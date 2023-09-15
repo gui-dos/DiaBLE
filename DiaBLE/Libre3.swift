@@ -811,6 +811,45 @@ class Libre3: Sensor {
     }
 
 
+    func parseActivation(output: Data) {
+
+        // let output = "A5002BC7291932189F36B26CD01E306209F0".bytes  // TEST
+
+        let output = Data(output.drop(while: { $0 == 0xA5 }))
+
+        if output[0] == 0x01 && output.count == 2 {
+            log("NFC: Libre 3 activation error: 0x\(output.hex)")
+            // getting 0x01b0 on an expired sensor
+            // getting error 0xc2 when altering crc16
+            // getting error 0xc1 when omitting crc16
+        }
+
+        if output[0] == 0x00 && output.count == 17 {
+
+            // i.e. 002BC7291932189F36B26CD01E306209F0 ->
+            // BD_Addr = 2B C7 29 19 32 18 (18:32:19:29:C7:2B)
+            // BLE_Key(BLE_Pin) = 9F36B26C
+            // A_UTC = 1647320784 (0xD01E3062)
+            // APP_CRC16 = 09 F0
+
+            let activationResponse = ActivationResponse(
+                bdAddress: Data(output[1 ..< 7].reversed()),
+                BLE_Pin:   output.subdata(in: 7 ..< 11),
+                activationTime: UInt32(output.subdata(in: 11 ..< 15))
+            )
+            let crc = UInt16(output[15 ... 16])
+            let computedCrc = output[1 ... 14].crc16
+            log("NFC: Libre 3 activation response: \(activationResponse), BLE address: \(activationResponse.bdAddress.hexAddress), BLE PIN: \(activationResponse.BLE_Pin.hex), activation time: \(Date(timeIntervalSince1970: Double(activationResponse.activationTime))), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
+
+            transmitter?.macAddress = activationResponse.bdAddress
+            blePIN = activationResponse.BLE_Pin
+            activationTime = activationResponse.activationTime
+            lastReadingDate = Date()
+            age = Int(Date().timeIntervalSince(Date(timeIntervalSince1970: Double(activationTime)))) / 60
+        }
+    }
+
+
     func pair() {
         send(securityCommand: .security_01)
         send(securityCommand: .security_02)
