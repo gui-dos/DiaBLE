@@ -859,8 +859,65 @@ class Libre3: Sensor {
         // TODO
     }
 
-}
 
+    struct MSLibre3Constants {
+        static let LIBRE3_HISTORIC_LIFECOUNT_INTERVAL = 5
+        static let LIBRE3_MAX_HISTORIC_READING_IN_PACKET = 10
+        static let LIBRE3_DQERROR_MAX = 0xFFFF
+        static let LIBRE3_DQERROR_DQ              = 0x8000  // 32768
+        static let LIBRE3_DQERROR_SENSOR_TOO_HOT  = 0xA000  // 40960
+        static let LIBRE3_DQERROR_SENSOR_TOO_COLD = 0xC000  // 49152
+        static let LIBRE3_DQERROR_OUTLIER_FILTER_DELTA = 2
+    }
+
+
+    class DPCRLInterface {
+        static let ABT_NO_ERROR: Int = 0x0
+        static let ABT_ERR0_BLE_TURNED_OFF: Int = 0x1f7
+        static let ABT_ERR3_TIME_CHANGE: Int = 0x2e
+        static let ABT_ERR3_SENSOR_EXPIRED: Int = 0x33
+        static let ABT_ERR3_SENSOR_RSSI_ERROR: Int = 0x39
+        static let ABT_ERR3_BLE_TURNED_OFF: Int = 0x4b
+        static let ABT_ERR3_REPLACE_SENSOR_ERROR: Int = 0x16d
+        static let ABT_ERR3_SENSOR_FALL_OUT_ERROR: Int = 0x16e
+        static let ABT_ERR3_INCOMPATIBLE_SENSOR_TYPE_ERROR: Int = 0x16f
+        static let ABT_ERR3_SENSOR_CAL_CODE_ERROR = 0x170
+        static let ABT_ERR3_SENSOR_DYNAMIC_DATA_CRC_ERROR = 0x171
+        static let ABT_ERR3_SENSOR_FACTORY_DATA_CRC_ERROR = 0x172
+        static let ABT_ERR3_SENSOR_LOG_DATA_CRC_ERROR = 0x173
+        static let ABT_ERR3_SENSOR_NOT_YOURS_ERROR: Int = 0x174
+        static let ABT_ERR3_REALTIME_RESULT_DQ_ERROR: Int = 0x175
+        static let ABT_ERR3_SENSOR_ESA_DETECTED: Int = 0x17c
+        static let ABT_ERR3_SENSOR_NOT_IN_GLUCOSE_MEASUREMENT_STATE: Int = 0x181
+        static let ABT_ERR3_BLE_PACKET_ERROR: Int = 0x182
+        static let ABT_ERR3_INVALID_DATA_SIZE_ERROR: Int = 0x183
+        static let ABT_ERR9_LIB_NOT_INITIALIZED_ERROR: Int = 0x3d6
+        static let ABT_ERR9_MEMORY_SIZE_ERROR: Int = 0x3d7
+        static let ABT_ERR9_NV_MEMORY_CRC_ERROR: Int = 0x3da
+        static let ABT_ERROR_DATA_BYTES = 0x8
+        static let LIBRE3_DP_LIBRARY_PARSE_ERROR = ~0x0
+        static let NFC_ACTIVATION_COMMAND_PAYLOAD_SIZE: Int = 10
+        static let PATCH_CONTROL_BACKFILL_GREATER_SIZE = 11
+        static let ABT_HISTORICAL_POINTS_PER_NOTIFICATION: Int = 6
+        static let LIB3_RECORD_ORDER_NEWEST_TO_OLDEST: Int = 0
+        static let LIB3_RECORD_ORDER_OLDEST_TO_NEWEST = 1
+        static let PATCH_CONTROL_COMMAND_SIZE: Int = 7
+        static let PATCH_NFC_EVENT_LOG_NUM_EVENTS: Int = 3
+        static let ABT_EVENT_LOGS_PER_NOTIFICATION: Int = 2
+        static let ABT_ERR10_INVALID_USER: Int = 0x582
+        static let ABT_ERR10_DUPLICATE_USER: Int = 0x596
+        static let ABT_ERR10_INVALID_TOKEN: Int = 0x5a6
+        static let ABT_ERR10_INVALID_DEVICE: Int = 0x5aa
+        static let SCRATCH_PAD_BUFFER_SIZE: Int = 0x400
+        static let CRL_NV_MEMORY_SIZE: Int = 0x400
+        static let LIBRE3_DEFAULT_WARMUP_TIME = 60
+        static let MAX_SERIAL_NUMBER_SIZE = 15
+        var lastError: Int = 0
+        var scratchPadBuffer: UnsafeMutablePointer<UInt32>? = nil
+    }
+
+
+}
 
 // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/ECDHCrypto.java
 

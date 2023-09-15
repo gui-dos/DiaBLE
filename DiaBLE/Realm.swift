@@ -325,4 +325,3 @@ class UploadQueueRecordEntity: Object {
         return "_id"
     }
 }
-
