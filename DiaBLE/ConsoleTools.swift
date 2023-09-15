@@ -53,7 +53,7 @@ struct ShellView: View {
                                     for file in documentsFiles {
                                         if file == "trident.realm" {
                                             do {
-                                                let realm = try Realm(fileURL: URL(filePath: "\(tridentContainer)/Documents/\(file)"))
+                                                let _ /*realm*/ = try Realm(fileURL: URL(filePath: "\(tridentContainer)/Documents/\(file)"))
                                             } catch {
                                                 app.main.log("\(error.localizedDescription)")
                                                 // TODO: dialog "128-character hex-encoded encyption key"
@@ -66,6 +66,12 @@ struct ShellView: View {
                                                 config.schemaVersion = 8  // as for RealmStudio 14
                                                 let realm = try Realm(configuration: config)
                                                 app.main.debugLog("Realm: opened decrypted \(tridentContainer)/Documents/\(file)")
+                                                let sensors = realm.objects(SensorEntity.self)
+                                                app.main.log("Realm: sensors: \(sensors)")
+                                                let appConfig = realm.objects(AppConfigEntity.self)
+                                                app.main.log("Realm: app config: \(appConfig)")
+                                                let libre3WrappedKAuth = realm.object(ofType: AppConfigEntity.self, forPrimaryKey: "Libre3WrappedKAuth")!["_configValue"]!
+                                                app.main.log("Realm: libre3WrappedKAuth: \(libre3WrappedKAuth)")
                                                 // TODO
                                             } catch {
                                                 app.main.log("\(error.localizedDescription)")
