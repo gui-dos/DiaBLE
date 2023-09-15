@@ -1,5 +1,9 @@
 import Foundation
 import SwiftUI
+import RealmSwift
+
+
+// TODO: rename to Copilot when smarter :-)
 
 
 struct ShellView: View {
@@ -23,6 +27,7 @@ struct ShellView: View {
                     Spacer()
 
                     TextField("Trident Container", text: $tridentContainer)
+                        .truncationMode(.head)
 
                     Button {
                         showingFileImporter = true
@@ -47,7 +52,24 @@ struct ShellView: View {
                                     app.main.log("ls Documents\n\(documentsFiles)")
                                     for file in documentsFiles {
                                         if file == "trident.realm" {
-                                            // TODO
+                                            do {
+                                                let realm = try Realm(fileURL: URL(filePath: "\(tridentContainer)/Documents/\(file)"))
+                                            } catch {
+                                                app.main.log("\(error.localizedDescription)")
+                                                // TODO: dialog "128-character hex-encoded encyption key"
+                                            }
+                                        }
+                                        if file == "trident-decrypted.realm" {
+                                            do {
+                                                var config = Realm.Configuration.defaultConfiguration
+                                                config.fileURL = URL(filePath: "\(tridentContainer)/Documents/\(file)")
+                                                config.schemaVersion = 8  // as for RealmStudio 14
+                                                let realm = try Realm(configuration: config)
+                                                app.main.debugLog("Realm: opened decrypted \(tridentContainer)/Documents/\(file)")
+                                                // TODO
+                                            } catch {
+                                                app.main.log("\(error.localizedDescription)")
+                                            }
                                         }
                                     }
                                 }
@@ -95,7 +117,7 @@ struct ShellView: View {
                             }
                             directory.stopAccessingSecurityScopedResource()
                         case .failure(let error):
-                            app.main.log("\(error)")
+                            app.main.log("\(error.localizedDescription)")
                         }
                     }
 
