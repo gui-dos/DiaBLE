@@ -17,6 +17,9 @@ struct ShellView: View {
     @State private var showingFileImporter = false
     @State private var tridentContainer = ""
 
+    @State private var showingRealmKeyPrompt = false
+    @AppStorage("tridentRealmKey") var tridentRealmKey = ""  // 128-char hex
+
     var body: some View {
 
         VStack(spacing: 0) {
@@ -47,38 +50,6 @@ struct ShellView: View {
                             let containerDirs = try! fileManager.contentsOfDirectory(atPath: tridentContainer)
                             app.main.log("ls \(tridentContainer)\n\(containerDirs)")
                             for dir in containerDirs {
-                                if dir == "Documents" {
-                                    let documentsFiles = try! fileManager.contentsOfDirectory(atPath: "\(tridentContainer)/Documents")
-                                    app.main.log("ls Documents\n\(documentsFiles)")
-                                    for file in documentsFiles {
-                                        if file == "trident.realm" {
-                                            do {
-                                                let _ /*realm*/ = try Realm(fileURL: URL(filePath: "\(tridentContainer)/Documents/\(file)"))
-                                            } catch {
-                                                app.main.log("\(error.localizedDescription)")
-                                                // TODO: dialog "128-character hex-encoded encyption key"
-                                            }
-                                        }
-                                        if file == "trident-decrypted.realm" {
-                                            do {
-                                                var config = Realm.Configuration.defaultConfiguration
-                                                config.fileURL = URL(filePath: "\(tridentContainer)/Documents/\(file)")
-                                                config.schemaVersion = 8  // as for RealmStudio 14
-                                                let realm = try Realm(configuration: config)
-                                                app.main.debugLog("Realm: opened decrypted \(tridentContainer)/Documents/\(file)")
-                                                let sensors = realm.objects(SensorEntity.self)
-                                                app.main.log("Realm: sensors: \(sensors)")
-                                                let appConfig = realm.objects(AppConfigEntity.self)
-                                                app.main.log("Realm: app config: \(appConfig)")
-                                                let libre3WrappedKAuth = realm.object(ofType: AppConfigEntity.self, forPrimaryKey: "Libre3WrappedKAuth")!["_configValue"]!
-                                                app.main.log("Realm: libre3WrappedKAuth: \(libre3WrappedKAuth)")
-                                                // TODO
-                                            } catch {
-                                                app.main.log("\(error.localizedDescription)")
-                                            }
-                                        }
-                                    }
-                                }
                                 if dir == "Library" {
                                     let libraryDirs = try! fileManager.contentsOfDirectory(atPath: "\(tridentContainer)/Library")
                                     app.main.log("ls Library\n\(libraryDirs)")
@@ -120,6 +91,45 @@ struct ShellView: View {
                                         }
                                     }
                                 }
+                                if dir == "Documents" {
+                                    let documentsFiles = try! fileManager.contentsOfDirectory(atPath: "\(tridentContainer)/Documents")
+                                    app.main.log("ls Documents\n\(documentsFiles)")
+                                    for file in documentsFiles {
+                                        do {
+                                            if file.hasSuffix(".realm") && !file.contains("backup") {
+                                                var realm: Realm
+                                                var config = Realm.Configuration.defaultConfiguration
+                                                config.fileURL = URL(filePath: "\(tridentContainer)/Documents/\(file)")
+                                                config.schemaVersion = 8  // as for RealmStudio 14
+                                                do {
+                                                    if !file.contains("decrypted") {
+                                                        config.encryptionKey = tridentRealmKey.bytes
+                                                    } else {
+                                                        config.encryptionKey = nil
+                                                    }
+                                                    realm = try Realm(configuration: config)
+                                                    if !file.contains("decrypted") {
+                                                        app.main.debugLog("Realm: opened encrypted \(tridentContainer)/Documents/\(file) by using the key \(tridentRealmKey)")
+                                                    } else {
+                                                        app.main.debugLog("Realm: opened already decrypted \(tridentContainer)/Documents/\(file)")
+                                                    }
+                                                    let sensors = realm.objects(SensorEntity.self)
+                                                    app.main.log("Realm: sensors: \(sensors)")
+                                                    let appConfig = realm.objects(AppConfigEntity.self)
+                                                    app.main.log("Realm: app config: \(appConfig), total entries count: \(appConfig.count)")
+                                                    let libre3WrappedKAuth = realm.object(ofType: AppConfigEntity.self, forPrimaryKey: "Libre3WrappedKAuth")!["_configValue"]!
+                                                    app.main.log("Realm: libre3WrappedKAuth: \(libre3WrappedKAuth)")
+                                                    // TODO
+                                                } catch {
+                                                    app.main.log("Realm: error: \(error.localizedDescription)")
+                                                    if file == "trident.realm" {
+                                                        showingRealmKeyPrompt = true
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             directory.stopAccessingSecurityScopedResource()
                         case .failure(let error):
@@ -132,11 +142,30 @@ struct ShellView: View {
                 .padding(20)
             }
         }
+        .sheet(isPresented: $showingRealmKeyPrompt) {
+            VStack(spacing: 20) {
+                Text("The Realm might be encrypted").fontWeight(.bold)
+                Text("Either this is not a Realm file or it's encrypted.")
+                TextField("128-character hex-encoded encyption key", text: $tridentRealmKey, axis: .vertical)
+                    .textFieldStyle(.roundedBorder)
+                    .padding()
+                HStack {
+                    Spacer()
+                    Button("Cancel") {
+                        showingRealmKeyPrompt = false
+                    }
+                    Button("Try again") {
+                        showingRealmKeyPrompt = false
+                        showingFileImporter = true
+                    }
+                }
+                .buttonStyle(.bordered)
+                .padding()
+            }
+        }
         .toolbar {
             Button {
-                withAnimation {
-                    showingStack.toggle()
-                }
+                withAnimation { showingStack.toggle() }
             } label: {
                 VStack(spacing: 0) {
                     Image(systemName: showingStack ? "fossil.shell.fill" : "fossil.shell")
@@ -145,4 +174,13 @@ struct ShellView: View {
             }
         }
     }
+}
+
+
+#Preview {
+    ShellView()
+        .preferredColorScheme(.dark)
+        .environmentObject(AppState.test(tab: .console))
+        .environmentObject(Log())
+        .environmentObject(Settings())
 }
