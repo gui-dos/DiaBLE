@@ -53,29 +53,6 @@ class Libre3: Sensor {
     }
 
 
-    enum LifeState: Int, CustomStringConvertible {
-        case missing         = 1
-        case warmup          = 2
-        case ready           = 3
-        case expired         = 4
-        case active          = 5
-        case ended           = 6
-        case insertionFailed = 7
-
-        var description: String {
-            switch self {
-            case .missing:         "missing"
-            case .warmup:          "warmup"
-            case .ready:           "ready"
-            case .expired:         "expired"
-            case .active:          "active"
-            case .ended:           "ended"
-            case .insertionFailed: "insertion failed"
-            }
-        }
-    }
-
-
     enum Condition: Int, CustomStringConvertible {
         case ok      = 0
         case invalid = 1
@@ -894,20 +871,20 @@ class Libre3: Sensor {
         static let ABT_ERR9_LIB_NOT_INITIALIZED_ERROR: Int = 0x3d6
         static let ABT_ERR9_MEMORY_SIZE_ERROR: Int = 0x3d7
         static let ABT_ERR9_NV_MEMORY_CRC_ERROR: Int = 0x3da
+        static let ABT_ERR10_INVALID_USER: Int = 0x582
+        static let ABT_ERR10_DUPLICATE_USER: Int = 0x596
+        static let ABT_ERR10_INVALID_TOKEN: Int = 0x5a6
+        static let ABT_ERR10_INVALID_DEVICE: Int = 0x5aa
         static let ABT_ERROR_DATA_BYTES = 0x8
         static let LIBRE3_DP_LIBRARY_PARSE_ERROR = ~0x0
         static let NFC_ACTIVATION_COMMAND_PAYLOAD_SIZE: Int = 10
         static let PATCH_CONTROL_BACKFILL_GREATER_SIZE = 11
         static let ABT_HISTORICAL_POINTS_PER_NOTIFICATION: Int = 6
         static let LIB3_RECORD_ORDER_NEWEST_TO_OLDEST: Int = 0
-        static let LIB3_RECORD_ORDER_OLDEST_TO_NEWEST = 1
+        static let LIB3_RECORD_ORDER_OLDEST_TO_NEWEST: Int = 1
         static let PATCH_CONTROL_COMMAND_SIZE: Int = 7
         static let PATCH_NFC_EVENT_LOG_NUM_EVENTS: Int = 3
         static let ABT_EVENT_LOGS_PER_NOTIFICATION: Int = 2
-        static let ABT_ERR10_INVALID_USER: Int = 0x582
-        static let ABT_ERR10_DUPLICATE_USER: Int = 0x596
-        static let ABT_ERR10_INVALID_TOKEN: Int = 0x5a6
-        static let ABT_ERR10_INVALID_DEVICE: Int = 0x5aa
         static let SCRATCH_PAD_BUFFER_SIZE: Int = 0x400
         static let CRL_NV_MEMORY_SIZE: Int = 0x400
         static let LIBRE3_DEFAULT_WARMUP_TIME = 60

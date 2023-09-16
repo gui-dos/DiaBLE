@@ -156,7 +156,7 @@ class AppConfigEntity: Object {
 class AppEventEntity: Object {
     @objc dynamic var _id: Int = 0
     @objc dynamic var _eventType: Int = 0
-    @objc dynamic var _eventErrorCode: Int = 0
+    @objc dynamic var _eventErrorCode: Int = 0       // DPCRLInterface
     @objc dynamic var _timestampUTC: Int = 0
     @objc dynamic var _timestampLocal: Int = 0
     @objc dynamic var _timeZone: String = ""
@@ -294,8 +294,8 @@ class SensorEventEntity: Object {
     @objc dynamic var _sensor: SensorEntity?
     @objc dynamic var _lifeCount: Int = 0
     @objc dynamic var _timestampUTC: Int = 0
-    @objc dynamic var _eventCode: Int = 0
-    @objc dynamic var _eventValue: Double = 0
+    @objc dynamic var _eventCode: Int = 0           // SensorEventType
+    @objc dynamic var _eventValue: Double = 0       // same SensorEventType
 
     override static func primaryKey() -> String? {
         return "_id"
@@ -324,4 +324,72 @@ class UploadQueueRecordEntity: Object {
     override static func primaryKey() -> String? {
         return "_id"
     }
+}
+
+
+// TODO: verify raw values
+
+extension Libre3 {
+
+    enum LifeState: Int {
+        case missing         = 1
+        case warmup          = 2
+        case ready           = 3
+        case expired         = 4
+        case active          = 5
+        case ended           = 6
+        case insertionFailed = 7
+    }
+
+    enum AppEventType: Int {
+        case none                = 0
+        case bleConnect          = 1
+        case bleDisconnect       = 2
+        case alarmConfigChanged  = 3
+        case alarmStateChanged
+        case error
+        // Android:
+        //   Error(4),
+        //   PATCH_WARMUP(5),
+        //   PATCH_PAIRED(6),
+        //   PATCH_ENDED(7),
+        //   FIRST_INIT(8),
+        //   LOGGED_IN(9),
+        //   NO_PATCH(10),
+        //   BleDataCountLow(11),
+        //   BleDisconnectsHigh(12),
+        //   AppException(13),
+        //   AlarmStateChanged(14);
+    }
+
+    enum EventType: Int {
+        case sensorException      = 0
+        case newYuUploadFailure   = 1
+        case oneStepUploadFailure = 2
+        case AppException         = 3
+        //   SensorScanUdoLogError(4);
+    }
+
+    enum SensorEventType: Int {
+        case none         = 0
+        case activated    = 1
+        case connected    = 2
+        case disconnected = 3
+        case expired      = 4
+        case terminated   = 5
+        case error        = 6
+        // Android:
+        //   NONE(0),
+        //   WARMINGUP(1),
+        //   ACTIVATED(2),
+        //   CONNECTED(3),
+        //   DISCONNECTED(4),
+        //   ENDED(5),
+        //   EXPIRED(6),
+        //   TERMINATED(7),
+        //   ERROR(8);
+
+    }
+
+
 }
