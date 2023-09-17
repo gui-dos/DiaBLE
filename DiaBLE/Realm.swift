@@ -22,7 +22,7 @@ class AppConfigEntity: Object {
     @objc dynamic var _id: Int = 0
     @objc dynamic var _configType: Int = 0
     @objc dynamic var _configValue: String = ""
-    @objc dynamic var _source: Int = 0
+    @objc dynamic var _source: Int = 0                // ConfigSource 1: build, 2: runtime
 
     override static func primaryKey() -> String? {
         return "_configName"
@@ -143,7 +143,7 @@ class AppConfigEntity: Object {
         ["SignalLossScheduleCount"],
         ["SignalLossUserDismissTime"],
         ["startSensorVideoUrl"],
-        ["userAccountMode"],
+        ["userAccountMode"],                         // UserAccountType string
         ["userCarbUnit"],
         ["userGlucoseUnit"],
         ["userGramsPerServing"],
@@ -330,6 +330,19 @@ class UploadQueueRecordEntity: Object {
 // TODO: verify raw values
 
 extension Libre3 {
+
+    enum UserAccountType {
+        case accountUser
+        case accountLess
+        case accountEmpty
+        case accountSwitched
+        case accountNotDefined
+    }
+
+    enum ConfigSource: Int {
+        case build    = 1
+        case runtime  = 2
+    }
 
     enum LifeState: Int {
         case missing         = 1
