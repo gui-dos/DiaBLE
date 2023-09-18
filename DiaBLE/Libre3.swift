@@ -774,6 +774,10 @@ class Libre3: Sensor {
 
     // TODO: separate CMD_ACTIVATE_SENSOR and CMD_SWITCH_RECEIVER
     var activationNFCCommand: NFCCommand {
+        // TODO:
+        if receiverId == 0 && settings.libreLinkUpPatientId == "" {
+            log("WARNING: the current receiverId and patientId are null: a successful login to LibreLinkUp is very probably required first.")
+        }
         var parameters: Data = Data()
         parameters += ((activationTime != 0 ? activationTime : UInt32(Date().timeIntervalSince1970)) - 1).data
         parameters += (receiverId != 0 ? receiverId : settings.libreLinkUpPatientId.fnv32Hash).data
