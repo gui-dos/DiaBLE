@@ -352,8 +352,8 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 }
             }
 
-            if sensor.type == .libre3 && taskRequest == .none {
-                // get the current Libre 3 blePIN and activationTime by sending `A0`
+            if sensor.type == .libre3 && sensor.state != .notActivated && taskRequest == .none {
+                // get the current Libre 3 blePIN and activationTime by sending `A0` to an already activated sensor
                 taskRequest = .activate
             }
 
