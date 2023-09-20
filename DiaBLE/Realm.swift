@@ -199,7 +199,7 @@ class GlucoseReadingEntity: Object {
     @objc dynamic var _resultRange: Int = 0
     let _notes = List<NotesEntity>()
     @objc dynamic var _temperature: Int = 0
-    @objc dynamic var _rawData: String = ""
+    @objc dynamic var _rawData: String = ""          // 8 bytes hex
     @objc dynamic var _viewed: Bool = false
     @objc dynamic var _extendedUDOflag: Int = 0
     @objc dynamic var _rssi: Int = 0
@@ -277,7 +277,7 @@ class SensorEntity: Object {
     @objc dynamic var _warmupDuration: Int = 0
     @objc dynamic var _wearDuration: Int = 0
     @objc dynamic var _currentLifeCount: Int = 0
-    @objc dynamic var _lastHistoricReading: Int = 0
+    @objc dynamic var _lastHistoricReading: Int = 0  // a lifeCount
     @objc dynamic var _status: Int = 0
     @objc dynamic var _receiverID: Int = 0
     @objc dynamic var _factoryData: String = ""      // 148 bytes hex (final CRC)

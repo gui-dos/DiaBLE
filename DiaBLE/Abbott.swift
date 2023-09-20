@@ -105,6 +105,16 @@ class Abbott: Transmitter {
 
             if buffer.count == 46 {
                 do {
+
+                    // FIXME: crash loop reported in https://github.com/gui-dos/DiaBLE/discussions/1#discussioncomment-7061392
+                    if sensor?.uid.count == 0 {
+                        log("Bluetooth: cannot decrypt the BLE data because the Libre 2 UID is not known (you could retry after scanning it via NFC).")
+                        struct DecryptBLEError: LocalizedError {
+                            var errorDescription: String? { "BLE data decryption failed" }
+                        }
+                        throw DecryptBLEError()
+                    }
+
                     let bleData = try Libre2.decryptBLE(id: sensor!.uid, data: buffer)
 
                     let crc = UInt16(bleData[42...43])
