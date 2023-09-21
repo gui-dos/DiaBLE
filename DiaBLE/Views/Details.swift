@@ -184,72 +184,77 @@ struct Details: View {
 
                     Section(header: Text("BLE Setup").font(.headline)) {
 
-                        HStack {
-                            Text("Patch Info")
-                            TextField("Patch Info", value: $settings.activeSensorInitialPatchInfo, formatter: HexDataFormatter()).multilineTextAlignment(.trailing).foregroundColor(.blue)
-                        }
-                        HStack {
-                            Text("Calibration Info")
-                            Spacer()
-                            Text("[\(settings.activeSensorCalibrationInfo.i1), \(settings.activeSensorCalibrationInfo.i2), \(settings.activeSensorCalibrationInfo.i3), \(settings.activeSensorCalibrationInfo.i4), \(settings.activeSensorCalibrationInfo.i5), \(settings.activeSensorCalibrationInfo.i6)]")
-                                .foregroundColor(.blue)
-                        }
-                        .onTapGesture {
-                            showingCalibrationInfoForm.toggle()
-                        }
-                        .sheet(isPresented: $showingCalibrationInfoForm) {
-                            Form {
-                                Section(header: Text("Calibration Info").font(.headline)) {
-                                    HStack {
-                                        Text("i1")
-                                        TextField("i1", value: $settings.activeSensorCalibrationInfo.i1,
-                                                  formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
-                                    }
-                                    HStack {
-                                        Text("i2")
-                                        TextField("i2", value: $settings.activeSensorCalibrationInfo.i2,
-                                                  formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
-                                    }
-                                    HStack {
-                                        Text("i3")
-                                        TextField("i3", value: $settings.activeSensorCalibrationInfo.i3,
-                                                  formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
-                                    }
-                                    HStack {
-                                        Text("i4")
-                                        TextField("i4", value: $settings.activeSensorCalibrationInfo.i4,
-                                                  formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
-                                    }
-                                    HStack {
-                                        Text("i5")
-                                        TextField("i5", value: $settings.activeSensorCalibrationInfo.i5,
-                                                  formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
-                                    }
-                                    HStack {
-                                        Text("i6")
-                                        TextField("i6", value: $settings.activeSensorCalibrationInfo.i6,
-                                                  formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
-                                    }
-                                    HStack {
-                                        Spacer()
-                                        Button {
-                                            showingCalibrationInfoForm = false
-                                        } label: {
-                                            Text("Set").bold().foregroundColor(.accentColor).padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                        if app.sensor?.type != .libre3 {
+
+                            HStack {
+                                Text("Patch Info")
+                                TextField("Patch Info", value: $settings.activeSensorInitialPatchInfo, formatter: HexDataFormatter()).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                            }
+
+                            HStack {
+                                Text("Calibration Info")
+                                Spacer()
+                                Text("[\(settings.activeSensorCalibrationInfo.i1), \(settings.activeSensorCalibrationInfo.i2), \(settings.activeSensorCalibrationInfo.i3), \(settings.activeSensorCalibrationInfo.i4), \(settings.activeSensorCalibrationInfo.i5), \(settings.activeSensorCalibrationInfo.i6)]")
+                                    .foregroundColor(.blue)
+                            }
+                            .onTapGesture {
+                                showingCalibrationInfoForm.toggle()
+                            }
+                            .sheet(isPresented: $showingCalibrationInfoForm) {
+                                Form {
+                                    Section(header: Text("Calibration Info").font(.headline)) {
+                                        HStack {
+                                            Text("i1")
+                                            TextField("i1", value: $settings.activeSensorCalibrationInfo.i1,
+                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
                                         }
-                                        Spacer()
+                                        HStack {
+                                            Text("i2")
+                                            TextField("i2", value: $settings.activeSensorCalibrationInfo.i2,
+                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                        }
+                                        HStack {
+                                            Text("i3")
+                                            TextField("i3", value: $settings.activeSensorCalibrationInfo.i3,
+                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                        }
+                                        HStack {
+                                            Text("i4")
+                                            TextField("i4", value: $settings.activeSensorCalibrationInfo.i4,
+                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                        }
+                                        HStack {
+                                            Text("i5")
+                                            TextField("i5", value: $settings.activeSensorCalibrationInfo.i5,
+                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                        }
+                                        HStack {
+                                            Text("i6")
+                                            TextField("i6", value: $settings.activeSensorCalibrationInfo.i6,
+                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                        }
+                                        HStack {
+                                            Spacer()
+                                            Button {
+                                                showingCalibrationInfoForm = false
+                                            } label: {
+                                                Text("Set").bold().foregroundColor(.accentColor).padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                            }
+                                            Spacer()
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        HStack {
-                            Text("Unlock Code")
-                            TextField("Unlock Code", value: $settings.activeSensorStreamingUnlockCode, formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
-                        }
-                        HStack {
-                            Text("Unlock Count")
-                            TextField("Unlock Count", value: $settings.activeSensorStreamingUnlockCount, formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                            HStack {
+                                Text("Unlock Code")
+                                TextField("Unlock Code", value: $settings.activeSensorStreamingUnlockCode, formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                            }
+                            HStack {
+                                Text("Unlock Count")
+                                TextField("Unlock Count", value: $settings.activeSensorStreamingUnlockCount, formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                            }
+
                         }
 
                         HStack {
