@@ -80,10 +80,11 @@ struct ShellView: View {
                                                             // Frida-> var crypto_lib = crypto_lib_def.$new()
                                                             // Frida-> unwrapped = crypto_lib.unWrapDBEncryptionKey([<realmEncryptionKeyInt8>])
                                                             //
-                                                            //
+                                                            // swift repl
+                                                            // import Foundation
                                                             // let unwrappedInt8: [Int8] = [<unwrapped>]
                                                             // let unwrappedUInt8: [UInt8] = unwrappedInt8.map { UInt8(bitPattern: $0) }
-                                                            // log(Data(unwrappedUInt8).reduce("", { $0 + String(format: "%02x", $1)}))
+                                                            // print(Data(unwrappedUInt8).reduce("", { $0 + String(format: "%02x", $1)}))
 
                                                             // TODO: parse rest of libre3Plist
                                                         }
