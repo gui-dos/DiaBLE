@@ -17,7 +17,6 @@ struct HamburgerMenu: View {
         "LibreMonitor": "https://github.com/UPetersen/LibreMonitor/tree/Swift4",
         "Loop": "https://github.com/LoopKit/Loop",
         "Nightscout LibreLinkUp Uploader": "https://github.com/timoschlueter/nightscout-librelink-up",
-        "xDrip": "https://github.com/Faifly/xDrip",
         "xDrip+": "https://github.com/NightscoutFoundation/xDrip",
         "xDrip4iO5": "https://github.com/JohanDegraeve/xdripswift"
     ]

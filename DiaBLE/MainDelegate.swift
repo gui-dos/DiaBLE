@@ -52,7 +52,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
 
         super.init()
 
-        let welcomeMessage = "Welcome to DiaBLE!\n\nTip: switch to [Test] mode to sniff incoming BLE data running side-by-side with Trident and the Dexcom apps.\n\nHint: better [Stop] me to avoid excessive logging during normal use.\n\nWarning: edit out your sensitive personal data after [Copy]ing and before pasting in your reports."
+        let welcomeMessage = "Welcome to DiaBLE!\n\nTip: switch to [Test] mode to sniff incoming BLE data running side-by-side with Trident and other apps.\n\nHint: better [Stop] me to avoid excessive logging during normal use.\n\nWarning: edit out your sensitive personal data after [Copy]ing and before pasting in your reports."
 
         log.entries = [LogEntry(message: "\(welcomeMessage)"), LogEntry(message: "\(settings.logging ? "Log started" : "Log stopped") \(Date().local)")]
         debugLog("User defaults: \(Settings.defaults.keys.map { [$0, UserDefaults.standard.dictionaryRepresentation()[$0]!] }.sorted{($0[0] as! String) < ($1[0] as! String) })")
@@ -175,8 +175,6 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                 bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Libre3.UUID.data.rawValue)]], rssi: 0)
             } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
                 bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
-            } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]).first {
-                bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
             } else {
                 centralManager.scanForPeripherals(withServices: nil, options: nil)
                 status("Scanning...")

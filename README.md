@@ -3,7 +3,7 @@
 
 To build the project you have to duplicate the file _DiaBLE.xcconfig_, rename the copy to _DiaBLEOverride.xcconfig_ (the missing reference displayed by Xcode in red should then point to it) and edit it by deleting the last line `#include?... ` and replacing `##TEAM_ID##` with your Apple Team ID so that the first line should read for example `DEVELOPMENT_TEAM = Z25SC9UDC8`.
 
-Currently I am targeting only the latest betas of Xcode and iOS and focusing on the new Libre 3 and Dexcom G7.
+Currently I am targeting only the latest betas of Xcode and iOS and focusing on the new Libre 3.
 
 Please refer to the [**TODOs**](https://github.com/gui-dos/DiaBLE/blob/main/TODO.md) list for the up-to-date status of all the current limitations and known bugs of this **prototype**.
 
@@ -15,6 +15,6 @@ Please refer to the [**TODOs**](https://github.com/gui-dos/DiaBLE/blob/main/TODO
   The Shell in the Console allows opening both encrypted and decrypted _trident.realm_ files from a backup of the Libre 3 app data (the Container folder extracted for example by using iMazing): see the nice technical post (mentioning me 😎) ["Liberating glucose data from the Freestyle Libre 3"](https://frdmtoplay.com/freeing-glucose-data-from-the-freestyle-libre-3/) (an Android rooted distribution like Waydroid is required to decrypt the Realm key).
 
 ---
-***Credits***: [@dabear](https://github.com/dabear), [@ivalkou](https://github.com/ivalkou), [@j-kaltes](https://github.com/j-kaltes), [LibreMonitor](https://github.com/UPetersen/LibreMonitor/tree/Swift4), [Loop](https://github.com/LoopKit/Loop), [Nightscout LibreLinkUp Uploader](https://github.com/timoschlueter/nightscout-librelink-up), [xDrip](https://github.com/Faifly/xDrip), [xDrip+](https://github.com/NightscoutFoundation/xDrip), [xDrip4iO5](https://github.com/JohanDegraeve/xdripswift).
+***Credits***: [@dabear](https://github.com/dabear), [@ivalkou](https://github.com/ivalkou), [@j-kaltes](https://github.com/j-kaltes), [LibreMonitor](https://github.com/UPetersen/LibreMonitor/tree/Swift4), [Loop](https://github.com/LoopKit/Loop), [Nightscout LibreLinkUp Uploader](https://github.com/timoschlueter/nightscout-librelink-up), [xDrip+](https://github.com/NightscoutFoundation/xDrip), [xDrip4iO5](https://github.com/JohanDegraeve/xdripswift).
 
 ###### ***Disclaimer: the decrypting keys I am publishing are not related to user accounts and can be dumped from the sensor memory by using DiaBLE itself. The online servers I am using probably are tracking your personal data but all the traffic sent/received by DiaBLE is clearly shown in its logs. The reversed code I am pasting has been retrieved from other GitHub repos or reproduced simply by using open-source tools like `jadx-gui`.***

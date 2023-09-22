@@ -54,9 +54,6 @@ class Settings: ObservableObject {
         "activeSensorCalibrationInfo": try! JSONEncoder().encode(CalibrationInfo()),
         "activeSensorBlePIN": Data(),
 
-        "activeTransmitterSerial": "",
-        "activeSensorCode": "",
-
         // TODO: rename to currentSensorUid/PatchInfo
         "patchUid": Data(),
         "patchInfo": Data()
@@ -65,9 +62,7 @@ class Settings: ObservableObject {
 
     @Published var preferredTransmitter: TransmitterType = TransmitterType(rawValue: UserDefaults.standard.string(forKey: "preferredTransmitter")!) ?? .none {
         willSet(type) {
-            if type == .dexcom {
-                readingInterval = 5
-            } else if type == .abbott {
+            if type == .abbott {
                 readingInterval = 1
             }
             if type != .none {
@@ -242,14 +237,6 @@ class Settings: ObservableObject {
 
     @Published var activeSensorBlePIN: Data = UserDefaults.standard.data(forKey: "activeSensorBlePIN")! {
         didSet { UserDefaults.standard.set(self.activeSensorBlePIN, forKey: "activeSensorBlePIN") }
-    }
-
-    @Published var activeTransmitterSerial: String = UserDefaults.standard.string(forKey: "activeTransmitterSerial")! {
-        didSet { UserDefaults.standard.set(self.activeTransmitterSerial, forKey: "activeTransmitterSerial") }
-    }
-
-    @Published var activeSensorCode: String = UserDefaults.standard.string(forKey: "activeSensorCode")! {
-        didSet { UserDefaults.standard.set(self.activeSensorCode, forKey: "activeSensorCode") }
     }
 
     @Published var patchUid: SensorUid = UserDefaults.standard.data(forKey: "patchUid")! {
