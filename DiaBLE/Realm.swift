@@ -404,5 +404,51 @@ extension Libre3 {
 
     }
 
+    // OOP.Alarm
+    enum GlycemicAlarmStatus: Int {
+        case alarmNotDetermined   = 0
+        case lowGlucose           = 1
+        case projectedLowGlucose  = 2
+        case normalGlucose        = 3
+        case projectedHighGlucose = 4
+        case highGlucose          = 5
+    }
+
+    enum AlarmFlag {
+        case lowAlarm
+        case highAlarm
+        case urgentLowAlarm
+        case signalLossAlarm
+    }
+
+    struct GlucoseAlarmState {
+        var isPresented: Bool
+        var isInEpisode: Bool
+        var isDismissed: Bool
+        var isCleared: Bool
+        var isUserCleared: Bool
+    }
+
+    struct SignalLossAlarmState {
+        var isPresented: Bool
+        var isCleared: Bool
+        var isUserCleared: Bool
+        var isAutoDismissed: Bool
+        var isUserDismissed: Bool
+    }
+
+    struct AlarmStates {
+        let lowGlucose: GlucoseAlarmState
+        let highGlucose: GlucoseAlarmState
+        let fixedLowGlucose: GlucoseAlarmState
+        let signalLoss: SignalLossAlarmState
+    }
+
+    struct AlarmStateDictionary {
+        let episodeFlag: Int
+        var states: AlarmStates
+    }
+
+    // TODO: lowGucoseAlarm, highGlucoseAlarm, fixedLowAlarm, signalLossAlarm JSON decoding when eventType = 4
 
 }
