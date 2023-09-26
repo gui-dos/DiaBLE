@@ -14,6 +14,8 @@ Please refer to the [**TODOs**](https://github.com/gui-dos/DiaBLE/blob/main/TODO
   
 The Shell in the Console allows opening both encrypted and decrypted _trident.realm_ files from a backup of the Libre 3 app data (the Container folder extracted for example by using iMazing): see the nice technical post (mentioning me 😎) ["Liberating glucose data from the Freestyle Libre 3"](https://frdmtoplay.com/freeing-glucose-data-from-the-freestyle-libre-3/) (an Android rooted distribution like Waydroid is required to unwrap the Realm encryption key).
 
+I can no longer afford to support the Dexcom ONE and G7 sensors, prolonging the Libre 1 lifespan, the Libre Pro, the MiaoMiao and Bubble transmitters, the LibreOOPWeb glucose.space server, the Swift Playgrounds… I forked the previous version to [DiaBLE-Legacy](https://github.com/gui-dos/DiaBLE-Legacy) and I will try to merge the compatiBLE commits with this repo anyway.
+
 ---
 ***Credits***: [@dabear](https://github.com/dabear), [@ivalkou](https://github.com/ivalkou), [@j-kaltes](https://github.com/j-kaltes), [LibreMonitor](https://github.com/UPetersen/LibreMonitor/tree/Swift4), [Loop](https://github.com/LoopKit/Loop), [Nightscout LibreLinkUp Uploader](https://github.com/timoschlueter/nightscout-librelink-up), [xDrip+](https://github.com/NightscoutFoundation/xDrip), [xDrip4iO5](https://github.com/JohanDegraeve/xdripswift).
 
