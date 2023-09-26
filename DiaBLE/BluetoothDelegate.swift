@@ -91,7 +91,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         var msg = "Bluetooth: \(name!)'s device identifier \(identifier)"
         if knownDevices[identifier.uuidString] == nil {
             msg += " not yet known"
-            knownDevices[identifier.uuidString] = name
+            knownDevices[identifier.uuidString] = name!.contains("unnamed") ? name : peripheral.name!
             if settings.userLevel > .basic {
                 msg += " (advertised data: \(advertisement))"
             }
