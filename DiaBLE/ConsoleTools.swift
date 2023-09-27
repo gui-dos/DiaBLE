@@ -165,12 +165,22 @@ struct ShellView: View {
                     .padding()
                 HStack {
                     Spacer()
-                    Button("Cancel") {
+
+                    Button {
                         showingRealmKeyPrompt = false
+                    } label: {
+                        Text("Cancel")
                     }
-                    Button("Try again") {
+
+                    Button {
                         showingRealmKeyPrompt = false
                         showingFileImporter = true
+                    } label: {
+                        Label {
+                            Text("Try again").fontWeight(.bold)
+                        } icon: {
+                            Image(systemName: "folder.circle").font(.system(size: 20))
+                        }
                     }
                 }
                 .buttonStyle(.bordered)
@@ -257,6 +267,7 @@ struct CrcCalculator: View {
                 Spacer()
 
                 Toggle("Trailing CRC", isOn: $trailingCrc)
+                    .controlSize(.mini)
                     .fixedSize()
                     .onChange(of: trailingCrc) { updateCRC() }
             }
