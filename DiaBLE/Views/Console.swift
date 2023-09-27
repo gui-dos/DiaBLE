@@ -78,11 +78,13 @@ struct Console: View {
                             if filterString.isEmpty {
                                 ForEach(log.entries) { entry in
                                     Text(entry.message)
+                                        .textSelection(.enabled)
                                 }
                             } else {
                                 let pattern = filterString.lowercased()
                                 ForEach(log.entries.filter { $0.message.lowercased().contains(pattern) }) { entry in
                                     Text(entry.message)
+                                        .textSelection(.enabled)
                                 }
                             }
                         }

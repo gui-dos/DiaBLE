@@ -200,9 +200,6 @@ struct ShellView: View {
 }
 
 
-// FIXME: on Console Text()'s  `.textSelection(.enabled)` doesn't work
-
-
 struct CrcCalculator: View {
 
     @State private var hexString = ""
