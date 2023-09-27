@@ -109,7 +109,7 @@ struct ShellView: View {
                                                     config.schemaVersion = 8  // as for RealmStudio 14
                                                     do {
                                                         if !file.contains("decrypted") {
-                                                            config.encryptionKey = tridentRealmKey.bytes
+                                                            config.encryptionKey = tridentRealmKey.count == 128 ? tridentRealmKey.bytes : Data(count: 64)
                                                         } else {
                                                             config.encryptionKey = nil
                                                         }
