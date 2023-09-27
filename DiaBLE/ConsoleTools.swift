@@ -210,6 +210,7 @@ struct CrcCalculator: View {
     @State private var computedCrc = "0000"
     @State private var trailingCrc = true
 
+    @FocusState private var focused: Bool
 
     func updateCRC() {
         hexString = hexString.filter { $0.isHexDigit || $0 == " " }
@@ -239,6 +240,14 @@ struct CrcCalculator: View {
                 .textFieldStyle(.roundedBorder)
                 .font(.system(.footnote, design: .monospaced))
                 .truncationMode(.head)
+                .focused($focused)
+                .toolbar {
+                    ToolbarItem(placement: .keyboard) {
+                        Button("Done") {
+                            focused = false
+                        }
+                    }
+                }
 
             HStack {
 
