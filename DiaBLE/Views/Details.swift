@@ -293,9 +293,15 @@ struct Details: View {
 
                 if settings.userLevel > .basic {
                     Section(header: Text("Known Devices")) {
-                        VStack(alignment: .leading) {
-                            ForEach(app.main.bluetoothDelegate.knownDevices.sorted(by: <), id: \.key) { key, value in
-                                Text(value).font(.callout).foregroundColor(.blue)
+                        List {
+                            ForEach(app.main.bluetoothDelegate.knownDevices.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
+                                HStack {
+                                    Text(value.name).font(.callout).foregroundColor(.blue)
+                                    if !value.isConnectable {
+                                        Spacer()
+                                        Image(systemName: "nosign").foregroundColor(.red)
+                                    }
+                                }
                             }
                         }
                     }
