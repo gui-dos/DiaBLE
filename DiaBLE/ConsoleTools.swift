@@ -25,10 +25,8 @@ struct ShellView: View {
         VStack(spacing: 0) {
 
             if showingStack {
-                VStack(spacing: 0) {
+                VStack {
                     HStack {
-
-                        Spacer()
 
                         TextField("Trident Container", text: $tridentContainer)
                             .textFieldStyle(.roundedBorder)
@@ -146,16 +144,16 @@ struct ShellView: View {
                             }
                         }
 
-                        Spacer()
                     }
-                    .padding(20)
+                    .padding(4)
                 }
 
                 CrcCalculator()
-                    .padding()
+                    .padding(4)
 
             }
         }
+        .background(.thinMaterial, ignoresSafeAreaEdges: [])
         .sheet(isPresented: $showingRealmKeyPrompt) {
             VStack(spacing: 20) {
                 Text("The Realm might be encrypted").fontWeight(.bold)
@@ -273,6 +271,7 @@ struct CrcCalculator: View {
             }
 
         }
+        .font(.subheadline)
         .onChange(of: hexString) { updateCRC() }
     }
 }
