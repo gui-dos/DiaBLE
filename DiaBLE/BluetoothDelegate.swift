@@ -90,7 +90,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         }
 
         let identifier = peripheral.identifier
-        let deviceIsConnectable = advertisement[CBAdvertisementDataIsConnectable] as? Int ?? 0 != 0
+        let deviceIsConnectable = advertisement[CBAdvertisementDataIsConnectable] as? Int ?? 1 != 0
         var msg = "Bluetooth: \(name!)'s device identifier \(identifier)"
         if knownDevices[identifier.uuidString] == nil {
             msg += " not yet known"
