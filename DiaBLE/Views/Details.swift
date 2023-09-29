@@ -294,10 +294,10 @@ struct Details: View {
                 if settings.userLevel > .basic {
                     Section(header: Text("Known Devices")) {
                         List {
-                            ForEach(app.main.bluetoothDelegate.knownDevices.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
+                            ForEach(app.main.bluetoothDelegate.knownDevices.sorted(by: { $0.key < $1.key }), id: \.key) { uuid, device in
                                 HStack {
-                                    Text(value.name).font(.callout).foregroundColor(.blue)
-                                    if !value.isConnectable {
+                                    Text(device.name).font(.callout).foregroundColor(.blue)
+                                    if !device.isConnectable {
                                         Spacer()
                                         Image(systemName: "nosign").foregroundColor(.red)
                                     }
