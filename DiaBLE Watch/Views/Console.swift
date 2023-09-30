@@ -165,7 +165,7 @@ struct Console: View {
                         }
                     }
                 } else {
-                    Text(" ").font(Font.footnote.monospacedDigit()).frame(width: 24, height: 24).fixedSize().hidden()
+                    Spacer()
                 }
 
                 Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")

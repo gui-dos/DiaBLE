@@ -11,6 +11,12 @@ struct ContentView: View {
     var body: some View {
 
         TabView(selection: $app.selectedTab) {
+
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gear")
+                }.tag(Tab.settings)
+
             Monitor()
                 .tabItem {
                     Label("Monitor", systemImage: "gauge")
@@ -26,11 +32,6 @@ struct ContentView: View {
                     Label("Console", systemImage: "terminal")
                 }.tag(Tab.console)
 
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gear")
-                }.tag(Tab.settings)
-
             DataView()
                 .tabItem {
                     Label("Data", systemImage: "tray.full.fill")
@@ -43,7 +44,9 @@ struct ContentView: View {
             //  }.tag(Tab.plan)
 
         }
-        .tabViewStyle(.verticalPage)
+
+        // FIXME: often hangs
+        // .tabViewStyle(.verticalPage)
 
 
         //  Previously in watchOS 9...:
