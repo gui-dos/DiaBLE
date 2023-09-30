@@ -45,7 +45,6 @@ struct Console: View {
                             Image(systemName: "magnifyingglass").padding(.leading).foregroundColor(Color(.lightGray))
                             TextField("Filter", text: $filterString)
                                 .autocapitalization(.none)
-                                .padding(.vertical, 8)
                                 .foregroundColor(.accentColor)
                             if filterString.count > 0 {
                                 Button {
@@ -57,7 +56,6 @@ struct Console: View {
                         }
                         .background(Color(.secondarySystemBackground))
                         .cornerRadius(10)
-                        .padding()
 
                         HStack {
                             ForEach(Array(log.labels), id: \.self) { label in
@@ -68,9 +66,9 @@ struct Console: View {
                                 }
                             }
                         }
-                        .padding()
 
                     }
+                    .padding(.vertical, 6)
                 }
 
                 ScrollViewReader { proxy in
