@@ -28,17 +28,22 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 main.errorStatus("Bluetooth on but stopped")
             } else {
                 log("Bluetooth: state: powered on")
-                // TODO: check preferred transmitter
-                if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
-                    log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
-                    centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Libre3.UUID.data.rawValue)]], rssi: 0)
-                } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
-                    log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
-                    centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
-                } else {
+                if !settings.preferredDevicePattern.matches("abbott") {
                     main.status("Scanning...")
                     log("Bluetooth: scanning...")
                     centralManager.scanForPeripherals(withServices: nil, options: nil)
+                } else {
+                    if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
+                        log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
+                        centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Libre3.UUID.data.rawValue)]], rssi: 0)
+                    } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
+                        log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
+                        centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
+                    } else {
+                        log("Bluetooth: scanning for a Libre...")
+                        main.status("Scanning for a Libre...")
+                        centralManager.scanForPeripherals(withServices: nil, options: nil)
+                    }
                 }
             }
         case .resetting:    log("Bluetooth: state: resetting")

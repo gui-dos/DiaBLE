@@ -171,18 +171,24 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         }
         if centralManager.state == .poweredOn {
             settings.stoppedBluetooth = false
-            if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
-                log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
-                bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Libre3.UUID.data.rawValue)]], rssi: 0)
-            } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
-                log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
-                bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
-            } else {
+            if !settings.preferredDevicePattern.matches("abbott") {
                 log("Bluetooth: scanning...")
                 status("Scanning...")
                 centralManager.scanForPeripherals(withServices: nil, options: nil)
+            } else {
+                if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
+                    log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
+                    bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Libre3.UUID.data.rawValue)]], rssi: 0)
+                } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
+                    log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
+                    bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
+                } else {
+                    log("Bluetooth: scanning for a Libre...")
+                    status("Scanning for a Libre...")
+                    centralManager.scanForPeripherals(withServices: nil, options: nil)
+                }
             }
-        }  else {
+        } else {
             log("Bluetooth is powered off: cannot scan")
         }
         healthKit?.read()
