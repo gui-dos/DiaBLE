@@ -30,14 +30,15 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 log("Bluetooth: state: powered on")
                 // TODO: check preferred transmitter
                 if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
+                    log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                     centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Libre3.UUID.data.rawValue)]], rssi: 0)
-                    log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                 } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
-                    centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
                     log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
+                    centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
                 } else {
-                    centralManager.scanForPeripherals(withServices: nil, options: nil)
                     main.status("Scanning...")
+                    log("Bluetooth: scanning...")
+                    centralManager.scanForPeripherals(withServices: nil, options: nil)
                 }
             }
         case .resetting:    log("Bluetooth: state: resetting")
