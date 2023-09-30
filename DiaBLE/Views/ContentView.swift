@@ -12,39 +12,34 @@ struct ContentView: View {
         TabView(selection: $app.selectedTab) {
             Monitor()
                 .tabItem {
-                    Image(systemName: "gauge")
-                    Text("Monitor")
-            }.tag(Tab.monitor)
+                    Label("Monitor", systemImage: "gauge")
+                }.tag(Tab.monitor)
 
             OnlineView()
                 .tabItem {
-                    Image(systemName: "globe")
-                    Text("Online")
-            }.tag(Tab.online)
+                    Label("Online", systemImage: "globe")
+                }.tag(Tab.online)
 
             ConsoleTab()
                 .tabItem {
-                    Image(systemName: "terminal")
-                    Text("Console")
-            }.tag(Tab.console)
+                    Label("Console", systemImage: "terminal")
+                }.tag(Tab.console)
 
             SettingsView()
                 .tabItem {
-                    Image(systemName: "gear")
-                    Text("Settings")
-            }.tag(Tab.settings)
+                    Label("Settings", systemImage: "gear")
+                }.tag(Tab.settings)
 
             DataView()
                 .tabItem {
-                    Image(systemName: "tray.full.fill")
-                    Text("Data")
-            }.tag(Tab.data)
+                    Label("Data", systemImage: "tray.full.fill")
+                }.tag(Tab.data)
 
-//            Plan()
-//                .tabItem {
-//                    Image(systemName: "map")
-//                    Text("Plan")
-//            }.tag(Tab.plan)
+            // Plan()
+            //     .tabItem {
+            //         Image(systemName: "map")
+            //         Text("Plan")
+            // }.tag(Tab.plan)
 
         }
     }
