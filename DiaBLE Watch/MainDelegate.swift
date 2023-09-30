@@ -152,6 +152,8 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
                 status("Scanning...")
                 centralManager.scanForPeripherals(withServices: nil, options: nil)
             }
+        } else {
+            log("Bluetooth is powered off: cannot scan")
         }
         healthKit?.read()
         nightscout?.read()
