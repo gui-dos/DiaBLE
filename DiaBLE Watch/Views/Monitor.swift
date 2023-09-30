@@ -102,6 +102,7 @@ struct Monitor: View {
                 }
 
                 Graph().frame(width: 31 * 4 + 60, height: 80)
+                    .padding(.vertical, 3)
 
                 HStack(spacing: 2) {
 
