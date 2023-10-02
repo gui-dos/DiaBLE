@@ -20,7 +20,7 @@ struct Monitor: View {
 
     var body: some View {
 
-        NavigationView {
+        NavigationStack {
 
             ScrollView {
 
@@ -184,6 +184,7 @@ struct Monitor: View {
 
                 }
             }
+
         }
         .navigationTitle("Monitor")
         .edgesIgnoringSafeArea([.bottom])
