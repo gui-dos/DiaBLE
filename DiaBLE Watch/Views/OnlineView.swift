@@ -327,9 +327,10 @@ struct OnlineView: View {
                 }
             }
         }
+        .padding(.top, -4)
         .edgesIgnoringSafeArea([.bottom])
         .buttonStyle(.plain)
-        .navigationTitle { Text("Online") }
+        // .navigationTitle { Text("Online") }
         .accentColor(.blue)
     }
 }

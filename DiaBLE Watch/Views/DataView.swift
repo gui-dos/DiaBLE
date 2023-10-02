@@ -164,6 +164,7 @@ struct DataView: View {
             }.frame(idealHeight: 300)
 
         }
+        .padding(.top, -4)
         .edgesIgnoringSafeArea([.bottom])
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         // .font(.system(.footnote, design: .monospaced)).foregroundColor(Color(.lightGray))

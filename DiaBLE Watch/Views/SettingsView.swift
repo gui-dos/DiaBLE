@@ -167,6 +167,7 @@ struct SettingsView: View {
             }
 
         }
+        .padding(.top, -4)
         .edgesIgnoringSafeArea([.bottom])
         .font(Font.body.monospacedDigit())
         .buttonStyle(.plain)

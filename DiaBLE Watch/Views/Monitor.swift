@@ -78,6 +78,7 @@ struct Monitor: View {
                         if app.oopAlarm.description.count + app.oopTrend.description.count != 0 {
                             Text("\(app.oopAlarm.description.replacingOccurrences(of: "_", with: " "))\(app.oopAlarm.description != "" ? " - " : "")\(app.oopTrend.description.replacingOccurrences(of: "_", with: " "))")
                                 .font(.footnote).foregroundColor(.blue).lineLimit(1)
+                                .padding(.vertical, -3)
                         }
 
                         HStack {
@@ -104,7 +105,7 @@ struct Monitor: View {
                     }
 
                     Graph().frame(width: 31 * 4 + 60, height: 80)
-                        .padding(.vertical, 3)
+                        .padding(.vertical, 2)
 
                     HStack(spacing: 2) {
 
@@ -185,12 +186,13 @@ struct Monitor: View {
                 }
 
             }
+            .padding(.top, -4)
 
         }
         .edgesIgnoringSafeArea([.bottom])
         .buttonStyle(.plain)
         .multilineTextAlignment(.center)
-        .navigationTitle { Text("Monitor") }
+        // .navigationTitle { Text("Monitor") }
         .accentColor(.blue)
         .onAppear {
             timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
