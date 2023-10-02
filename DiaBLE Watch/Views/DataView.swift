@@ -164,11 +164,12 @@ struct DataView: View {
             }.frame(idealHeight: 300)
 
         }
-        .navigationTitle("Data")
         .edgesIgnoringSafeArea([.bottom])
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         // .font(.system(.footnote, design: .monospaced)).foregroundColor(Color(.lightGray))
         .font(.footnote)
+        .navigationTitle { Text("Data") }
+        .accentColor(.blue)
     }
 }
 

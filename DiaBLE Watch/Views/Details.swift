@@ -327,8 +327,9 @@ struct Details: View {
             }.edgesIgnoringSafeArea(.bottom).padding(.vertical, -40).offset(y: 40)
 
         }
-        .navigationTitle("Details")
         .buttonStyle(.plain)
+        .navigationTitle { Text ("Details") }
+        .accentColor(.blue)
         .onAppear {
             if app.sensor != nil {
                 minutesSinceLastReading = Int(Date().timeIntervalSince(app.sensor.lastReadingDate)/60)

@@ -183,13 +183,15 @@ struct Monitor: View {
                         .frame(maxWidth: .infinity)
 
                 }
+
             }
 
         }
-        .navigationTitle("Monitor")
         .edgesIgnoringSafeArea([.bottom])
         .buttonStyle(.plain)
         .multilineTextAlignment(.center)
+        .navigationTitle { Text("Monitor") }
+        .accentColor(.blue)
         .onAppear {
             timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
             minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()

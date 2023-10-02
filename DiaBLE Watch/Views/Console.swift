@@ -233,7 +233,8 @@ struct Console: View {
             }.font(.footnote)
         }
         .edgesIgnoringSafeArea(.bottom)
-        .navigationTitle("Console")
+        .navigationTitle { Text("Console") }
+        .accentColor(.blue)
     }
 }
 

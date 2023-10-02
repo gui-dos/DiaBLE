@@ -168,9 +168,10 @@ struct SettingsView: View {
 
         }
         .edgesIgnoringSafeArea([.bottom])
-        .navigationTitle("Settings")
         .font(Font.body.monospacedDigit())
         .buttonStyle(.plain)
+        .navigationTitle { Text("Settings") }
+        .accentColor(.blue)
     }
 }
 
