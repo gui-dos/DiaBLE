@@ -37,6 +37,7 @@
 		C5E015E42989B0F600F6EDF9 /* TODO.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015E22989B0F600F6EDF9 /* TODO.md */; };
 		C5E015E62989B10500F6EDF9 /* LICENSE.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015E52989B10500F6EDF9 /* LICENSE.md */; };
 		C5E015E72989B10500F6EDF9 /* LICENSE.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015E52989B10500F6EDF9 /* LICENSE.md */; };
+		C5E165052ACBE5E600970835 /* HamburgerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E165042ACBE5E600970835 /* HamburgerMenu.swift */; };
 		C5E4004729825C710021C6B7 /* alarm_high.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C5E4004429825C710021C6B7 /* alarm_high.mp3 */; };
 		C5E4004829825C710021C6B7 /* alarm_high.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C5E4004429825C710021C6B7 /* alarm_high.mp3 */; };
 		C5E4004929825C710021C6B7 /* alarm_low.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C5E4004529825C710021C6B7 /* alarm_low.mp3 */; };
@@ -141,6 +142,7 @@
 		C5E015DF2989B0EA00F6EDF9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C5E015E22989B0F600F6EDF9 /* TODO.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
 		C5E015E52989B10500F6EDF9 /* LICENSE.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
+		C5E165042ACBE5E600970835 /* HamburgerMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HamburgerMenu.swift; sourceTree = "<group>"; };
 		C5E4004429825C710021C6B7 /* alarm_high.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alarm_high.mp3; sourceTree = "<group>"; };
 		C5E4004529825C710021C6B7 /* alarm_low.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alarm_low.mp3; sourceTree = "<group>"; };
 		C5E4004629825C710021C6B7 /* alarm_signal_loss.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alarm_signal_loss.mp3; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 			children = (
 				C5916E4D29827E860051AC06 /* ContentView.swift */,
 				C5916E4C29827E860051AC06 /* Monitor.swift */,
+				C5E165042ACBE5E600970835 /* HamburgerMenu.swift */,
 				C5916E4A29827E860051AC06 /* Graph.swift */,
 				C5916E4829827E860051AC06 /* Details.swift */,
 				C5916E4B29827E860051AC06 /* OnlineView.swift */,
@@ -459,6 +462,7 @@
 				C5E4007A29825E450021C6B7 /* Sensor.swift in Sources */,
 				C5BF60A92A66630D005DC208 /* Gen2.swift in Sources */,
 				C5E4009729825F120021C6B7 /* LibreLink.swift in Sources */,
+				C5E165052ACBE5E600970835 /* HamburgerMenu.swift in Sources */,
 				C5E4008329825E8B0021C6B7 /* Libre2.swift in Sources */,
 				C5E4006F29825DEA0021C6B7 /* Device.swift in Sources */,
 				C5E4009129825EEE0021C6B7 /* NFC.swift in Sources */,
