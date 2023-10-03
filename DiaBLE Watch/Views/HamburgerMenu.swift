@@ -25,7 +25,7 @@ struct HamburgerMenu: View {
                         }
                         NavigationLink(destination: Details()) {
                             VStack {
-                                Image(systemName: "info.circle").resizable().frame(width: 40, height: 40).offset(y: 4)
+                                Image("Bluetooth").renderingMode(.template).resizable().frame(width: 40, height: 40).offset(y: 4)
                                 Text("Details").bold().foregroundColor(.blue)
                             }.frame(maxWidth: .infinity)
                         }
@@ -58,6 +58,22 @@ struct HamburgerMenu: View {
                             VStack {
                                 Image(systemName: "globe").resizable().frame(width: 40, height: 40).offset(y: 4)
                                 Text("Online").bold().foregroundColor(.blue)
+                            }.frame(maxWidth: .infinity)
+                        }
+                    }
+
+                    // TODO: Help and About
+                    HStack(spacing: 10) {
+                        NavigationLink(destination: Monitor()) {
+                            VStack {
+                                Image(systemName: "questionmark.circle").resizable().frame(width: 40, height: 40).offset(y: 4)
+                                Text("Help").bold().foregroundColor(.blue)
+                            }.frame(maxWidth: .infinity)
+                        }
+                        NavigationLink(destination: Monitor()) {
+                            VStack {
+                                Image(systemName: "info.circle").resizable().frame(width: 40, height: 40).offset(y: 4)
+                                Text("About").bold().foregroundColor(.blue)
                             }.frame(maxWidth: .infinity)
                         }
                     }
