@@ -44,6 +44,12 @@ struct Graph: View {
                         let minutes = count % 4 * 15
                         Text((hours > 0 ? "\(hours) h\n" : "") + (minutes != 0 ? "\(minutes) min" : ""))
                             .position(x: 5, y: geometry.size.height - geometry.size.height / 2)
+                    } else { // factory data coming from LLU: TODO
+                        let count = history.factoryValues.count
+                        if count > 0 {
+                            Text("12 h\n\n\(count) /\n144")
+                                .position(x: 5, y: geometry.size.height - geometry.size.height / 2 - 8)
+                        }
                     }
                 }.font(.footnote).foregroundColor(.gray)
             }

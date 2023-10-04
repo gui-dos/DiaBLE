@@ -102,7 +102,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             msg += " not yet known"
             knownDevices[identifier.uuidString] = (name!.contains("unnamed") ? name! : peripheral.name!, deviceIsConnectable)
             if settings.userLevel > .basic {
-                msg += " (advertised data: \(advertisement))"
+                msg += " (advertised data: \(advertisement)\(BLE.companies[companyId].name != "< Unknown >" ? ", company: \(BLE.companies[companyId].name)" : ""))"
             }
         } else {
             msg += " already known"
