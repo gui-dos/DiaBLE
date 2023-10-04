@@ -70,13 +70,20 @@ struct ShellView: View {
 
                                                                 // https://frdmtoplay.com/freeing-glucose-data-from-the-freestyle-libre-3/
                                                                 //
-                                                                // adb root
-                                                                // sudo waydroid shell
-                                                                // # /data/local/tmp/frida-server &
+                                                                // Assuming that `python3` is available after installing the Xcode Command Line Tools
+                                                                // and `Library/Android/sdk/platform-tools/` is in your $PATH after installing Android Studio:
+                                                                //
+                                                                // $ pip3 install frida-tools
+                                                                // $ adb root
+                                                                // $ adb push ~/Downloads/frida-server-16.1.4-android-arm64 /data/local/tmp/frida-server
+                                                                // $ adb shell
+                                                                // $ su
+                                                                // # chmod 755 /data/local/tmp/frida-server
+                                                                // # /data/local/tmp/frida-server &
                                                                 //
                                                                 // $ frida -U "Libre 3"
-                                                                // Frida-> Java.perform(function(){}); // Seems necessary to use Java.use
-                                                                // Frida-> var crypto_lib_def = Java.use("com.adc.trident.app.frameworks.mobileservices.libre3.security.Libre3SKBCryptoLib");
+                                                                // Frida-> Java.perform(function(){}) // Seems necessary to use Java.use
+                                                                // Frida-> var crypto_lib_def = Java.use("com.adc.trident.app.frameworks.mobileservices.libre3.security.Libre3SKBCryptoLib")
                                                                 // Frida-> var crypto_lib = crypto_lib_def.$new()
                                                                 // Frida-> unwrapped = crypto_lib.unWrapDBEncryptionKey([<realmEncryptionKeyInt8>])
                                                                 //
