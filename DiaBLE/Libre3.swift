@@ -1058,6 +1058,24 @@ class Libre3: Sensor {
     //     cryptptr = initcrypt(cryptptr, kEnc, ivEnc);
 
 
+    class SecureFile {
+        static let CRYPTO_EXTENSION_OPEN_LOG_CREATE = 10
+        static let CRYPTO_EXTENSION_OPEN_LOG_APPEND = 11
+        static let CRYPTO_EXTENSION_CLOSE_LOG = 12
+        static let CRYPTO_EXTENSION_WRITE_LOG = 13
+        static let CRYPTO_EXTENSION_LOG_SIZE = 15
+        static let CRYPTO_EXTENSION_LOG_ERROR = 16
+        static let LOG_FILE_NAME = "diagnostics.elog"
+
+        // void latchSkb(String absolutePath):
+        //   byte[] bytes = str.getBytes(C6581d.UTF_8);
+        //   int process1 = Libre3SKBCryptoLib.process1(11, bytes, null);
+        // 
+        // Frida-> var buffer = Java.array('byte', new Array(256).fill(0))
+        // Frida-> p = crypto_lib.process1(11, Array.from("/data/data/com.freestylelibre3.app.it/files/diagnotics.elog", c => c.charCodeAt(0)), buffer)
+    }
+
+
     // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/libre3/loadlibs.cpp
 
     func process1(command: Int, _ d1: Data?, _ d2: Data?) -> Int {
