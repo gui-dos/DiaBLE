@@ -46,6 +46,7 @@ struct ContentView: View {
                 //  }.tag(Tab.plan)
 
             }
+            .toolbarBackground(.hidden, for: .navigationBar)
 
             // FIXME: often hangs
             // .tabViewStyle(.verticalPage)

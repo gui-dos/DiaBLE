@@ -184,8 +184,8 @@ struct Monitor: View {
             }
 
         }
-        .padding(.top, -4)
         .edgesIgnoringSafeArea([.bottom])
+        .padding(.top, -26)
         .buttonStyle(.plain)
         .multilineTextAlignment(.center)
         // .navigationTitle { Text("Monitor") }
@@ -202,14 +202,19 @@ struct Monitor: View {
             minuteTimer.upstream.connect().cancel()
         }
         // TODO:
+        .toolbarBackground(.hidden, for: .navigationBar)
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
+            ToolbarItem(placement: .topBarLeading) {
                 NavigationLink(destination: HamburgerMenu()) {
                     Image(systemName: "line.horizontal.3").foregroundColor(.blue)
                 }
-                Spacer()
             }
+            ToolbarItem(placement: .topBarTrailing) {
+                Image(systemName: "line.horizontal.3").foregroundColor(.blue)
+                    .hidden() // trick to center time
+            }
+
         }
     }
 }
