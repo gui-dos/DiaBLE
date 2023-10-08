@@ -412,12 +412,12 @@ class Libre3: Sensor {
     // notify 2198  04                  // certificate accepted event
     // write  2198  09
     // notify 2198  0A 8C               // certificate ready event
-    // notify 23FA  20 * 7 + 8 bytes    // 140-byte payload
+    // notify 23FA  20 * 7 + 8 bytes    // 140-byte patch certificate
     // write  2198  0D
-    // write  23FA  20 * 3 + 13 bytes   // 65-byte payload
+    // write  23FA  20 * 3 + 13 bytes   // 65-byte ephemeral key
     // write  2198  0E
     // notify 2198  0F 41               // ephemeral ready event
-    // notify 23FA  20 * 3 + 9 bytes    // 65-byte paylod
+    // notify 23FA  20 * 3 + 9 bytes    // 65-byte ephemeral key
     // write  2198  11
     // notify 2198  08 17
     // notify 22CE  20 + 5 bytes        // 23-byte challenge
@@ -445,25 +445,25 @@ class Libre3: Sensor {
 
     enum SecurityCommand: UInt8, CustomStringConvertible {
 
-        case security_01       = 0x01
-        case security_02       = 0x02
-        case security_03       = 0x03
-        case challengeLoadDone = 0x08
-        case security_09       = 0x09
-        case security_0D       = 0x0D
-        case ephemeralLoadDone = 0x0E
-        case readChallenge     = 0x11
+        case security_01         = 0x01
+        case security_02         = 0x02
+        case certificateLoadDone = 0x03
+        case challengeLoadDone   = 0x08
+        case security_09         = 0x09
+        case security_0D         = 0x0D
+        case ephemeralLoadDone   = 0x0E
+        case readChallenge       = 0x11
 
         var description: String {
             switch self {
-            case .security_01:       "security 0x01 command"
-            case .security_02:       "security 0x02 command"
-            case .security_03:       "security 0x03 command"
-            case .challengeLoadDone: "challenge load done"
-            case .security_09:       "security 0x09 command"
-            case .security_0D:       "security 0x0D command"
-            case .ephemeralLoadDone: "ephemeral load done"
-            case .readChallenge:     "read security challenge"
+            case .security_01:         "security 0x01 command"
+            case .security_02:         "security 0x02 command"
+            case .certificateLoadDone: "certificate load done"
+            case .challengeLoadDone:   "challenge load done"
+            case .security_09:         "security 0x09 command"
+            case .security_0D:         "security 0x0D command"
+            case .ephemeralLoadDone:   "ephemeral load done"
+            case .readChallenge:       "read security challenge"
             }
         }
     }
@@ -683,7 +683,7 @@ class Libre3: Sensor {
                     currentSecurityCommand = .ephemeralLoadDone
                 }
             }
-            if currentSecurityCommand == .security_03 && lastSecurityEvent == .certificateAccepted {
+            if currentSecurityCommand == .certificateLoadDone && lastSecurityEvent == .certificateAccepted {
                 if settings.userLevel < .test { // not sniffing Trident
                     send(securityCommand: .security_09)
                 }
@@ -708,7 +708,11 @@ class Libre3: Sensor {
                     if settings.userLevel < .test { // not sniffing Trident
                         log("\(type) \(transmitter!.peripheral!.name!): patch certificate: \(payload.hex)")
                         send(securityCommand: .security_0D)
-                        // TODO
+                        // TODO::
+                        // write 65-byte ephemeral key
+                        // send(securityCommand: .ephemeralLoadDone)
+
+
                     }
 
                 case .ephemeralLoadDone:
@@ -836,7 +840,7 @@ class Libre3: Sensor {
         send(securityCommand: .security_02)
         let certificate = "03 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 00 01 5F 14 9F E1 01 00 00 00 00 00 00 00 00 04 E2 36 95 4F FD 06 A2 25 22 57 FA A7 17 6A D9 0A 69 02 E6 1D DA FF 40 FB 36 B8 FB 52 AA 09 2C 33 A8 02 32 63 2E 94 AF A8 28 86 AE 75 CE F9 22 CD 88 85 CE 8C DA B5 3D AB 2A 4F 23 9B CB 17 C2 6C DE 74 9E A1 6F 75 89 76 04 98 9F DC B3 F0 C7 BC 1D A5 E6 54 1D C3 CE C6 3E 72 0C D9 B3 6A 7B 59 3C FC C5 65 D6 7F 1E E1 84 64 B9 B9 7C CF 06 BE D0 40 C7 BB D5 D2 2F 35 DF DB 44 58 AC 7C 46 15".bytes
         write(certificate, for: .certificateData)
-        send(securityCommand: .security_03)
+        send(securityCommand: .certificateLoadDone)
         // TODO
     }
 
@@ -1027,7 +1031,7 @@ class Libre3: Sensor {
     //     var evikeys = Natives.processbar(5, null, null);
     //
     // boolean generateKAuth(byte[] bArr):
-    //     Natives.processint(6, patchEphemeral, null);
+    //     var bool = Natives.processint(6, patchEphemeral, null);
     //     var uit = new byte[evikeys.length + 1];
     //     arraycopy(evikeys, 0, uit, 1, evikeys.length);
     //     uit[0] = (byte)0x4;
@@ -1058,6 +1062,10 @@ class Libre3: Sensor {
     //     cryptptr = initcrypt(cryptptr, kEnc, ivEnc);
 
 
+    // Frida-> crypto_lib.getAppCertificate()     => 162 bytes
+    // Frida-> crypto_lib.generateEphemeralKeys() => 65 bytes
+
+
     class SecureFile {
         static let CRYPTO_EXTENSION_OPEN_LOG_CREATE = 10
         static let CRYPTO_EXTENSION_OPEN_LOG_APPEND = 11
@@ -1070,7 +1078,7 @@ class Libre3: Sensor {
         // void latchSkb(String absolutePath):
         //   byte[] bytes = str.getBytes(C6581d.UTF_8);
         //   int process1 = Libre3SKBCryptoLib.process1(11, bytes, null);
-        // 
+        //
         // Frida-> var buffer = Java.array('byte', new Array(256).fill(0))
         // Frida-> p = crypto_lib.process1(11, Array.from("/data/data/com.freestylelibre3.app.it/files/diagnotics.elog", c => c.charCodeAt(0)), buffer)
     }

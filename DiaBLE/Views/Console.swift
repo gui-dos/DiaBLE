@@ -137,6 +137,7 @@ struct Console: View {
                 Menu {
 
                     Button {
+                        ((app.device as? Abbott)?.sensor as? Libre3)?.pair()
                         if app.main.nfc.isAvailable {
                             settings.logging = true
                             app.main.nfc.taskRequest = .enableStreaming

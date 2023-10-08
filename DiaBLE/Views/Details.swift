@@ -260,6 +260,7 @@ struct Details: View {
                         HStack {
                             Spacer()
                             Button {
+                                ((app.device as? Abbott)?.sensor as? Libre3)?.pair()
                                 if app.main.nfc.isAvailable {
                                     app.main.nfc.taskRequest = .enableStreaming
                                     app.selectedTab = .console
