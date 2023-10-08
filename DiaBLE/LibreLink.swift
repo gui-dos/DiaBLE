@@ -135,14 +135,27 @@ class LibreLinkUp: Logging {
             do {
                 if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                    let status = json["status"] as? Int {
+
+                    let data = json["data"] as? [String: Any]
+
                     if status == 2 || status == 429 || status == 911 {
                         // {"status":2,"error":{"message":"notAuthenticated"}}
                         // {"status":429,"data":{"code":60,"data":{"failures":3,"interval":60,"lockout":300},"message":"locked"}}
                         // {"status":911} when logging in at a stranger regional server
+                        if let data, let message = data["message"] as? String {
+                            if message == "locked" {
+                                if let data = data["data"] as? [String: Any],
+                                   let failures = data["failures"] as? Int,
+                                   let interval = data["interval"] as? Int,
+                                   let lockout = data["lockout"] as? Int {
+                                    log("LibreLinkUp: login failures: \(failures), interval: \(interval) s, lockout: \(lockout) s")
+                                    // TODO: warn the user to wait 5 minutes before reattempting
+                                }
+                            }
+
+                        }
                         throw LibreLinkUpError.notAuthenticated
                     }
-
-                    let data = json["data"] as? [String: Any]
 
                     // TODO: redirect
                     // {"status":0,"data":{"redirect":true,"region":"fr"}}
