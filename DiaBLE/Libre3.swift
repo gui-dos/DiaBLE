@@ -708,7 +708,7 @@ class Libre3: Sensor {
                     if settings.userLevel < .test { // not sniffing Trident
                         log("\(type) \(transmitter!.peripheral!.name!): patch certificate: \(payload.hex)")
                         send(securityCommand: .security_0D)
-                        // TODO::
+                        // TODO:
                         // write 65-byte ephemeral key
                         // send(securityCommand: .ephemeralLoadDone)
 
@@ -788,8 +788,9 @@ class Libre3: Sensor {
         parameters += parameters.crc16.data
 
         // - A8 changes the BLE PIN on an activated sensor and returns the error 0x1B0 on an expired one.
-        // - A0 returns the current BLE PIN on an activated sensor, the error 0x1B2 on an expired one with a
-        //   firmware like 1.1.13.30 and a new BLE PIN with older firmwares like 1.0.25.30...
+        // - A0 returns the current BLE PIN on an activated sensor, the error 0x1B1 on a sensor activated
+        //   by the reader, the error 0x1B2 on an expired one with a firmware like 1.1.13.30
+        //   and a new BLE PIN with older firmwares like 1.0.25.30...
         let code = patchInfo[14] == State.storage.rawValue ? 0xA8 : 0xA0
 
         return NFCCommand(code: code, parameters: parameters, description: "activate")
@@ -805,6 +806,7 @@ class Libre3: Sensor {
         if output[0] == 0x01 && output.count == 2 {
             log("NFC: Libre 3 activation error: 0x\(output.hex)")
             // getting 0x01b0 on an expired sensor
+            // getting 0x01b1 on a sensor activated by the reader
             // getting error 0xc2 when altering crc16
             // getting error 0xc1 when omitting crc16
         }
