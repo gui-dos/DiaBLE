@@ -710,9 +710,9 @@ class Libre3: Sensor {
                         send(securityCommand: .security_0D)
                         // TODO:
                         // write 65-byte ephemeral key
-                        // send(securityCommand: .ephemeralLoadDone)
-
-
+                        let ephemeralKey = Data((0 ..< 65 ).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })  // TEST random ephemeral
+                        write(ephemeralKey, for: .certificateData)
+                        send(securityCommand: .ephemeralLoadDone)
                     }
 
                 case .ephemeralLoadDone:
