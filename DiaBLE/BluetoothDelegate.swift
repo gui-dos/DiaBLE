@@ -8,8 +8,8 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
     var centralManager: CBCentralManager { main.centralManager }
     var app: AppState { main.app }
 
-    /// [uuid: (name, isConnectable)]
-    @Published var knownDevices: [String: (name: String, isConnectable: Bool)] = [:]
+    /// [uuid: (name, isConnectable, isIgnored)]
+    @Published var knownDevices: [String: (name: String, isConnectable: Bool, isIgnored: Bool)] = [:]
 
 
     public func centralManagerDidUpdateState(_ manager: CBCentralManager) {
@@ -97,19 +97,22 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
         let identifier = peripheral.identifier
         let deviceIsConnectable = advertisement[CBAdvertisementDataIsConnectable] as? Int ?? 1 != 0
+        var deviceIsIgnored = false
         var msg = "Bluetooth: \(name!)'s device identifier \(identifier)"
         if knownDevices[identifier.uuidString] == nil {
             msg += " not yet known"
-            knownDevices[identifier.uuidString] = (name!.contains("unnamed") ? name! : peripheral.name!, deviceIsConnectable)
+            knownDevices[identifier.uuidString] = (name!.contains("unnamed") ? name! : peripheral.name!, deviceIsConnectable, deviceIsIgnored)
             if settings.userLevel > .basic {
                 msg += " (advertised data: \(advertisement)\(BLE.companies[companyId].name != "< Unknown >" ? ", company: \(BLE.companies[companyId].name)" : ""))"
             }
         } else {
             msg += " already known"
+            deviceIsIgnored = knownDevices[identifier.uuidString]!.isIgnored
         }
         debugLog("\(msg)")
 
         if !deviceIsConnectable
+            || deviceIsIgnored
             || (didFindATransmitter && !settings.preferredDevicePattern.isEmpty && !name!.matches(settings.preferredDevicePattern))
             || (!didFindATransmitter && (settings.preferredTransmitter != .none || (!settings.preferredDevicePattern.isEmpty && !name!.matches(settings.preferredDevicePattern)))) {
             var scanningFor = "Scanning"
@@ -122,6 +125,12 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 if !settings.preferredDevicePattern.isEmpty && name!.matches(settings.preferredDevicePattern) {
                     msg += " because not connectable"
                     main.errorStatus("(not connectable)")
+                }
+            }
+            if deviceIsIgnored {
+                if !settings.preferredDevicePattern.isEmpty && name!.matches(settings.preferredDevicePattern) {
+                    msg += " because ignored"
+                    main.errorStatus("(ignored)")
                 }
             }
             msg += ", \(scanningFor.lowercased())..."

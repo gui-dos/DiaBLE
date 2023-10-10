@@ -278,8 +278,12 @@ struct Details: View {
                                     if !device.isConnectable {
                                         Spacer()
                                         Image(systemName: "nosign").foregroundColor(.red)
+                                    } else if device.isIgnored {
+                                        Spacer()
+                                        Image(systemName: "hand.raised.slash.fill").foregroundColor(.red)
                                     }
                                 }
+//                                .listRowBackground((app.device != nil) && uuid == app.device!.peripheral!.identifier.uuidString ? Color(.secondarySystemGroupedBackground) : Color(.tertiarySystemGroupedBackground))
                             }
                         }
                     }
@@ -315,6 +319,7 @@ struct Details: View {
 
                 Button {
                     if app.device != nil {
+                        app.main.bluetoothDelegate.knownDevices[app.device.peripheral!.identifier.uuidString]!.isIgnored = true
                         app.main.centralManager.cancelPeripheralConnection(app.device.peripheral!)
                     }
                 } label: {

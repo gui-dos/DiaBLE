@@ -109,7 +109,7 @@ class LibreLinkUp: Logging {
         var request = URLRequest(url: URL(string: "\(siteURL)/\(loginEndpoint)")!)
         let credentials = [
             "email": settings.libreLinkUpEmail,
-            "password":settings.libreLinkUpPassword
+            "password": settings.libreLinkUpPassword
         ]
         request.httpMethod = "POST"
         for (header, value) in headers {
@@ -157,7 +157,6 @@ class LibreLinkUp: Logging {
                         throw LibreLinkUpError.notAuthenticated
                     }
 
-                    // TODO: redirect
                     // {"status":0,"data":{"redirect":true,"region":"fr"}}
                     if let redirect = data?["redirect"] as? Bool,
                        let region = data?["region"] as? String {
@@ -213,7 +212,6 @@ class LibreLinkUp: Logging {
                             }
                         }
 
-                        // TODO: follower mode
                         if settings.libreLinkUpFollowing {
                             self.log("LibreLinkUp: getting connections for follower user id: \(id)")
                             var request = URLRequest(url: URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)")!)

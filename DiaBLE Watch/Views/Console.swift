@@ -133,6 +133,7 @@ struct Console: View {
                 } else if app.deviceState == "Connected" || app.deviceState == "Reconnecting..." || app.status.hasSuffix("retrying...") {
                     Button {
                         if app.device != nil {
+                            app.main.bluetoothDelegate.knownDevices[app.device.peripheral!.identifier.uuidString]!.isIgnored = true
                             app.main.centralManager.cancelPeripheralConnection(app.device.peripheral!)
                         }
                     } label: {
