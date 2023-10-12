@@ -8,8 +8,8 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
     var centralManager: CBCentralManager { main.centralManager }
     var app: AppState { main.app }
 
-    /// [uuid: (name, isConnectable, isIgnored)]
-    @Published var knownDevices: [String: (name: String, isConnectable: Bool, isIgnored: Bool)] = [:]
+    /// [uuid: (name, peripheral, isConnectable, isIgnored)]
+    @Published var knownDevices: [String: (name: String, peripheral: CBPeripheral, isConnectable: Bool, isIgnored: Bool)] = [:]
 
 
     public func centralManagerDidUpdateState(_ manager: CBCentralManager) {
@@ -33,6 +33,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                     log("Bluetooth: scanning...")
                     centralManager.scanForPeripherals(withServices: nil, options: nil)
                 } else {
+                    // TODO: use centralManager.connect() after retrieval
                     if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
                         log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                         centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Libre3.UUID.data.rawValue)]], rssi: 0)
@@ -57,6 +58,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
 
     public func centralManager(_ manager: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData advertisement: [String: Any], rssi: NSNumber) {
+        peripheral.delegate = self
         var name = peripheral.name
         let manufacturerData = advertisement[CBAdvertisementDataManufacturerDataKey] as? Data
         let dataServiceUUIDs = advertisement[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID]
@@ -101,7 +103,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         var msg = "Bluetooth: \(name!)'s device identifier \(identifier)"
         if knownDevices[identifier.uuidString] == nil {
             msg += " not yet known"
-            knownDevices[identifier.uuidString] = (name!.contains("unnamed") ? name! : peripheral.name!, deviceIsConnectable, deviceIsIgnored)
+            knownDevices[identifier.uuidString] = (name!.contains("unnamed") ? name! : peripheral.name!, peripheral, deviceIsConnectable, deviceIsIgnored)
             if settings.userLevel > .basic {
                 msg += " (advertised data: \(advertisement)\(BLE.companies[companyId].name != "< Unknown >" ? ", company: \(BLE.companies[companyId].name)" : ""))"
             }
@@ -219,6 +221,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         if app.device.name == "Unnamed peripheral" && name != "unnamed peripheral" {
             app.device.name = name
             main.status("\(app.device.name)")
+            knownDevices[peripheral.identifier.uuidString]!.name = name
         }
         app.device.state = peripheral.state
         if let services = peripheral.services {
