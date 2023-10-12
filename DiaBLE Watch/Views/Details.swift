@@ -70,7 +70,12 @@ struct Details: View {
                                         .foregroundColor(app.device.state == .connected ? .yellow : .red)
                                         .onReceive(timer) { _ in
                                             if let device = app.device {
-                                                secondsSinceLastConnection = Int(Date().timeIntervalSince(device.lastConnectionDate))
+                                                // workaround: watchOS fails converting the interval to an Int32
+                                                if device.lastConnectionDate != .distantPast {
+                                                    secondsSinceLastConnection = Int(Date().timeIntervalSince(device.lastConnectionDate))
+                                                } else {
+                                                    secondsSinceLastConnection = 1
+                                                }
                                             } else {
                                                 secondsSinceLastConnection = 1
                                             }
@@ -274,16 +279,28 @@ struct Details: View {
                         List {
                             ForEach(app.main.bluetoothDelegate.knownDevices.sorted(by: { $0.key < $1.key }), id: \.key) { uuid, device in
                                 HStack {
-                                    Text(device.name).font(.callout).foregroundColor(.blue)
+                                    Text(device.name).font(.callout).foregroundColor((app.device != nil) && uuid == app.device!.peripheral!.identifier.uuidString ? .yellow : .blue)
+                                        .onTapGesture {
+                                            // TODO: navigate to peripheral details
+                                            if let peripheral = app.main.centralManager.retrievePeripherals(withIdentifiers: [UUID(uuidString: uuid)!]).first {
+                                                if let appDevice = app.device {
+                                                    app.main.centralManager.cancelPeripheralConnection(appDevice.peripheral!)
+                                                }
+                                                // app.main.centralManager.connect(peripheral)
+                                                app.main.bluetoothDelegate.centralManager(app.main.centralManager, didDiscover: peripheral, advertisementData: [:], rssi: 0)
+                                            }
+                                        }
                                     if !device.isConnectable {
                                         Spacer()
                                         Image(systemName: "nosign").foregroundColor(.red)
                                     } else if device.isIgnored {
                                         Spacer()
                                         Image(systemName: "hand.raised.slash.fill").foregroundColor(.red)
+                                            .onTapGesture {
+                                                app.main.bluetoothDelegate.knownDevices[uuid]!.isIgnored.toggle()
+                                            }
                                     }
                                 }
-//                                .listRowBackground((app.device != nil) && uuid == app.device!.peripheral!.identifier.uuidString ? Color(.secondarySystemGroupedBackground) : Color(.tertiarySystemGroupedBackground))
                             }
                         }
                     }
@@ -329,7 +346,7 @@ struct Details: View {
 
                 Spacer()
 
-            }.edgesIgnoringSafeArea(.bottom).padding(.vertical, -40).offset(y: 40)
+            }.edgesIgnoringSafeArea(.bottom).padding(.vertical, -40).offset(y: 38)
 
         }
         .buttonStyle(.plain)
