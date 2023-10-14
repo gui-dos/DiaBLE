@@ -30,7 +30,7 @@ enum DeviceType: CaseIterable, Hashable, Identifiable {
 }
 
 
-class Device: ObservableObject, Logging {
+@Observable class Device: Logging {
 
     class var type: DeviceType { DeviceType.none }
     class var name: String { "Unknown" }
@@ -41,7 +41,7 @@ class Device: ObservableObject, Logging {
     class var dataWriteCharacteristicUUID: String { "" }
 
     var type: DeviceType = DeviceType.none
-    @Published var name: String = "Unknown"
+    var name: String = "Unknown"
 
 
     var main: MainDelegate!
@@ -50,14 +50,14 @@ class Device: ObservableObject, Logging {
     var characteristics = [String: CBCharacteristic]()
 
     /// Updated when notified by the Bluetooth manager
-    @Published var state: CBPeripheralState = .disconnected
-    @Published var lastConnectionDate: Date = Date.distantPast
+    var state: CBPeripheralState = .disconnected
+    var lastConnectionDate: Date = Date.distantPast
 
     var readCharacteristic: CBCharacteristic?
     var writeCharacteristic: CBCharacteristic?
 
-    @Published var battery: Int = -1
-    @Published var rssi: Int = 0
+    var battery: Int = -1
+    var rssi: Int = 0
     var company: String = ""
     var model: String = ""
     var serial: String = ""
@@ -139,9 +139,9 @@ enum TransmitterType: String, CaseIterable, Hashable, Codable, Identifiable {
 }
 
 
-class Transmitter: Device {
-    @Published var sensorUid: SensorUid = Data()
-    @Published var sensor: Sensor?
+@Observable class Transmitter: Device {
+    var sensorUid: SensorUid = Data()
+    var sensor: Sensor?
 }
 
 
@@ -163,9 +163,9 @@ enum WatchType: String, CaseIterable, Hashable, Codable, Identifiable {
 }
 
 
-class Watch: Device {
+@Observable class Watch: Device {
     override class var type: DeviceType { DeviceType.watch(.none) }
-    @Published var transmitter: Transmitter? = Transmitter()
+    var transmitter: Transmitter? = Transmitter()
 }
 
 

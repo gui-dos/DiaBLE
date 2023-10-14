@@ -174,7 +174,7 @@ func writeBits(_ buffer: Data, _ byteOffset: Int, _ bitOffset: Int, _ bitCount: 
 }
 
 
-class Sensor: ObservableObject, Logging {
+@Observable class Sensor: Logging {
 
     var type: SensorType = .unknown
     var family: SensorFamily = .libre
@@ -186,18 +186,18 @@ class Sensor: ObservableObject, Logging {
     var transmitter: Transmitter?
     var main: MainDelegate!
 
-    @Published var state: SensorState = .unknown
-    @Published var lastReadingDate = Date.distantPast
-    @Published var activationTime: UInt32 = 0
-    @Published var age: Int = 0
-    @Published var maxLife: Int = 0
-    @Published var initializations: Int = 0
+    var state: SensorState = .unknown
+    var lastReadingDate = Date.distantPast
+    var activationTime: UInt32 = 0
+    var age: Int = 0
+    var maxLife: Int = 0
+    var initializations: Int = 0
 
     var crcReport: String = ""
 
     var securityGeneration: Int = 0
 
-    @Published var patchInfo: PatchInfo = Data() {
+    var patchInfo: PatchInfo = Data() {
         willSet(info) {
             if info.count > 0 {
                 type = SensorType(patchInfo: info)
@@ -262,9 +262,9 @@ class Sensor: ObservableObject, Logging {
     }
 
     // Libre 2 and BLE streaming parameters
-    @Published var initialPatchInfo: PatchInfo = Data()
+    var initialPatchInfo: PatchInfo = Data()
     var streamingUnlockCode: UInt32 = 42
-    @Published var streamingUnlockCount: UInt16 = 0
+    var streamingUnlockCount: UInt16 = 0
 
 
     // Gen2
