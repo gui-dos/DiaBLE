@@ -16,7 +16,7 @@ extension MeasurementColor {
 
 
 struct OnlineView: View {
-    @EnvironmentObject var app: AppState
+    @Environment(AppState.self) var app: AppState
     @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
 
@@ -33,7 +33,7 @@ struct OnlineView: View {
 
 
     func reloadLibreLinkUp() async {
-        if let libreLinkUp = app.main?.libreLinkUp {
+        if let libreLinkUp = await app.main?.libreLinkUp {
             var dataString = ""
             var retries = 0
         loop: repeat {
@@ -344,7 +344,7 @@ struct OnlineView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             OnlineView()
-                .environmentObject(AppState.test(tab: .online))
+                .environment(AppState.test(tab: .online))
                 .environment(History.test)
                 .environment(Settings())
         }

@@ -3,7 +3,7 @@ import SwiftUI
 
 
 struct Monitor: View {
-    @EnvironmentObject var app: AppState
+    @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
@@ -40,8 +40,8 @@ struct Monitor: View {
                             }
                         }
                         .font(.footnote).frame(maxWidth: .infinity, alignment: .trailing ).foregroundColor(Color(.lightGray))
-                        .onReceive(app.$lastReadingDate) { readingDate in
-                            minutesSinceLastReading = Int(Date().timeIntervalSince(readingDate)/60)
+                        .onChange(of: app.lastReadingDate) {
+                            minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate)/60)
                         }
 
                         Text(app.currentGlucose > 0 ? "\(app.currentGlucose.units)" : "---")
@@ -225,7 +225,7 @@ struct Monitor_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             Monitor()
-                .environmentObject(AppState.test(tab: .monitor))
+                .environment(AppState.test(tab: .monitor))
                 .environment(Log())
                 .environment(History.test)
                 .environment(Settings())

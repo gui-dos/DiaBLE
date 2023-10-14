@@ -3,7 +3,7 @@ import SwiftUI
 
 
 struct Console: View {
-    @EnvironmentObject var app: AppState
+    @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
 
@@ -246,7 +246,7 @@ struct Console_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             Console()
-                .environmentObject(AppState.test(tab: .console))
+                .environment(AppState.test(tab: .console))
                 .environment(Log())
                 .environment(Settings())
         }

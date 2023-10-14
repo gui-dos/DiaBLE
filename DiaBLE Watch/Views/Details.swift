@@ -3,7 +3,7 @@ import SwiftUI
 
 
 struct Details: View {
-    @EnvironmentObject var app: AppState
+    @Environment(AppState.self) var app: AppState
     @Environment(Settings.self) var settings: Settings
 
     @State private var showingCalibrationInfoForm = false
@@ -368,11 +368,11 @@ struct Details_Preview: PreviewProvider {
     static var previews: some View {
         Group {
             Details()
-                .environmentObject(AppState.test(tab: .monitor))
+                .environment(AppState.test(tab: .monitor))
                 .environment(Settings())
             NavigationView {
                 Details()
-                    .environmentObject(AppState.test(tab: .monitor))
+                    .environment(AppState.test(tab: .monitor))
                     .environment(Settings())
             }
         }

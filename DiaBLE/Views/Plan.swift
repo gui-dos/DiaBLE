@@ -3,7 +3,7 @@ import SwiftUI
 
 
 struct Plan: View {
-    @EnvironmentObject var app: AppState
+    @Environment(AppState.self) var app: AppState
     @Environment(History.self) var history: History
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
@@ -47,7 +47,7 @@ struct Plan_Previews: PreviewProvider {
         Group {
             ContentView()
                 .preferredColorScheme(.dark)
-                .environmentObject(AppState.test(tab: .data))
+                .environment(AppState.test(tab: .data))
                 .environment(Log())
                 .environment(History.test)
                 .environment(Settings())

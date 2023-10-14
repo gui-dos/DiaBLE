@@ -16,7 +16,7 @@ struct ConsoleTab: View {
 
 
 struct Console: View {
-    @EnvironmentObject var app: AppState
+    @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
 
@@ -199,7 +199,7 @@ struct Console: View {
 
 
 struct ConsoleSidebar: View {
-    @EnvironmentObject var app: AppState
+    @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
 
@@ -363,7 +363,7 @@ struct Console_Previews: PreviewProvider {
         Group {
             ContentView()
                 .preferredColorScheme(.dark)
-                .environmentObject(AppState.test(tab: .console))
+                .environment(AppState.test(tab: .console))
                 .environment(Log())
                 .environment(Settings())
         }

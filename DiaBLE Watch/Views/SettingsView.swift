@@ -3,7 +3,7 @@ import SwiftUI
 
 
 struct SettingsView: View {
-    @EnvironmentObject var app: AppState
+    @Environment(AppState.self) var app: AppState
     @Environment(Settings.self) var settings: Settings
 
     @State private var showingCalendarPicker = false
@@ -183,7 +183,7 @@ struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             SettingsView()
-                .environmentObject(AppState.test(tab: .settings))
+                .environment(AppState.test(tab: .settings))
                 .environment(Settings())
         }
     }

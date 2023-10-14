@@ -145,7 +145,7 @@ struct Graph_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             Monitor()
-                .environmentObject(AppState.test(tab: .monitor))
+                .environment(AppState.test(tab: .monitor))
                 .environment(History.test)
                 .environment(Settings())
         }

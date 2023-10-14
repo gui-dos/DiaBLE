@@ -3,7 +3,7 @@ import SwiftUI
 
 
 struct Details: View {
-    @EnvironmentObject var app: AppState
+    @Environment(AppState.self) var app: AppState
     @Environment(Settings.self) var settings: Settings
 
     @State private var showingNFCAlert = false
@@ -388,12 +388,12 @@ struct Details_Preview: PreviewProvider {
         Group {
             Details()
                 .preferredColorScheme(.dark)
-                .environmentObject(AppState.test(tab: .monitor))
+                .environment(AppState.test(tab: .monitor))
                 .environment(Settings())
             NavigationView {
                 Details()
                     .preferredColorScheme(.dark)
-                    .environmentObject(AppState.test(tab: .monitor))
+                    .environment(AppState.test(tab: .monitor))
                     .environment(Settings())
             }
         }

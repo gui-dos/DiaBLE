@@ -2,7 +2,7 @@ import SwiftUI
 
 
 struct ContentView: View {
-    @EnvironmentObject var app: AppState
+    @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
@@ -55,35 +55,35 @@ struct ContentView_Previews: PreviewProvider {
         Group {
             ContentView()
                 .preferredColorScheme(.dark)
-                .environmentObject(AppState.test(tab: .monitor))
+                .environment(AppState.test(tab: .monitor))
                 .environment(Log())
                 .environment(History.test)
                 .environment(Settings())
 
             ContentView()
                 .preferredColorScheme(.dark)
-                .environmentObject(AppState.test(tab: .online))
+                .environment(AppState.test(tab: .online))
                 .environment(Log())
                 .environment(History.test)
                 .environment(Settings())
 
             ContentView()
                 .preferredColorScheme(.dark)
-                .environmentObject(AppState.test(tab: .data))
+                .environment(AppState.test(tab: .data))
                 .environment(Log())
                 .environment(History.test)
                 .environment(Settings())
 
             ContentView()
                 .preferredColorScheme(.dark)
-                .environmentObject(AppState.test(tab: .console))
+                .environment(AppState.test(tab: .console))
                 .environment(Log())
                 .environment(History.test)
                 .environment(Settings())
 
             ContentView()
                 .preferredColorScheme(.dark)
-                .environmentObject(AppState.test(tab: .settings))
+                .environment(AppState.test(tab: .settings))
                 .environment(Log())
                 .environment(History.test)
                 .environment(Settings())
