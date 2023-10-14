@@ -3,7 +3,7 @@ import SwiftUI
 
 
 struct Graph: View {
-    @EnvironmentObject var history: History
+    @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
 
 
@@ -146,8 +146,7 @@ struct Graph_Previews: PreviewProvider {
         Group {
             Monitor()
                 .environmentObject(AppState.test(tab: .monitor))
-                .environmentObject(Log())
-                .environmentObject(History.test)
+                .environment(History.test)
                 .environment(Settings())
         }
     }

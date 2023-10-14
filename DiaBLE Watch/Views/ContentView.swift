@@ -4,8 +4,8 @@ import SwiftUI
 struct ContentView: View {
 
     @EnvironmentObject var app: AppState
-    @EnvironmentObject var log: Log
-    @EnvironmentObject var history: History
+    @Environment(Log.self) var log: Log
+    @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
 
     var body: some View {
@@ -62,7 +62,7 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environmentObject(AppState.test(tab: .monitor))
-        .environmentObject(Log())
-        .environmentObject(History.test)
+        .environment(Log())
+        .environment(History.test)
         .environment(Settings())
 }

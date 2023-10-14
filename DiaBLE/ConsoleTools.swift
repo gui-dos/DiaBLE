@@ -9,7 +9,7 @@ import RealmSwift
 struct ShellView: View {
 
     @EnvironmentObject var app: AppState
-    @EnvironmentObject var log: Log
+    @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
 
     @State private var showingStack = false
@@ -210,7 +210,7 @@ struct ShellView: View {
     ShellView()
         .preferredColorScheme(.dark)
         .environmentObject(AppState.test(tab: .console))
-        .environmentObject(Log())
+        .environment(Log())
         .environment(Settings())
 }
 

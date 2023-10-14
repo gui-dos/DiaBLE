@@ -17,7 +17,7 @@ extension MeasurementColor {
 
 struct OnlineView: View {
     @EnvironmentObject var app: AppState
-    @EnvironmentObject var history: History
+    @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
 
     @Environment(\.colorScheme) var colorScheme
@@ -347,8 +347,7 @@ struct OnlineView_Previews: PreviewProvider {
             ContentView()
                 .preferredColorScheme(.dark)
                 .environmentObject(AppState.test(tab: .online))
-                .environmentObject(Log())
-                .environmentObject(History.test)
+                .environment(History.test)
                 .environment(Settings())
         }
     }

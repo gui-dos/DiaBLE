@@ -3,8 +3,8 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var app: AppState
-    @EnvironmentObject var log: Log
-    @EnvironmentObject var history: History
+    @Environment(Log.self) var log: Log
+    @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
 
     var body: some View {
@@ -56,36 +56,36 @@ struct ContentView_Previews: PreviewProvider {
             ContentView()
                 .preferredColorScheme(.dark)
                 .environmentObject(AppState.test(tab: .monitor))
-                .environmentObject(Log())
-                .environmentObject(History.test)
+                .environment(Log())
+                .environment(History.test)
                 .environment(Settings())
 
             ContentView()
                 .preferredColorScheme(.dark)
                 .environmentObject(AppState.test(tab: .online))
-                .environmentObject(Log())
-                .environmentObject(History.test)
+                .environment(Log())
+                .environment(History.test)
                 .environment(Settings())
 
             ContentView()
                 .preferredColorScheme(.dark)
                 .environmentObject(AppState.test(tab: .data))
-                .environmentObject(Log())
-                .environmentObject(History.test)
+                .environment(Log())
+                .environment(History.test)
                 .environment(Settings())
 
             ContentView()
                 .preferredColorScheme(.dark)
                 .environmentObject(AppState.test(tab: .console))
-                .environmentObject(Log())
-                .environmentObject(History.test)
+                .environment(Log())
+                .environment(History.test)
                 .environment(Settings())
 
             ContentView()
                 .preferredColorScheme(.dark)
                 .environmentObject(AppState.test(tab: .settings))
-                .environmentObject(Log())
-                .environmentObject(History.test)
+                .environment(Log())
+                .environment(History.test)
                 .environment(Settings())
         }
     }

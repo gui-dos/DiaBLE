@@ -4,7 +4,6 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var app: AppState
-    @EnvironmentObject var history: History
     @Environment(Settings.self) var settings: Settings
 
     @State private var showingCalendarPicker = false
@@ -185,7 +184,6 @@ struct SettingsView_Previews: PreviewProvider {
         Group {
             SettingsView()
                 .environmentObject(AppState.test(tab: .settings))
-                .environmentObject(History.test)
                 .environment(Settings())
         }
     }

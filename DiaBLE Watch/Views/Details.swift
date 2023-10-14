@@ -4,7 +4,6 @@ import SwiftUI
 
 struct Details: View {
     @EnvironmentObject var app: AppState
-    @EnvironmentObject var history: History
     @Environment(Settings.self) var settings: Settings
 
     @State private var showingCalibrationInfoForm = false

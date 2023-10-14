@@ -4,8 +4,8 @@ import SwiftUI
 
 struct DataView: View {
     @EnvironmentObject var app: AppState
-    @EnvironmentObject var history: History
-    @EnvironmentObject var log: Log
+    @Environment(History.self) var history: History
+    @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
 
     @State private var onlineCountdown: Int = 0
@@ -181,8 +181,8 @@ struct DataView_Previews: PreviewProvider {
         Group {
             DataView()
                 .environmentObject(AppState.test(tab: .data))
-                .environmentObject(History.test)
-                .environmentObject(Log())
+                .environment(History.test)
+                .environment(Log())
                 .environment(Settings())
         }
     }
