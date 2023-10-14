@@ -98,12 +98,12 @@ struct OnlineView: View {
                 Button {
                     settings.selectedService = settings.selectedService == .nightscout ? .libreLinkUp : .nightscout
                 } label: {
-                    Image(settings.selectedService.description).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
+                    Image(settings.selectedService.rawValue).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
                 }
 
                 VStack(spacing: 0) {
 
-                    Text("\(settings.selectedService.description)").foregroundColor(.accentColor)
+                    Text("\(settings.selectedService.rawValue)").foregroundColor(.accentColor)
 
                     HStack {
 

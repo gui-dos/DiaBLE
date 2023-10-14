@@ -31,11 +31,9 @@ enum Tab: String {
 }
 
 
-enum OnlineService: String, CustomStringConvertible, CaseIterable {
+enum OnlineService: String, CaseIterable {
     case nightscout  = "Nightscout"
     case libreLinkUp = "LibreLinkUp"
-
-    var description: String { self.rawValue }
 }
 
 
