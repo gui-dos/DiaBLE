@@ -3,11 +3,6 @@ import SwiftUI
 
 struct HamburgerMenu: View {
 
-    @EnvironmentObject var app: AppState
-    @EnvironmentObject var log: Log
-    @EnvironmentObject var history: History
-    @EnvironmentObject var settings: Settings
-
     let credits = [
         "@dabear": "https://github.com/dabear",
         "@ivalkou": "https://github.com/ivalkou",
@@ -148,8 +143,4 @@ struct HamburgerMenu: View {
 
 #Preview {
     HamburgerMenu()
-        .environmentObject(AppState.test(tab: .monitor))
-        .environmentObject(Log())
-        .environmentObject(History.test)
-        .environmentObject(Settings())
 }

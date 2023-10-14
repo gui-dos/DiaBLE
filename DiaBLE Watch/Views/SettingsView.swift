@@ -5,12 +5,14 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var app: AppState
     @EnvironmentObject var history: History
-    @EnvironmentObject var settings: Settings
+    @Environment(Settings.self) var settings: Settings
 
     @State private var showingCalendarPicker = false
 
 
     var body: some View {
+
+        @Bindable var settings = settings
 
         VStack(spacing: 8) {
 
@@ -184,7 +186,7 @@ struct SettingsView_Previews: PreviewProvider {
             SettingsView()
                 .environmentObject(AppState.test(tab: .settings))
                 .environmentObject(History.test)
-                .environmentObject(Settings())
+                .environment(Settings())
         }
     }
 }

@@ -6,7 +6,7 @@ struct Monitor: View {
     @EnvironmentObject var app: AppState
     @EnvironmentObject var log: Log
     @EnvironmentObject var history: History
-    @EnvironmentObject var settings: Settings
+    @Environment(Settings.self) var settings: Settings
 
     @Environment(\.dismiss) var dismiss
 
@@ -228,7 +228,7 @@ struct Monitor_Previews: PreviewProvider {
                 .environmentObject(AppState.test(tab: .monitor))
                 .environmentObject(Log())
                 .environmentObject(History.test)
-                .environmentObject(Settings())
+                .environment(Settings())
         }
     }
 }

@@ -4,7 +4,7 @@ import SwiftUI
 
 struct Graph: View {
     @EnvironmentObject var history: History
-    @EnvironmentObject var settings: Settings
+    @Environment(Settings.self) var settings: Settings
 
 
     func yMax() -> Double {
@@ -148,7 +148,7 @@ struct Graph_Previews: PreviewProvider {
                 .environmentObject(AppState.test(tab: .monitor))
                 .environmentObject(Log())
                 .environmentObject(History.test)
-                .environmentObject(Settings())
+                .environment(Settings())
         }
     }
 }

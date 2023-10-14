@@ -6,7 +6,7 @@ struct Plan: View {
     @EnvironmentObject var app: AppState
     @EnvironmentObject var history: History
     @EnvironmentObject var log: Log
-    @EnvironmentObject var settings: Settings
+    @Environment(Settings.self) var settings: Settings
 
     @State private var readingCountdown: Int = 0
 
@@ -50,7 +50,7 @@ struct Plan_Previews: PreviewProvider {
                 .environmentObject(AppState.test(tab: .data))
                 .environmentObject(Log())
                 .environmentObject(History.test)
-                .environmentObject(Settings())
+                .environment(Settings())
         }
     }
 }

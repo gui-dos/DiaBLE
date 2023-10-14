@@ -5,9 +5,11 @@ struct ContentView: View {
     @EnvironmentObject var app: AppState
     @EnvironmentObject var log: Log
     @EnvironmentObject var history: History
-    @EnvironmentObject var settings: Settings
+    @Environment(Settings.self) var settings: Settings
 
     var body: some View {
+
+        @Bindable var settings = settings
 
         TabView(selection: $settings.selectedTab) {
             Monitor()
@@ -56,35 +58,35 @@ struct ContentView_Previews: PreviewProvider {
                 .environmentObject(AppState.test(tab: .monitor))
                 .environmentObject(Log())
                 .environmentObject(History.test)
-                .environmentObject(Settings())
+                .environment(Settings())
 
             ContentView()
                 .preferredColorScheme(.dark)
                 .environmentObject(AppState.test(tab: .online))
                 .environmentObject(Log())
                 .environmentObject(History.test)
-                .environmentObject(Settings())
+                .environment(Settings())
 
             ContentView()
                 .preferredColorScheme(.dark)
                 .environmentObject(AppState.test(tab: .data))
                 .environmentObject(Log())
                 .environmentObject(History.test)
-                .environmentObject(Settings())
+                .environment(Settings())
 
             ContentView()
                 .preferredColorScheme(.dark)
                 .environmentObject(AppState.test(tab: .console))
                 .environmentObject(Log())
                 .environmentObject(History.test)
-                .environmentObject(Settings())
+                .environment(Settings())
 
             ContentView()
                 .preferredColorScheme(.dark)
                 .environmentObject(AppState.test(tab: .settings))
                 .environmentObject(Log())
                 .environmentObject(History.test)
-                .environmentObject(Settings())
+                .environment(Settings())
         }
     }
 }

@@ -5,7 +5,7 @@ import SwiftUI
 struct Details: View {
     @EnvironmentObject var app: AppState
     @EnvironmentObject var history: History
-    @EnvironmentObject var settings: Settings
+    @Environment(Settings.self) var settings: Settings
 
     @State private var showingCalibrationInfoForm = false
 
@@ -185,6 +185,8 @@ struct Details: View {
                 if app.device != nil && app.device.type == .transmitter(.abbott) || settings.preferredTransmitter == .abbott {
 
                     Section(header: Text("BLE Setup")) {
+
+                        @Bindable var settings = settings
 
                         if app.sensor?.type != .libre3 {
 
@@ -368,11 +370,11 @@ struct Details_Preview: PreviewProvider {
         Group {
             Details()
                 .environmentObject(AppState.test(tab: .monitor))
-                .environmentObject(Settings())
+                .environment(Settings())
             NavigationView {
                 Details()
                     .environmentObject(AppState.test(tab: .monitor))
-                    .environmentObject(Settings())
+                    .environment(Settings())
             }
         }
     }

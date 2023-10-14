@@ -10,7 +10,7 @@ struct ShellView: View {
 
     @EnvironmentObject var app: AppState
     @EnvironmentObject var log: Log
-    @EnvironmentObject var settings: Settings
+    @Environment(Settings.self) var settings: Settings
 
     @State private var showingStack = false
 
@@ -211,7 +211,7 @@ struct ShellView: View {
         .preferredColorScheme(.dark)
         .environmentObject(AppState.test(tab: .console))
         .environmentObject(Log())
-        .environmentObject(Settings())
+        .environment(Settings())
 }
 
 

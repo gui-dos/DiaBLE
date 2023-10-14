@@ -18,7 +18,7 @@ extension MeasurementColor {
 struct OnlineView: View {
     @EnvironmentObject var app: AppState
     @EnvironmentObject var history: History
-    @EnvironmentObject var settings: Settings
+    @Environment(Settings.self) var settings: Settings
 
     @State private var onlineCountdown: Int = 0
     @State private var readingCountdown: Int = 0
@@ -164,6 +164,9 @@ struct OnlineView: View {
             }
 
             if showingCredentials {
+
+                @Bindable var settings = settings
+                
                 HStack {
 
                     if settings.selectedService == .nightscout {
@@ -343,7 +346,7 @@ struct OnlineView_Previews: PreviewProvider {
             OnlineView()
                 .environmentObject(AppState.test(tab: .online))
                 .environmentObject(History.test)
-                .environmentObject(Settings())
+                .environment(Settings())
         }
     }
 }

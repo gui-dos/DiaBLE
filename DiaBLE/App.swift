@@ -15,7 +15,7 @@ struct DiaBLEApp: App {
                 .environmentObject(main.app)
                 .environmentObject(main.log)
                 .environmentObject(main.history)
-                .environmentObject(main.settings)
+                .environment(main.settings)
         }
     }
 }

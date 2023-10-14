@@ -6,9 +6,11 @@ struct ContentView: View {
     @EnvironmentObject var app: AppState
     @EnvironmentObject var log: Log
     @EnvironmentObject var history: History
-    @EnvironmentObject var settings: Settings
+    @Environment(Settings.self) var settings: Settings
 
     var body: some View {
+
+        @Bindable var settings = settings
 
         NavigationStack {
 
@@ -62,5 +64,5 @@ struct ContentView: View {
         .environmentObject(AppState.test(tab: .monitor))
         .environmentObject(Log())
         .environmentObject(History.test)
-        .environmentObject(Settings())
+        .environment(Settings())
 }

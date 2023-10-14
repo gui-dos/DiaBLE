@@ -5,7 +5,7 @@ import SwiftUI
 struct Console: View {
     @EnvironmentObject var app: AppState
     @EnvironmentObject var log: Log
-    @EnvironmentObject var settings: Settings
+    @Environment(Settings.self) var settings: Settings
 
     @State private var onlineCountdown: Int = 0
     @State private var readingCountdown: Int = 0
@@ -248,7 +248,7 @@ struct Console_Previews: PreviewProvider {
             Console()
                 .environmentObject(AppState.test(tab: .console))
                 .environmentObject(Log())
-                .environmentObject(Settings())
+                .environment(Settings())
         }
     }
 }

@@ -1,7 +1,7 @@
 import Foundation
 
 
-class Settings: ObservableObject {
+@Observable class Settings {
 
     static let defaults: [String: Any] = [
         "preferredTransmitter": TransmitterType.none.id,
@@ -62,7 +62,7 @@ class Settings: ObservableObject {
     ]
 
 
-    @Published var preferredTransmitter: TransmitterType = TransmitterType(rawValue: UserDefaults.standard.string(forKey: "preferredTransmitter")!) ?? .none {
+    var preferredTransmitter: TransmitterType = TransmitterType(rawValue: UserDefaults.standard.string(forKey: "preferredTransmitter")!) ?? .none {
         willSet(type) {
             if type == .abbott {
                 readingInterval = 1
@@ -76,7 +76,7 @@ class Settings: ObservableObject {
         didSet { UserDefaults.standard.set(self.preferredTransmitter.id, forKey: "preferredTransmitter") }
     }
 
-    @Published var preferredDevicePattern: String = UserDefaults.standard.string(forKey: "preferredDevicePattern")! {
+    var preferredDevicePattern: String = UserDefaults.standard.string(forKey: "preferredDevicePattern")! {
         willSet(pattern) {
             if !pattern.isEmpty {
                 if !preferredTransmitter.id.matches(pattern) {
@@ -87,169 +87,169 @@ class Settings: ObservableObject {
         didSet { UserDefaults.standard.set(self.preferredDevicePattern, forKey: "preferredDevicePattern") }
     }
 
-    @Published var stoppedBluetooth: Bool = UserDefaults.standard.bool(forKey: "stoppedBluetooth") {
+    var stoppedBluetooth: Bool = UserDefaults.standard.bool(forKey: "stoppedBluetooth") {
         didSet { UserDefaults.standard.set(self.stoppedBluetooth, forKey: "stoppedBluetooth") }
     }
 
-    @Published var selectedTab: Tab = Tab(rawValue: UserDefaults.standard.string(forKey: "selectedTab")!)! {
+    var selectedTab: Tab = Tab(rawValue: UserDefaults.standard.string(forKey: "selectedTab")!)! {
         didSet { UserDefaults.standard.set(self.selectedTab.rawValue, forKey: "selectedTab") }
     }
 
-    @Published var readingInterval: Int = UserDefaults.standard.integer(forKey: "readingInterval") {
+    var readingInterval: Int = UserDefaults.standard.integer(forKey: "readingInterval") {
         didSet { UserDefaults.standard.set(self.readingInterval, forKey: "readingInterval") }
     }
 
-    @Published var displayingMillimoles: Bool = UserDefaults.standard.bool(forKey: "displayingMillimoles") {
+    var displayingMillimoles: Bool = UserDefaults.standard.bool(forKey: "displayingMillimoles") {
         didSet { UserDefaults.standard.set(self.displayingMillimoles, forKey: "displayingMillimoles") }
     }
 
-    @Published var numberFormatter: NumberFormatter = NumberFormatter()
+    var numberFormatter: NumberFormatter = NumberFormatter()
 
-    @Published var targetLow: Double = UserDefaults.standard.double(forKey: "targetLow") {
+    var targetLow: Double = UserDefaults.standard.double(forKey: "targetLow") {
         didSet { UserDefaults.standard.set(self.targetLow, forKey: "targetLow") }
     }
 
-    @Published var targetHigh: Double = UserDefaults.standard.double(forKey: "targetHigh") {
+    var targetHigh: Double = UserDefaults.standard.double(forKey: "targetHigh") {
         didSet { UserDefaults.standard.set(self.targetHigh, forKey: "targetHigh") }
     }
 
-    @Published var alarmSnoozeInterval: Int = UserDefaults.standard.integer(forKey: "alarmSnoozeInterval") {
+    var alarmSnoozeInterval: Int = UserDefaults.standard.integer(forKey: "alarmSnoozeInterval") {
         didSet { UserDefaults.standard.set(self.alarmSnoozeInterval, forKey: "alarmSnoozeInterval") }
     }
 
-    @Published var lastAlarmDate: Date = Date(timeIntervalSince1970: UserDefaults.standard.double(forKey: "lastAlarmDate")) {
+    var lastAlarmDate: Date = Date(timeIntervalSince1970: UserDefaults.standard.double(forKey: "lastAlarmDate")) {
         didSet { UserDefaults.standard.set(self.lastAlarmDate.timeIntervalSince1970, forKey: "lastAlarmDate") }
     }
 
-    @Published var alarmLow: Double = UserDefaults.standard.double(forKey: "alarmLow") {
+    var alarmLow: Double = UserDefaults.standard.double(forKey: "alarmLow") {
         didSet { UserDefaults.standard.set(self.alarmLow, forKey: "alarmLow") }
     }
 
-    @Published var alarmHigh: Double = UserDefaults.standard.double(forKey: "alarmHigh") {
+    var alarmHigh: Double = UserDefaults.standard.double(forKey: "alarmHigh") {
         didSet { UserDefaults.standard.set(self.alarmHigh, forKey: "alarmHigh") }
     }
 
-    @Published var mutedAudio: Bool = UserDefaults.standard.bool(forKey: "mutedAudio") {
+    var mutedAudio: Bool = UserDefaults.standard.bool(forKey: "mutedAudio") {
         didSet { UserDefaults.standard.set(self.mutedAudio, forKey: "mutedAudio") }
     }
 
-    @Published var disabledNotifications: Bool = UserDefaults.standard.bool(forKey: "disabledNotifications") {
+    var disabledNotifications: Bool = UserDefaults.standard.bool(forKey: "disabledNotifications") {
         didSet { UserDefaults.standard.set(self.disabledNotifications, forKey: "disabledNotifications") }
     }
 
-    @Published var calendarTitle: String = UserDefaults.standard.string(forKey: "calendarTitle")! {
+    var calendarTitle: String = UserDefaults.standard.string(forKey: "calendarTitle")! {
         didSet { UserDefaults.standard.set(self.calendarTitle, forKey: "calendarTitle") }
     }
 
-    @Published var calendarAlarmIsOn: Bool = UserDefaults.standard.bool(forKey: "calendarAlarmIsOn") {
+    var calendarAlarmIsOn: Bool = UserDefaults.standard.bool(forKey: "calendarAlarmIsOn") {
         didSet { UserDefaults.standard.set(self.calendarAlarmIsOn, forKey: "calendarAlarmIsOn") }
     }
 
-    @Published var logging: Bool = UserDefaults.standard.bool(forKey: "logging") {
+    var logging: Bool = UserDefaults.standard.bool(forKey: "logging") {
         didSet { UserDefaults.standard.set(self.logging, forKey: "logging") }
     }
 
-    @Published var reversedLog: Bool = UserDefaults.standard.bool(forKey: "reversedLog") {
+    var reversedLog: Bool = UserDefaults.standard.bool(forKey: "reversedLog") {
         didSet { UserDefaults.standard.set(self.reversedLog, forKey: "reversedLog") }
     }
 
-    @Published var userLevel: UserLevel = UserLevel(rawValue: UserDefaults.standard.integer(forKey: "userLevel"))! {
+    var userLevel: UserLevel = UserLevel(rawValue: UserDefaults.standard.integer(forKey: "userLevel"))! {
         didSet { UserDefaults.standard.set(self.userLevel.rawValue, forKey: "userLevel") }
     }
 
-    @Published var nightscoutSite: String = UserDefaults.standard.string(forKey: "nightscoutSite")! {
+    var nightscoutSite: String = UserDefaults.standard.string(forKey: "nightscoutSite")! {
         didSet { UserDefaults.standard.set(self.nightscoutSite, forKey: "nightscoutSite") }
     }
 
-    @Published var nightscoutToken: String = UserDefaults.standard.string(forKey: "nightscoutToken")! {
+    var nightscoutToken: String = UserDefaults.standard.string(forKey: "nightscoutToken")! {
         didSet { UserDefaults.standard.set(self.nightscoutToken, forKey: "nightscoutToken") }
     }
 
-    @Published var libreLinkUpEmail: String = UserDefaults.standard.string(forKey: "libreLinkUpEmail")! {
+    var libreLinkUpEmail: String = UserDefaults.standard.string(forKey: "libreLinkUpEmail")! {
         didSet { UserDefaults.standard.set(self.libreLinkUpEmail, forKey: "libreLinkUpEmail") }
     }
 
-    @Published var libreLinkUpPassword: String = UserDefaults.standard.string(forKey: "libreLinkUpPassword")! {
+    var libreLinkUpPassword: String = UserDefaults.standard.string(forKey: "libreLinkUpPassword")! {
         didSet { UserDefaults.standard.set(self.libreLinkUpPassword, forKey: "libreLinkUpPassword") }
     }
 
-    @Published var libreLinkUpPatientId: String = UserDefaults.standard.string(forKey: "libreLinkUpPatientId")! {
+    var libreLinkUpPatientId: String = UserDefaults.standard.string(forKey: "libreLinkUpPatientId")! {
         didSet { UserDefaults.standard.set(self.libreLinkUpPatientId, forKey: "libreLinkUpPatientId") }
     }
 
-    @Published var libreLinkUpCountry: String = UserDefaults.standard.string(forKey: "libreLinkUpCountry")! {
+    var libreLinkUpCountry: String = UserDefaults.standard.string(forKey: "libreLinkUpCountry")! {
         didSet { UserDefaults.standard.set(self.libreLinkUpCountry, forKey: "libreLinkUpCountry") }
     }
 
-    @Published var libreLinkUpRegion: String = UserDefaults.standard.string(forKey: "libreLinkUpRegion")! {
+    var libreLinkUpRegion: String = UserDefaults.standard.string(forKey: "libreLinkUpRegion")! {
         didSet { UserDefaults.standard.set(self.libreLinkUpRegion, forKey: "libreLinkUpRegion") }
     }
 
-    @Published var libreLinkUpToken: String = UserDefaults.standard.string(forKey: "libreLinkUpToken")! {
+    var libreLinkUpToken: String = UserDefaults.standard.string(forKey: "libreLinkUpToken")! {
         didSet { UserDefaults.standard.set(self.libreLinkUpToken, forKey: "libreLinkUpToken") }
     }
 
-    @Published var libreLinkUpTokenExpirationDate: Date = Date(timeIntervalSince1970: UserDefaults.standard.double(forKey: "libreLinkUpTokenExpirationDate")) {
+    var libreLinkUpTokenExpirationDate: Date = Date(timeIntervalSince1970: UserDefaults.standard.double(forKey: "libreLinkUpTokenExpirationDate")) {
         didSet { UserDefaults.standard.set(self.libreLinkUpTokenExpirationDate.timeIntervalSince1970, forKey: "libreLinkUpTokenExpirationDate") }
     }
 
-    @Published var libreLinkUpFollowing: Bool = UserDefaults.standard.bool(forKey: "libreLinkUpFollowing") {
+    var libreLinkUpFollowing: Bool = UserDefaults.standard.bool(forKey: "libreLinkUpFollowing") {
         didSet { UserDefaults.standard.set(self.libreLinkUpFollowing, forKey: "libreLinkUpFollowing") }
     }
 
-    @Published var libreLinkUpScrapingLogbook: Bool = UserDefaults.standard.bool(forKey: "libreLinkUpScrapingLogbook") {
+    var libreLinkUpScrapingLogbook: Bool = UserDefaults.standard.bool(forKey: "libreLinkUpScrapingLogbook") {
         didSet { UserDefaults.standard.set(self.libreLinkUpScrapingLogbook, forKey: "libreLinkUpScrapingLogbook") }
     }
 
-    @Published var selectedService: OnlineService = OnlineService(rawValue: UserDefaults.standard.string(forKey: "selectedService")!)! {
+    var selectedService: OnlineService = OnlineService(rawValue: UserDefaults.standard.string(forKey: "selectedService")!)! {
         didSet { UserDefaults.standard.set(self.selectedService.rawValue, forKey: "selectedService") }
     }
 
-    @Published var onlineInterval: Int = UserDefaults.standard.integer(forKey: "onlineInterval") {
+    var onlineInterval: Int = UserDefaults.standard.integer(forKey: "onlineInterval") {
         didSet { UserDefaults.standard.set(self.onlineInterval, forKey: "onlineInterval") }
     }
 
-    @Published var lastOnlineDate: Date = Date(timeIntervalSince1970: UserDefaults.standard.double(forKey: "lastOnlineDate")) {
+    var lastOnlineDate: Date = Date(timeIntervalSince1970: UserDefaults.standard.double(forKey: "lastOnlineDate")) {
         didSet { UserDefaults.standard.set(self.lastOnlineDate.timeIntervalSince1970, forKey: "lastOnlineDate") }
     }
 
-    @Published var activeSensorSerial: String = UserDefaults.standard.string(forKey: "activeSensorSerial")! {
+    var activeSensorSerial: String = UserDefaults.standard.string(forKey: "activeSensorSerial")! {
         didSet { UserDefaults.standard.set(self.activeSensorSerial, forKey: "activeSensorSerial") }
     }
 
-    @Published var activeSensorAddress: Data = UserDefaults.standard.data(forKey: "activeSensorAddress")! {
+    var activeSensorAddress: Data = UserDefaults.standard.data(forKey: "activeSensorAddress")! {
         didSet { UserDefaults.standard.set(self.activeSensorAddress, forKey: "activeSensorAddress") }
     }
 
-    @Published var activeSensorInitialPatchInfo: PatchInfo = UserDefaults.standard.data(forKey: "activeSensorInitialPatchInfo")! {
+    var activeSensorInitialPatchInfo: PatchInfo = UserDefaults.standard.data(forKey: "activeSensorInitialPatchInfo")! {
         didSet { UserDefaults.standard.set(self.activeSensorInitialPatchInfo, forKey: "activeSensorInitialPatchInfo") }
     }
 
-    @Published var activeSensorStreamingUnlockCode: Int = UserDefaults.standard.integer(forKey: "activeSensorStreamingUnlockCode") {
+    var activeSensorStreamingUnlockCode: Int = UserDefaults.standard.integer(forKey: "activeSensorStreamingUnlockCode") {
         didSet { UserDefaults.standard.set(self.activeSensorStreamingUnlockCode, forKey: "activeSensorStreamingUnlockCode") }
     }
 
-    @Published var activeSensorStreamingUnlockCount: Int = UserDefaults.standard.integer(forKey: "activeSensorStreamingUnlockCount") {
+    var activeSensorStreamingUnlockCount: Int = UserDefaults.standard.integer(forKey: "activeSensorStreamingUnlockCount") {
         didSet { UserDefaults.standard.set(self.activeSensorStreamingUnlockCount, forKey: "activeSensorStreamingUnlockCount") }
     }
 
-    @Published var activeSensorMaxLife: Int = UserDefaults.standard.integer(forKey: "activeSensorMaxLife") {
+    var activeSensorMaxLife: Int = UserDefaults.standard.integer(forKey: "activeSensorMaxLife") {
         didSet { UserDefaults.standard.set(self.activeSensorMaxLife, forKey: "activeSensorMaxLife") }
     }
 
-    @Published var activeSensorCalibrationInfo: CalibrationInfo = try! JSONDecoder().decode(CalibrationInfo.self, from: UserDefaults.standard.data(forKey: "activeSensorCalibrationInfo")!) {
+    var activeSensorCalibrationInfo: CalibrationInfo = try! JSONDecoder().decode(CalibrationInfo.self, from: UserDefaults.standard.data(forKey: "activeSensorCalibrationInfo")!) {
         didSet { UserDefaults.standard.set(try! JSONEncoder().encode(self.activeSensorCalibrationInfo), forKey: "activeSensorCalibrationInfo") }
     }
 
-    @Published var activeSensorBlePIN: Data = UserDefaults.standard.data(forKey: "activeSensorBlePIN")! {
+    var activeSensorBlePIN: Data = UserDefaults.standard.data(forKey: "activeSensorBlePIN")! {
         didSet { UserDefaults.standard.set(self.activeSensorBlePIN, forKey: "activeSensorBlePIN") }
     }
 
-    @Published var patchUid: SensorUid = UserDefaults.standard.data(forKey: "patchUid")! {
+    var patchUid: SensorUid = UserDefaults.standard.data(forKey: "patchUid")! {
         didSet { UserDefaults.standard.set(self.patchUid, forKey: "patchUid") }
     }
 
-    @Published var patchInfo: PatchInfo = UserDefaults.standard.data(forKey: "patchInfo")! {
+    var patchInfo: PatchInfo = UserDefaults.standard.data(forKey: "patchInfo")! {
         didSet { UserDefaults.standard.set(self.patchInfo, forKey: "patchInfo") }
     }
 
