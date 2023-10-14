@@ -47,10 +47,6 @@ class AppState: ObservableObject {
 
     var main: MainDelegate!
 
-    // FIXME: @AppStorage prevents managing the "More..." fifth tab item
-    @AppStorage("selectedTab") var selectedTab: Tab = .monitor
-    @AppStorage("selectedService") var selectedService: OnlineService = .libreLinkUp
-
     @Published var currentGlucose: Int = 0
     @Published var lastReadingDate: Date = Date.distantPast
     @Published var oopGlucose: Int = 0
@@ -146,7 +142,7 @@ extension AppState {
         app.sensor = sensor
         app.device.serial = sensor.serial
 
-        app.selectedTab = tab
+        app.main.settings.selectedTab = tab
         app.currentGlucose = 234
         app.trendDelta = -12
         app.trendDeltaMinutes = 6

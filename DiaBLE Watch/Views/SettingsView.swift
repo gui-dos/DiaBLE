@@ -55,7 +55,7 @@ struct SettingsView: View {
                     NavigationLink(destination: Monitor()) {
                         Image(systemName: "timer").resizable().frame(width: 20, height: 20)
                     }.simultaneousGesture(TapGesture().onEnded {
-                        // app.selectedTab = (settings.preferredTransmitter != .none) ? .monitor : .log
+                        // settings.selectedTab = (settings.preferredTransmitter != .none) ? .monitor : .log
                         app.main.rescan()
                     })
 

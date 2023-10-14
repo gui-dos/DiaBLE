@@ -96,14 +96,14 @@ struct OnlineView: View {
             HStack {
 
                 Button {
-                    app.selectedService = app.selectedService == .nightscout ? .libreLinkUp : .nightscout
+                    settings.selectedService = settings.selectedService == .nightscout ? .libreLinkUp : .nightscout
                 } label: {
-                    Image(app.selectedService.description).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
+                    Image(settings.selectedService.description).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
                 }
 
                 VStack(spacing: 0) {
 
-                    Text("\(app.selectedService.description)").foregroundColor(.accentColor)
+                    Text("\(settings.selectedService.description)").foregroundColor(.accentColor)
 
                     HStack {
 
@@ -166,12 +166,12 @@ struct OnlineView: View {
             if showingCredentials {
                 HStack {
 
-                    if app.selectedService == .nightscout {
+                    if settings.selectedService == .nightscout {
                         TextField("Nightscout URL", text: $settings.nightscoutSite)
                             .textContentType(.URL)
                         SecureField("token", text: $settings.nightscoutToken)
 
-                    } else if app.selectedService == .libreLinkUp {
+                    } else if settings.selectedService == .libreLinkUp {
                         TextField("email", text: $settings.libreLinkUpEmail)
                             .textContentType(.emailAddress)
                             .onSubmit {
@@ -204,7 +204,7 @@ struct OnlineView: View {
                 }
             }
 
-            if app.selectedService == .nightscout {
+            if settings.selectedService == .nightscout {
 
                 ScrollView(showsIndicators: true) {
 
@@ -252,7 +252,7 @@ struct OnlineView: View {
             }
 
 
-            if app.selectedService == .libreLinkUp {
+            if settings.selectedService == .libreLinkUp {
 
                 ScrollView(showsIndicators: true) {
 

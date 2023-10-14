@@ -102,15 +102,15 @@ struct OnlineView: View {
                     HStack(alignment: .top) {
 
                         Button {
-                            app.selectedService = app.selectedService == .nightscout ? .libreLinkUp : .nightscout
+                            settings.selectedService = settings.selectedService == .nightscout ? .libreLinkUp : .nightscout
                         } label: {
-                            Image(app.selectedService.description).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
+                            Image(settings.selectedService.description).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
                         }
                         .padding(.top, 8).padding(.trailing, 4)
 
                         VStack(spacing: 0) {
 
-                            if app.selectedService == .nightscout {
+                            if settings.selectedService == .nightscout {
                                 HStack(alignment: .firstTextBaseline, spacing: 0) {
                                     Text("https://").foregroundColor(Color(.lightGray))
                                     TextField("Nightscout URL", text: $settings.nightscoutSite)
@@ -123,7 +123,7 @@ struct OnlineView: View {
                                     SecureField("token", text: $settings.nightscoutToken)
                                 }
 
-                            } else if app.selectedService == .libreLinkUp {
+                            } else if settings.selectedService == .libreLinkUp {
                                 HStack(alignment: .firstTextBaseline, spacing: 0) {
                                     Text("email: ").foregroundColor(Color(.lightGray))
                                     TextField("email", text: $settings.libreLinkUpEmail)
@@ -228,7 +228,7 @@ struct OnlineView: View {
                         .padding(.horizontal, 15)
 #endif
 
-                    if app.selectedService == .nightscout {
+                    if settings.selectedService == .nightscout {
 
                         WebView(site: settings.nightscoutSite, query: "token=\(settings.nightscoutToken)", delegate: app.main?.nightscout )
                             .frame(height: UIScreen.main.bounds.size.height * 0.60)
@@ -255,7 +255,7 @@ struct OnlineView: View {
                     }
 
 
-                    if app.selectedService == .libreLinkUp {
+                    if settings.selectedService == .libreLinkUp {
                         VStack {
                             ScrollView(showsIndicators: true) {
                                 Text(libreLinkUpResponse)

@@ -9,7 +9,7 @@ struct ContentView: View {
 
     var body: some View {
 
-        TabView(selection: $app.selectedTab) {
+        TabView(selection: $settings.selectedTab) {
             Monitor()
                 .tabItem {
                     Label("Monitor", systemImage: "gauge")

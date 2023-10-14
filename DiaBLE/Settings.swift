@@ -6,8 +6,9 @@ class Settings: ObservableObject {
     static let defaults: [String: Any] = [
         "preferredTransmitter": TransmitterType.none.id,
         "preferredDevicePattern": BLE.knownDevicesIds.joined(separator: " "),
-        "activeTransmitterIdentifier": "",
         "stoppedBluetooth": false,
+
+        "selectedTab": Tab.monitor.rawValue,
 
         "readingInterval": 5,
 
@@ -42,6 +43,7 @@ class Settings: ObservableObject {
         "libreLinkUpFollowing": false,
         "libreLinkUpScrapingLogbook": false,
 
+        "selectedService": OnlineService.libreLinkUp.rawValue,
         "onlineInterval": 5,
         "lastOnlineDate": Date.distantPast,
 
@@ -85,12 +87,12 @@ class Settings: ObservableObject {
         didSet { UserDefaults.standard.set(self.preferredDevicePattern, forKey: "preferredDevicePattern") }
     }
 
-    @Published var activeTransmitterIdentifier: String = UserDefaults.standard.string(forKey: "activeTransmitterIdentifier")! {
-        didSet { UserDefaults.standard.set(self.activeTransmitterIdentifier, forKey: "activeTransmitterIdentifier") }
-    }
-
     @Published var stoppedBluetooth: Bool = UserDefaults.standard.bool(forKey: "stoppedBluetooth") {
         didSet { UserDefaults.standard.set(self.stoppedBluetooth, forKey: "stoppedBluetooth") }
+    }
+
+    @Published var selectedTab: Tab = Tab(rawValue: UserDefaults.standard.string(forKey: "selectedTab")!)! {
+        didSet { UserDefaults.standard.set(self.selectedTab.rawValue, forKey: "selectedTab") }
     }
 
     @Published var readingInterval: Int = UserDefaults.standard.integer(forKey: "readingInterval") {
@@ -197,6 +199,10 @@ class Settings: ObservableObject {
 
     @Published var libreLinkUpScrapingLogbook: Bool = UserDefaults.standard.bool(forKey: "libreLinkUpScrapingLogbook") {
         didSet { UserDefaults.standard.set(self.libreLinkUpScrapingLogbook, forKey: "libreLinkUpScrapingLogbook") }
+    }
+
+    @Published var selectedService: OnlineService = OnlineService(rawValue: UserDefaults.standard.string(forKey: "selectedService")!)! {
+        didSet { UserDefaults.standard.set(self.selectedService.rawValue, forKey: "selectedService") }
     }
 
     @Published var onlineInterval: Int = UserDefaults.standard.integer(forKey: "onlineInterval") {

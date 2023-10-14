@@ -36,11 +36,11 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
 
         UserDefaults.standard.register(defaults: Settings.defaults)
 
-        app = AppState()
+        settings = Settings()
         logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Debug")
         log = Log()
         history = History()
-        settings = Settings()
+        app = AppState()
 
         bluetoothDelegate = BluetoothDelegate()
         centralManager = CBCentralManager(delegate: bluetoothDelegate,

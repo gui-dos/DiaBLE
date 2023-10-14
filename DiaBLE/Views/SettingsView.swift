@@ -103,7 +103,7 @@ struct SettingsView: View {
                 Spacer()
 
                 Button {
-                    app.selectedTab = (settings.preferredTransmitter != .none) ? .monitor : .console
+                    settings.selectedTab = (settings.preferredTransmitter != .none) ? .monitor : .console
                     app.main.rescan()
                 } label: {
                     Text("Rescan").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))

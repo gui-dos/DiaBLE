@@ -12,7 +12,7 @@ struct ContentView: View {
 
         NavigationStack {
 
-            TabView(selection: $app.selectedTab) {
+            TabView(selection: $settings.selectedTab) {
 
                 SettingsView()
                     .tabItem {
