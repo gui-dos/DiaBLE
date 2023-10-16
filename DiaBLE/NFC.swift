@@ -765,14 +765,25 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
             // getting 64 0xA5 bytes from A2-A7, AB-C7, CA-DF
             // getting 22 bytes from AA: 44 4f 43 34 32 37 31 35 2d 31 30 31 11 26 20 12 09 00 80 67 73 e0
             //                          (leading `DOC42715-101` and final CRC)
+            // getting 17 bytes from AB when activated by a reader, i.e. a5 00 ff 1f 00 00 00 00 00 00 1e 02 04 01 04 40 c0 (final CRC when excluding A5 00)
+            // getting 5  bytes from AC when activated by a reader, i.e. 23 03 14 95 85  (final CRC)
             // getting zeros from standard read command 0x23
 
         }
 
         if sensor.type == .libre3 {
             do {
-                let aa = try await send(NFCCommand(code: 0xAA))
-                log("NFC: Libre 3 `AA` command output: \(aa.hexBytes), CRC: \(Data(aa.suffix(2).reversed()).hex), computed CRC: \(aa.prefix(aa.count-2).crc16.hex), string: \"\(aa.string)\"")
+                for c in [0xAA, 0xAB, 0xAC] {
+                    var output = try await send(NFCCommand(code: c))
+                    var msg = "NFC: Libre 3 `\(c.hex)` command output: \(output.hexBytes)"
+                    if output.count > 2 {
+                        if output[0] == 0xA5 {
+                            output = Data(output.dropFirst(2))
+                        }
+                        msg += ", CRC: \(Data(output.suffix(2).reversed()).hex), computed CRC: \(output.prefix(output.count-2).crc16.hex), string: \"\(output.string)\""
+                    }
+                    log(msg)
+                }
                 let params = "0102030405060708090A0B0C0D0E0F10".bytes
                 for c in [0xA9, 0xC8, 0xC9] {
                     for p in 1 ... 16 {
