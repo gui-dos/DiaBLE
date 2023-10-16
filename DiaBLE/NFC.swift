@@ -765,7 +765,8 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
             // getting 64 0xA5 bytes from A2-A7, AB-C7, CA-DF
             // getting 22 bytes from AA: 44 4f 43 34 32 37 31 35 2d 31 30 31 11 26 20 12 09 00 80 67 73 e0
             //                          (leading `DOC42715-101` and final CRC)
-            // getting 17 bytes from AB when activated by a reader, i.e. a5 00 ff 1f 00 00 00 00 00 00 1e 02 04 01 04 40 c0 (final CRC when excluding A5 00)
+            // getting 17 bytes from AB when activated by a reader, i.e. a5 00 ff 1f 00 00 00 00 00 00 1e 02 04 01 04 40 c0
+            //                                                                                         [firmware ]    [CRC]
             // getting 5  bytes from AC when activated by a reader, i.e. 23 03 14 95 85  (final CRC)
             // getting zeros from standard read command 0x23
 
@@ -781,6 +782,11 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                             output = Data(output.dropFirst(2))
                         }
                         msg += ", CRC: \(Data(output.suffix(2).reversed()).hex), computed CRC: \(output.prefix(output.count-2).crc16.hex), string: \"\(output.string)\""
+                        if c == 0xAB {
+                            let fwVersion = output.subdata(in: 8 ..< 12)
+                            let firmware = "\(fwVersion[3]).\(fwVersion[2]).\(fwVersion[1]).\(fwVersion[0])"
+                            msg += ", firmware version: \(firmware) (0x\(fwVersion.hex))"
+                        }
                     }
                     log(msg)
                 }
