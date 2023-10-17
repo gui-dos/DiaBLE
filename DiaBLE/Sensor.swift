@@ -21,26 +21,26 @@ enum SensorType: String, CustomStringConvertible {
     case unknown      = "Libre"
 
     init(patchInfo: PatchInfo) {
-        switch patchInfo[0] {
-        case 0xDF, 0xA2: self = .libre1
-        case 0xE5, 0xE6: self = .libreUS14day
-        case 0x70:       self = .libreProH
-        case 0x9D, 0xC5: self = .libre2
-        case 0x76: self =
+        self = switch patchInfo[0] {
+        case 0xDF, 0xA2: .libre1
+        case 0xE5, 0xE6: .libreUS14day
+        case 0x70:       .libreProH
+        case 0x9D, 0xC5: .libre2
+        case 0x76, 0x2B:
             patchInfo[3] == 2 ? .libre2US :
             patchInfo[3] == 4 ? .libre2CA :
             patchInfo[2] >> 4 == 7 ? .libreSense :
                 .unknown
         default:
             if patchInfo.count == 24 {
-                self = .libre3
+                .libre3
             } else {
-                self = .unknown
+                .unknown
             }
         }
     }
 
-    var description: String { self.rawValue }
+    var description: String { rawValue }
 }
 
 
