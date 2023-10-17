@@ -37,13 +37,13 @@ struct ContentView: View {
                     Label("Data", systemImage: "tray.full.fill")
                 }.tag(Tab.data)
 
-            // Plan()
-            //     .tabItem {
-            //         Image(systemName: "map")
-            //         Text("Plan")
-            // }.tag(Tab.plan)
+            Plan()
+                .tabItem {
+                    Label("Plan", systemImage: "map")
+                }.tag(Tab.plan)
 
         }
+        .toolbarRole(.navigationStack)
     }
 }
 

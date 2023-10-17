@@ -8,7 +8,6 @@ FIXME
     (https://developer.apple.com/forums/thread/109947)
 * iOS 16:
   - *"This method should not be called on the main thread as it may lead to UI unresponsiveness"* warning for `App.swift`
-* `@AppStorage(selectedTab)` prevents managing the "More..." fifth tab item
 
 
 TODO
