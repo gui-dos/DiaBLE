@@ -29,17 +29,8 @@ enum NFCError: LocalizedError {
 
 extension Sensor {
 
-    var backdoor: Data {
-        switch self.type {
-        case .libre1:    Data([0xc2, 0xad, 0x75, 0x21])
-        default:         Data([0xde, 0xad, 0xbe, 0xef])
-        }
-    }
-
     var activationCommand: NFCCommand {
         switch self.type {
-        case .libre1:
-            NFCCommand(code: 0xA0, parameters: backdoor, description: "activate")
         case .libre2:
             nfcCommand(.activate)
         case .libre3:
@@ -51,11 +42,6 @@ extension Sensor {
 
     var universalCommand: NFCCommand    { NFCCommand(code: 0xA1, description: "A1 universal prefix") }
     var getPatchInfoCommand: NFCCommand { NFCCommand(code: 0xA1, description: "get patch info") }
-
-    // Libre 1
-    var lockCommand: NFCCommand         { NFCCommand(code: 0xA2, parameters: backdoor, description: "lock") }
-    var readRawCommand: NFCCommand      { NFCCommand(code: 0xA3, parameters: backdoor, description: "read raw") }
-    var unlockCommand: NFCCommand       { NFCCommand(code: 0xA4, parameters: backdoor, description: "unlock") }
 
     // Libre 2
     // SEE: custom commands C0-C4 in TI RF430FRL15xH Firmware User's Guide
@@ -152,7 +138,6 @@ extension Error {
 enum TaskRequest {
     case enableStreaming
     case readFRAM
-    case dump
     case activate
 }
 
@@ -370,7 +355,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
                 }
 
-                if taskRequest == .dump || taskRequest == .activate {
+                if taskRequest == .activate {
 
                     var invalidateMessage = ""
 
@@ -580,135 +565,9 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
     }
 
 
-    // MARK: - Libre 1
-
-    func readRaw(_ address: Int, _ bytes: Int) async throws -> (Int, Data) {
-
-        if sensor.type != .libre1 {
-            debugLog("readRaw() A3 command not supported by \(sensor.type)")
-            throw NFCError.commandNotSupported
-        }
-
-        var buffer = Data()
-        var remainingBytes = bytes
-        let retries = 5
-        var retry = 0
-
-        while remainingBytes > 0 && retry <= retries {
-
-            let addressToRead = address + buffer.count
-            let bytesToRead = min(remainingBytes, 24)
-
-            var remainingWords = remainingBytes / 2
-            if remainingBytes % 2 == 1 || ( remainingBytes % 2 == 0 && addressToRead % 2 == 1 ) { remainingWords += 1 }
-            let wordsToRead = min(remainingWords, 12)   // real limit is 15
-
-            let readRawCommand = NFCCommand(code: 0xA3, parameters: sensor.backdoor + [UInt8(addressToRead & 0xFF), UInt8(addressToRead >> 8), UInt8(wordsToRead)])
-
-            if buffer.count == 0 { debugLog("NFC: sending '\(readRawCommand.code.hex) \(readRawCommand.parameters.hex)' custom command (\(sensor.type) read raw)") }
-
-            do {
-                let output = try await connectedTag?.customCommand(requestFlags: .highDataRate, customCommandCode: readRawCommand.code, customRequestParameters: readRawCommand.parameters)
-                var data = Data(output!)
-
-                if addressToRead % 2 == 1 { data = data.subdata(in: 1 ..< data.count) }
-                if data.count - bytesToRead == 1 { data = data.subdata(in: 0 ..< data.count - 1) }
-
-                buffer += data
-                remainingBytes -= data.count
-
-            } catch {
-                debugLog("NFC: error while reading \(wordsToRead) words at raw memory 0x\(addressToRead.hex): \(error.localizedDescription) (ISO 15693 error 0x\(error.iso15693Code.hex): \(error.iso15693Description))")
-
-                retry += 1
-                if retry <= retries {
-                    AudioServicesPlaySystemSound(1520)    // "pop" vibration
-                    log("NFC: retry # \(retry)...")
-                    try await Task.sleep(nanoseconds: 250_000_000)
-                } else {
-                    throw NFCError.customCommandError
-                }
-            }
-        }
-
-        return (address, buffer)
-
-    }
-
-
     func execute(_ taskRequest: TaskRequest) async throws {
 
         switch taskRequest {
-
-
-        case .dump:
-
-            // Libre 1 memory layout:
-            // config: 0x1A00, 64    (sensor UID and calibration info)
-            // sram:   0x1C00, 512
-            // rom:    0x4400 - 0x5FFF
-            // fram lock table: 0xF840, 32
-            // fram:   0xF860, 1952
-
-            do {
-                var (address, data) = try await readRaw(0x1A00, 64)
-                log(data.hexDump(header: "Config RAM (patch UID at 0x1A08):", address: address))
-                (address, data) = try await readRaw(0x1C00, 512)
-                log(data.hexDump(header: "SRAM:", address: address))
-                if sensor.type == .libre1 {
-                    (address, data) = try await readRaw(0xFFAC, 36)
-                    log(data.hexDump(header: "Patch table for A0-A4 E0-E2 commands:", address: address))
-                    (address, data) = try await readRaw(0xF860, 244 * 8)
-                    log(data.hexDump(header: "FRAM:", address: address))
-                }
-            } catch {}
-
-            do {
-                let (start, data) = try await read(fromBlock: 0, count: 43 + (sensor.type == .libre1 ? 201 : 0))
-                log(data.hexDump(header: "ISO 15693 FRAM blocks:", startBlock: start))
-                sensor.fram = Data(data)
-                if sensor.encryptedFram.count > 0 && sensor.fram.count >= 344 {
-                    log("\(sensor.fram.hexDump(header: "Decrypted FRAM:", startBlock: 0))")
-                }
-            } catch {
-            }
-
-            /// count is limited to 89 with an encrypted sensor (header as first 3 blocks);
-            /// after sending the A1 1A subcommand the FRAM is decrypted in-place
-            /// and mirrored in the last 43 blocks of 89 but the max count becomes 1252
-            var count = sensor.encryptedFram.count > 0 ? 89 : 1252
-            if sensor.securityGeneration > 1 { count = 43 }
-
-            let command = sensor.securityGeneration > 1 ? "A1 21" : "B0/B3"
-
-            do {
-
-                let (start, data) = try await readBlocks(from: 0, count: count)
-
-                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-
-                let blocks = data.count / 8
-
-                log(data.hexDump(header: "\'\(command)' command output (\(blocks) blocks):", startBlock: start))
-
-                // await main actor
-                if settings.userLevel > .basic {
-                    let bytes = min(89 * 8 + 34 + 10, data.count)
-                    var offset = 0
-                    var i = offset + 2
-                    while offset < bytes - 3 && i < bytes - 1 {
-                        if UInt16(data[offset ... offset + 1]) == data[offset + 2 ... i + 1].crc16 {
-                            log("CRC matches for \(i - offset + 2) bytes at #\((offset / 8).hex) [\(offset + 2)...\(i + 1)] \(data[offset ... offset + 1].hex) = \(data[offset + 2 ... i + 1].crc16.hex)\n\(data[offset ... i + 1].hexDump(header: "\(libre2DumpMap[offset]?.1 ?? "[???]"):", address: 0))")
-                            offset = i + 2
-                            i = offset
-                        }
-                        i += 2
-                    }
-                }
-
-            } catch {
-                log("NFC: 'read blocks \(command)' command error: \(error.localizedDescription) (ISO 15693 error 0x\(error.iso15693Code.hex): \(error.iso15693Description))")
-            }
 
 
         case .activate:

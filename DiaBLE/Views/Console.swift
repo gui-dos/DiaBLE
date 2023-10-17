@@ -164,18 +164,6 @@ struct Console: View {
                     }
 
 
-                    Button {
-                        if app.main.nfc.isAvailable {
-                            settings.logging = true
-                            app.main.nfc.taskRequest = .dump
-                        } else {
-                            showingNFCAlert = true
-                        }
-                    } label: {
-                        Label("Dump Memory", systemImage: "cpu")
-                    }
-
-
                 } label: {
                     VStack(spacing: 0) {
                         Image(systemName: "wrench.and.screwdriver")
