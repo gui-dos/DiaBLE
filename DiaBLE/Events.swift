@@ -64,9 +64,9 @@ class EventKit: Logging {
             if currentGlucose != 0 {
                 title += "  \(self.settings.displayingMillimoles ? GlucoseUnit.mmoll : GlucoseUnit.mgdl)"
 
-                let oopAlarm = self.main.app.oopAlarm
-                if oopAlarm != .unknown {
-                    title += "  \(oopAlarm.shortDescription)"
+                let alarm = self.main.app.glycemicAlarm
+                if alarm != .unknown {
+                    title += "  \(alarm.shortDescription)"
                 } else {
                     if currentGlucose > Int(self.settings.alarmHigh) {
                         title += "  HIGH"

@@ -404,7 +404,7 @@ extension Libre3 {
 
     }
 
-    // OOP.Alarm
+    // same as App's GlycemicAlarm
     enum GlycemicAlarmStatus: Int {
         case alarmNotDetermined   = 0
         case lowGlucose           = 1

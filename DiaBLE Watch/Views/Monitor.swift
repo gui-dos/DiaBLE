@@ -73,8 +73,8 @@ struct Monitor: View {
 
                     }
 
-                    if app.oopAlarm.description.count + app.oopTrend.description.count != 0 {
-                        Text("\(app.oopAlarm.description.replacingOccurrences(of: "_", with: " "))\(app.oopAlarm.description != "" ? " - " : "")\(app.oopTrend.description.replacingOccurrences(of: "_", with: " "))")
+                    if app.glycemicAlarm.description.count + app.oopTrend.description.count != 0 {
+                        Text("\(app.glycemicAlarm.description.replacingOccurrences(of: "_", with: " "))\(app.glycemicAlarm.description != "" ? " - " : "")\(app.oopTrend.description.replacingOccurrences(of: "_", with: " "))")
                             .font(.footnote).foregroundColor(.blue).lineLimit(1)
                             .padding(.vertical, -3)
                     }
