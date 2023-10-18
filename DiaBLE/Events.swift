@@ -76,9 +76,9 @@ class EventKit: Logging {
                     }
                 }
 
-                let oopTrend = self.main.app.oopTrend
-                if oopTrend != .unknown {
-                    title += "  \(oopTrend.symbol)"
+                let trendArrow = self.main.app.trendArrow
+                if trendArrow != .unknown {
+                    title += "  \(trendArrow.symbol)"
                 }
 
                 // TODO: delta

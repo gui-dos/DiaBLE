@@ -41,7 +41,7 @@ struct GlucoseMeasurement: Codable {
     let type: Int  //  0: graph, 1: logbook, 2: alarm, 3: hybrid
     let alarmType: Int?  // when type = 3  0: fixedLow, 1: low, 2: high
     let valueInMgPerDl: Int
-    let trendArrow: OOP.TrendArrow?    // in logbook but not in graph data
+    let trendArrow: TrendArrow?    // in logbook but not in graph data
     let trendMessage: String?
     let measurementColor: MeasurementColor
     let glucoseUnits: Int
@@ -55,7 +55,7 @@ struct GlucoseMeasurement: Codable {
 struct LibreLinkUpGlucose: Identifiable, Codable {
     let glucose: Glucose
     let color: MeasurementColor
-    let trendArrow: OOP.TrendArrow?
+    let trendArrow: TrendArrow?
     var id: Int { glucose.id }
 }
 
@@ -368,7 +368,7 @@ class LibreLinkUp: Logging {
                             debugLog("LibreLinkUp: last glucose measurement: \(measurement) (JSON: \(lastGlucoseMeasurement))")
                             if lastGlucose.trendArrow != nil {
                                 DispatchQueue.main.async {
-                                    self.main.app.oopTrend = lastGlucose.trendArrow!
+                                    self.main.app.trendArrow = lastGlucose.trendArrow!
                                 }
                             }
                             // TODO: scrape historic data only when the 17-minute delay has passed

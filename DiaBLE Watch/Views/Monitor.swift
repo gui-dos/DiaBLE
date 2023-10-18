@@ -65,7 +65,7 @@ struct Monitor: View {
                                     Text("\(app.trendDeltaMinutes)m").font(.footnote)
                                 }.frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 10)
                             } else {
-                                Text(app.oopTrend.symbol).font(.system(size: 28)).bold()
+                                Text(app.trendArrow.symbol).font(.system(size: 28)).bold()
                                     .frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 10)
                             }
                         }.foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && app.trendDelta > 0) || (app.currentGlucose < Int(settings.alarmLow) && app.trendDelta < 0)) ?
@@ -73,8 +73,8 @@ struct Monitor: View {
 
                     }
 
-                    if app.glycemicAlarm.description.count + app.oopTrend.description.count != 0 {
-                        Text("\(app.glycemicAlarm.description.replacingOccurrences(of: "_", with: " "))\(app.glycemicAlarm.description != "" ? " - " : "")\(app.oopTrend.description.replacingOccurrences(of: "_", with: " "))")
+                    if app.glycemicAlarm.description.count + app.trendArrow.description.count != 0 {
+                        Text("\(app.glycemicAlarm.description.replacingOccurrences(of: "_", with: " "))\(app.glycemicAlarm.description != "" ? " - " : "")\(app.trendArrow.description.replacingOccurrences(of: "_", with: " "))")
                             .font(.footnote).foregroundColor(.blue).lineLimit(1)
                             .padding(.vertical, -3)
                     }
