@@ -595,66 +595,68 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
     func testNFCCommands() async {
 
-        var commands: [NFCCommand] = []
+        // Libre 3:
+        // getting 28 bytes from A1: dummy `a5 00` + 24-byte PatchInfo + CRC
+        // getting 0xC1 error from A0, A1 20-22, A8, A9, C8, C9  (A0 and A8 activate a sensor)
+        // getting 64 0xA5 bytes from A2-A7, AB-C7, CA-DF
+        // getting 22 bytes from AA: 44 4f 43 34 32 37 31 35 2d 31 30 31 11 26 20 12 09 00 80 67 73 e0
+        //                          (leading `DOC42715-101` and final CRC)
+        // getting 17 bytes from AB with latest firmware, i.e. a5 00 ff 1f 00 00 00 00 00 00 1e 02 04 01 04 40 c0
+        //                                                                                   [firmware ]    [CRC]
+        // getting 5  bytes from AC with latest firmware, i.e. 23 03 14 95 85  (final CRC)
+        // getting zeros from standard read command 0x23
 
         if settings.userLevel > .basic {
+
+            if sensor.type == .libre3 {
+                for c in [0xAA, 0xAB, 0xAC] {
+                    do {
+                        var output = try await send(NFCCommand(code: c))
+                        var msg = "NFC: Libre 3 `\(c.hex)` command output: \(output.hexBytes)"
+                        if output.count > 2 && output.count != 64 {
+                            if output[0] == 0xA5 {
+                                output = Data(output.dropFirst(2))
+                            }
+                            msg += ", CRC: \(Data(output.suffix(2).reversed()).hex), computed CRC: \(output.prefix(output.count-2).crc16.hex), string: \"\(output.string)\""
+                            if c == 0xAB {
+                                let fwVersion = output.subdata(in: 8 ..< 12)
+                                let firmware = "\(fwVersion[3]).\(fwVersion[2]).\(fwVersion[1]).\(fwVersion[0])"
+                                msg += ", firmware version: \(firmware) (0x\(fwVersion.hex))"
+                            }
+                        }
+                        log(msg)
+                    } catch {
+                        log("NFC: '\(c.hex)' command error: \(error.localizedDescription) (ISO 15693 error 0x\(error.iso15693Code.hex): \(error.iso15693Description))")
+                    }
+                }
+            }
+
+            var commands: [NFCCommand] = []
 
             for c in 0xA0 ... 0xDF {
                 commands.append(NFCCommand(code: c, parameters: Data(), description: c.hex))
             }
 
-            // Libre 3:
-            // getting 28 bytes from A1: dummy `a5 00` + 24-byte PatchInfo + CRC
-            // getting 0xC1 error from A0, A1 20-22, A8, A9, C8, C9  (A0 and A8 activate a sensor)
-            // getting 64 0xA5 bytes from A2-A7, AB-C7, CA-DF
-            // getting 22 bytes from AA: 44 4f 43 34 32 37 31 35 2d 31 30 31 11 26 20 12 09 00 80 67 73 e0
-            //                          (leading `DOC42715-101` and final CRC)
-            // getting 17 bytes from AB with latest firmware, i.e. a5 00 ff 1f 00 00 00 00 00 00 1e 02 04 01 04 40 c0
-            //                                                                                   [firmware ]    [CRC]
-            // getting 5  bytes from AC with latest firmware, i.e. 23 03 14 95 85  (final CRC)
-            // getting zeros from standard read command 0x23
+            let params = "01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10".bytes
 
-        }
-
-        if sensor.type == .libre3 {
-            for c in [0xAA, 0xAB, 0xAC] {
-                do {
-                    var output = try await send(NFCCommand(code: c))
-                    var msg = "NFC: Libre 3 `\(c.hex)` command output: \(output.hexBytes)"
-                    if output.count > 2 && output.count != 64 {
-                        if output[0] == 0xA5 {
-                            output = Data(output.dropFirst(2))
-                        }
-                        msg += ", CRC: \(Data(output.suffix(2).reversed()).hex), computed CRC: \(output.prefix(output.count-2).crc16.hex), string: \"\(output.string)\""
-                        if c == 0xAB {
-                            let fwVersion = output.subdata(in: 8 ..< 12)
-                            let firmware = "\(fwVersion[3]).\(fwVersion[2]).\(fwVersion[1]).\(fwVersion[0])"
-                            msg += ", firmware version: \(firmware) (0x\(fwVersion.hex))"
-                        }
-                    }
-                    log(msg)
-                } catch {
-                    log("NFC: '\(c.hex)' command error: \(error.localizedDescription) (ISO 15693 error 0x\(error.iso15693Code.hex): \(error.iso15693Description))")
+            for c in [0xA9, 0xC8, 0xC9] {
+                for p in 1 ... 16 {
+                    commands.append(NFCCommand(code: c, parameters: params.prefix(p), description: "\(c.hex) \(params.prefix(p).hex)"))
                 }
             }
+
+            for cmd in commands {
+                log("NFC: sending \(sensor.type) '\(cmd.description)' command: code: 0x\(cmd.code.hex), parameters: \(cmd.parameters.count == 0 ? "[]" : "0x\(cmd.parameters.hex)")")
+                do {
+                    let output = try await connectedTag!.customCommand(requestFlags: .highDataRate, customCommandCode: cmd.code, customRequestParameters: cmd.parameters)
+                    log("NFC: '\(cmd.description)' command output (\(output.count) bytes): 0x\(output.hex)")
+                } catch {
+                    log("NFC: '\(cmd.description)' command error: \(error.localizedDescription) (ISO 15693 error 0x\(error.iso15693Code.hex): \(error.iso15693Description))")
+                }
+            }
+
         }
 
-        let params = "01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10".bytes
-        for c in [0xA9, 0xC8, 0xC9] {
-            for p in 1 ... 16 {
-                commands.append(NFCCommand(code: c, parameters: params.prefix(p), description: "\(c.hex) \(params.prefix(p).hex)"))
-            }
-        }
-
-        for cmd in commands {
-            log("NFC: sending \(sensor.type) '\(cmd.description)' command: code: 0x\(cmd.code.hex), parameters: \(cmd.parameters.count == 0 ? "[]" : "0x\(cmd.parameters.hex)")")
-            do {
-                let output = try await connectedTag!.customCommand(requestFlags: .highDataRate, customCommandCode: cmd.code, customRequestParameters: cmd.parameters)
-                log("NFC: '\(cmd.description)' command output (\(output.count) bytes): 0x\(output.hex)")
-            } catch {
-                log("NFC: '\(cmd.description)' command error: \(error.localizedDescription) (ISO 15693 error 0x\(error.iso15693Code.hex): \(error.iso15693Description))")
-            }
-        }
     }
 
 }
