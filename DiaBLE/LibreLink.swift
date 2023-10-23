@@ -38,13 +38,13 @@ enum MeasurementColor: Int, Codable {
 struct GlucoseMeasurement: Codable {
     let factoryTimestamp: String
     let timestamp: String
-    let type: Int  //  0: graph, 1: logbook, 2: alarm, 3: hybrid
-    let alarmType: Int?  // when type = 3  0: fixedLow, 1: low, 2: high
+    let type: Int                // 0: graph, 1: logbook, 2: alarm, 3: hybrid
+    let alarmType: Int?          // when type = 3  0: fixedLow, 1: low, 2: high
     let valueInMgPerDl: Int
-    let trendArrow: TrendArrow?    // in logbook but not in graph data
+    let trendArrow: TrendArrow?  // in logbook but not in graph data
     let trendMessage: String?
     let measurementColor: MeasurementColor
-    let glucoseUnits: Int
+    let glucoseUnits: Int        // 0: mmoll, 1: mgdl
     let value: Int
     let isHigh: Bool
     let isLow: Bool
@@ -83,9 +83,11 @@ class LibreLinkUp: Logging {
     let connectionsEndpoint = "llu/connections"
     let measurementsEndpoint = "lsl/api/measurements"
 
-    let regions = ["ae", "ap", "au", "ca", "de", "eu", "eu2", "fr", "jp", "us"]
+    let regions = ["ae", "ap", "au", "ca", "de", "eu", "eu2", "fr", "jp", "us"]  // eu2: GB and IE
 
     var regionalSiteURL: String { "https://api-\(settings.libreLinkUpRegion).libreview.io" }
+
+    var unit: GlucoseUnit = .mgdl
 
     let headers = [
         "User-Agent": "Mozilla/5.0",
@@ -118,7 +120,7 @@ class LibreLinkUp: Logging {
         let jsonData = try? JSONSerialization.data(withJSONObject: credentials)
         request.httpBody = jsonData
         do {
-            var redirected = false
+            var redirected: Bool
         loop: repeat {
             redirected = false
             debugLog("LibreLinkUp: posting to \(request.url!.absoluteString) \(jsonData!.string), headers: \(headers)")
@@ -284,6 +286,8 @@ class LibreLinkUp: Logging {
                    let data = json["data"] as? [String: Any],
                    let connection = data["connection"] as? [String: Any] {
                     log("LibreLinkUp: connection data: \(connection)")
+                    unit = connection["uom"] as? Int ?? 1 == 1 ? .mgdl : .mmoll
+                    log("LibreLinkUp: measurement unit: \(unit)")
                     var deviceSerials: [String: String] = [:]
                     var deviceActivationTimes: [String: Int] = [:]
                     var deviceTypes: [String: SensorType] = [:]
@@ -342,20 +346,21 @@ class LibreLinkUp: Logging {
                                 await self.main.app.sensor.serial = serial
                             }
                         }
-                        if await main.app.sensor.serial.hasSuffix(serial) || deviceTypes.count == 1 {
+                        let sensor = await main.app.sensor!
+                        if sensor.serial.hasSuffix(serial) || deviceTypes.count == 1 {
                             DispatchQueue.main.async {
-                                self.main.app.sensor.activationTime = UInt32(activationTime)
-                                self.main.app.sensor.age = Int(Date().timeIntervalSince(activationDate)) / 60
-                                self.main.app.sensor.state = .active
-                                self.main.app.sensor.lastReadingDate = Date()
-                                if self.main.app.sensor.type == .libre3 {
-                                    self.main.app.sensor.serial = serial
-                                    self.main.app.sensor.maxLife = 20160
+                                sensor.activationTime = UInt32(activationTime)
+                                sensor.age = Int(Date().timeIntervalSince(activationDate)) / 60
+                                sensor.state = .active
+                                sensor.lastReadingDate = Date()
+                                if sensor.type == .libre3 {
+                                    sensor.serial = serial
+                                    sensor.maxLife = 20160
                                     let receiverId = self.settings.libreLinkUpPatientId.fnv32Hash
-                                    (self.main.app.sensor as! Libre3).receiverId = receiverId
+                                    (sensor as! Libre3).receiverId = receiverId
                                     self.log("LibreLinkUp: LibreView receiver ID: \(receiverId)")
                                 }
-                                self.main.status("\(self.main.app.sensor.type)  +  LLU")
+                                self.main.status("\(sensor.type)  +  LLU")
                             }
                         }
                         log("LibreLinkUp: sensor serial: \(serial), activation date: \(activationDate) (timestamp = \(activationTime)), device id: \(deviceId), sensor type: \(sensorType), alarms: \(alarms)")
