@@ -123,7 +123,6 @@ enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
 
     var currentGlucose: Int = 0
     var lastReadingDate: Date = Date.distantPast
-    var oopGlucose: Int = 0
     var glycemicAlarm: GlycemicAlarm = .unknown
     var trendArrow: TrendArrow = .unknown
     var trendDelta: Int = 0
@@ -220,7 +219,6 @@ extension AppState {
         app.currentGlucose = 234
         app.trendDelta = -12
         app.trendDeltaMinutes = 6
-        app.oopGlucose = 234
         app.glycemicAlarm = .highGlucose
         app.trendArrow = .falling
         app.deviceState = "Connected"
