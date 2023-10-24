@@ -364,17 +364,16 @@ struct Details: View {
 }
 
 
-struct Details_Preview: PreviewProvider {
-    static var previews: some View {
-        Group {
-            Details()
-                .environment(AppState.test(tab: .monitor))
-                .environment(Settings())
-            NavigationView {
-                Details()
-                    .environment(AppState.test(tab: .monitor))
-                    .environment(Settings())
-            }
-        }
+#Preview {
+    Details()
+        .environment(AppState.test(tab: .monitor))
+        .environment(Settings())
+}
+
+#Preview {
+    NavigationView {
+        Details()
+            .environment(AppState.test(tab: .monitor))
+            .environment(Settings())
     }
 }

@@ -178,13 +178,8 @@ struct SettingsView: View {
 }
 
 
-struct SettingsView_Previews: PreviewProvider {
-
-    static var previews: some View {
-        Group {
-            SettingsView()
-                .environment(AppState.test(tab: .settings))
-                .environment(Settings())
-        }
-    }
+#Preview {
+    SettingsView()
+        .environment(AppState.test(tab: .settings))
+        .environment(Settings())
 }

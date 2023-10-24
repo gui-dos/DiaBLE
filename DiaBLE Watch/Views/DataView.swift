@@ -175,15 +175,10 @@ struct DataView: View {
 }
 
 
-struct DataView_Previews: PreviewProvider {
-
-    static var previews: some View {
-        Group {
-            DataView()
-                .environment(AppState.test(tab: .data))
-                .environment(History.test)
-                .environment(Log())
-                .environment(Settings())
-        }
-    }
+#Preview {
+    DataView()
+        .environment(AppState.test(tab: .data))
+        .environment(Log())
+        .environment(History.test)
+        .environment(Settings())
 }

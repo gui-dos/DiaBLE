@@ -241,14 +241,9 @@ struct Console: View {
 }
 
 
-struct Console_Previews: PreviewProvider {
-
-    static var previews: some View {
-        Group {
-            Console()
-                .environment(AppState.test(tab: .console))
-                .environment(Log())
-                .environment(Settings())
-        }
-    }
+#Preview {
+    Console()
+        .environment(AppState.test(tab: .console))
+        .environment(Log())
+        .environment(Settings())
 }

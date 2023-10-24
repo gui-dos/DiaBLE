@@ -201,16 +201,17 @@ struct LogEntry: Identifiable {
 extension AppState {
     static func test(tab: Tab) -> AppState {
 
-        let app = AppState()
+        let main = MainDelegate()
+        let app = main.app
 
-        let transmitter = Abbott()
+        let transmitter = Abbott(main: main)
         transmitter.type = .transmitter(.abbott); transmitter.name = "Thingy"; transmitter.battery = 54; transmitter.rssi =  -75; transmitter.firmware = "4.56"; transmitter.manufacturer = "Acme Inc."; transmitter.hardware = "2.3"; transmitter.macAddress = Data([0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF]); transmitter.state = .connected; transmitter.lastConnectionDate = Date() - 5
         app.transmitter = transmitter
         app.device = app.transmitter
         app.lastConnectionDate = transmitter.lastConnectionDate
         app.lastReadingDate = transmitter.lastConnectionDate
 
-        let sensor = Sensor()
+        let sensor = Sensor(transmitter: transmitter, main: main)
         sensor.state = .active; sensor.serial = "3MH001DG75W"; sensor.age = 18705; sensor.uid = "2fe7b10000a407e0".bytes; sensor.patchInfo = "9d083001712b".bytes
         app.sensor = sensor
         app.device.serial = sensor.serial

@@ -339,14 +339,9 @@ struct OnlineView: View {
 }
 
 
-struct OnlineView_Previews: PreviewProvider {
-
-    static var previews: some View {
-        Group {
-            OnlineView()
-                .environment(AppState.test(tab: .online))
-                .environment(History.test)
-                .environment(Settings())
-        }
-    }
+#Preview {
+    OnlineView()
+        .environment(AppState.test(tab: .online))
+        .environment(History.test)
+        .environment(Settings())
 }

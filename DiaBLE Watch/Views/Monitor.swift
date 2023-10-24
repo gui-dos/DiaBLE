@@ -220,15 +220,10 @@ struct Monitor: View {
 }
 
 
-struct Monitor_Previews: PreviewProvider {
-
-    static var previews: some View {
-        Group {
-            Monitor()
-                .environment(AppState.test(tab: .monitor))
-                .environment(Log())
-                .environment(History.test)
-                .environment(Settings())
-        }
-    }
+#Preview {
+    Monitor()
+        .environment(AppState.test(tab: .monitor))
+        .environment(Log())
+        .environment(History.test)
+        .environment(Settings())
 }

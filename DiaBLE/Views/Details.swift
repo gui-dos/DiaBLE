@@ -383,19 +383,18 @@ struct Details: View {
 }
 
 
-struct Details_Preview: PreviewProvider {
-    static var previews: some View {
-        Group {
-            Details()
-                .preferredColorScheme(.dark)
-                .environment(AppState.test(tab: .monitor))
-                .environment(Settings())
-            NavigationView {
-                Details()
-                    .preferredColorScheme(.dark)
-                    .environment(AppState.test(tab: .monitor))
-                    .environment(Settings())
-            }
-        }
+#Preview {
+    Details()
+        .preferredColorScheme(.dark)
+        .environment(AppState.test(tab: .monitor))
+        .environment(Settings())
+}
+
+#Preview {
+    NavigationView {
+        Details()
+            .preferredColorScheme(.dark)
+            .environment(AppState.test(tab: .monitor))
+            .environment(Settings())
     }
 }

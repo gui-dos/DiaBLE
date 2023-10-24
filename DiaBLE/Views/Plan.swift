@@ -54,9 +54,9 @@ struct Plan: View {
 
 
 #Preview {
-    Plan()
+    ContentView()
         .preferredColorScheme(.dark)
-        .environment(AppState.test(tab: .data))
+        .environment(AppState.test(tab: .plan))
         .environment(Log())
         .environment(History.test)
         .environment(Settings())
