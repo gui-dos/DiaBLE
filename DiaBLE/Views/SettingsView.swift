@@ -223,7 +223,7 @@ struct SettingsView: View {
             }
             .font(Font.body.monospacedDigit())
             .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("DiaBLE  \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String)  -  Settings")
+            .navigationTitle("DiaBLE  \(Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String)  -  Settings")
         }.navigationViewStyle(.stack)
     }
 }

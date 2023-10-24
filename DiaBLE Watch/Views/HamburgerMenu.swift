@@ -86,6 +86,9 @@ struct HamburgerMenu: View {
 
                 VStack(spacing: 20) {
                     VStack {
+
+                        Text("DiaBLE  \(Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String)  (\(Bundle.main.infoDictionary!["CFBundleVersion"] as! String))")
+
                         // TODO: get AppIcon 1024x1024
                         // Image("AppIcon").resizable().frame(width: 100, height: 100)
                         // FIXME: crashes in TestFlight (not in Release scheme)
@@ -130,10 +133,12 @@ struct HamburgerMenu: View {
 
             }
             .buttonStyle(.borderless)
-            .navigationTitle("DiaBLE  \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String)")
+            .navigationTitle { Text("DiaBLE") }
+            .accentColor(.blue)
             .navigationBarTitleDisplayMode(.inline)
 
         }
+        .padding(.top, -4)
         .edgesIgnoringSafeArea([.bottom])
 
     }
