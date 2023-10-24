@@ -114,11 +114,14 @@ struct Console: View {
                     }
                 }
             }
-#if targetEnvironment(macCatalyst)
+            #if targetEnvironment(macCatalyst)
             .padding(.horizontal, 15)
-#endif
+            #endif
 
             ConsoleSidebar(showingNFCAlert: $showingNFCAlert)
+            #if targetEnvironment(macCatalyst)
+            .padding(.trailing, 15)
+            #endif
 
         }
         .navigationBarTitleDisplayMode(.inline)
