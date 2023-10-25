@@ -55,8 +55,8 @@ enum OOPError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .noConnection: return "no connection"
-        case .jsonDecoding: return "JSON decoding"
+        case .noConnection: "no connection"
+        case .jsonDecoding: "JSON decoding"
         }
     }
 }
@@ -81,13 +81,13 @@ struct OOP {
 
         var description: String {
             switch self {
-            case .notDetermined:  return "NOT_DETERMINED"
-            case .fallingQuickly: return "FALLING_QUICKLY"
-            case .falling:        return "FALLING"
-            case .stable:         return "STABLE"
-            case .rising:         return "RISING"
-            case .risingQuickly:  return "RISING_QUICKLY"
-            default:              return ""
+            case .notDetermined:  "NOT_DETERMINED"
+            case .fallingQuickly: "FALLING_QUICKLY"
+            case .falling:        "FALLING"
+            case .stable:         "STABLE"
+            case .rising:         "RISING"
+            case .risingQuickly:  "RISING_QUICKLY"
+            default:              ""
             }
         }
 
@@ -103,12 +103,12 @@ struct OOP {
 
         var symbol: String {
             switch self {
-            case .fallingQuickly: return "↓"
-            case .falling:        return "↘︎"
-            case .stable:         return "→"
-            case .rising:         return "↗︎"
-            case .risingQuickly:  return "↑"
-            default:              return "---"
+            case .fallingQuickly: "↓"
+            case .falling:        "↘︎"
+            case .stable:         "→"
+            case .rising:         "↗︎"
+            case .risingQuickly:  "↑"
+            default:              "---"
             }
         }
     }
@@ -124,13 +124,13 @@ struct OOP {
 
         var description: String {
             switch self {
-            case .notDetermined:        return "NOT_DETERMINED"
-            case .lowGlucose:           return "LOW_GLUCOSE"
-            case .projectedLowGlucose:  return "PROJECTED_LOW_GLUCOSE"
-            case .glucoseOK:            return "GLUCOSE_OK"
-            case .projectedHighGlucose: return "PROJECTED_HIGH_GLUCOSE"
-            case .highGlucose:          return "HIGH_GLUCOSE"
-            default:                    return ""
+            case .notDetermined:        "NOT_DETERMINED"
+            case .lowGlucose:           "LOW_GLUCOSE"
+            case .projectedLowGlucose:  "PROJECTED_LOW_GLUCOSE"
+            case .glucoseOK:            "GLUCOSE_OK"
+            case .projectedHighGlucose: "PROJECTED_HIGH_GLUCOSE"
+            case .highGlucose:          "HIGH_GLUCOSE"
+            default:                    ""
             }
         }
 
@@ -146,12 +146,12 @@ struct OOP {
 
         var shortDescription: String {
             switch self {
-            case .lowGlucose:           return "LOW"
-            case .projectedLowGlucose:  return "GOING LOW"
-            case .glucoseOK:            return "OK"
-            case .projectedHighGlucose: return "GOING HIGH"
-            case .highGlucose:          return "HIGH"
-            default:                    return ""
+            case .lowGlucose:           "LOW"
+            case .projectedLowGlucose:  "GOING LOW"
+            case .glucoseOK:            "OK"
+            case .projectedHighGlucose: "GOING HIGH"
+            case .highGlucose:          "HIGH"
+            default:                    ""
             }
         }
     }

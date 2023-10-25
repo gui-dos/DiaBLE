@@ -21,10 +21,10 @@ class Droplet: Transmitter {
 
         var description: String {
             switch self {
-            case .L1:   return "Libre 1"
-            case .L2:   return "Libre 2"
-            case .US14: return "Libre US 14d"
-            case .Lpro: return "Libre Pro"
+            case .L1:   "Libre 1"
+            case .L2:   "Libre 2"
+            case .US14: "Libre US 14d"
+            case .Lpro: "Libre Pro"
             }
         }
     }
@@ -148,18 +148,18 @@ class Limitter: Droplet {
 
         var description: String {
             switch self {
-            case .data:           return "data"
-            case .dataWrite:      return "data write"
-            case .dataRead:       return "data read"
-            case .legacyData:     return "data (legacy)"
-            case .legacyDataRead: return "raw glucose data (legacy)"
-            case .bridgeStatus:   return "bridge connection status"
-            case .lastGlucose:    return "last glucose raw value"
-            case .calibration:    return "calibration"
-            case .glucoseUnit:    return "glucose unit"
-            case .alerts:         return "alerts settings"
-            case .unknown1:       return "unknown 1"
-            case .unknown2:       return "unknown 2 (sensor serial)"
+            case .data:           "data"
+            case .dataWrite:      "data write"
+            case .dataRead:       "data read"
+            case .legacyData:     "data (legacy)"
+            case .legacyDataRead: "raw glucose data (legacy)"
+            case .bridgeStatus:   "bridge connection status"
+            case .lastGlucose:    "last glucose raw value"
+            case .calibration:    "calibration"
+            case .glucoseUnit:    "glucose unit"
+            case .alerts:         "alerts settings"
+            case .unknown1:       "unknown 1"
+            case .unknown2:       "unknown 2 (sensor serial)"
             }
         }
     }
@@ -181,10 +181,10 @@ class Limitter: Droplet {
 
         var description: String {
             switch self {
-            case .dataPacket:      return "data packet"
-            case .newSensor:       return "new sensor"
-            case .noSensor:        return "no sensor"
-            case .frequencyChange: return "frequency change"
+            case .dataPacket:      "data packet"
+            case .newSensor:       "new sensor"
+            case .noSensor:        "no sensor"
+            case .frequencyChange: "frequency change"
             }
         }
     }
@@ -197,10 +197,10 @@ class Limitter: Droplet {
 
         var description: String {
             switch self {
-            case .notConnetced:            return "Not connected"
-            case .connectedInactiveSensor: return "Connected: inactive sensor"
-            case .connectedActiveSensor:   return "Connected: active sensor"
-            case .unknown:                 return "Unknown"
+            case .notConnetced:            "Not connected"
+            case .connectedInactiveSensor: "Connected: inactive sensor"
+            case .connectedActiveSensor:   "Connected: active sensor"
+            case .unknown:                 "Unknown"
             }
         }
     }

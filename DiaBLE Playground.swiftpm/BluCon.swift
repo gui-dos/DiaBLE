@@ -19,9 +19,9 @@ class BluCon: Transmitter {
 
         var description: String {
             switch self {
-            case .data:      return "data"
-            case .dataWrite: return "data write"
-            case .dataRead:  return "data read"
+            case .data:      "data"
+            case .dataWrite: "data write"
+            case .dataRead:  "data read"
             }
         }
     }
@@ -50,19 +50,19 @@ class BluCon: Transmitter {
 
         var description: String {
             switch self {
-            case .ack:            return "ack"
-            case .patchUidInfo:   return "patch uid/info"
-            case .noSensor:       return "no sensor"
-            case .readingError:   return "reading error"
-            case .timeout:        return "timeout"
-            case .sensorInfo:     return "sensor info"
-            case .battery:        return "battery"
-            case .firmware:       return "firmware"
-            case .singleBlock:    return "single block"
-            case .multipleBlocks: return "multiple blocks"
-            case .wakeup:         return "wake up"
-            case .batteryLow1:    return "battery low 1"
-            case .batteryLow2:    return "battery low 2"
+            case .ack:            "ack"
+            case .patchUidInfo:   "patch uid/info"
+            case .noSensor:       "no sensor"
+            case .readingError:   "reading error"
+            case .timeout:        "timeout"
+            case .sensorInfo:     "sensor info"
+            case .battery:        "battery"
+            case .firmware:       "firmware"
+            case .singleBlock:    "single block"
+            case .multipleBlocks: "multiple blocks"
+            case .wakeup:         "wake up"
+            case .batteryLow1:    "battery low 1"
+            case .batteryLow2:    "battery low 2"
             }
         }
     }
@@ -85,16 +85,16 @@ class BluCon: Transmitter {
 
         var description: String {
             switch self {
-            case .none:        return "none"
-            case .ack:         return "ack"
-            case .sleep:       return "sleep"
-            case .wakeupReply: return "wake up response"
-            case .sensorInfo:  return "sensor info"
-            case .fram:        return "fram"
-            case .battery:     return "battery"
-            case .firmware:    return "firmware"
-            case .patchUid:    return "patch uid"
-            case .patchInfo:   return "patch info"
+            case .none:        "none"
+            case .ack:         "ack"
+            case .sleep:       "sleep"
+            case .wakeupReply: "wake up response"
+            case .sensorInfo:  "sensor info"
+            case .fram:        "fram"
+            case .battery:     "battery"
+            case .firmware:    "firmware"
+            case .patchUid:    "patch uid"
+            case .patchInfo:   "patch info"
             }
         }
     }

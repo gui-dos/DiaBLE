@@ -39,15 +39,15 @@ class Libre3: Sensor {
 
         var description: String {
             switch self {
-            case .manufacturing:      return "Manufacturing"
-            case .storage:            return "Not activated"
-            case .insertionDetection: return "Insertion detection"
-            case .insertionFailed:    return "Insertion failed"
-            case .paired:             return "Paired"
-            case .expired:            return "Expired"
-            case .terminated:         return "Terminated"
-            case .error:              return "Error"
-            case .errorTerminated:    return "Terminated (error)"
+            case .manufacturing:      "Manufacturing"
+            case .storage:            "Not activated"
+            case .insertionDetection: "Insertion detection"
+            case .insertionFailed:    "Insertion failed"
+            case .paired:             "Paired"
+            case .expired:            "Expired"
+            case .terminated:         "Terminated"
+            case .error:              "Error"
+            case .errorTerminated:    "Terminated (error)"
             }
         }
     }
@@ -62,9 +62,9 @@ class Libre3: Sensor {
 
         var description: String {
             switch self {
-            case .ok:      return "OK"
-            case .invalid: return "invalid"
-            case .esa:     return "ESA"
+            case .ok:      "OK"
+            case .invalid: "invalid"
+            case .esa:     "ESA"
             }
         }
     }
@@ -76,8 +76,8 @@ class Libre3: Sensor {
 
         var description: String {
             switch self {
-            case .others: return "OTHERS"
-            case .sensor: return "SENSOR"
+            case .others: "OTHERS"
+            case .sensor: "SENSOR"
             }
         }
     }
@@ -91,10 +91,10 @@ class Libre3: Sensor {
 
         var description: String {
             switch self {
-            case .in:      return "in range"
-            case .below:   return "below range"
-            case .above:   return "above range"
-            case .noRange: return "no range"
+            case .in:      "in range"
+            case .below:   "below range"
+            case .above:   "above range"
+            case .noRange: "no range"
             }
         }
     }
@@ -393,20 +393,20 @@ class Libre3: Sensor {
 
         var description: String {
             switch self {
-            case .data:             return "data service"
-            case .patchControl:     return "patch control"
-            case .patchStatus:      return "patch status"
-            case .oneMinuteReading: return "one-minute reading"
-            case .historicalData:   return "historical data"
-            case .clinicalData:     return "clinical data"
-            case .eventLog:         return "event log"
-            case .factoryData:      return "factory data"
-            case .security:         return "security service"
-            case .securityCommands: return "security commands"
-            case .challengeData:    return "challenge data"
-            case .certificateData:  return "certificate data"
-            case .debug:            return "debug service"
-            case .bleLogin:         return "BLE login"
+            case .data:             "data service"
+            case .patchControl:     "patch control"
+            case .patchStatus:      "patch status"
+            case .oneMinuteReading: "one-minute reading"
+            case .historicalData:   "historical data"
+            case .clinicalData:     "clinical data"
+            case .eventLog:         "event log"
+            case .factoryData:      "factory data"
+            case .security:         "security service"
+            case .securityCommands: "security commands"
+            case .challengeData:    "challenge data"
+            case .certificateData:  "certificate data"
+            case .debug:            "debug service"
+            case .bleLogin:         "BLE login"
             }
         }
     }
@@ -517,14 +517,14 @@ class Libre3: Sensor {
 
         var description: String {
             switch self {
-            case .security_01:         return "security 0x01 command"
-            case .security_02:         return "security 0x02 command"
-            case .certificateLoadDone: return "certificate load done"
-            case .challengeLoadDone:   return "challenge load done"
-            case .security_09:         return "security 0x09 command"
-            case .security_0D:         return "security 0x0D command"
-            case .ephemeralLoadDone:   return "ephemeral load done"
-            case .readChallenge:       return "read security challenge"
+            case .security_01:         "security 0x01 command"
+            case .security_02:         "security 0x02 command"
+            case .certificateLoadDone: "certificate load done"
+            case .challengeLoadDone:   "challenge load done"
+            case .security_09:         "security 0x09 command"
+            case .security_0D:         "security 0x0D command"
+            case .ephemeralLoadDone:   "ephemeral load done"
+            case .readChallenge:       "read security challenge"
             }
         }
     }
@@ -539,11 +539,11 @@ class Libre3: Sensor {
 
         var description: String {
             switch self {
-            case .unknown:             return "unknown [TODO]"
-            case .certificateAccepted: return "certificate accepted"
-            case .challengeLoadDone:   return "challenge load done"
-            case .certificateReady:    return "certificate ready"
-            case .ephemeralReady:      return "ephemeral ready"
+            case .unknown:             "unknown [TODO]"
+            case .certificateAccepted: "certificate accepted"
+            case .challengeLoadDone:   "challenge load done"
+            case .certificateReady:    "certificate ready"
+            case .ephemeralReady:      "ephemeral ready"
             }
         }
     }

@@ -7,8 +7,8 @@ enum GlucoseUnit: String, CustomStringConvertible, CaseIterable, Identifiable {
 
     var description: String {
         switch self {
-        case .mgdl:  return "mg/dL"
-        case .mmoll: return "mmol/L"
+        case .mgdl:  "mg/dL"
+        case .mmoll: "mmol/L"
         }
     }
 }
@@ -479,10 +479,10 @@ struct Calibration: Codable, Equatable {
         // enums are intended to be read as "term + subfix", therefore .slopeOffset = "slope of the offset" => "Offset slope"
         var description: String {
             switch self {
-            case .slopeSlope:   return "Slope slope"
-            case .slopeOffset:  return "Offset slope"
-            case .offsetOffset: return "Offset offset"
-            case .offsetSlope:  return "Slope offset"
+            case .slopeSlope:   "Slope slope"
+            case .slopeOffset:  "Offset slope"
+            case .offsetOffset: "Offset offset"
+            case .offsetSlope:  "Slope offset"
             }
         }
     }
@@ -495,18 +495,18 @@ struct Calibration: Codable, Equatable {
 
 public func trendSymbol(for trend: Double) -> String {
     if trend > 2.0 {
-        return "⇈"
+        "⇈"
     } else if trend > 1.0 {
-        return "↑"
+        "↑"
     } else if trend > 0.33 {
-        return "↗︎"
+        "↗︎"
     } else if trend > -0.33 {
-        return "→"
+        "→"
     } else if trend > -1.0 {
-        return "↘︎"
+        "↘︎"
     } else if trend > -2.0 {
-        return "↓"
+        "↓"
     } else {
-        return "⇊"
+        "⇊"
     }
 }
