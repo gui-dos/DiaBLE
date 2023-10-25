@@ -77,7 +77,7 @@ struct Monitor: View {
 
                         }
 
-                        Text("\(app.oopAlarm.description.replacingOccurrences(of: "_", with: " "))\(app.oopAlarm.description != "" ? " - " : "")\(app.oopTrend.description.replacingOccurrences(of: "_", with: " "))")
+                        Text("\(app.glycemicAlarm.description.replacingOccurrences(of: "_", with: " "))\(app.glycemicAlarm.description != "" ? " - " : "")\(app.oopTrend.description.replacingOccurrences(of: "_", with: " "))")
                             .foregroundColor(.blue)
 
                         HStack {

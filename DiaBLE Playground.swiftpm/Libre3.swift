@@ -145,7 +145,7 @@ class Libre3: Sensor {
         let esaDuration: UInt16
         let temperatureStatus: Int
         let actionableStatus: Int
-        let glycemicAlarmStatus: OOP.Alarm
+        let glycemicAlarmStatus: GlycemicAlarm
         let glucoseRangeStatus: ResultRange
         let sensorCondition: Condition
         let uncappedCurrentMgDl: Int

@@ -375,9 +375,9 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                 if (settings.calendarTitle == "" || !settings.calendarAlarmIsOn) && !settings.disabledNotifications { // TODO: notifications settings
                     title += "  \(settings.displayingMillimoles ? GlucoseUnit.mmoll : GlucoseUnit.mgdl)"
 
-                    let oopAlarm = app.oopAlarm
-                    if oopAlarm != .unknown {
-                        title += "  \(oopAlarm.shortDescription)"
+                    let alarm = app.glycemicAlarm
+                    if alarm != .unknown {
+                        title += "  \(alarm.shortDescription)"
                     } else {
                         if currentGlucose > Int(settings.alarmHigh) {
                             title += "  HIGH"

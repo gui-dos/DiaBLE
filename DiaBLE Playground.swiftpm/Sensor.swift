@@ -403,8 +403,6 @@ func writeBits(_ buffer: Data, _ byteOffset: Int, _ bitOffset: Int, _ bitCount: 
             log("Sensor failure error 0x\(errorCode.hex) (\(decodeFailure(error: errorCode))) at \(failureInterval) after activation.")
         }
 
-        // TODO:
-
         if fram.count >= 344 && !crcReport.contains("FAILED") {
 
             if settings.userLevel > .basic {
