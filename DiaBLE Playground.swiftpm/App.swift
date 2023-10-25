@@ -75,6 +75,44 @@ enum GlycemicAlarm: Int, CustomStringConvertible, CaseIterable, Codable {
 }
 
 
+enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
+    case unknown        = -1
+    case notDetermined  = 0
+    case fallingQuickly = 1
+    case falling        = 2
+    case stable         = 3
+    case rising         = 4
+    case risingQuickly  = 5
+
+    var description: String {
+        switch self {
+        case .notDetermined:  "NOT_DETERMINED"
+        case .fallingQuickly: "FALLING_QUICKLY"
+        case .falling:        "FALLING"
+        case .stable:         "STABLE"
+        case .rising:         "RISING"
+        case .risingQuickly:  "RISING_QUICKLY"
+        default:              ""
+        }
+    }
+
+    init(string: String) {
+        self = Self.allCases.first { $0.description == string } ?? .unknown
+    }
+
+    var symbol: String {
+        switch self {
+        case .fallingQuickly: "↓"
+        case .falling:        "↘︎"
+        case .stable:         "→"
+        case .rising:         "↗︎"
+        case .risingQuickly:  "↑"
+        default:              "---"
+        }
+    }
+}
+
+
 @Observable class AppState {
 
     var device: Device!
@@ -87,7 +125,7 @@ enum GlycemicAlarm: Int, CustomStringConvertible, CaseIterable, Codable {
     var lastReadingDate: Date = Date.distantPast
     var oopGlucose: Int = 0
     var glycemicAlarm: GlycemicAlarm = .unknown
-    var oopTrend: OOP.TrendArrow = .unknown
+    var trendArrow: TrendArrow = .unknown
     var trendDelta: Int = 0
     var trendDeltaMinutes: Int = 0
 
@@ -194,7 +232,7 @@ extension AppState {
         app.trendDeltaMinutes = 6
         app.oopGlucose = 234
         app.glycemicAlarm = .highGlucose
-        app.oopTrend = .falling
+        app.trendArrow = .falling
         app.deviceState = "Connected"
         app.status = "Sensor + Transmitter\nError about connection\nError about sensor"
 

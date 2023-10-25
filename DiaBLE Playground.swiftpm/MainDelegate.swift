@@ -387,9 +387,9 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                         }
                     }
 
-                    let oopTrend = app.oopTrend
-                    if oopTrend != .unknown {
-                        title += "  \(oopTrend.symbol)"
+                    let trendArrow = app.trendArrow
+                    if trendArrow != .unknown {
+                        title += "  \(trendArrow.symbol)"
                     }
 
                     let content = UNMutableNotificationContent()

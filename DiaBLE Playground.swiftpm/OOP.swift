@@ -68,48 +68,6 @@ struct OOPGen2Response: Codable {
 }
 
 
-struct OOP {
-
-    enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
-        case unknown        = -1
-        case notDetermined  = 0
-        case fallingQuickly = 1
-        case falling        = 2
-        case stable         = 3
-        case rising         = 4
-        case risingQuickly  = 5
-
-        var description: String {
-            switch self {
-            case .notDetermined:  "NOT_DETERMINED"
-            case .fallingQuickly: "FALLING_QUICKLY"
-            case .falling:        "FALLING"
-            case .stable:         "STABLE"
-            case .rising:         "RISING"
-            case .risingQuickly:  "RISING_QUICKLY"
-            default:              ""
-            }
-        }
-
-        init(string: String) {
-            self = Self.allCases.first { $0.description == string } ?? .unknown
-        }
-
-        var symbol: String {
-            switch self {
-            case .fallingQuickly: "↓"
-            case .falling:        "↘︎"
-            case .stable:         "→"
-            case .rising:         "↗︎"
-            case .risingQuickly:  "↑"
-            default:              "---"
-            }
-        }
-    }
-
-}
-
-
 // TODO: Codable
 class OOPHistoryResponse {
     var currentGlucose: Int = 0
@@ -359,7 +317,7 @@ extension MainDelegate {
         if !settings.usingOOP {
             app.oopGlucose = 0
             app.glycemicAlarm = .unknown
-            app.oopTrend = .unknown
+            app.trendArrow = .unknown
             history.values = []
             return
         }
@@ -485,7 +443,7 @@ extension MainDelegate {
                             app.oopGlucose = realTimeGlucose
                         }
                         app.glycemicAlarm = GlycemicAlarm(string: oopData.alarm ?? "")
-                        app.oopTrend = OOP.TrendArrow(string: oopData.trendArrow ?? "")
+                        app.trendArrow = TrendArrow(string: oopData.trendArrow ?? "")
                         app.trendDeltaMinutes = 0
                         var oopHistory = oopData.glucoseData(sensorAge: sensor.age, readingDate: app.lastReadingDate)
                         let oopHistoryCount = oopHistory.count
