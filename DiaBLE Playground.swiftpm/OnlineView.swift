@@ -1,14 +1,15 @@
 import Foundation
 import SwiftUI
+import Charts
 
 
 extension MeasurementColor {
     var color: Color {
         switch self {
-        case .green:  return .green
-        case .yellow: return .yellow
-        case .orange: return .orange
-        case .red:    return .red
+        case .green:  .green
+        case .yellow: .yellow
+        case .orange: .orange
+        case .red:    .red
         }
     }
 }
@@ -117,7 +118,7 @@ struct OnlineView: View {
                                     TextField("Nightscout URL", text: $settings.nightscoutSite)
                                         .keyboardType(.URL)
                                         .textContentType(.URL)
-                                        .disableAutocorrection(true)
+                                        .autocorrectionDisabled(true)
                                 }
                                 HStack(alignment: .firstTextBaseline) {
                                     Text("token:").foregroundColor(Color(.lightGray))
@@ -130,7 +131,7 @@ struct OnlineView: View {
                                     TextField("email", text: $settings.libreLinkUpEmail)
                                         .keyboardType(.emailAddress)
                                         .textContentType(.emailAddress)
-                                        .disableAutocorrection(true)
+                                        .autocorrectionDisabled(true)
                                         .onSubmit {
                                             settings.libreLinkUpPatientId = ""
                                             libreLinkUpResponse = "[Logging in...]"
@@ -140,7 +141,7 @@ struct OnlineView: View {
                                         }
                                 }
                                 HStack(alignment: .firstTextBaseline) {
-                                    Text("password:").foregroundColor(Color(.lightGray))
+                                    Text("password:").lineLimit(1).foregroundColor(Color(.lightGray))
                                     SecureField("password", text: $settings.libreLinkUpPassword)
                                 }
                                 .onSubmit {
@@ -215,7 +216,7 @@ struct OnlineView: View {
                                 showingNFCAlert = true
                             }
                         } label: {
-                            Image("NFC").renderingMode(.template).resizable().frame(width: 39, height: 27).padding(.bottom, 12)
+                            Image("NFC").renderingMode(.template).resizable().frame(width: 39, height: 27)
                         }
                         .alert("NFC not supported", isPresented: $showingNFCAlert) {
                         } message: {
@@ -269,6 +270,24 @@ struct OnlineView: View {
                             .padding()
 #endif
 
+                            if libreLinkUpHistory.count > 0 {
+                                Chart(libreLinkUpHistory) {
+                                    PointMark(x: .value("Time", $0.glucose.date),
+                                              y: .value("Glucose", $0.glucose.value)
+                                    )
+                                    .foregroundStyle($0.color.color)
+                                    .symbolSize(12)
+                                }
+                                .chartXAxis {
+                                    AxisMarks(values: .stride(by: .hour, count: 3)) { _ in
+                                        AxisGridLine()
+                                        AxisTick()
+                                        AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .omitted)).minute(), anchor: .top)
+                                    }
+                                }
+                                .padding()
+                            }
+
                             HStack {
 
                                 List {
@@ -283,7 +302,7 @@ struct OnlineView: View {
                                 // TODO: respect onlineInterval
                                 .onReceive(minuteTimer) { _ in
                                     Task {
-                                        app.main.log("DEBUG: fired onlineView minuteTimer: timeInterval: \(Int(Date().timeIntervalSince(settings.lastOnlineDate)))")
+                                        app.main.debugLog("DEBUG: fired onlineView minuteTimer: timeInterval: \(Int(Date().timeIntervalSince(settings.lastOnlineDate)))")
                                         if settings.onlineInterval > 0 && Int(Date().timeIntervalSince(settings.lastOnlineDate)) >= settings.onlineInterval * 60 - 5 {
                                             await reloadLibreLinkUp()
                                         }
@@ -312,6 +331,7 @@ struct OnlineView: View {
 #if targetEnvironment(macCatalyst)
                         .padding(.leading, 15)
 #endif
+
                     }
                 }
             }
@@ -322,16 +342,11 @@ struct OnlineView: View {
 }
 
 
-struct OnlineView_Previews: PreviewProvider {
-
-    static var previews: some View {
-        Group {
-            ContentView()
-                .preferredColorScheme(.dark)
-                .environment(AppState.test(tab: .online))
-                .environment(Log())
-                .environment(History.test)
-                .environment(Settings())
-        }
-    }
+#Preview {
+    ContentView()
+        .preferredColorScheme(.dark)
+        .environment(AppState.test(tab: .online))
+        .environment(Log())
+        .environment(History.test)
+        .environment(Settings())
 }
