@@ -49,45 +49,47 @@ struct ContentView: View {
 }
 
 
-struct ContentView_Previews: PreviewProvider {
+#Preview {
+    ContentView()
+        .preferredColorScheme(.dark)
+        .environment(AppState.test(tab: .monitor))
+        .environment(Log())
+        .environment(History.test)
+        .environment(Settings())
+}
 
-    static var previews: some View {
+#Preview {
+    ContentView()
+        .preferredColorScheme(.dark)
+        .environment(AppState.test(tab: .online))
+        .environment(Log())
+        .environment(History.test)
+        .environment(Settings())
+}
 
-        Group {
-            ContentView()
-                .preferredColorScheme(.dark)
-                .environment(AppState.test(tab: .monitor))
-                .environment(Log())
-                .environment(History.test)
-                .environment(Settings())
+#Preview {
+    ContentView()
+        .preferredColorScheme(.dark)
+        .environment(AppState.test(tab: .data))
+        .environment(Log())
+        .environment(History.test)
+        .environment(Settings())
+}
 
-            ContentView()
-                .preferredColorScheme(.dark)
-                .environment(AppState.test(tab: .online))
-                .environment(Log())
-                .environment(History.test)
-                .environment(Settings())
+#Preview {
+    ContentView()
+        .preferredColorScheme(.dark)
+        .environment(AppState.test(tab: .console))
+        .environment(Log())
+        .environment(History.test)
+        .environment(Settings())
+}
 
-            ContentView()
-                .preferredColorScheme(.dark)
-                .environment(AppState.test(tab: .data))
-                .environment(Log())
-                .environment(History.test)
-                .environment(Settings())
-
-            ContentView()
-                .preferredColorScheme(.dark)
-                .environment(AppState.test(tab: .console))
-                .environment(Log())
-                .environment(History.test)
-                .environment(Settings())
-
-            ContentView()
-                .preferredColorScheme(.dark)
-                .environment(AppState.test(tab: .settings))
-                .environment(Log())
-                .environment(History.test)
-                .environment(Settings())
-        }
-    }
+#Preview {
+    ContentView()
+        .preferredColorScheme(.dark)
+        .environment(AppState.test(tab: .settings))
+        .environment(Log())
+        .environment(History.test)
+        .environment(Settings())
 }

@@ -169,16 +169,11 @@ struct Graph: View {
 }
 
 
-struct Graph_Previews: PreviewProvider {
-
-    static var previews: some View {
-        Group {
-            ContentView()
-                .preferredColorScheme(.dark)
-                .environment(AppState.test(tab: .monitor))
-                .environment(Log())
-                .environment(History.test)
-                .environment(Settings())
-        }
-    }
+#Preview {
+    ContentView()
+        .preferredColorScheme(.dark)
+        .environment(AppState.test(tab: .monitor))
+        .environment(Log())
+        .environment(History.test)
+        .environment(Settings())
 }

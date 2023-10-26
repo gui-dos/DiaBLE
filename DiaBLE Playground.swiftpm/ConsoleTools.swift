@@ -212,16 +212,12 @@ struct ShellView: View {
 }
 
 
-struct ShellView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            ShellView()
-                .preferredColorScheme(.dark)
-                .environment(AppState.test(tab: .console))
-                .environment(Log())
-                .environment(Settings())
-        }
-    }
+#Preview {
+    ShellView()
+        .preferredColorScheme(.dark)
+        .environment(AppState.test(tab: .console))
+        .environment(Log())
+        .environment(Settings())
 }
 
 

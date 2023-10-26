@@ -583,18 +583,13 @@ struct WatlaaDetailsView: View {
 }
 
 
-struct Watch_Previews: PreviewProvider {
-    @Environment(AppState.self) var app: AppState
-    @Environment(Settings.self) var settings: Settings
-    static var previews: some View {
-        Group {
-            WatlaaDetailsView(device: Watlaa())
-                .environment(AppState.test(tab: .monitor))
-                .environment(Settings())
-                .environment(\.colorScheme, .dark)
-        }
-    }
+#Preview {
+    WatlaaDetailsView(device: Watlaa())
+        .environment(AppState.test(tab: .monitor))
+        .environment(Settings())
+        .environment(\.colorScheme, .dark)
 }
+
 
 #endif
 

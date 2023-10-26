@@ -429,16 +429,11 @@ struct ConsoleSidebar: View {
 }
 
 
-struct Console_Previews: PreviewProvider {
-
-    static var previews: some View {
-        Group {
-            ContentView()
-                .preferredColorScheme(.dark)
-                .environment(AppState.test(tab: .console))
-                .environment(Log())
-                .environment(History.test)
-                .environment(Settings())
-        }
-    }
+#Preview {
+    ContentView()
+        .preferredColorScheme(.dark)
+        .environment(AppState.test(tab: .console))
+        .environment(Log())
+        .environment(History.test)
+        .environment(Settings())
 }
