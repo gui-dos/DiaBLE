@@ -91,6 +91,9 @@ struct HamburgerMenu: View {
                 NavigationView {
                     VStack(spacing: 40) {
                         VStack {
+
+                            Text("DiaBLE  \(Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String)  (\(Bundle.main.infoDictionary!["CFBundleVersion"] as! String))")
+
                             // TODO: get AppIcon 1024x1024
                             // Image("AppIcon").resizable().frame(width: 100, height: 100)
                             // FIXME: crashes in TestFlight (not in Release scheme)
