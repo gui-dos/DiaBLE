@@ -159,6 +159,12 @@ class LibreLinkUp: Logging {
                         throw LibreLinkUpError.notAuthenticated
                     }
 
+                    // TODO: status 4 requires accepting new Terms of Use: api.libreview.io/auth/continue/tou
+                    if status == 4 {
+                        log("LibreLinkUp: Terms of Use have been updated and must be accepted by running LibreLink (tip: log out and re-login)")
+                        throw LibreLinkUpError.notAuthenticated
+                    }
+
                     // {"status":0,"data":{"redirect":true,"region":"fr"}}
                     if let redirect = data?["redirect"] as? Bool,
                        let region = data?["region"] as? String {
