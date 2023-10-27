@@ -68,16 +68,16 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         bluetoothDelegate.main = self
         nfc.main = self
 
-        if let healthKit = healthKit {
+        if let healthKit {
             healthKit.main = self
-            healthKit.authorize {
-                self.log("HealthKit: \( $0 ? "" : "not ")authorized")
+            healthKit.authorize { [self] in
+                log("HealthKit: \( $0 ? "" : "not ")authorized")
                 if healthKit.isAuthorized {
                     healthKit.read { [self] in debugLog("HealthKit last 12 stored values: \($0[..<(min(12, $0.count))])") }
                 }
             }
         } else {
-            self.log("HealthKit: not available")
+            log("HealthKit: not available")
         }
 
         libreLinkUp = LibreLinkUp(main: self)
@@ -104,19 +104,19 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
 
     public func log(_ msg: String, level: LogLevel = .info, label: String = "") {
         if settings.logging || msg.hasPrefix("Log") {
-            DispatchQueue.main.async {
-                let entry = LogEntry(message: msg, level: level, label: label)
-                if self.settings.reversedLog {
-                    self.log.entries.insert(entry, at: 0)
+            let entry = LogEntry(message: msg, level: level, label: label)
+            Task { @MainActor in
+                if settings.reversedLog {
+                    log.entries.insert(entry, at: 0)
                 } else {
-                    self.log.entries.append(entry)
+                    log.entries.append(entry)
                 }
                 print(msg)
-                if self.settings.userLevel > .basic {
-                    self.logger.log("\(msg)")
+                if settings.userLevel > .basic {
+                    logger.log("\(msg)")
                 }
                 if !entry.label.isEmpty {
-                    self.log.labels.insert(entry.label)
+                    log.labels.insert(entry.label)
                 }
             }
         }
@@ -130,15 +130,15 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
     }
 
     public func status(_ text: String) {
-        DispatchQueue.main.async {
-            self.app.status = text
+        Task { @MainActor in
+            app.status = text
         }
     }
 
     public func errorStatus(_ text: String) {
-        if !self.app.status.contains(text) {
-            DispatchQueue.main.async {
-                self.app.status.append("\n\(text)")
+        if !app.status.contains(text) {
+            Task { @MainActor in
+                app.status.append("\n\(text)")
             }
         }
     }
@@ -437,12 +437,12 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
             // TODO
             // nightscout?.delete(query: "find[device]=OOP&count=32") { data, response, error in
 
-            nightscout?.read { values in
+            nightscout?.read { [self] values in
                 let newEntries = values.count > 0 ? entries.filter { $0.date > values[0].date } : entries
                 if newEntries.count > 0 {
-                    self.nightscout?.post(entries: newEntries) {
+                    nightscout?.post(entries: newEntries) { [self]
                         data, response, error in
-                        self.nightscout?.read()
+                        nightscout?.read()
                     }
                 }
             }

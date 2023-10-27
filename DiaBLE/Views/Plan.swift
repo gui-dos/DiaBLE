@@ -43,9 +43,10 @@ struct Plan: View {
                         onlineCountdown = settings.onlineInterval * 60 - Int(Date().timeIntervalSince(settings.lastOnlineDate))
                     }
             }
-#if targetEnvironment(macCatalyst)
+            .monospacedDigit()
+            #if targetEnvironment(macCatalyst)
             .padding(.horizontal, 15)
-#endif
+            #endif
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Plan")
         }.navigationViewStyle(.stack)
