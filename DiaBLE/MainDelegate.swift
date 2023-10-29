@@ -182,9 +182,11 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                 } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
                     log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                     bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
+                } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]).first {
+                    bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
                 } else {
-                    log("Bluetooth: scanning for a Libre...")
-                    status("Scanning for a Libre...")
+                    log("Bluetooth: scanning for Libre/Dexcom...")
+                    status("Scanning for a Libre/Dexcom...")
                     centralManager.scanForPeripherals(withServices: nil, options: nil)
                 }
             }

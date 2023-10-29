@@ -56,6 +56,11 @@ import Foundation
         "activeSensorCalibrationInfo": try! JSONEncoder().encode(CalibrationInfo()),
         "activeSensorBlePIN": Data(),
 
+        // Dexcom
+        "activeTransmitterIdentifier": "",
+        "activeTransmitterSerial": "",
+        "activeSensorCode": "",
+
         // TODO: rename to currentSensorUid/PatchInfo
         "patchUid": Data(),
         "patchInfo": Data()
@@ -64,7 +69,9 @@ import Foundation
 
     var preferredTransmitter: TransmitterType = TransmitterType(rawValue: UserDefaults.standard.string(forKey: "preferredTransmitter")!) ?? .none {
         willSet(type) {
-            if type == .abbott {
+            if type == .dexcom  {
+                readingInterval = 5
+            } else if type == .abbott {
                 readingInterval = 1
             }
             if type != .none {
@@ -243,6 +250,18 @@ import Foundation
 
     var activeSensorBlePIN: Data = UserDefaults.standard.data(forKey: "activeSensorBlePIN")! {
         didSet { UserDefaults.standard.set(self.activeSensorBlePIN, forKey: "activeSensorBlePIN") }
+    }
+
+    var activeTransmitterIdentifier: String = UserDefaults.standard.string(forKey: "activeTransmitterIdentifier")! {
+        didSet { UserDefaults.standard.set(self.activeTransmitterIdentifier, forKey: "activeTransmitterIdentifier") }
+    }
+
+    var activeTransmitterSerial: String = UserDefaults.standard.string(forKey: "activeTransmitterSerial")! {
+        didSet { UserDefaults.standard.set(self.activeTransmitterSerial, forKey: "activeTransmitterSerial") }
+    }
+
+    var activeSensorCode: String = UserDefaults.standard.string(forKey: "activeSensorCode")! {
+        didSet { UserDefaults.standard.set(self.activeSensorCode, forKey: "activeSensorCode") }
     }
 
     var patchUid: SensorUid = UserDefaults.standard.data(forKey: "patchUid")! {

@@ -62,7 +62,10 @@ struct SettingsView: View {
 
                     Picker(selection: $settings.readingInterval, label: Text("")) {
                         ForEach(Array(stride(from: 1,
-                                             through: settings.preferredTransmitter == .abbott || (settings.preferredTransmitter == .none && app.transmitter != nil && app.transmitter.type == .transmitter(.abbott)) ? 1 : 15,
+                                             through: settings.preferredTransmitter == .abbott || (settings.preferredTransmitter == .none && app.transmitter != nil && app.transmitter.type == .transmitter(.abbott)) ? 1 :
+                                                settings.preferredTransmitter == .dexcom || (settings.preferredTransmitter == .none && app.transmitter != nil && app.transmitter.type == .transmitter(.dexcom)) ? 5
+                                             :
+                                                15,
                                              by: 1)),
 
                                 id: \.self) { t in

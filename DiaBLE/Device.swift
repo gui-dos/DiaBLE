@@ -122,18 +122,20 @@ enum DeviceType: CaseIterable, Hashable, Identifiable {
 
 
 enum TransmitterType: String, CaseIterable, Hashable, Codable, Identifiable {
-    case none, abbott
+    case none, abbott, dexcom
     var id: String { rawValue }
     var name: String {
         switch self {
         case .none:     "Any"
         case .abbott:   Abbott.name
+        case .dexcom:   Dexcom.name
         }
     }
     var type: AnyClass {
         switch self {
         case .none:     Transmitter.self
         case .abbott:   Abbott.self
+        case .dexcom:   Dexcom.self
         }
     }
 }
