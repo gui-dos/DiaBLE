@@ -61,7 +61,7 @@ struct ShellView: View {
                                                 app.main.log("ls Preferences\n\(preferencesContents)")
                                                 for plist in preferencesContents {
                                                     if plist.hasPrefix("com.abbott.libre3") {
-                                                        if let plistData = fileManager.contents(atPath:"\(tridentContainer)/Library/Preferences/\(plist)") {
+                                                        if let plistData = fileManager.contents(atPath: "\(tridentContainer)/Library/Preferences/\(plist)") {
                                                             if let libre3Plist = try? PropertyListSerialization.propertyList(from: plistData, options: [], format: nil) as? [String: Any] {
                                                                 app.main.log("cat \(plist)\n\(libre3Plist)")
                                                                 let realmEncryptionKey = libre3Plist["RealmEncryptionKey"] as! [UInt8]
@@ -105,38 +105,47 @@ struct ShellView: View {
                                     if dir == "Documents" {
                                         let documentsFiles = try! fileManager.contentsOfDirectory(atPath: "\(tridentContainer)/Documents")
                                         app.main.log("ls Documents\n\(documentsFiles)")
+
                                         for file in documentsFiles {
-                                            do {
-                                                if file.hasSuffix(".realm") && !file.contains("backup") {
-                                                    var realm: Realm
-                                                    var config = Realm.Configuration.defaultConfiguration
-                                                    config.fileURL = URL(filePath: "\(tridentContainer)/Documents/\(file)")
-                                                    config.schemaVersion = 8  // as for RealmStudio 14
-                                                    do {
-                                                        if !file.contains("decrypted") {
-                                                            config.encryptionKey = tridentRealmKey.count == 128 ? tridentRealmKey.bytes : Data(count: 64)
-                                                        } else {
-                                                            config.encryptionKey = nil
-                                                        }
-                                                        realm = try Realm(configuration: config)
-                                                        if !file.contains("decrypted") {
-                                                            app.main.debugLog("Realm: opened encrypted \(tridentContainer)/Documents/\(file) by using the key \(tridentRealmKey)")
-                                                        } else {
-                                                            app.main.debugLog("Realm: opened already decrypted \(tridentContainer)/Documents/\(file)")
-                                                        }
-                                                        let sensors = realm.objects(SensorEntity.self)
-                                                        app.main.log("Realm: sensors: \(sensors)")
-                                                        let appConfig = realm.objects(AppConfigEntity.self)
-                                                        // overcome limit of max 100 objects in a result description
-                                                        app.main.log(appConfig.reduce("Realm: app config:", { $0 + "\n" + $1.description }))
-                                                        let libre3WrappedKAuth = realm.object(ofType: AppConfigEntity.self, forPrimaryKey: "Libre3WrappedKAuth")!["_configValue"]!
-                                                        app.main.log("Realm: libre3WrappedKAuth: \(libre3WrappedKAuth)")
-                                                        // TODO
-                                                    } catch {
-                                                        app.main.log("Realm: error: \(error.localizedDescription)")
-                                                        if file == "trident.realm" {
-                                                            showingRealmKeyPrompt = true
-                                                        }
+
+                                            if file.hasSuffix(".realm") && !file.contains("backup") {
+                                                var realm: Realm
+                                                var config = Realm.Configuration.defaultConfiguration
+                                                config.fileURL = URL(filePath: "\(tridentContainer)/Documents/\(file)")
+                                                config.schemaVersion = 8  // as for RealmStudio 14
+                                                do {
+                                                    if !file.contains("decrypted") {
+                                                        config.encryptionKey = tridentRealmKey.count == 128 ? tridentRealmKey.bytes : Data(count: 64)
+                                                    } else {
+                                                        config.encryptionKey = nil
+                                                    }
+                                                    realm = try Realm(configuration: config)
+                                                    if !file.contains("decrypted") {
+                                                        app.main.debugLog("Realm: opened encrypted \(tridentContainer)/Documents/\(file) by using the key \(tridentRealmKey)")
+                                                    } else {
+                                                        app.main.debugLog("Realm: opened already decrypted \(tridentContainer)/Documents/\(file)")
+                                                    }
+                                                    let sensors = realm.objects(SensorEntity.self)
+                                                    app.main.log("Realm: sensors: \(sensors)")
+                                                    let appConfig = realm.objects(AppConfigEntity.self)
+                                                    // overcome limit of max 100 objects in a result description
+                                                    app.main.log(appConfig.reduce("Realm: app config:", { $0 + "\n" + $1.description }))
+                                                    let libre3WrappedKAuth = realm.object(ofType: AppConfigEntity.self, forPrimaryKey: "Libre3WrappedKAuth")!["_configValue"]!
+                                                    app.main.log("Realm: libre3WrappedKAuth: \(libre3WrappedKAuth)")
+                                                    // TODO
+                                                } catch {
+                                                    app.main.log("Realm: error: \(error.localizedDescription)")
+                                                    if file == "trident.realm" {
+                                                        showingRealmKeyPrompt = true
+                                                    }
+                                                }
+                                            }
+
+                                            if file == "trident.json" {
+                                                if let tridentJson = fileManager.contents(atPath: "\(tridentContainer)/Documents/\(file)") {
+                                                    // TODO: parse flatted JSON: https://github.com/WebReflection/flatted
+                                                    if let json = try? JSONSerialization.jsonObject(with: tridentJson) as? [Any] {
+                                                        app.main.log("Realm: trident.json tables: \(json[0])")
                                                     }
                                                 }
                                             }
@@ -146,6 +155,8 @@ struct ShellView: View {
                                 }
 
                                 directory.stopAccessingSecurityScopedResource()
+
+
                             case .failure(let error):
                                 app.main.log("\(error.localizedDescription)")
                             }
