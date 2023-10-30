@@ -632,4 +632,19 @@ extension Libre3 {
     //     var _recordType: Swift.String
     // }
 
+
+    // TODO: parse flatted JSON: https://github.com/WebReflection/flatted
+
+    func parseRealmFlattedJson(data: Data) {
+        // var index = 0
+        if let json = try? JSONSerialization.jsonObject(with: data) as? [Any] {
+            let entities = (json[0] as! [String: String]).sorted { Int($0.value)! < Int($1.value)! }
+            log("Realm: trident.json tables: \(entities)")
+            for (i, e) in entities.enumerated() {
+                let indexes = (json[i + 1] as! [String])
+                log("\(e.key): \(indexes.count) rows, indexes: \(indexes.first ?? "0") - \(indexes.last ?? "0")")
+            }
+        }
+    }
+
 }

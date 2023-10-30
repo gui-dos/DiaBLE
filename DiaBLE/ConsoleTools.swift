@@ -143,10 +143,7 @@ struct ShellView: View {
 
                                             if file == "trident.json" {
                                                 if let tridentJson = fileManager.contents(atPath: "\(tridentContainer)/Documents/\(file)") {
-                                                    // TODO: parse flatted JSON: https://github.com/WebReflection/flatted
-                                                    if let json = try? JSONSerialization.jsonObject(with: tridentJson) as? [Any] {
-                                                        app.main.log("Realm: trident.json tables: \(json[0])")
-                                                    }
+                                                    (app.sensor as? Libre3 ?? Libre3(main: app.main)).parseRealmFlattedJson(data: tridentJson)
                                                 }
                                             }
                                         }
