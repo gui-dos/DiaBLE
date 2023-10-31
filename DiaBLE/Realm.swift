@@ -636,14 +636,52 @@ extension Libre3 {
     // TODO: parse flatted JSON: https://github.com/WebReflection/flatted
 
     func parseRealmFlattedJson(data: Data) {
-        // var index = 0
+        var entityRowsCount: [String: Int] = [:]
+        var entityStartIndex: [String: Int] = [:]
         if let json = try? JSONSerialization.jsonObject(with: data) as? [Any] {
             let entities = (json[0] as! [String: String]).sorted { Int($0.value)! < Int($1.value)! }
             log("Realm: trident.json tables: \(entities)")
-            for (i, e) in entities.enumerated() {
+            var index = 1
+            for (i, entity) in entities.enumerated() {
                 let indexes = (json[i + 1] as! [String])
-                log("\(e.key): \(indexes.count) rows, indexes: \(indexes.first ?? "0") - \(indexes.last ?? "0")")
+                let rowsCount = indexes.count
+                entityStartIndex[entity.key] = Int(indexes.first ?? "0")
+                entityRowsCount[entity.key] = rowsCount
+                log("\(entity.key): \(indexes.count) rows, indexes: \(indexes.first ?? "0") - \(indexes.last ?? "0")")
+
+                switch entity.key {
+
+
+                case "AppConfigEntity":
+                    for i in 0 ..< rowsCount {
+                        let entityJson = json[entityStartIndex[entity.key]! + i] as! [String: Any]
+                        let configName = json[Int(entityJson["_configName"]! as! String)!] as! String
+                        let configValue = json[Int(entityJson["_configValue"]! as! String)!] as! String
+                        log("Realm: \(entity.key) #\(i+1) of \(rowsCount) JSON: \(entityJson), configName = \(configName), configValue = \(configValue)")
+                    }
+
+
+                case "SensorEntity":
+                    for i in 0 ..< rowsCount {
+                        let entityJson = json[entityStartIndex[entity.key]! + i] as! [String: Any]
+                        let serialNumber = json[Int(entityJson["_serialNumber"]! as! String)!] as! String
+                        let sensorUID = json[Int(entityJson["_sensorUID"]! as! String)!] as! String
+                        let hwVersion = json[Int(entityJson["_hwVersion"]! as! String)!] as! String
+                        let swVersion = json[Int(entityJson["_swVersion"]! as! String)!] as! String
+                        let fwVersion = json[Int(entityJson["_fwVersion"]! as! String)!] as! String
+                        let blePIN = json[Int(entityJson["_blePIN"]! as! String)!] as! String
+                        let factoryData = json[Int(entityJson["_factoryData"]! as! String)!] as! String
+                        log("Realm: \(entity.key) #\(i+1) of \(rowsCount) JSON: \(entityJson), serialNumber: \(serialNumber), sensorUID: \(sensorUID), hwVersion: \(hwVersion), swVersion: \(swVersion), fwVersion: \(fwVersion),  blePIN: \(blePIN), factoryData: \(factoryData)")
+                    }
+
+
+                default:
+                    break
+                }
+
+                index += rowsCount
             }
+
         }
     }
 
