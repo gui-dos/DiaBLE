@@ -661,6 +661,33 @@ extension Libre3 {
                     }
 
 
+                case "GlucoseReadingEntity":
+                    var sensorsCount: Int64 = 0
+                    for i in 0 ..< rowsCount {
+                        let j = rowsCount - i - 1
+                        let entityJson = json[entityStartIndex[entity.key]! + j] as! [String: Any]
+                        let compositeKey = entityJson["_compositeKey"]! as! Int64
+                        let sensorID = compositeKey >> 32
+                        if sensorID < sensorsCount {
+                            break
+                        } else {
+                            sensorsCount = sensorID
+                        }
+                        // let sensor = json[Int(entityJson["_sensor"]! as! String)!]
+                        let lifeCount = entityJson["_lifeCount"]! as! Int
+                        let timestampUTC = entityJson["_timestampUTC"]! as! Int64
+                        let currentGlucose = entityJson["_currentGlucose"]! as! Double
+                        let historicGlucose = entityJson["_historicGlucose"]! as! Double
+                        let trend = entityJson["_trend"]! as! Int
+                        let rateOfChange = entityJson["_rateOfChange"]! as! Double
+                        let glycemicAlarmStatus = entityJson["_glycemicAlarmStatus"]! as! Int
+                        let date = Date(timeIntervalSince1970: Double(timestampUTC) / 1000)
+                        let trendArrow = TrendArrow(rawValue: trend)!
+                        let glycemicAlarm = GlycemicAlarm(rawValue: glycemicAlarmStatus)!
+                        log("Realm: \(entity.key) #\(j+1) of \(rowsCount) JSON: \(entityJson), lifeCount: \(lifeCount), currentGlucose: \(currentGlucose), historicGlucose: \(historicGlucose), date: \(date.local), trend arrow: \(trendArrow), rate of change: \(rateOfChange/100), glycemic alarm: \(glycemicAlarm), sensor id: \(sensorID)")
+                    }
+
+
                 case "SensorEntity":
                     for i in 0 ..< rowsCount {
                         let entityJson = json[entityStartIndex[entity.key]! + i] as! [String: Any]
