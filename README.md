@@ -7,7 +7,7 @@ The NFC capabilities require a paid Apple Developer Program annual membership. T
 
 Currently I am targeting only the latest betas of Xcode and iOS and focusing on the new Libre 3.
 
-If you own an iPad you can download the [zipped archive](https://github.com/gui-dos/DiaBLE/archive/refs/heads/main.zip) of this repository and tap _DiaBLE Playground.swiftpm_: DiaBLE was born in fact as a single script for the iPad Swift Playgrounds to test the internal workings of the several trouBLEsome BLE accessories I bought, mainly the BubBLE and the MiaoMiao, but I cannot afford to support actively such transmitters and the LibreOOPWeb _glucose.space_ server anymore. A past complete fork still buildaBLE for the iPhone is availaBLE at [DiaBLE-Legacy](https://github.com/gui-dos/DiaBLE-Legacy).
+If you own an iPad you can download the [zipped archive](https://github.com/gui-dos/DiaBLE/archive/refs/heads/main.zip) of this repository and tap _DiaBLE Playground.swiftpm_: DiaBLE was born in fact as a single script for the iPad Swift Playgrounds to test the internal workings of the several trouBLEsome BLE accessories I bought, mainly the BubBLE and the MiaoMiao, but I cannot afford to support actively such transmitters and the LibreOOPWeb _glucose.space_ server anymore.
 
 Please refer to the [**TODOs**](https://github.com/gui-dos/DiaBLE/blob/main/TODO.md) list for the up-to-date status of all the current limitations and known bugs of this **prototype**.
 

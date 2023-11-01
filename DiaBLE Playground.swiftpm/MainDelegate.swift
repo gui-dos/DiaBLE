@@ -194,7 +194,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                     log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                       bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
                 } else {
-                    log("Bluetooth: scanning for Libre/Dexcom...")
+                    log("Bluetooth: scanning for a Libre/Dexcom...")
                     status("Scanning for a Libre/Dexcom...")
                     centralManager.scanForPeripherals(withServices: nil, options: nil)
                 }

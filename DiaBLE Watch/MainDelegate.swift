@@ -141,7 +141,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
         }
         if centralManager.state == .poweredOn {
             settings.stoppedBluetooth = false
-            if !settings.preferredDevicePattern.matches("abbott") {
+            if !(settings.preferredDevicePattern.matches("abbott") || settings.preferredDevicePattern.matches("dexcom")) {
                 log("Bluetooth: scanning...")
                 status("Scanning...")
                 centralManager.scanForPeripherals(withServices: nil, options: nil)
@@ -153,10 +153,11 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
                     log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                     bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
                 } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]).first {
-                    bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
+                    log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
+                      bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
                 } else {
-                    log("Bluetooth: scanning for a Libre...")
-                    status("Scanning for a Libre...")
+                    log("Bluetooth: scanning for a Libre/Dexcom...")
+                    status("Scanning for a Libre/Dexcom...")
                     centralManager.scanForPeripherals(withServices: nil, options: nil)
                 }
             }

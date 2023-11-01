@@ -687,10 +687,14 @@ extension Libre3 {
                         let trend = entityJson["_trend"]! as! Int
                         let rateOfChange = entityJson["_rateOfChange"]! as! Double
                         let glycemicAlarmStatus = entityJson["_glycemicAlarmStatus"]! as! Int
+                        let projectedGlucose = entityJson["_projectedGlucose"]! as! Double
+                        let temperature = entityJson["_temperature"]! as! Int
+                        let rawData = (json[Int(entityJson["_rawData"]! as! String)!] as! String).trimmingCharacters(in: .whitespaces)
+
                         let date = Date(timeIntervalSince1970: Double(timestampUTC) / 1000)
                         let trendArrow = TrendArrow(rawValue: trend)!
                         let glycemicAlarm = GlycemicAlarm(rawValue: glycemicAlarmStatus)!
-                        log("Realm: \(entity.key) #\(j+1) of \(rowsCount) JSON: \(entityJson), lifeCount: \(lifeCount), currentGlucose: \(currentGlucose), historicGlucose: \(historicGlucose), date: \(date.local), trend arrow: \(trendArrow), rate of change: \(rateOfChange/100), glycemic alarm: \(glycemicAlarm), sensor id: \(sensorID)")
+                        log("Realm: \(entity.key) #\(j+1) of \(rowsCount) JSON: \(entityJson), lifeCount: \(lifeCount), currentGlucose: \(currentGlucose), historicGlucose: \(historicGlucose), date: \(date.local), trend arrow: \(trendArrow), rate of change: \(rateOfChange / 100), glycemic alarm: \(glycemicAlarm), projected glucose: \(projectedGlucose / 100), temperature: \(Double(temperature) / 100), raw data: \(rawData), sensor id: \(sensorID)")
                     }
 
 
@@ -702,8 +706,8 @@ extension Libre3 {
                         let hwVersion = json[Int(entityJson["_hwVersion"]! as! String)!] as! String
                         let swVersion = json[Int(entityJson["_swVersion"]! as! String)!] as! String
                         let fwVersion = json[Int(entityJson["_fwVersion"]! as! String)!] as! String
-                        let blePIN = json[Int(entityJson["_blePIN"]! as! String)!] as! String
-                        let factoryData = json[Int(entityJson["_factoryData"]! as! String)!] as! String
+                        let blePIN = (json[Int(entityJson["_blePIN"]! as! String)!] as! String).trimmingCharacters(in: .whitespaces)
+                        let factoryData = (json[Int(entityJson["_factoryData"]! as! String)!] as! String).trimmingCharacters(in: .whitespaces)
                         log("Realm: \(entity.key) #\(i+1) of \(rowsCount) JSON: \(entityJson), serialNumber: \(serialNumber), sensorUID: \(sensorUID), hwVersion: \(hwVersion), swVersion: \(swVersion), fwVersion: \(fwVersion),  blePIN: \(blePIN), factoryData: \(factoryData)")
                     }
 
