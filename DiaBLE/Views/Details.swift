@@ -335,33 +335,31 @@ struct Details: View {
                 // }
 
 
-                if settings.userLevel > .basic {
-                    Section(header: Text("Known Devices")) {
-                        List {
-                            ForEach(app.main.bluetoothDelegate.knownDevices.sorted(by: { $0.key < $1.key }), id: \.key) { uuid, device in
-                                HStack {
-                                    Text(device.name).font(.callout).foregroundColor((app.device != nil) && uuid == app.device!.peripheral!.identifier.uuidString ? .yellow : .blue)
-                                        .onTapGesture {
-                                            // TODO: navigate to peripheral details
-                                            if let peripheral = app.main.centralManager.retrievePeripherals(withIdentifiers: [UUID(uuidString: uuid)!]).first {
-                                                if let appDevice = app.device {
-                                                    app.main.centralManager.cancelPeripheralConnection(appDevice.peripheral!)
-                                                }
-                                                app.main.log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
-                                                // app.main.centralManager.connect(peripheral)
-                                                app.main.bluetoothDelegate.centralManager(app.main.centralManager, didDiscover: peripheral, advertisementData: [:], rssi: 0)
+                Section(header: Text("Known Devices")) {
+                    List {
+                        ForEach(app.main.bluetoothDelegate.knownDevices.sorted(by: { $0.key < $1.key }), id: \.key) { uuid, device in
+                            HStack {
+                                Text(device.name).font(.callout).foregroundColor((app.device != nil) && uuid == app.device!.peripheral!.identifier.uuidString ? .yellow : .blue)
+                                    .onTapGesture {
+                                        // TODO: navigate to peripheral details
+                                        if let peripheral = app.main.centralManager.retrievePeripherals(withIdentifiers: [UUID(uuidString: uuid)!]).first {
+                                            if let appDevice = app.device {
+                                                app.main.centralManager.cancelPeripheralConnection(appDevice.peripheral!)
                                             }
+                                            app.main.log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
+                                            // app.main.centralManager.connect(peripheral)
+                                            app.main.bluetoothDelegate.centralManager(app.main.centralManager, didDiscover: peripheral, advertisementData: [:], rssi: 0)
                                         }
-                                    if !device.isConnectable {
-                                        Spacer()
-                                        Image(systemName: "nosign").foregroundColor(.red)
-                                    } else if device.isIgnored {
-                                        Spacer()
-                                        Image(systemName: "hand.raised.slash.fill").foregroundColor(.red)
-                                            .onTapGesture {
-                                                app.main.bluetoothDelegate.knownDevices[uuid]!.isIgnored.toggle()
-                                            }
                                     }
+                                if !device.isConnectable {
+                                    Spacer()
+                                    Image(systemName: "nosign").foregroundColor(.red)
+                                } else if device.isIgnored {
+                                    Spacer()
+                                    Image(systemName: "hand.raised.slash.fill").foregroundColor(.red)
+                                        .onTapGesture {
+                                            app.main.bluetoothDelegate.knownDevices[uuid]!.isIgnored.toggle()
+                                        }
                                 }
                             }
                         }
