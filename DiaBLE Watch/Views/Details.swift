@@ -318,7 +318,7 @@ struct Details: View {
                                                 app.main.centralManager.cancelPeripheralConnection(appDevice.peripheral!)
                                             }
                                             app.main.log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
-                                            // app.main.centralManager.connect(peripheral)
+                                            app.main.settings.preferredTransmitter = .none
                                             app.main.bluetoothDelegate.centralManager(app.main.centralManager, didDiscover: peripheral, advertisementData: [:], rssi: 0)
                                         }
                                     }

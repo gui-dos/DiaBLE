@@ -335,7 +335,7 @@ struct Details: View {
                 // }
 
 
-                Section(header: Text("Known Devices")) {
+                Section(header: Text("Known Devices").font(.headline)) {
                     List {
                         ForEach(app.main.bluetoothDelegate.knownDevices.sorted(by: { $0.key < $1.key }), id: \.key) { uuid, device in
                             HStack {
@@ -347,7 +347,7 @@ struct Details: View {
                                                 app.main.centralManager.cancelPeripheralConnection(appDevice.peripheral!)
                                             }
                                             app.main.log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
-                                            // app.main.centralManager.connect(peripheral)
+                                            app.main.settings.preferredTransmitter = .none
                                             app.main.bluetoothDelegate.centralManager(app.main.centralManager, didDiscover: peripheral, advertisementData: [:], rssi: 0)
                                         }
                                     }
