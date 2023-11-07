@@ -3,6 +3,8 @@
 
 To build the project you have to duplicate the file _DiaBLE.xcconfig_, rename the copy to _DiaBLEOverride.xcconfig_ (the missing reference displayed by Xcode in red should then point to it) and edit it by deleting the last line `#include?... ` and replacing `##TEAM_ID##` with your Apple Team ID so that the first line should read for example `DEVELOPMENT_TEAM = Z25SC9UDC8`.
 
+The NFC capabilities require a paid Apple Developer Program annual membership. A public beta is available at **[TestFlight](https://testflight.apple.com/join/H48doU3l)** but the simplest way to get invited to the alpha internal builds is to sponsor me $-)
+
 Currently I am targeting only the latest betas of Xcode and iOS and focusing on the new Libre 3.
 
 If you own an iPad you can download the [zipped archive](https://github.com/gui-dos/DiaBLE/archive/refs/heads/main.zip) of this repository and tap _DiaBLE Playground.swiftpm_: DiaBLE was born in fact as a single script for the iPad Swift Playgrounds to test the internal workings of the several trouBLEsome BLE accessories I bought, mainly the BubBLE and the MiaoMiao, but I cannot afford to support actively such transmitters and the LibreOOPWeb _glucose.space_ server anymore.
