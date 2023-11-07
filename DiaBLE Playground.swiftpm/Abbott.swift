@@ -105,7 +105,6 @@ class Abbott: Transmitter {
             if buffer.count == 46 {
                 do {
 
-                    // FIXME: crash loop reported in https://github.com/gui-dos/DiaBLE/discussions/1#discussioncomment-7061392
                     if sensor?.uid.count == 0 {
                         log("Bluetooth: cannot decrypt the BLE data because the Libre 2 UID is not known (it may be necessary to scan the sensor via NFC first).")
                         struct DecryptBLEError: LocalizedError {
