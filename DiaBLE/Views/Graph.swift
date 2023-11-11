@@ -1,6 +1,85 @@
 import Foundation
 import SwiftUI
 
+//struct LiveActivityGraph: View{
+//    
+//    var ymax: Double
+//    var settingsTargetHigh: Double
+//    var settingsTargetLow: Double
+//    
+//    var settingsTargetHighUnits: String
+//    var settingsTargetLowUnits: String
+//    
+//    var historyRawvaluesCount: Int
+//    var historyFactoryValuesCount: Int
+//    
+//    var yScale: Double
+//    var startingVoid: Bool
+//    var pathY: Int
+//    
+//    var body: some View{
+//        ZStack{
+//            GeometryReader { geometry in
+//                Path { path in
+//                    let width  = geometry.size.width - 60
+//                    let height = geometry.size.height
+//                    let yScale = (height - 20) / ymax
+//                    path.addRect(CGRect(x: 1 + 30, y: height - settingsTargetHigh * yScale + 1.0, width: width - 2, height: (settingsTargetHigh - settingsTargetLow) * yScale - 1))
+//                }.fill(Color.green).opacity(0.15)
+//            }
+//            
+//            GeometryReader { geometry in
+//                ZStack {
+//                    Text("\(settingsTargetHighUnits)")
+//                        .position(x: geometry.size.width - 15, y: geometry.size.height - (geometry.size.height - 20) / ymax * settingsTargetHigh)
+//                    Text("\(settingsTargetLowUnits)")
+//                        .position(x: geometry.size.width - 15, y: geometry.size.height - (geometry.size.height - 20) / ymax * settingsTargetLow)
+//                    let count = historyRawvaluesCount
+//                    if count > 0 {
+//                        let hours = count / 4
+//                        let minutes = count % 4 * 15
+//                        Text((hours > 0 ? "\(hours) h\n" : "") + (minutes != 0 ? "\(minutes) min" : ""))
+//                            .position(x: 5, y: geometry.size.height - geometry.size.height / 2)
+//                    } else { // factory data coming from LLU: TODO
+//                        let count = historyFactoryValuesCount
+//                        if count > 0 {
+//                            Text("12 h\n\n\(count) /\n144")
+//                                .position(x: 5, y: geometry.size.height - geometry.size.height / 2 - 8)
+//                        }
+//                    }
+//                }.font(.footnote).foregroundColor(.gray)
+//            }
+//            
+//            GeometryReader { geometry in
+//                let count = historyRawvaluesCount
+//                if count > 0 {
+//                    Path { path in
+//                        let width  = geometry.size.width - 60
+//                        let height = geometry.size.height
+//                        
+////                        let v = history.rawValues.map(\.value)
+//                        let xScale = width / Double(count - 1)
+//                        
+//                        if !startingVoid {
+//                            path.move(to: .init(x: 0 + 30, y: pathY))
+//                        }
+//                        for i in 1 ..< count {
+//                            if v[count - i - 1] > 0 {
+//                                let point = CGPoint(x: Double(i) * xScale + 30.0, y: height - Double(v[count - i - 1]) * yScale)
+//                                if !startingVoid {
+//                                    path.addLine(to: point)
+//                                } else {
+//                                    startingVoid = false
+//                                    path.move(to: point)
+//                                }
+//                            }
+//                        }
+//                    }.stroke(Color.yellow).opacity(0.6)
+//                }
+//            }
+//        }
+//    }
+//}
 
 struct Graph: View {
     @Environment(History.self) var history: History
@@ -8,6 +87,8 @@ struct Graph: View {
 
 
     func yMax() -> Double {
+        
+        
         let maxValues = [
             history.rawValues.map(\.value).max() ?? 0,
             history.factoryValues.map(\.value).max() ?? 0,
@@ -20,7 +101,7 @@ struct Graph: View {
 
     var body: some View {
         ZStack {
-
+            
             // Glucose range rect in the background
             GeometryReader { geometry in
                 Path { path in
@@ -34,6 +115,7 @@ struct Graph: View {
             // Target glucose low and high labels at the right, timespan on the left
             GeometryReader { geometry in
                 ZStack {
+//                    settings.targetHigh.uni
                     Text("\(settings.targetHigh.units)")
                         .position(x: geometry.size.width - 15, y: geometry.size.height - (geometry.size.height - 20) / yMax() * settings.targetHigh)
                     Text("\(settings.targetLow.units)")
@@ -147,4 +229,6 @@ struct Graph: View {
         .environment(Log())
         .environment(History.test)
         .environment(Settings())
+    
+//    LiveActivityGraph(ymax: 1, settingsTargetHigh: 3, settingsTargetLow: 1, settingsTargetHighUnits: "sthu", settingsTargetLowUnits: "stlu", historyRawvaluesCount: 12, historyFactoryValuesCount: 10)
 }

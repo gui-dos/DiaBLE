@@ -32,9 +32,32 @@ struct OnlineView: View {
 
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+    
+    @StateObject var widgetController: WidgetCenter = .shared
 
 
     func reloadLibreLinkUp() async {
+        
+        print("reload function ############")
+//        start the live activity from here
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3){
+            if let sensor = app.sensor{
+                widgetController.startLiveActivity(
+                    lastReadingDate: app.lastReadingDate.shortTime,
+                    minuteSinceLastReading: "\(Int(Date().timeIntervalSince(app.lastReadingDate)/60))",
+                    currentGlucose: app.currentGlucose > 0 ? "\(app.currentGlucose.units) " : "--- ", alarmHigh: Int(settings.alarmHigh),
+                    alarmLow: Int(settings.alarmLow),
+                    color: app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ? "red" : "blue", appState: app.status,
+                    sensorStateDescription: sensor.state.description, sensorStateColor: app.sensor.state == .active ? "green" : "red",
+                    glycemicAlarmDescription: app.glycemicAlarm.description,
+                    trendArrowDescription: app.trendArrow.description,
+                    arrowColor: app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
+                    "red" : "blue")
+            }
+            
+        }
+        
+        
         if let libreLinkUp = await app.main?.libreLinkUp {
             var dataString = ""
             var retries = 0
@@ -306,6 +329,24 @@ struct OnlineView: View {
                                         if settings.onlineInterval > 0 && Int(Date().timeIntervalSince(settings.lastOnlineDate)) >= settings.onlineInterval * 60 - 5 {
                                             await reloadLibreLinkUp()
                                         }
+                                    }
+                                    
+                                
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 3){
+                                        if let sensor = app.sensor{
+                                            widgetController.updateLiveActivity(
+                                                lastReadingDate: app.lastReadingDate.shortTime,
+                                                minuteSinceLastReading: "\(Int(Date().timeIntervalSince(app.lastReadingDate)/60))",
+                                                currentGlucose: app.currentGlucose > 0 ? "\(app.currentGlucose.units) " : "--- ", alarmHigh: Int(settings.alarmHigh),
+                                                alarmLow: Int(settings.alarmLow),
+                                                color: app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ? "red" : "blue", appState: app.status,
+                                                sensorStateDescription: sensor.state.description, sensorStateColor: app.sensor.state == .active ? "green" : "red",
+                                                glycemicAlarmDescription: app.glycemicAlarm.description,
+                                                trendArrowDescription: app.trendArrow.description,
+                                                arrowColor: app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
+                                                "red" : "blue")
+                                        }
+                                        
                                     }
                                 }
 
