@@ -149,6 +149,11 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
     var systemInfo: NFCISO15693SystemInfo!
     var sensor: Sensor!
 
+    // Gen2
+    var securityChallenge: Data = Data()
+    var authContext: Int = 0
+    var sessionInfo: Data = Data()
+
     var taskRequest: TaskRequest? {
         didSet {
             guard taskRequest != nil else { return }
@@ -389,6 +394,12 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
             }
 
             do {
+
+                if sensor.securityGeneration == 2 {
+                    securityChallenge = try await send(sensor.nfcCommand(.readChallenge))
+                    log("NFC: Gen2 security challenge: \(securityChallenge.hex)")
+                }
+
                 let (start, data) = try await sensor.securityGeneration < 2 ?
                 read(fromBlock: 0, count: blocks) : readBlocks(from: 0, count: blocks)
 
@@ -595,6 +606,8 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
     func testNFCCommands() async {
 
+        // Gen2 supported commands: A1, B1, B2, B4
+
         // Libre 3:
         // getting 28 bytes from A1: dummy `a5 00` + 24-byte PatchInfo + CRC
         // getting 0xC1 error from A0, A1 20-22, A8, A9, C8, C9  (A0 and A8 activate a sensor)
@@ -631,7 +644,9 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 }
             }
 
-            var commands: [NFCCommand] = []
+            var commands: [NFCCommand] = [sensor.nfcCommand(.readAttribute),
+                                          sensor.nfcCommand(.readChallenge)
+            ]
 
             for c in 0xA0 ... 0xDF {
                 commands.append(NFCCommand(code: c, parameters: Data(), description: c.hex))
@@ -650,6 +665,11 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 do {
                     let output = try await connectedTag!.customCommand(requestFlags: .highDataRate, customCommandCode: cmd.code, customRequestParameters: cmd.parameters)
                     log("NFC: '\(cmd.description)' command output (\(output.count) bytes): 0x\(output.hex)")
+                    if sensor.securityGeneration == 2 && output.count == 6 { // .readAttribute
+                        let state = SensorState(rawValue: output[0]) ?? .unknown
+                        sensor.state = state
+                        log("\(sensor.type) state: \(state.description.lowercased()) (0x\(state.rawValue.hex))")
+                    }
                 } catch {
                     log("NFC: '\(cmd.description)' command error: \(error.localizedDescription) (ISO 15693 error 0x\(error.iso15693Code.hex): \(error.iso15693Description))")
                 }

@@ -26,7 +26,6 @@ class Abbott: Transmitter {
     override class var dataWriteCharacteristicUUID: String { UUID.bleLogin.rawValue }
     override class var dataReadCharacteristicUUID: String  { UUID.compositeRawData.rawValue }
 
-
     enum AuthenticationState: Int, CustomStringConvertible {
         case notAuthenticated   = 0
         // Gen2

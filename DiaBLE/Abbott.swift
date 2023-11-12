@@ -27,7 +27,31 @@ class Abbott: Transmitter {
     override class var dataWriteCharacteristicUUID: String { UUID.bleLogin.rawValue }
     override class var dataReadCharacteristicUUID: String  { UUID.compositeRawData.rawValue }
 
+    enum AuthenticationState: Int, CustomStringConvertible {
+        case notAuthenticated   = 0
+        // Gen2
+        case enableNotification = 1
+        case challengeResponse  = 2
+        case getSessionInfo     = 3
+        case authenticated      = 4
+        // Gen1
+        case bleLogin           = 5
+
+        var description: String {
+            switch self {
+            case .notAuthenticated:   "AUTH_STATE_NOT_AUTHENTICATED"
+            case .enableNotification: "AUTH_STATE_ENABLE_NOTIFICATION"
+            case .challengeResponse:  "AUTH_STATE_CHALLENGE_RESPONSE"
+            case .getSessionInfo:     "AUTH_STATE_GET_SESSION_INFO"
+            case .authenticated:      "AUTH_STATE_AUTHENTICATED"
+            case .bleLogin:           "AUTH_STATE_BLE_LOGIN"
+            }
+        }
+    }
+
     var securityGeneration: Int = 0    // unknown; then 1 or 2
+    var authenticationState: AuthenticationState = .notAuthenticated
+    var sessionInfo = Data()    // 7 + 18 bytes
 
     override func parseManufacturerData(_ data: Data) {
         if data.count > 7 {
@@ -43,6 +67,27 @@ class Abbott: Transmitter {
     override func read(_ data: Data, for uuid: String) {
 
         switch UUID(rawValue: uuid) {
+
+            // Gen2
+        case .bleLogin:
+            if authenticationState == .challengeResponse {
+                if data.count == 14 {
+                    log("\(name): challenge response: \(data.hex)")
+                    // TODO: processChallengeResponse(), compute streamingUnlockPayload (AUTH_COMMAND_PAYLOAD_LENGTH = 19) and write it
+                    authenticationState = .getSessionInfo
+                }
+            } else if authenticationState == .getSessionInfo {
+                if data.count == 7 {
+                    sessionInfo = Data(data)
+                } else if data.count == 18 {
+                    sessionInfo.append(data)
+                    if sessionInfo.count == 25 {
+                        // TODO: createSecureStreamingSession(), enable read notification
+                        authenticationState = .authenticated
+                    }
+                }
+            }
+
 
         case .compositeRawData:
 

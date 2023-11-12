@@ -446,6 +446,15 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                     // ((app.device as? Abbott)?.sensor as? Libre3)?.pair()  // TEST
                 }
 
+            } else if (app.transmitter as! Abbott).securityGeneration == 2 && (app.transmitter as! Abbott).authenticationState == .notAuthenticated {
+                app.device.peripheral?.setNotifyValue(true, for: app.device.writeCharacteristic!)
+                (app.transmitter as! Abbott).authenticationState = .enableNotification
+                debugLog("Bluetooth: enabled \(app.device.name) security notification")
+                // TODO: move to didUpdateNotificationStateFor()
+                (app.transmitter as! Abbott).authenticationState = .challengeResponse
+                app.device.write(Data([0x20]), .withResponse)
+                debugLog("Bluetooth: sent \(app.device.name) read security challenge")
+
             } else if sensor.uid.count > 0 && settings.activeSensorInitialPatchInfo.count > 0 {
                 if settings.userLevel < .test {  // not sniffing Libre 2
                     sensor.streamingUnlockCount += 1

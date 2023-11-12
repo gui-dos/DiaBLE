@@ -28,6 +28,8 @@
 		C59184472981E9B000A6DA89 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C5AAA61C2981CF7200CA3EC1 /* Assets.xcassets */; };
 		C5AAA6192981CF7000CA3EC1 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AAA6182981CF7000CA3EC1 /* App.swift */; };
 		C5AAA61D2981CF7200CA3EC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C5AAA61C2981CF7200CA3EC1 /* Assets.xcassets */; };
+		C5ADF5822B00E65E00E29632 /* Gen2.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5ADF5812B00E65E00E29632 /* Gen2.swift */; };
+		C5ADF5832B00E65E00E29632 /* Gen2.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5ADF5812B00E65E00E29632 /* Gen2.swift */; };
 		C5B7CE322AEE498F00227392 /* Dexcom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7CE312AEE498F00227392 /* Dexcom.swift */; };
 		C5B7CE332AEE498F00227392 /* Dexcom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7CE312AEE498F00227392 /* Dexcom.swift */; };
 		C5BE8E5B29916D3600604237 /* DiaBLE Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C59960DF2981E381005999C2 /* DiaBLE Watch.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -135,6 +137,7 @@
 		C5AAA6182981CF7000CA3EC1 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		C5AAA61C2981CF7200CA3EC1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C5AAA61E2981CF7200CA3EC1 /* DiaBLE.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DiaBLE.entitlements; sourceTree = "<group>"; };
+		C5ADF5812B00E65E00E29632 /* Gen2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gen2.swift; sourceTree = "<group>"; };
 		C5B7CE312AEE498F00227392 /* Dexcom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dexcom.swift; sourceTree = "<group>"; };
 		C5DED87529899B8A00164AEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C5E015DF2989B0EA00F6EDF9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -265,6 +268,7 @@
 				C5B7CE312AEE498F00227392 /* Dexcom.swift */,
 				C5E4007B29825E4E0021C6B7 /* Abbott.swift */,
 				C5E4008129825E8B0021C6B7 /* Libre2.swift */,
+				C5ADF5812B00E65E00E29632 /* Gen2.swift */,
 				C5E4008429825E990021C6B7 /* Libre3.swift */,
 				C5E4008A29825EC40021C6B7 /* Events.swift */,
 				C5E4008C29825ED00021C6B7 /* Health.swift */,
@@ -451,6 +455,7 @@
 				C5E4008629825E990021C6B7 /* Libre3.swift in Sources */,
 				C5E4007729825E370021C6B7 /* Glucose.swift in Sources */,
 				C5916E5729827EB10051AC06 /* MainDelegate.swift in Sources */,
+				C5ADF5832B00E65E00E29632 /* Gen2.swift in Sources */,
 				C5E4006629825D1F0021C6B7 /* Extensions.swift in Sources */,
 				C5916E5029827E860051AC06 /* Details.swift in Sources */,
 				C5B7CE332AEE498F00227392 /* Dexcom.swift in Sources */,
@@ -477,6 +482,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C5E4008B29825EC40021C6B7 /* Events.swift in Sources */,
+				C5ADF5822B00E65E00E29632 /* Gen2.swift in Sources */,
 				C5E4005E29825C930021C6B7 /* Graph.swift in Sources */,
 				C5E4007929825E450021C6B7 /* Sensor.swift in Sources */,
 				C5E4009029825EEE0021C6B7 /* NFC.swift in Sources */,
