@@ -795,6 +795,27 @@ class Dexcom: Transmitter {
 }
 
 
+class DexcomG6: Sensor {
+
+    /// called by Dexcom Transmitter class
+    func read(_ data: Data, for uuid: String) {
+
+        switch Dexcom.UUID(rawValue: uuid) {
+
+        case .communication:
+            log("\(transmitter!.peripheral!.name!): received \(data.count) \(Dexcom.UUID(rawValue: uuid)!) bytes: \(data.hex)")
+            // TODO
+
+        default:
+            break
+
+        }
+
+    }
+
+}
+
+
 class DexcomONE: Sensor {
 
     /// called by Dexcom Transmitter class

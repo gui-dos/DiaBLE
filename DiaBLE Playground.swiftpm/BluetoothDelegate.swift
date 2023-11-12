@@ -180,7 +180,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             app.transmitter = Dexcom(peripheral: peripheral, main: main)
             app.device = app.transmitter
             if name!.hasPrefix("Dexcom") {
-                app.device.name = "Dexcom"         // TODO: Dexcom ONE
+                app.device.name = "Dexcom"         // TODO: separate Dexcom G6 and ONE
             } else if name!.hasPrefix("DEXCOM") {  // restore to the original G7 device name
                 app.device.name = "Dexcom G7"
                 name = "DXCM" + name!.suffix(2)
@@ -504,11 +504,12 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
         if app.device.type == .transmitter(.dexcom) && serviceUUID == Dexcom.dataServiceUUID {
             var sensor: Sensor! = app.sensor
-            if sensor == nil || sensor.type != .dexcomONE || sensor.type != .dexcomG7 {
+            if sensor == nil ||  sensor.type != .dexcomG6 || sensor.type != .dexcomONE || sensor.type != .dexcomG7 {
                 if app.device.name.suffix(2) == "G7" {
                     sensor = DexcomG7(transmitter: app.transmitter)
                     sensor.type = .dexcomG7
                 } else {
+                    // TODO: default type should be DexcomG6
                     sensor = DexcomONE(transmitter: app.transmitter)
                     sensor.type = .dexcomONE
                 }
