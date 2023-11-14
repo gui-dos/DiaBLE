@@ -135,8 +135,8 @@ struct SettingsView: View {
                         Image(systemName: "hand.thumbsup.fill").foregroundColor(.green).padding(4)
                         Text("\(settings.targetLow.units) - \(settings.targetHigh.units)").foregroundColor(.green)
                         HStack {
-                            Slider(value: $settings.targetLow,  in: 40 ... 99, step: 1)
-                            Slider(value: $settings.targetHigh, in: 140 ... 300, step: 1)
+                            Slider(value: $settings.targetLow,  in: 40 ... 80, step: 1)
+                            Slider(value: $settings.targetHigh, in: 120 ... 300, step: 1)
                         }
                     }.accentColor(.green)
 
@@ -144,8 +144,8 @@ struct SettingsView: View {
                         Image(systemName: "bell.fill").foregroundColor(.red).padding(4)
                         Text("< \(settings.alarmLow.units)   > \(settings.alarmHigh.units)").foregroundColor(.red)
                         HStack {
-                            Slider(value: $settings.alarmLow,  in: 40 ... 99, step: 1)
-                            Slider(value: $settings.alarmHigh, in: 140 ... 300, step: 1)
+                            Slider(value: $settings.alarmLow,  in: 40 ... 80, step: 1)
+                            Slider(value: $settings.alarmHigh, in: 120 ... 300, step: 1)
                         }
                     }.accentColor(.red)
                 }.padding(.horizontal, 40)
