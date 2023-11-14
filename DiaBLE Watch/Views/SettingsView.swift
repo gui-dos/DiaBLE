@@ -105,7 +105,7 @@ struct SettingsView: View {
                     }
                     HStack {
                         Slider(value: $settings.targetLow,  in: 40 ... 99, step: 1).frame(height: 20).scaleEffect(0.6)
-                        Slider(value: $settings.targetHigh, in: 140 ... 300, step: 1).frame(height: 20).scaleEffect(0.6)
+                        Slider(value: $settings.targetHigh, in: 120 ... 300, step: 1).frame(height: 20).scaleEffect(0.6)
                     }
                 }.accentColor(.green)
 
@@ -117,7 +117,7 @@ struct SettingsView: View {
                     }
                     HStack {
                         Slider(value: $settings.alarmLow,  in: 40 ... 99, step: 1).frame(height: 20).scaleEffect(0.6)
-                        Slider(value: $settings.alarmHigh, in: 140 ... 300, step: 1).frame(height: 20).scaleEffect(0.6)
+                        Slider(value: $settings.alarmHigh, in: 120 ... 300, step: 1).frame(height: 20).scaleEffect(0.6)
                     }
                 }.accentColor(.red)
             }
