@@ -5,11 +5,7 @@ To build the project you have to duplicate the file _DiaBLE.xcconfig_, rename th
 
 The NFC capabilities require a paid Apple Developer Program annual membership. A public beta is availaBLE at **[TestFlight](https://testflight.apple.com/join/H48doU3l)** but the simplest way to get invited to the alpha internal builds is to sponsor me $-)
 
-Currently I am targeting only the latest betas of Xcode and iOS and focusing on the new Libre 3.
-
-If you own an iPad you can download the [zipped archive](https://github.com/gui-dos/DiaBLE/archive/refs/heads/main.zip) of this repository and just tap _DiaBLE Playground.swiftpm_: DiaBLE was born in fact as a single script for the iPad Swift Playgrounds to test the internal workings of the several trouBLEsome BLE accessories I bought, mainly the BubBLE and the MiaoMiao, but I cannot afford to support actively such transmitters and the LibreOOPWeb _glucose.space_ server anymore.
-
-Please refer to the [**TODOs**](https://github.com/gui-dos/DiaBLE/blob/main/TODO.md) list for the up-to-date status of all the current limitations and known bugs of this **prototype**.
+Currently I am targeting only the latest betas of Xcode and iOS and focusing on the new Libre 3. Please refer to the [**TODOs**](https://github.com/gui-dos/DiaBLE/blob/main/TODO.md) list for the up-to-date status of all the current limitations and known bugs of this **prototype**.
 
 **Warnings:**
   * the temperature-based calibration algorithm has been derived from the old LibreLink 2.3: it is known that the Vendor improves its algorithms at every new release, smoothing the historical values and projecting the trend ones into the future to compensate the interstitial delay but these further stages aren't understood yet; I never was convinced by the simple linear regression models that others apply on finger pricks;
