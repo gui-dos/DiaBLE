@@ -2,6 +2,10 @@ import SwiftUI
 
 
 struct ContentView: View {
+    
+    @Environment(\.scenePhase) var scenePhase
+    @State var backgroundTask: UIBackgroundTaskIdentifier? = nil
+    
     @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(History.self) var history: History
@@ -44,6 +48,24 @@ struct ContentView: View {
 
         }
         .toolbarRole(.navigationStack)
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                
+            } else if newPhase == .inactive {
+                
+            } else if newPhase == .background {
+                if backgroundTask != nil {
+                    UIApplication.shared.endBackgroundTask(backgroundTask!)
+                    backgroundTask = UIBackgroundTaskIdentifier.invalid
+                }
+
+                backgroundTask = UIApplication.shared.beginBackgroundTask(expirationHandler: { () -> Void in
+                    UIApplication.shared.endBackgroundTask(self.backgroundTask!)
+                    self.backgroundTask = UIBackgroundTaskIdentifier.invalid
+                })
+            }
+            
+        }
     }
 }
 
@@ -92,3 +114,4 @@ struct ContentView: View {
         .environment(History.test)
         .environment(Settings())
 }
+

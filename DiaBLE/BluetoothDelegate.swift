@@ -180,7 +180,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             app.transmitter = Dexcom(peripheral: peripheral, main: main)
             app.device = app.transmitter
             if name!.hasPrefix("Dexcom") {
-                app.device.name = "Dexcom"         // TODO: separate Dexcom G6 and ONE
+                app.device.name = "Dexcom"         // TODO: Dexcom ONE
             } else if name!.hasPrefix("DEXCOM") {  // restore to the original G7 device name
                 app.device.name = "Dexcom G7"
                 name = "DXCM" + name!.suffix(2)
@@ -446,15 +446,6 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                     // ((app.device as? Abbott)?.sensor as? Libre3)?.pair()  // TEST
                 }
 
-            } else if (app.transmitter as! Abbott).securityGeneration == 2 && (app.transmitter as! Abbott).authenticationState == .notAuthenticated {
-                app.device.peripheral?.setNotifyValue(true, for: app.device.writeCharacteristic!)
-                (app.transmitter as! Abbott).authenticationState = .enableNotification
-                debugLog("Bluetooth: enabled \(app.device.name) security notification")
-                // TODO: move to didUpdateNotificationStateFor()
-                (app.transmitter as! Abbott).authenticationState = .challengeResponse
-                app.device.write(Data([0x20]), .withResponse)
-                debugLog("Bluetooth: sent \(app.device.name) read security challenge")
-
             } else if sensor.uid.count > 0 && settings.activeSensorInitialPatchInfo.count > 0 {
                 if settings.userLevel < .test {  // not sniffing Libre 2
                     sensor.streamingUnlockCount += 1
@@ -468,12 +459,11 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
         if app.device.type == .transmitter(.dexcom) && serviceUUID == Dexcom.dataServiceUUID {
             var sensor: Sensor! = app.sensor
-            if sensor == nil ||  sensor.type != .dexcomG6 || sensor.type != .dexcomONE || sensor.type != .dexcomG7 {
+            if sensor == nil || sensor.type != .dexcomONE || sensor.type != .dexcomG7 {
                 if app.device.name.suffix(2) == "G7" {
                     sensor = DexcomG7(transmitter: app.transmitter)
                     sensor.type = .dexcomG7
                 } else {
-                    // TODO: default type should be DexcomG6
                     sensor = DexcomONE(transmitter: app.transmitter)
                     sensor.type = .dexcomONE
                 }
@@ -714,3 +704,4 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         }
     }
 }
+

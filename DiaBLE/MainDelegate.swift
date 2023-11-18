@@ -30,6 +30,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
     var libreLinkUp: LibreLinkUp?
     var nightscout: Nightscout?
     var eventKit: EventKit?
+    
 
 
     override init() {
@@ -92,6 +93,54 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         }
 
     }
+    
+    public func applicationDidEnterBackground(_ application: UIApplication) {
+//        scheduleBackgroundTask()
+    }
+    
+//    func scheduleBackgroundTask() {
+//
+//        print("sched")
+//            backgroundTask = UIApplication.shared.beginBackgroundTask {
+//                self.endBackgroundTask()
+//            }
+//
+//            DispatchQueue.global().async {
+//                while true {
+//                    // Your function to be executed every minute
+//                    Task{
+//                        await self.reloadLibreLinkUp()
+//                    }
+//                    // Sleep for a minute
+//                    Thread.sleep(forTimeInterval: 10)
+//
+//                    if let sensor = self.app.sensor{
+//                        self.widgetController.updateLiveActivity(
+//                            lastReadingDate: self.app.lastReadingDate.shortTime,
+//                            minuteSinceLastReading: "\(Int(Date().timeIntervalSince(self.app.lastReadingDate)/60))",
+//                            currentGlucose: self.app.currentGlucose > 0 ? "\(self.app.currentGlucose.units) " : "--- ", alarmHigh: Int(self.settings.alarmHigh),
+//                            alarmLow: Int(self.settings.alarmLow),
+//                            color: self.app.currentGlucose > 0 && ((self.app.currentGlucose > Int(self.settings.alarmHigh) && (self.app.trendDelta > 0 || self.app.trendArrow == .rising || self.app.trendArrow == .risingQuickly)) || (self.app.currentGlucose < Int(self.settings.alarmLow) && (self.app.trendDelta < 0 || self.app.trendArrow == .falling || self.app.trendArrow == .fallingQuickly))) ? "red" : "blue", appState: self.app.status,
+//                            sensorStateDescription: sensor.state.description, sensorStateColor: self.app.sensor.state == .active ? "green" : "red",
+//                            glycemicAlarmDescription: self.app.glycemicAlarm.description,
+//                            trendArrowDescription: self.app.trendArrow.description,
+//                            arrowColor: self.app.currentGlucose > 0 && ((self.app.currentGlucose > Int(self.settings.alarmHigh) && (self.app.trendDelta > 0 || self.app.trendArrow == .rising || self.app.trendArrow == .risingQuickly)) || (self.app.currentGlucose < Int(self.settings.alarmLow) && (self.app.trendDelta < 0 || self.app.trendArrow == .falling || self.app.trendArrow == .fallingQuickly))) ?
+//                            "red" : "blue")
+//                    }
+//
+//                    Thread.sleep(forTimeInterval: 30)
+//
+//
+//                }
+//            }
+//        }
+    
+//    func endBackgroundTask() {
+//            UIApplication.shared.endBackgroundTask(backgroundTask)
+//            backgroundTask = .invalid
+//        }
+    
+    
 
 
     public func log(_ msg: String, level: LogLevel = .info, label: String = "") {
@@ -395,3 +444,4 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         }
     }
 }
+

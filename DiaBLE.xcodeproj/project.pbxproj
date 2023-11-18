@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D8E032A2B07B97F00BEA851 /* sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6D8E03292B07B97F00BEA851 /* sound.mp3 */; };
+		6D8E032B2B07B97F00BEA851 /* sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 6D8E03292B07B97F00BEA851 /* sound.mp3 */; };
+		6D8E033B2B07BCB000BEA851 /* WidgetCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8E033A2B07BCB000BEA851 /* WidgetCenter.swift */; };
+		6D8E03412B07C34D00BEA851 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D8E030E2B07B8DB00BEA851 /* WidgetKit.framework */; };
+		6D8E03422B07C34D00BEA851 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D8E03102B07B8DB00BEA851 /* SwiftUI.framework */; };
+		6D8E034D2B07C35100BEA851 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D8E034C2B07C35100BEA851 /* Assets.xcassets */; };
+		6D8E03512B07C35100BEA851 /* DiaBLE_LiveActivitiesExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6D8E03402B07C34D00BEA851 /* DiaBLE_LiveActivitiesExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6D8E03582B07C3BA00BEA851 /* DiaBLE_LiveActivitiesBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8E03572B07C3BA00BEA851 /* DiaBLE_LiveActivitiesBundle.swift */; };
+		6D8E035A2B07C3CA00BEA851 /* DiaBLE_LiveActivitiesLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8E03592B07C3CA00BEA851 /* DiaBLE_LiveActivitiesLiveActivity.swift */; };
+		6D8E035C2B07C3DB00BEA851 /* DiableAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8E035B2B07C3DB00BEA851 /* DiableAttributes.swift */; };
+		6D8E035D2B07C3DB00BEA851 /* DiableAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8E035B2B07C3DB00BEA851 /* DiableAttributes.swift */; };
+		6D8E035F2B07C3F300BEA851 /* DiaBLE_LiveActivities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D8E035E2B07C3F300BEA851 /* DiaBLE_LiveActivities.swift */; };
 		C50B9AD32AA7396500FF1EA3 /* ConsoleTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50B9AD22AA7396500FF1EA3 /* ConsoleTools.swift */; };
 		C535AEB42AB3431F00AB61AD /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C535AEB32AB3431F00AB61AD /* Realm */; };
 		C535AEB62AB3431F00AB61AD /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C535AEB52AB3431F00AB61AD /* RealmSwift */; };
@@ -28,8 +40,6 @@
 		C59184472981E9B000A6DA89 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C5AAA61C2981CF7200CA3EC1 /* Assets.xcassets */; };
 		C5AAA6192981CF7000CA3EC1 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AAA6182981CF7000CA3EC1 /* App.swift */; };
 		C5AAA61D2981CF7200CA3EC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C5AAA61C2981CF7200CA3EC1 /* Assets.xcassets */; };
-		C5ADF5822B00E65E00E29632 /* Gen2.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5ADF5812B00E65E00E29632 /* Gen2.swift */; };
-		C5ADF5832B00E65E00E29632 /* Gen2.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5ADF5812B00E65E00E29632 /* Gen2.swift */; };
 		C5B7CE322AEE498F00227392 /* Dexcom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7CE312AEE498F00227392 /* Dexcom.swift */; };
 		C5B7CE332AEE498F00227392 /* Dexcom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7CE312AEE498F00227392 /* Dexcom.swift */; };
 		C5BE8E5B29916D3600604237 /* DiaBLE Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C59960DF2981E381005999C2 /* DiaBLE Watch.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -92,6 +102,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6D8E034F2B07C35100BEA851 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C5AAA60D2981CF7000CA3EC1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6D8E033F2B07C34D00BEA851;
+			remoteInfo = DiaBLE_LiveActivitiesExtension;
+		};
 		C5BE8E5C29916D3600604237 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C5AAA60D2981CF7000CA3EC1 /* Project object */;
@@ -102,6 +119,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		6D8E03222B07B8E000BEA851 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				6D8E03512B07C35100BEA851 /* DiaBLE_LiveActivitiesExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C5BE8E5E29916D3600604237 /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -118,6 +146,18 @@
 /* Begin PBXFileReference section */
 		49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DiaBLE.xcconfig; sourceTree = "<group>"; };
 		49DE8D3429AFFB3000BB7CF4 /* DiaBLEOverride.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DiaBLEOverride.xcconfig; sourceTree = "<group>"; };
+		6D8E030E2B07B8DB00BEA851 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		6D8E03102B07B8DB00BEA851 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		6D8E03212B07B8DF00BEA851 /* DiaBLE_LiveActivitiesExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DiaBLE_LiveActivitiesExtension.entitlements; sourceTree = "<group>"; };
+		6D8E03292B07B97F00BEA851 /* sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = sound.mp3; path = ../../../../Downloads/sound.mp3; sourceTree = "<group>"; };
+		6D8E033A2B07BCB000BEA851 /* WidgetCenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WidgetCenter.swift; path = "../../../Downloads/DiaBLE 2/DiaBLE/WidgetCenter.swift"; sourceTree = "<group>"; };
+		6D8E03402B07C34D00BEA851 /* DiaBLE_LiveActivitiesExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DiaBLE_LiveActivitiesExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D8E034C2B07C35100BEA851 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		6D8E034E2B07C35100BEA851 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6D8E03572B07C3BA00BEA851 /* DiaBLE_LiveActivitiesBundle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiaBLE_LiveActivitiesBundle.swift; path = "../../../Downloads/DiaBLE 2/DiaBLE_LiveActivities/DiaBLE_LiveActivitiesBundle.swift"; sourceTree = "<group>"; };
+		6D8E03592B07C3CA00BEA851 /* DiaBLE_LiveActivitiesLiveActivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiaBLE_LiveActivitiesLiveActivity.swift; path = "../../../Downloads/DiaBLE 2/DiaBLE_LiveActivities/DiaBLE_LiveActivitiesLiveActivity.swift"; sourceTree = "<group>"; };
+		6D8E035B2B07C3DB00BEA851 /* DiableAttributes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiableAttributes.swift; path = "../../../Downloads/DiaBLE 2/DiaBLE_LiveActivities/DiableAttributes.swift"; sourceTree = "<group>"; };
+		6D8E035E2B07C3F300BEA851 /* DiaBLE_LiveActivities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DiaBLE_LiveActivities.swift; path = "../../../Downloads/DiaBLE 2/DiaBLE_LiveActivities/DiaBLE_LiveActivities.swift"; sourceTree = "<group>"; };
 		C50B9AD22AA7396500FF1EA3 /* ConsoleTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleTools.swift; sourceTree = "<group>"; };
 		C535AEB72AB343AE00AB61AD /* Realm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Realm.swift; sourceTree = "<group>"; };
 		C53F77C529894478004F275A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -137,7 +177,6 @@
 		C5AAA6182981CF7000CA3EC1 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		C5AAA61C2981CF7200CA3EC1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C5AAA61E2981CF7200CA3EC1 /* DiaBLE.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DiaBLE.entitlements; sourceTree = "<group>"; };
-		C5ADF5812B00E65E00E29632 /* Gen2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gen2.swift; sourceTree = "<group>"; };
 		C5B7CE312AEE498F00227392 /* Dexcom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dexcom.swift; sourceTree = "<group>"; };
 		C5DED87529899B8A00164AEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C5E015DF2989B0EA00F6EDF9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -178,6 +217,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6D8E033D2B07C34D00BEA851 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D8E03422B07C34D00BEA851 /* SwiftUI.framework in Frameworks */,
+				6D8E03412B07C34D00BEA851 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C59960DC2981E381005999C2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -199,6 +247,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6D8E03432B07C34D00BEA851 /* DiaBLE_LiveActivities */ = {
+			isa = PBXGroup;
+			children = (
+				6D8E03572B07C3BA00BEA851 /* DiaBLE_LiveActivitiesBundle.swift */,
+				6D8E03592B07C3CA00BEA851 /* DiaBLE_LiveActivitiesLiveActivity.swift */,
+				6D8E035E2B07C3F300BEA851 /* DiaBLE_LiveActivities.swift */,
+				6D8E035B2B07C3DB00BEA851 /* DiableAttributes.swift */,
+				6D8E034C2B07C35100BEA851 /* Assets.xcassets */,
+				6D8E034E2B07C35100BEA851 /* Info.plist */,
+			);
+			path = DiaBLE_LiveActivities;
+			sourceTree = "<group>";
+		};
 		C5916E4529827E860051AC06 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -229,6 +290,7 @@
 		C5AAA60C2981CF7000CA3EC1 = {
 			isa = PBXGroup;
 			children = (
+				6D8E03212B07B8DF00BEA851 /* DiaBLE_LiveActivitiesExtension.entitlements */,
 				49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */,
 				49DE8D3429AFFB3000BB7CF4 /* DiaBLEOverride.xcconfig */,
 				C5E015DF2989B0EA00F6EDF9 /* README.md */,
@@ -236,6 +298,7 @@
 				C5E015E52989B10500F6EDF9 /* LICENSE.md */,
 				C5AAA6172981CF7000CA3EC1 /* DiaBLE */,
 				C59960E02981E381005999C2 /* DiaBLE Watch */,
+				6D8E03432B07C34D00BEA851 /* DiaBLE_LiveActivities */,
 				C5AAA6162981CF7000CA3EC1 /* Products */,
 				C5BE8E5A29916D3600604237 /* Frameworks */,
 			);
@@ -246,6 +309,7 @@
 			children = (
 				C5AAA6152981CF7000CA3EC1 /* DiaBLE.app */,
 				C59960DF2981E381005999C2 /* DiaBLE Watch.app */,
+				6D8E03402B07C34D00BEA851 /* DiaBLE_LiveActivitiesExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -264,11 +328,11 @@
 				C5E4007329825E050021C6B7 /* MainDelegate.swift */,
 				C5E4007529825E370021C6B7 /* Glucose.swift */,
 				C5E4007829825E450021C6B7 /* Sensor.swift */,
+				6D8E033A2B07BCB000BEA851 /* WidgetCenter.swift */,
 				C55D12B329ACB5E00050F567 /* Crypto.swift */,
 				C5B7CE312AEE498F00227392 /* Dexcom.swift */,
 				C5E4007B29825E4E0021C6B7 /* Abbott.swift */,
 				C5E4008129825E8B0021C6B7 /* Libre2.swift */,
-				C5ADF5812B00E65E00E29632 /* Gen2.swift */,
 				C5E4008429825E990021C6B7 /* Libre3.swift */,
 				C5E4008A29825EC40021C6B7 /* Events.swift */,
 				C5E4008C29825ED00021C6B7 /* Health.swift */,
@@ -288,6 +352,8 @@
 		C5BE8E5A29916D3600604237 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6D8E030E2B07B8DB00BEA851 /* WidgetKit.framework */,
+				6D8E03102B07B8DB00BEA851 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -297,6 +363,7 @@
 			children = (
 				C5E4004429825C710021C6B7 /* alarm_high.mp3 */,
 				C5E4004529825C710021C6B7 /* alarm_low.mp3 */,
+				6D8E03292B07B97F00BEA851 /* sound.mp3 */,
 				C5E4004629825C710021C6B7 /* alarm_signal_loss.mp3 */,
 			);
 			path = Media;
@@ -323,6 +390,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		6D8E033F2B07C34D00BEA851 /* DiaBLE_LiveActivitiesExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6D8E03522B07C35200BEA851 /* Build configuration list for PBXNativeTarget "DiaBLE_LiveActivitiesExtension" */;
+			buildPhases = (
+				6D8E033C2B07C34D00BEA851 /* Sources */,
+				6D8E033D2B07C34D00BEA851 /* Frameworks */,
+				6D8E033E2B07C34D00BEA851 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DiaBLE_LiveActivitiesExtension;
+			productName = DiaBLE_LiveActivitiesExtension;
+			productReference = 6D8E03402B07C34D00BEA851 /* DiaBLE_LiveActivitiesExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		C59960DE2981E381005999C2 /* DiaBLE Watch */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C59960EC2981E383005999C2 /* Build configuration list for PBXNativeTarget "DiaBLE Watch" */;
@@ -351,11 +435,13 @@
 				C5AAA6122981CF7000CA3EC1 /* Frameworks */,
 				C5AAA6132981CF7000CA3EC1 /* Resources */,
 				C5BE8E5E29916D3600604237 /* Embed Watch Content */,
+				6D8E03222B07B8E000BEA851 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				C5BE8E5D29916D3600604237 /* PBXTargetDependency */,
+				6D8E03502B07C35100BEA851 /* PBXTargetDependency */,
 			);
 			name = DiaBLE;
 			packageProductDependencies = (
@@ -374,9 +460,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1420;
+				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					6D8E033F2B07C34D00BEA851 = {
+						CreatedOnToolsVersion = 15.0.1;
+						LastSwiftMigration = 1500;
+					};
 					C59960DE2981E381005999C2 = {
 						CreatedOnToolsVersion = 14.2;
 					};
@@ -404,16 +494,26 @@
 			targets = (
 				C5AAA6142981CF7000CA3EC1 /* DiaBLE */,
 				C59960DE2981E381005999C2 /* DiaBLE Watch */,
+				6D8E033F2B07C34D00BEA851 /* DiaBLE_LiveActivitiesExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6D8E033E2B07C34D00BEA851 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D8E034D2B07C35100BEA851 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C59960DD2981E381005999C2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				C5E015E12989B0EA00F6EDF9 /* README.md in Resources */,
+				6D8E032B2B07B97F00BEA851 /* sound.mp3 in Resources */,
 				C5E400A029825F580021C6B7 /* company_ids.json in Resources */,
 				C5E015E42989B0F600F6EDF9 /* TODO.md in Resources */,
 				C5E4004A29825C710021C6B7 /* alarm_low.mp3 in Resources */,
@@ -429,6 +529,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C5E015E02989B0EA00F6EDF9 /* README.md in Resources */,
+				6D8E032A2B07B97F00BEA851 /* sound.mp3 in Resources */,
 				C5E4009F29825F580021C6B7 /* company_ids.json in Resources */,
 				C5E015E32989B0F600F6EDF9 /* TODO.md in Resources */,
 				C5E4004929825C710021C6B7 /* alarm_low.mp3 in Resources */,
@@ -442,6 +543,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6D8E033C2B07C34D00BEA851 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6D8E035A2B07C3CA00BEA851 /* DiaBLE_LiveActivitiesLiveActivity.swift in Sources */,
+				6D8E035D2B07C3DB00BEA851 /* DiableAttributes.swift in Sources */,
+				6D8E03582B07C3BA00BEA851 /* DiaBLE_LiveActivitiesBundle.swift in Sources */,
+				6D8E035F2B07C3F300BEA851 /* DiaBLE_LiveActivities.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C59960DB2981E381005999C2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -455,7 +567,6 @@
 				C5E4008629825E990021C6B7 /* Libre3.swift in Sources */,
 				C5E4007729825E370021C6B7 /* Glucose.swift in Sources */,
 				C5916E5729827EB10051AC06 /* MainDelegate.swift in Sources */,
-				C5ADF5832B00E65E00E29632 /* Gen2.swift in Sources */,
 				C5E4006629825D1F0021C6B7 /* Extensions.swift in Sources */,
 				C5916E5029827E860051AC06 /* Details.swift in Sources */,
 				C5B7CE332AEE498F00227392 /* Dexcom.swift in Sources */,
@@ -482,7 +593,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C5E4008B29825EC40021C6B7 /* Events.swift in Sources */,
-				C5ADF5822B00E65E00E29632 /* Gen2.swift in Sources */,
 				C5E4005E29825C930021C6B7 /* Graph.swift in Sources */,
 				C5E4007929825E450021C6B7 /* Sensor.swift in Sources */,
 				C5E4009029825EEE0021C6B7 /* NFC.swift in Sources */,
@@ -495,9 +605,11 @@
 				C5E4008D29825ED00021C6B7 /* Health.swift in Sources */,
 				C5E4008229825E8B0021C6B7 /* Libre2.swift in Sources */,
 				C5E4005C29825C930021C6B7 /* ViewRepresentables.swift in Sources */,
+				6D8E035C2B07C3DB00BEA851 /* DiableAttributes.swift in Sources */,
 				C5E4006829825DCD0021C6B7 /* Settings.swift in Sources */,
 				C5E4005F29825C930021C6B7 /* OnlineView.swift in Sources */,
 				C5E4006E29825DEA0021C6B7 /* Device.swift in Sources */,
+				6D8E033B2B07BCB000BEA851 /* WidgetCenter.swift in Sources */,
 				C5E4006129825C930021C6B7 /* Plan.swift in Sources */,
 				C5E4009929825F1C0021C6B7 /* Nightscout.swift in Sources */,
 				C5E4005B29825C930021C6B7 /* Details.swift in Sources */,
@@ -520,6 +632,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6D8E03502B07C35100BEA851 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6D8E033F2B07C34D00BEA851 /* DiaBLE_LiveActivitiesExtension */;
+			targetProxy = 6D8E034F2B07C35100BEA851 /* PBXContainerItemProxy */;
+		};
 		C5BE8E5D29916D3600604237 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
@@ -529,6 +646,75 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		6D8E03532B07C35200BEA851 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = DiaBLE_LiveActivitiesExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JBZXBBQ35Y;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DiaBLE_LiveActivities/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DiaBLE_LiveActivities;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.JBZXBBQ35Y.DiaBLE.DiaBLE-LiveActivities";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6D8E03542B07C35200BEA851 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = DiaBLE_LiveActivitiesExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JBZXBBQ35Y;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = DiaBLE_LiveActivities/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DiaBLE_LiveActivities;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.JBZXBBQ35Y.DiaBLE.DiaBLE-LiveActivities";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		C59960EA2981E383005999C2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */;
@@ -538,7 +724,7 @@
 				CODE_SIGN_ENTITLEMENTS = "DiaBLE Watch/DiaBLE Watch.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 69;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = JBZXBBQ35Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "DiaBLE Watch/Info.plist";
@@ -549,7 +735,7 @@
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "DiaBLE tracks your blood glucose and saves the insulin delivery data.";
 				INFOPLIST_KEY_NSRemindersUsageDescription = "DiaBLE reminds to check the glucose level at scheduled times.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "$(WATCHKIT_COMPANION_APP)";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.JBZXBBQ35Y.DiaBLE;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -576,7 +762,7 @@
 				CODE_SIGN_ENTITLEMENTS = "DiaBLE Watch/DiaBLE Watch.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 69;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = JBZXBBQ35Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "DiaBLE Watch/Info.plist";
@@ -587,7 +773,7 @@
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "DiaBLE tracks your blood glucose and saves the insulin delivery data.";
 				INFOPLIST_KEY_NSRemindersUsageDescription = "DiaBLE reminds to check the glucose level at scheduled times.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "$(WATCHKIT_COMPANION_APP)";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.JBZXBBQ35Y.DiaBLE;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -731,13 +917,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DiaBLE/DiaBLE.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 69;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = JBZXBBQ35Y;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -749,6 +936,8 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "DiaBLE reads blood glucose and insulin delivery data.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "DiaBLE tracks your blood glucose and saves the insulin delivery data.";
 				INFOPLIST_KEY_NSRemindersUsageDescription = "DiaBLE reminds to check the glucose level at scheduled times.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -779,13 +968,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DiaBLE/DiaBLE.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 69;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = JBZXBBQ35Y;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -797,6 +987,8 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "DiaBLE reads blood glucose and insulin delivery data.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "DiaBLE tracks your blood glucose and saves the insulin delivery data.";
 				INFOPLIST_KEY_NSRemindersUsageDescription = "DiaBLE reminds to check the glucose level at scheduled times.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
+				INFOPLIST_KEY_NSSupportsLiveActivitiesFrequentUpdates = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -826,6 +1018,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6D8E03522B07C35200BEA851 /* Build configuration list for PBXNativeTarget "DiaBLE_LiveActivitiesExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6D8E03532B07C35200BEA851 /* Debug */,
+				6D8E03542B07C35200BEA851 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C59960EC2981E383005999C2 /* Build configuration list for PBXNativeTarget "DiaBLE Watch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

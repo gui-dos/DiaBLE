@@ -23,6 +23,10 @@ struct Console: View {
     @Environment(\.colorScheme) var colorScheme
 
     @State private var showingNFCAlert = false
+    @State private var showingUnlockConfirmationDialog = false
+    @State private var showingResetConfirmationDialog = false
+    @State private var showingProlongConfirmationDialog = false
+    @State private var showingActivateConfirmationDialog = false
     @State private var showingFilterField = false
     @State private var filterString = ""
 
@@ -174,6 +178,11 @@ struct Console: View {
         .alert("NFC not supported", isPresented: $showingNFCAlert) {
         } message: {
             Text("This device doesn't allow scanning the Libre.")
+        }
+        .confirmationDialog("Activating a fresh/ened sensor will put it in the usual warming-up state for 60 minutes.", isPresented: $showingActivateConfirmationDialog, titleVisibility: .visible) {
+            Button("Activate", role: .destructive) {
+                app.main.nfc.taskRequest = .activate
+            }
         }
 
     }
@@ -347,3 +356,4 @@ struct ConsoleSidebar: View {
         .environment(History.test)
         .environment(Settings())
 }
+

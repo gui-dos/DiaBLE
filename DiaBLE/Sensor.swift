@@ -18,7 +18,6 @@ enum SensorType: String, CustomStringConvertible {
     case libre2CA     = "Libre 2 CA"
     case libreSense   = "Libre Sense"
     case libre3       = "Libre 3"
-    case dexcomG6     = "Dexcom G6"
     case dexcomONE    = "Dexcom ONE"
     case dexcomG7     = "Dexcom G7"
     case unknown      = "Libre"
@@ -268,13 +267,6 @@ func writeBits(_ buffer: Data, _ byteOffset: Int, _ bitOffset: Int, _ bitCount: 
     var initialPatchInfo: PatchInfo = Data()
     var streamingUnlockCode: UInt32 = 42
     var streamingUnlockCount: UInt16 = 0
-
-    // Gen2
-    var streamingContext: Int = 0    // returned by getNfcAuthenticatedCommandBLE(command:...)
-
-    /// formed when passed as third inout argument to verifyEnableStreamingResponse()
-    /// 10 bytes in older US2 models, 12 bytes in new  ones
-    var streamingAuthenticationData: Data = Data()
 
 
     init(transmitter: Transmitter? = nil, main: MainDelegate? = nil) {

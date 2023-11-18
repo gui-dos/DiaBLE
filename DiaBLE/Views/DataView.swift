@@ -173,3 +173,4 @@ struct DataView: View {
         .environment(History.test)
         .environment(Settings())
 }
+

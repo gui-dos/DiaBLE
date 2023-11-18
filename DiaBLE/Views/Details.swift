@@ -19,7 +19,7 @@ struct Details: View {
 
     // TODO:
     @ViewBuilder func Row(_ label: String, _ value: String, foregroundColor: Color? = .yellow) -> some View {
-        if !(value.isEmpty || value == "unknown") {
+        if !value.isEmpty {
             HStack {
                 Text(label)
                 Spacer()
@@ -437,3 +437,4 @@ struct Details: View {
             .environment(Settings())
     }
 }
+

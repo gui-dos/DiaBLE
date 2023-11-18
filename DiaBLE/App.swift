@@ -3,20 +3,31 @@ import SwiftUI
 
 @main
 struct DiaBLEApp: App {
+    
+    
+    
+    
 #if !os(watchOS)
     @UIApplicationDelegateAdaptor(MainDelegate.self) var main
 #else
     @WKApplicationDelegateAdaptor(MainDelegate.self) var main
 #endif
+    
+    
 
     @SceneBuilder var body: some Scene {
         WindowGroup {
             ContentView()
+                
                 .environment(main.app)
                 .environment(main.log)
                 .environment(main.history)
                 .environment(main.settings)
+                
         }
+        
+        
+        
     }
 }
 
@@ -87,11 +98,11 @@ enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
     var description: String {
         switch self {
         case .notDetermined:  "NOT_DETERMINED"
-        case .fallingQuickly: "FALLING_QUICKLY"
-        case .falling:        "FALLING"
-        case .stable:         "STABLE"
-        case .rising:         "RISING"
-        case .risingQuickly:  "RISING_QUICKLY"
+        case .fallingQuickly: "Falling_Quickly"
+        case .falling:        "Falling"
+        case .stable:         "Stable"
+        case .rising:         "Rising"
+        case .risingQuickly:  "Rising_Quickly"
         default:              ""
         }
     }

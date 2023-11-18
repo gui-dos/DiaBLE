@@ -288,3 +288,4 @@ class HexDataFormatter: Formatter {
         return true
     }
 }
+

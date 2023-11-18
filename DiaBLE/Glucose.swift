@@ -448,3 +448,4 @@ func factoryGlucose(rawGlucose: Glucose, calibrationInfo: CalibrationInfo) -> Gl
 
     return glucose
 }
+

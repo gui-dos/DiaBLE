@@ -62,3 +62,4 @@ struct Plan: View {
         .environment(History.test)
         .environment(Settings())
 }
+
