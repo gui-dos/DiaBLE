@@ -310,13 +310,15 @@ class LibreLinkUp: Logging {
                                let a = sensor["a"] as? Int,
                                // pruduct type should be 0: .libre1, 3: .libre2, 4: .libre3 but happening a Libre 1 with `pt` = 3...
                                let pt = sensor["pt"] as? Int {
-                                let sensorType: SensorType =
+                                var sensorType: SensorType =
                                 dtid == 40068 ? .libre3 :
                                 dtid == 40067 ? .libre2 :
                                 dtid == 40066 ? .libre1 : .unknown
-                                deviceTypes[deviceId] = sensorType
+                                // FIXME:
                                 // according to bundle.js, if `alarms` is true 40066 is also a .libre2
                                 // but happening a Libre 1 with `alarms` = true...
+                                if sensorType == .libre1 && alarms == true { sensorType = .libre2 }
+                                deviceTypes[deviceId] = sensorType
                                 if sn.count == 10 {
                                     switch sensorType {
                                     case .libre1: sn = "0" + sn

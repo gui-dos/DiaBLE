@@ -468,7 +468,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
         if app.device.type == .transmitter(.dexcom) && serviceUUID == Dexcom.dataServiceUUID {
             var sensor: Sensor! = app.sensor
-            if sensor == nil ||  sensor.type != .dexcomG6 || sensor.type != .dexcomONE || sensor.type != .dexcomG7 {
+            if sensor == nil || sensor.type != .dexcomG6 || sensor.type != .dexcomONE || sensor.type != .dexcomG7 {
                 if app.device.name.suffix(2) == "G7" {
                     sensor = DexcomG7(transmitter: app.transmitter)
                     sensor.type = .dexcomG7

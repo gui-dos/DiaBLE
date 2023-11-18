@@ -76,7 +76,7 @@ struct ShellView: View {
                                                                 // $ pip3 install frida-tools
                                                                 // $ adb root
                                                                 // $ adb push ~/Downloads/frida-server-16.1.4-android-arm64 /data/local/tmp/frida-server
-                                                                // $ adb shell
+                                                                // $ adb shell  # sudo waydroid shell
                                                                 // $ su
                                                                 // # chmod 755 /data/local/tmp/frida-server
                                                                 // # /data/local/tmp/frida-server &
