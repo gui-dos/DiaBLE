@@ -654,7 +654,7 @@
 				INFOPLIST_FILE = DiaBLEWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DiaBLEWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -689,7 +689,7 @@
 				INFOPLIST_FILE = DiaBLEWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DiaBLEWidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -930,6 +930,7 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "DiaBLE reads blood glucose and insulin delivery data.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "DiaBLE tracks your blood glucose and saves the insulin delivery data.";
 				INFOPLIST_KEY_NSRemindersUsageDescription = "DiaBLE reminds to check the glucose level at scheduled times.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -979,6 +980,7 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "DiaBLE reads blood glucose and insulin delivery data.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "DiaBLE tracks your blood glucose and saves the insulin delivery data.";
 				INFOPLIST_KEY_NSRemindersUsageDescription = "DiaBLE reminds to check the glucose level at scheduled times.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
