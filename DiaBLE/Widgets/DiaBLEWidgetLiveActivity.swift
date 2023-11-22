@@ -1,10 +1,3 @@
-//
-//  DiaBLEWidgetLiveActivity.swift
-//  DiaBLEWidget
-//
-//  Created by Guido Soranzio on 22/11/23.
-//
-
 import ActivityKit
 import WidgetKit
 import SwiftUI
