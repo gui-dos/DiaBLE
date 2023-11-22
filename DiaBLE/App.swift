@@ -3,11 +3,14 @@ import SwiftUI
 
 @main
 struct DiaBLEApp: App {
+
 #if !os(watchOS)
     @UIApplicationDelegateAdaptor(MainDelegate.self) var main
 #else
     @WKApplicationDelegateAdaptor(MainDelegate.self) var main
 #endif
+
+    @Environment(\.scenePhase) private var scenePhase
 
     @SceneBuilder var body: some Scene {
         WindowGroup {
@@ -16,6 +19,13 @@ struct DiaBLEApp: App {
                 .environment(main.log)
                 .environment(main.history)
                 .environment(main.settings)
+        }
+        .onChange(of: scenePhase) {
+            if scenePhase == .background {
+                if main.settings.userLevel >= .devel {
+                    main.debugLog("DEBUG: app went background at \(Date.now.shortTime)")
+                }
+            }
         }
     }
 }
