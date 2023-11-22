@@ -641,6 +641,7 @@
 /* Begin XCBuildConfiguration section */
 		C581D59A2B0E699D002A4633 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
@@ -675,6 +676,7 @@
 		};
 		C581D59B2B0E699D002A4633 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
