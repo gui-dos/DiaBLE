@@ -81,7 +81,13 @@ class EventKit: Logging {
                     title += "  \(trendArrow.symbol)"
                 }
 
-                // TODO: delta
+                if self.main.app.trendDeltaMinutes > 0 {
+                    title += "\n"
+                    title += "\(self.main.app.trendDelta > 0 ? "+" : self.main.app.trendDelta < 0 ? "-" : "")\(self.main.app.trendDelta == 0 ? "→" : abs(self.main.app.trendDelta).units)" + " over " + "\(self.main.app.trendDeltaMinutes)" + " min"
+                }
+                else {
+                    title += "\n Computing trend"
+                }
 
                 let snoozed = self.settings.lastAlarmDate.timeIntervalSinceNow >= -Double(self.settings.alarmSnoozeInterval * 60) && self.settings.disabledNotifications
 
