@@ -1,3 +1,5 @@
+#if canImport(ActivityKit)
+
 import ActivityKit
 import WidgetKit
 import SwiftUI
@@ -71,3 +73,5 @@ extension DiaBLEWidgetAttributes.ContentState {
     DiaBLEWidgetAttributes.ContentState.smiley
     DiaBLEWidgetAttributes.ContentState.starEyes
 }
+
+#endif
