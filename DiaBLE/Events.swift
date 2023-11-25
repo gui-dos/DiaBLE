@@ -28,29 +28,29 @@ class EventKit: Logging {
                 return
             }
 
-            self.calendarTitles = self.store.calendars(for: .event)
+            calendarTitles = store.calendars(for: .event)
                 .filter(\.allowsContentModifications)
                 .map(\.title)
 
-            guard self.settings.calendarTitle != "" else { return }
+            guard settings.calendarTitle != "" else { return }
 
             var calendar: EKCalendar?
-            for storeCalendar in self.store.calendars(for: .event) {
-                if storeCalendar.title == self.settings.calendarTitle {
+            for storeCalendar in store.calendars(for: .event) {
+                if storeCalendar.title == settings.calendarTitle {
                     calendar = storeCalendar
                     break
                 }
             }
 
             if calendar == nil {
-                calendar = self.store.defaultCalendarForNewEvents
+                calendar = store.defaultCalendarForNewEvents
             }
-            let predicate = self.store.predicateForEvents(withStart: Calendar.current.date(byAdding: .year, value: -1, to: Date())!, end: Date(), calendars: [calendar!])  // Date.distantPast doesn't work
-            for event in self.store.events(matching: predicate) {
+            let predicate = store.predicateForEvents(withStart: Calendar.current.date(byAdding: .year, value: -1, to: Date())!, end: Date(), calendars: [calendar!])  // Date.distantPast doesn't work
+            for event in store.events(matching: predicate) {
                 if let notes = event.notes {
                     if notes.contains("Created by DiaBLE") {
                         do {
-                            try self.store.remove(event, span: .thisEvent)
+                            try store.remove(event, span: .thisEvent)
                         } catch {
                             debugLog("EventKit: error while deleting calendar events created by DiaBLE: \(error.localizedDescription)")
                         }
@@ -58,55 +58,55 @@ class EventKit: Logging {
                 }
             }
 
-            let currentGlucose = self.main.app.currentGlucose
+            let currentGlucose = main.app.currentGlucose
             var title = currentGlucose > 0 ? "\(currentGlucose.units)" : "---"
 
             if currentGlucose != 0 {
-                title += "  \(self.settings.displayingMillimoles ? GlucoseUnit.mmoll : GlucoseUnit.mgdl)"
+                title += "  \(settings.displayingMillimoles ? GlucoseUnit.mmoll : GlucoseUnit.mgdl)"
 
-                let alarm = self.main.app.glycemicAlarm
+                let alarm = main.app.glycemicAlarm
                 if alarm != .unknown {
                     title += "  \(alarm.shortDescription)"
                 } else {
-                    if currentGlucose > Int(self.settings.alarmHigh) {
+                    if currentGlucose > Int(settings.alarmHigh) {
                         title += "  HIGH"
                     }
-                    if currentGlucose < Int(self.settings.alarmLow) {
+                    if currentGlucose < Int(settings.alarmLow) {
                         title += "  LOW"
                     }
                 }
 
-                let trendArrow = self.main.app.trendArrow
+                let trendArrow = main.app.trendArrow
                 if trendArrow != .unknown {
                     title += "  \(trendArrow.symbol)"
                 }
 
-                if self.main.app.trendDeltaMinutes > 0 {
+                if main.app.trendDeltaMinutes > 0 {
                     title += "\n"
-                    title += "\(self.main.app.trendDelta > 0 ? "+" : self.main.app.trendDelta < 0 ? "-" : "")\(self.main.app.trendDelta == 0 ? "→" : abs(self.main.app.trendDelta).units)" + " over " + "\(self.main.app.trendDeltaMinutes)" + " min"
+                    title += "\(main.app.trendDelta > 0 ? "+" : main.app.trendDelta < 0 ? "-" : "")\(main.app.trendDelta == 0 ? "→" : abs(main.app.trendDelta).units)" + " over " + "\(main.app.trendDeltaMinutes)" + " min"
                 }
                 else {
                     title += "\n Computing trend"
                 }
 
-                let snoozed = self.settings.lastAlarmDate.timeIntervalSinceNow >= -Double(self.settings.alarmSnoozeInterval * 60) && self.settings.disabledNotifications
+                let snoozed = settings.lastAlarmDate.timeIntervalSinceNow >= -Double(settings.alarmSnoozeInterval * 60) && settings.disabledNotifications
 
-                let event = EKEvent(eventStore: self.store)
+                let event = EKEvent(eventStore: store)
                 event.title = title
                 event.notes = "Created by DiaBLE"
                 event.startDate = Date()
-                event.endDate = Date(timeIntervalSinceNow: TimeInterval(60 * max(self.settings.readingInterval, self.settings.onlineInterval, snoozed ? self.settings.alarmSnoozeInterval : 0) + 5))
+                event.endDate = Date(timeIntervalSinceNow: TimeInterval(60 * max(settings.readingInterval, settings.onlineInterval, snoozed ? settings.alarmSnoozeInterval : 0) + 5))
                 event.calendar = calendar
 
-                if !snoozed && self.settings.calendarAlarmIsOn {
-                    if currentGlucose > 0 && (currentGlucose > Int(self.settings.alarmHigh) || currentGlucose < Int(self.settings.alarmLow)) {
+                if !snoozed && settings.calendarAlarmIsOn {
+                    if currentGlucose > 0 && (currentGlucose > Int(settings.alarmHigh) || currentGlucose < Int(settings.alarmLow)) {
                         let alarm = EKAlarm(relativeOffset: 1)
                         event.addAlarm(alarm)
                     }
                 }
 
                 do {
-                    try self.store.save(event, span: .thisEvent)
+                    try store.save(event, span: .thisEvent)
                 } catch {
                     log("EventKit: error while saving event: \(error.localizedDescription)")
                 }
