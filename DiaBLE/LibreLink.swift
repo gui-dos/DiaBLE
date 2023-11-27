@@ -343,18 +343,18 @@ class LibreLinkUp: Logging {
                         let sensorType = deviceTypes[deviceId]!
                         let activationTime = deviceActivationTimes[deviceId]!
                         let activationDate = Date(timeIntervalSince1970: Double(activationTime))
-                        if await main.app.sensor == nil {
+                        if app.sensor == nil {
                             DispatchQueue.main.async {
-                                self.main.app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Sensor(main: self.main)
-                                self.main.app.sensor.type = sensorType
-                                self.main.app.sensor.serial = serial
+                                self.app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Sensor(main: self.main)
+                                self.app.sensor.type = sensorType
+                                self.app.sensor.serial = serial
                             }
                         } else {
-                            if await self.main.app.sensor.serial.isEmpty {
-                                await self.main.app.sensor.serial = serial
+                            if self.app.sensor.serial.isEmpty {
+                                self.app.sensor.serial = serial
                             }
                         }
-                        let sensor = await main.app.sensor!
+                        let sensor = app.sensor!
                         if sensor.serial.hasSuffix(serial) || deviceTypes.count == 1 {
                             DispatchQueue.main.async {
                                 sensor.activationTime = UInt32(activationTime)
@@ -381,7 +381,7 @@ class LibreLinkUp: Logging {
                             debugLog("LibreLinkUp: last glucose measurement: \(measurement) (JSON: \(lastGlucoseMeasurement))")
                             if lastGlucose.trendArrow != nil {
                                 DispatchQueue.main.async {
-                                    self.main.app.trendArrow = lastGlucose.trendArrow!
+                                    self.app.trendArrow = lastGlucose.trendArrow!
                                 }
                             }
                             // TODO: scrape historic data only when the 17-minute delay has passed

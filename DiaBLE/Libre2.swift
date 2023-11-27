@@ -343,7 +343,7 @@ extension Sensor {
             }
         }
 
-        if bleTrend[0].rawValue > 0 { main.app.currentGlucose = bleTrend[0].value }
+        if bleTrend[0].rawValue > 0 { app.currentGlucose = bleTrend[0].value }
 
         let readingDate = bleTrend[0].date
 

@@ -95,8 +95,8 @@ class Abbott: Transmitter {
 
             if data.count == 20 {
                 buffer = Data()
-                main.app.lastReadingDate = main.app.lastConnectionDate
-                sensor!.lastReadingDate = main.app.lastConnectionDate
+                app.lastReadingDate = app.lastConnectionDate
+                sensor!.lastReadingDate = app.lastConnectionDate
             }
 
             buffer.append(data)
@@ -151,8 +151,8 @@ class Abbott: Transmitter {
                     // TODO: compute accurate delta and update trend arrow
                     let deltaMinutes = factoryTrend[6].value > 0 ? 6 : 7
                     let delta = (factoryTrend[0].value > 0 ? factoryTrend[0].value : (factoryTrend[1].value > 0 ? factoryTrend[1].value : factoryTrend[2].value)) - factoryTrend[deltaMinutes].value
-                    main.app.trendDeltaMinutes = deltaMinutes
-                    main.app.trendDelta = delta
+                    app.trendDeltaMinutes = deltaMinutes
+                    app.trendDelta = delta
 
 
                     main.history.rawValues = sensor!.history

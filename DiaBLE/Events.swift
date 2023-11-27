@@ -58,13 +58,13 @@ class EventKit: Logging {
                 }
             }
 
-            let currentGlucose = main.app.currentGlucose
+            let currentGlucose = app.currentGlucose
             var title = currentGlucose > 0 ? "\(currentGlucose.units)" : "---"
 
             if currentGlucose != 0 {
                 title += "  \(settings.displayingMillimoles ? GlucoseUnit.mmoll : GlucoseUnit.mgdl)"
 
-                let alarm = main.app.glycemicAlarm
+                let alarm = app.glycemicAlarm
                 if alarm != .unknown {
                     title += "  \(alarm.shortDescription)"
                 } else {
@@ -76,14 +76,14 @@ class EventKit: Logging {
                     }
                 }
 
-                let trendArrow = main.app.trendArrow
+                let trendArrow = app.trendArrow
                 if trendArrow != .unknown {
                     title += "  \(trendArrow.symbol)"
                 }
 
-                if main.app.trendDeltaMinutes > 0 {
+                if app.trendDeltaMinutes > 0 {
                     title += "\n"
-                    title += "\(main.app.trendDelta > 0 ? "+" : main.app.trendDelta < 0 ? "-" : "")\(main.app.trendDelta == 0 ? "→" : abs(main.app.trendDelta).units)" + " over " + "\(main.app.trendDeltaMinutes)" + " min"
+                    title += "\(app.trendDelta > 0 ? "+" : app.trendDelta < 0 ? "-" : "")\(app.trendDelta == 0 ? "→" : abs(app.trendDelta).units)" + " over " + "\(app.trendDeltaMinutes)" + " min"
                 }
                 else {
                     title += "\n Computing trend"
