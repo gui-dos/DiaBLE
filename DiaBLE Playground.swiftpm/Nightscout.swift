@@ -109,8 +109,8 @@ class Nightscout: NSObject, Logging {
                     }
                 }
             }
-            DispatchQueue.main.async {
-                self.main.history.nightscoutValues = values
+            DispatchQueue.main.async { [self] in
+                main.history.nightscoutValues = values
                 handler?(values)
             }
         }
@@ -130,8 +130,8 @@ class Nightscout: NSObject, Logging {
         }
         let glucoseArray = values
         // TODO: update from MainDelegate
-        DispatchQueue.main.async {
-            self.main.history.nightscoutValues = glucoseArray
+        DispatchQueue.main.async { [self] in
+            main.history.nightscoutValues = glucoseArray
         }
         return (values, response)
     }

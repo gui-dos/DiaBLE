@@ -144,7 +144,7 @@ class LibreLinkUp: Logging {
                         // {"status":2,"error":{"message":"notAuthenticated"}}
                         // {"status":429,"data":{"code":60,"data":{"failures":3,"interval":60,"lockout":300},"message":"locked"}}
                         // {"status":911} when logging in at a stranger regional server
-                        if let data = data, let message = data["message"] as? String {
+                        if let data, let message = data["message"] as? String {
                             if message == "locked" {
                                 if let data = data["data"] as? [String: Any],
                                    let failures = data["failures"] as? Int,
@@ -169,8 +169,8 @@ class LibreLinkUp: Logging {
                     if let redirect = data?["redirect"] as? Bool,
                        let region = data?["region"] as? String {
                         redirected = redirect
-                        DispatchQueue.main.async {
-                            self.settings.libreLinkUpRegion = region
+                        DispatchQueue.main.async { [self] in
+                            settings.libreLinkUpRegion = region
                         }
                         log("LibreLinkUp: redirecting to \(regionalSiteURL)/\(loginEndpoint) ")
                         request.url = URL(string: "\(regionalSiteURL)/\(loginEndpoint)")!
@@ -185,11 +185,11 @@ class LibreLinkUp: Logging {
                        let authTicketData = try? JSONSerialization.data(withJSONObject: authTicketDict),
                        let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
                         self.log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
-                        DispatchQueue.main.async {
-                            self.settings.libreLinkUpPatientId = id
-                            self.settings.libreLinkUpCountry = country
-                            self.settings.libreLinkUpToken = authTicket.token
-                            self.settings.libreLinkUpTokenExpirationDate = Date(timeIntervalSince1970: Double(authTicket.expires))
+                        DispatchQueue.main.async { [self] in
+                            settings.libreLinkUpPatientId = id
+                            settings.libreLinkUpCountry = country
+                            settings.libreLinkUpToken = authTicket.token
+                            settings.libreLinkUpTokenExpirationDate = Date(timeIntervalSince1970: Double(authTicket.expires))
                         }
 
                         if !settings.libreLinkUpCountry.isEmpty {
@@ -210,8 +210,8 @@ class LibreLinkUp: Logging {
                                     let regionIndex = server.firstIndex(of: "-")
                                     let region = regionIndex == nil ? defaultRegion : String(server[server.index(regionIndex!, offsetBy: 1) ... server.index(regionIndex!, offsetBy: 2)])
                                     log("LibreLinkUp: regional server: \(server), saved default region: \(region)")
-                                    DispatchQueue.main.async {
-                                        self.settings.libreLinkUpRegion = region
+                                    DispatchQueue.main.async { [self] in
+                                        settings.libreLinkUpRegion = region
                                     }
                                 }
                             } catch {
@@ -237,8 +237,8 @@ class LibreLinkUp: Logging {
                                     let connection = data[0]
                                     let patientId = connection["patientId"] as! String
                                     log("LibreLinkUp: first patient Id: \(patientId)")
-                                    DispatchQueue.main.async {
-                                        self.settings.libreLinkUpPatientId = patientId
+                                    DispatchQueue.main.async { [self] in
+                                        settings.libreLinkUpPatientId = patientId
                                     }
                                 }
                             }
@@ -343,20 +343,20 @@ class LibreLinkUp: Logging {
                         let sensorType = deviceTypes[deviceId]!
                         let activationTime = deviceActivationTimes[deviceId]!
                         let activationDate = Date(timeIntervalSince1970: Double(activationTime))
-                        if app.sensor == nil {
-                            DispatchQueue.main.async {
-                                self.app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Sensor(main: self.main)
-                                self.app.sensor.type = sensorType
-                                self.app.sensor.serial = serial
-                            }
-                        } else {
-                            if app.sensor.serial.isEmpty {
-                                self.app.sensor.serial = serial
+                        DispatchQueue.main.async { [self] in
+                            if app.sensor == nil {
+                                app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Sensor(main: self.main)
+                                app.sensor.type = sensorType
+                                app.sensor.serial = serial
+                            } else {
+                                if app.sensor.serial.isEmpty {
+                                    app.sensor.serial = serial
+                                }
                             }
                         }
                         let sensor = await main.app.sensor!
                         if sensor.serial.hasSuffix(serial) || deviceTypes.count == 1 {
-                            DispatchQueue.main.async {
+                            DispatchQueue.main.async { [self] in
                                 sensor.activationTime = UInt32(activationTime)
                                 sensor.age = Int(Date().timeIntervalSince(activationDate)) / 60
                                 sensor.state = .active
@@ -364,11 +364,11 @@ class LibreLinkUp: Logging {
                                 if sensor.type == .libre3 {
                                     sensor.serial = serial
                                     sensor.maxLife = 20160
-                                    let receiverId = self.settings.libreLinkUpPatientId.fnv32Hash
+                                    let receiverId = settings.libreLinkUpPatientId.fnv32Hash
                                     (sensor as! Libre3).receiverId = receiverId
-                                    self.log("LibreLinkUp: LibreView receiver ID: \(receiverId)")
+                                    log("LibreLinkUp: LibreView receiver ID: \(receiverId)")
                                 }
-                                self.main.status("\(sensor.type)  +  LLU")
+                                main.status("\(sensor.type)  +  LLU")
                             }
                         }
                         log("LibreLinkUp: sensor serial: \(serial), activation date: \(activationDate) (timestamp = \(activationTime)), device id: \(deviceId), sensor type: \(sensorType), alarms: \(alarms)")
@@ -380,8 +380,8 @@ class LibreLinkUp: Logging {
                             let lastGlucose = LibreLinkUpGlucose(glucose: Glucose(measurement.valueInMgPerDl, id: lifeCount, date: date, source: "LibreLinkUp"), color: measurement.measurementColor, trendArrow: measurement.trendArrow)
                             debugLog("LibreLinkUp: last glucose measurement: \(measurement) (JSON: \(lastGlucoseMeasurement))")
                             if lastGlucose.trendArrow != nil {
-                                DispatchQueue.main.async {
-                                    self.app.trendArrow = lastGlucose.trendArrow!
+                                DispatchQueue.main.async { [self] in
+                                    app.trendArrow = lastGlucose.trendArrow!
                                 }
                             }
                             // TODO: scrape historic data only when the 17-minute delay has passed

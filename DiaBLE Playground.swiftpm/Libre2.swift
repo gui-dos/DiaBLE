@@ -203,16 +203,16 @@ class Libre2: Sensor {
                 if output.count == 6 {
                     log("NFC: enabled BLE streaming on \(type) \(serial) (unlock code: \(streamingUnlockCode), MAC address: \(Data(output.reversed()).hexAddress))")
                     // "Publishing changes from background threads is not allowed"
-                    DispatchQueue.main.async {
-                        self.settings.activeSensorSerial = self.serial
-                        self.settings.activeSensorAddress = Data(output.reversed())
-                        self.initialPatchInfo = self.patchInfo
-                        self.settings.activeSensorInitialPatchInfo = self.patchInfo
-                        self.streamingUnlockCount = 0
-                        self.settings.activeSensorStreamingUnlockCount = 0
+                    DispatchQueue.main.async { [self] in
+                        settings.activeSensorSerial = serial
+                        settings.activeSensorAddress = Data(output.reversed())
+                        initialPatchInfo = patchInfo
+                        settings.activeSensorInitialPatchInfo = patchInfo
+                        streamingUnlockCount = 0
+                        settings.activeSensorStreamingUnlockCount = 0
 
                         // TODO: cancel connections also before enabling streaming?
-                        self.main.rescan()
+                        main.rescan()
                     }
                 }
 

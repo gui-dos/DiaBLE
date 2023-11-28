@@ -362,8 +362,8 @@ func writeBits(_ buffer: Data, _ byteOffset: Int, _ bitOffset: Int, _ bitCount: 
         // fram[322...323] (footer[2..3]) corresponds to patchInfo[2...3]
         region = SensorRegion(rawValue: Int(fram[323])) ?? .unknown
         maxLife = Int(fram[326]) + Int(fram[327]) << 8
-        DispatchQueue.main.async {
-            self.main?.settings.activeSensorMaxLife = self.maxLife
+        DispatchQueue.main.async { [self] in
+            main?.settings.activeSensorMaxLife = maxLife
         }
 
         let i1 = readBits(fram, 2, 0, 3)
@@ -375,8 +375,8 @@ func writeBits(_ buffer: Data, _ byteOffset: Int, _ bitOffset: Int, _ bitCount: 
         let i6 = readBits(fram, 0x150, 0x34, 0xc) << 2
 
         calibrationInfo = CalibrationInfo(i1: i1, i2: i2, i3: negativei3 ? -i3 : i3, i4: i4, i5: i5, i6: i6)
-        DispatchQueue.main.async {
-            self.main?.settings.activeSensorCalibrationInfo = self.calibrationInfo
+        DispatchQueue.main.async { [self] in
+            main?.settings.activeSensorCalibrationInfo = calibrationInfo
         }
 
     }

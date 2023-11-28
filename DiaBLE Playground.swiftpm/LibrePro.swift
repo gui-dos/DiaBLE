@@ -78,9 +78,9 @@ class LibrePro: Sensor {
         let historyGap = 22 * 8 + historyIndex * 6 - history.count - fram.count
         let blankFRAM = historyGap > 0 ? Data(count: historyGap) : Data()
 
-        DispatchQueue.main.async {
-            self.main.history.rawTrend  = self.trend
-            self.main.history.rawValues = self.history
+        DispatchQueue.main.async { [self] in
+            main.history.rawTrend  = trend
+            main.history.rawValues = self.history
         }
 
         return fram + blankFRAM + history
@@ -183,8 +183,8 @@ class LibrePro: Sensor {
         region = SensorRegion(rawValue: Int(fram[43])) ?? .unknown
 
         maxLife = Int(fram[46]) + Int(fram[47]) << 8   // footer[6...7]
-        DispatchQueue.main.async {
-            self.main?.settings.activeSensorMaxLife = self.maxLife
+        DispatchQueue.main.async { [self] in
+            main?.settings.activeSensorMaxLife = maxLife
         }
 
         let b = 14 + 42                                // footer[16]
@@ -197,8 +197,8 @@ class LibrePro: Sensor {
         let i6 = readBits(fram, b, 0x34, 0xc) << 2
 
         calibrationInfo = CalibrationInfo(i1: i1, i2: i2, i3: negativei3 ? -i3 : i3, i4: i4, i5: i5, i6: i6)
-        DispatchQueue.main.async {
-            self.main?.settings.activeSensorCalibrationInfo = self.calibrationInfo
+        DispatchQueue.main.async { [self] in
+            main?.settings.activeSensorCalibrationInfo = calibrationInfo
         }
     }
 

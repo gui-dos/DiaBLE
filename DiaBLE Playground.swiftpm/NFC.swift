@@ -323,8 +323,8 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     }
                 }
                 sensor.patchInfo = patchInfo
-                DispatchQueue.main.async {
-                    self.app.sensor = self.sensor
+                DispatchQueue.main.async { [self] in
+                    app.sensor = sensor
                 }
             }
 
@@ -368,9 +368,9 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 log("NFC: sensor type: \(sensor.type.rawValue)\(sensor.patchInfo.hex.hasPrefix("a2") ? " (new 'A2' kind)" : "")")
                 log("NFC: sensor security generation [0-3]: \(sensor.securityGeneration)")
 
-                DispatchQueue.main.async {
-                    self.settings.patchUid = self.sensor.uid
-                    self.settings.patchInfo = self.sensor.patchInfo
+                DispatchQueue.main.async { [self] in
+                    settings.patchUid = sensor.uid
+                    settings.patchInfo = sensor.patchInfo
                 }
             }
 
@@ -471,8 +471,8 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 let lastReadingDate = Date()
 
                 // "Publishing changes from background threads is not allowed"
-                DispatchQueue.main.async {
-                    self.app.lastReadingDate = lastReadingDate
+                DispatchQueue.main.async { [self] in
+                    app.lastReadingDate = lastReadingDate
                 }
                 sensor.lastReadingDate = lastReadingDate
 
