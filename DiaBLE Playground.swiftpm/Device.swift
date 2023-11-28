@@ -177,7 +177,7 @@ enum WatchType: String, CaseIterable, Hashable, Codable, Identifiable {
 }
 
 
-class AppleWatch: Watch {
+@Observable class AppleWatch: Watch {
     override class var type: DeviceType { DeviceType.watch(.appleWatch) }
     override class var name: String { "Apple Watch" }
 }

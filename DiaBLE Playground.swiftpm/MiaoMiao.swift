@@ -1,7 +1,7 @@
 import Foundation
 import CoreBluetooth
 
-class MiaoMiao: Transmitter {
+@Observable class MiaoMiao: Transmitter {
     override class var type: DeviceType { DeviceType.transmitter(.miaomiao) }
     override class var name: String { "MiaoMiao" }
 

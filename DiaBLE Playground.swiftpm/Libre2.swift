@@ -49,7 +49,7 @@ let libre2DumpMap = [
 
 // https://github.com/ivalkou/LibreTools/blob/master/Sources/LibreTools/Sensor/Libre2.swift
 
-class Libre2: Sensor {
+@Observable class Libre2: Libre {
 
     static let key: [UInt16] = [0xA0C5, 0x6860, 0x0000, 0x14C6]
     static let secret: UInt16 = 0x1b6a

@@ -41,6 +41,8 @@
 		C5B7CE322AEE498F00227392 /* Dexcom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7CE312AEE498F00227392 /* Dexcom.swift */; };
 		C5B7CE332AEE498F00227392 /* Dexcom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7CE312AEE498F00227392 /* Dexcom.swift */; };
 		C5BE8E5B29916D3600604237 /* DiaBLE Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C59960DF2981E381005999C2 /* DiaBLE Watch.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C5DB4E4E2B168E08005AD792 /* Libre.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DB4E4D2B168E08005AD792 /* Libre.swift */; };
+		C5DB4E4F2B168E08005AD792 /* Libre.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DB4E4D2B168E08005AD792 /* Libre.swift */; };
 		C5E015E02989B0EA00F6EDF9 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015DF2989B0EA00F6EDF9 /* README.md */; };
 		C5E015E12989B0EA00F6EDF9 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015DF2989B0EA00F6EDF9 /* README.md */; };
 		C5E015E32989B0F600F6EDF9 /* TODO.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015E22989B0F600F6EDF9 /* TODO.md */; };
@@ -175,6 +177,7 @@
 		C5AAA61E2981CF7200CA3EC1 /* DiaBLE.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DiaBLE.entitlements; sourceTree = "<group>"; };
 		C5ADF5812B00E65E00E29632 /* Gen2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gen2.swift; sourceTree = "<group>"; };
 		C5B7CE312AEE498F00227392 /* Dexcom.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dexcom.swift; sourceTree = "<group>"; };
+		C5DB4E4D2B168E08005AD792 /* Libre.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Libre.swift; sourceTree = "<group>"; };
 		C5DED87529899B8A00164AEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C5E015DF2989B0EA00F6EDF9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C5E015E22989B0F600F6EDF9 /* TODO.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
@@ -328,6 +331,7 @@
 				C55D12B329ACB5E00050F567 /* Crypto.swift */,
 				C5B7CE312AEE498F00227392 /* Dexcom.swift */,
 				C5E4007B29825E4E0021C6B7 /* Abbott.swift */,
+				C5DB4E4D2B168E08005AD792 /* Libre.swift */,
 				C5E4008129825E8B0021C6B7 /* Libre2.swift */,
 				C5ADF5812B00E65E00E29632 /* Gen2.swift */,
 				C5E4008429825E990021C6B7 /* Libre3.swift */,
@@ -567,6 +571,7 @@
 				C55D12B529ACB5E00050F567 /* Crypto.swift in Sources */,
 				C5916E5229827E860051AC06 /* Graph.swift in Sources */,
 				C5E4007A29825E450021C6B7 /* Sensor.swift in Sources */,
+				C5DB4E4F2B168E08005AD792 /* Libre.swift in Sources */,
 				C5E4009729825F120021C6B7 /* LibreLink.swift in Sources */,
 				C5E165052ACBE5E600970835 /* HamburgerMenu.swift in Sources */,
 				C5E4008329825E8B0021C6B7 /* Libre2.swift in Sources */,
@@ -610,6 +615,7 @@
 				C5E4006529825D1F0021C6B7 /* Extensions.swift in Sources */,
 				C5E4006029825C930021C6B7 /* Monitor.swift in Sources */,
 				C5E4008529825E990021C6B7 /* Libre3.swift in Sources */,
+				C5DB4E4E2B168E08005AD792 /* Libre.swift in Sources */,
 				C535AEB82AB343AE00AB61AD /* Realm.swift in Sources */,
 				C5E4006329825C930021C6B7 /* HamburgerMenu.swift in Sources */,
 				C5E4007429825E050021C6B7 /* MainDelegate.swift in Sources */,

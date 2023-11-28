@@ -10,7 +10,7 @@ extension String {
 }
 
 
-class Libre3: Sensor {
+@Observable class Libre3: Libre {
 
 
     enum State: UInt8, CustomStringConvertible {

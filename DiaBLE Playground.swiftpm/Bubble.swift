@@ -5,7 +5,7 @@ import CoreBluetooth
 // https://github.com/bubbledevteam/bubble-client-swift/
 
 
-class Bubble: Transmitter {
+@Observable class Bubble: Transmitter {
     override class var type: DeviceType { DeviceType.transmitter(.bubble) }
     override class var name: String { "Bubble" }
 

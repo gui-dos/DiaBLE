@@ -6,7 +6,7 @@ import SwiftUI
 // "Strip off the management of the Watlaa, preferred watches and bridge transmitters"
 
 
-class Droplet: Transmitter {
+@Observable class Droplet: Transmitter {
     // override class var type: DeviceType { DeviceType.transmitter(.droplet) }
     override class var name: String { "Droplet" }
     override class var dataServiceUUID: String { "C97433F0-BE8F-4DC8-B6F0-5343E6100EB4" }
@@ -46,7 +46,7 @@ class Droplet: Transmitter {
 }
 
 
-class Limitter: Droplet {
+@Observable class Limitter: Droplet {
     // override class var type: DeviceType { DeviceType.transmitter(.limitter) }
     override class var name: String { "Limitter" }
 

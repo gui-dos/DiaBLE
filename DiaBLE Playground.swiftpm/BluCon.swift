@@ -5,7 +5,7 @@ import Foundation
 // https://github.com/JohanDegraeve/xdripswift/tree/master/xdrip/BluetoothTransmitter/CGM/Libre/Blucon
 
 
-class BluCon: Transmitter {
+@Observable class BluCon: Transmitter {
     override class var type: DeviceType { DeviceType.transmitter(.blu) }
     override class var name: String { "BluCon" }
 

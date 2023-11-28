@@ -12,7 +12,7 @@ import CoreBluetooth
 // https://github.com/NightscoutFoundation/xDrip/tree/master/libkeks/src/main/java/jamorham/keks
 
 
-class Dexcom: Transmitter {
+@Observable class Dexcom: Transmitter {
     override class var type: DeviceType { DeviceType.transmitter(.dexcom) }
     override class var name: String { "Dexcom" }
 
@@ -795,7 +795,7 @@ class Dexcom: Transmitter {
 }
 
 
-class DexcomG6: Sensor {
+@Observable class DexcomG6: Sensor {
 
     /// called by Dexcom Transmitter class
     func read(_ data: Data, for uuid: String) {
@@ -815,7 +815,7 @@ class DexcomG6: Sensor {
 }
 
 
-class DexcomONE: Sensor {
+@Observable class DexcomONE: Sensor {
 
     /// called by Dexcom Transmitter class
     func read(_ data: Data, for uuid: String) {
@@ -836,7 +836,7 @@ class DexcomONE: Sensor {
 }
 
 
-class DexcomG7: Sensor {
+@Observable class DexcomG7: Sensor {
 
     /// called by Dexcom Transmitter class
     func read(_ data: Data, for uuid: String) {
