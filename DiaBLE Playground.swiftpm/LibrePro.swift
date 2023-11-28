@@ -47,7 +47,7 @@ import Foundation
 
 
 
-class LibrePro: Sensor {
+class LibrePro: Libre {
 
 
 #if !os(watchOS)
