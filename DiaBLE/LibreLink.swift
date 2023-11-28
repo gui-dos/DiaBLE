@@ -354,7 +354,7 @@ class LibreLinkUp: Logging {
                                 self.app.sensor.serial = serial
                             }
                         }
-                        let sensor = app.sensor!
+                        let sensor = await main.app.sensor!
                         if sensor.serial.hasSuffix(serial) || deviceTypes.count == 1 {
                             DispatchQueue.main.async {
                                 sensor.activationTime = UInt32(activationTime)
