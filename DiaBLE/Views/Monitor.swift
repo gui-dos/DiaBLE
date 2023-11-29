@@ -171,7 +171,7 @@ struct Monitor: View {
                 }
                 .multilineTextAlignment(.center)
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle("DiaBLE  \(Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String)  -  Monitor")
+                .navigationTitle("Monitor")
                 .onAppear {
                     timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
                     minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
