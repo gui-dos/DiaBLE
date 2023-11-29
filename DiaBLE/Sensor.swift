@@ -5,10 +5,6 @@ import CoreNFC
 #endif
 
 
-typealias SensorUid = Data
-typealias PatchInfo = Data
-
-
 enum SensorType: String, CustomStringConvertible {
     case libre1       = "Libre 1"
     case libreUS14day = "Libre US 14d"
@@ -21,7 +17,7 @@ enum SensorType: String, CustomStringConvertible {
     case dexcomG6     = "Dexcom G6"
     case dexcomONE    = "Dexcom ONE"
     case dexcomG7     = "Dexcom G7"
-    case unknown      = "Libre"
+    case unknown      = "unknown"
 
     init(patchInfo: PatchInfo) {
         self = switch patchInfo[0] {
@@ -48,7 +44,8 @@ enum SensorType: String, CustomStringConvertible {
 
 
 enum SensorFamily: Int, CustomStringConvertible {
-    case libre      = 0
+    case unknown    = -1
+    case libre1     = 0
     case librePro   = 1
     case libre2     = 3
     case libre3     = 4
@@ -56,7 +53,8 @@ enum SensorFamily: Int, CustomStringConvertible {
 
     var description: String {
         switch self {
-        case .libre:      "Libre"
+        case .unknown:    "unknown"
+        case .libre1:     "Libre 1"
         case .librePro:   "Libre Pro"
         case .libre2:     "Libre 2"
         case .libre3:     "Libre 3"
@@ -103,7 +101,7 @@ enum SensorState: UInt8, CustomStringConvertible {
         case .expired:      "Expired"
         case .shutdown:     "Shut down"
         case .failure:      "Failure"
-        default:            "Unknown"
+        default:            "unknown"
         }
     }
 }
@@ -112,7 +110,7 @@ enum SensorState: UInt8, CustomStringConvertible {
 @Observable class Sensor: Logging {
 
     var type: SensorType = .unknown
-    var family: SensorFamily = .libre
+    var family: SensorFamily = .unknown
     var region: SensorRegion = .unknown
     var serial: String = ""
     var readerSerial: Data = Data()
@@ -144,7 +142,7 @@ enum SensorState: UInt8, CustomStringConvertible {
                     region = SensorRegion(rawValue: Int(info[3])) ?? .unknown
                 }
                 if info.count >= 6 {
-                    family = SensorFamily(rawValue: Int(info[2] >> 4)) ?? .libre
+                    family = SensorFamily(rawValue: Int(info[2] >> 4)) ?? .libre1
                     if serial != "" {
                         serial = "\(family.rawValue)\(serial.dropFirst())"
                     }
