@@ -15,7 +15,7 @@ To build the project you have to duplicate the file _DiaBLE.xcconfig_, rename th
 
 The NFC capabilities require a paid ADC annual membership. The simplest way to get invited to the internal TestFlight builds is to sponsor me $-)
 
-If you own an iPad you can download the [zipped archive](https://github.com/gui-dos/DiaBLE/archive/refs/heads/main.zip) of this repository and just tap _DiaBLE Playground.swiftpm. A past complete fork of this repository hosting the same legacy code and still buildaBLE for the iPhone is availaBLE at [DiaBLE-Legacy](https://github.com/gui-dos/DiaBLE-Legacy).
+If you own an iPad you can download the [zipped archive](https://github.com/gui-dos/DiaBLE/archive/refs/heads/main.zip) of this repository and just tap _DiaBLE Playground.swiftpm_. A past complete fork of this repository hosting the same legacy code and still buildaBLE for the iPhone is availaBLE at [DiaBLE-Legacy](https://github.com/gui-dos/DiaBLE-Legacy).
 
 Currently I am targeting only the latest betas of Xcode and iOS and focusing on the new Libre 3 and Dexcom G7. The new _async / await_ and _actors_ introduced in Swift 5.5 and iOS 15 probably would require a total rewrite of DiaBLE's foundations, as well as the enhanced *Gen2* protocols already adopted by the Libre 2 Sense/US/CA/AU which haven't been reversed yet.
 
