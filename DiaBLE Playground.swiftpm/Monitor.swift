@@ -231,6 +231,14 @@ struct Monitor: View {
                         }
                     }
 
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button {
+                            settings.caffeinated.toggle()
+                        } label: {
+                            Image(systemName: settings.caffeinated ? "cup.and.saucer.fill" : "cup.and.saucer" )
+                        }
+                    }
+
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             if app.main.nfc.isAvailable {

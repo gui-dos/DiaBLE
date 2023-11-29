@@ -8,6 +8,8 @@ import Foundation
         "preferredDevicePattern": BLE.knownDevicesIds.joined(separator: " "),
         "stoppedBluetooth": false,
 
+        "caffeinated": false,
+
         "selectedTab": Tab.monitor.rawValue,
 
         "readingInterval": 5,
@@ -101,6 +103,10 @@ import Foundation
 
     var stoppedBluetooth: Bool = UserDefaults.standard.bool(forKey: "stoppedBluetooth") {
         didSet { UserDefaults.standard.set(self.stoppedBluetooth, forKey: "stoppedBluetooth") }
+    }
+
+    var caffeinated: Bool = UserDefaults.standard.bool(forKey: "caffeinated") {
+        didSet { UserDefaults.standard.set(self.stoppedBluetooth, forKey: "caffeinated") }
     }
 
     var selectedTab: Tab = Tab(rawValue: UserDefaults.standard.string(forKey: "selectedTab")!)! {
