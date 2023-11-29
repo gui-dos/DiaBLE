@@ -20,6 +20,7 @@ enum SensorType: String, CustomStringConvertible {
     case unknown      = "unknown"
 
     var description: String { rawValue }
+    var isALibre: Bool { self == .libre3 || self == .libre2 || self == .libre1 || self == .libreUS14day || self == .libreProH || self == .libre2US || self == .libre2CA || self == .libreSense }
 }
 
 
