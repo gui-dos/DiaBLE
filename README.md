@@ -5,6 +5,8 @@ To build the project you have to duplicate the file _DiaBLE.xcconfig_, rename th
 
 The NFC capabilities require a paid Apple Developer Program annual membership. A public beta is availaBLE at **[TestFlight](https://testflight.apple.com/join/H48doU3l)** but the simplest way to get invited to the alpha internal builds is to sponsor me $-)
 
+If you own an iPad you can download the [zipped archive](https://github.com/gui-dos/DiaBLE/archive/refs/heads/main.zip) of this repository and just tap _DiaBLE Playground.swiftpm. A past complete fork of this repository hosting the same legacy code and still buildaBLE for the iPhone is availaBLE at [DiaBLE-Legacy](https://github.com/gui-dos/DiaBLE-Legacy).
+
 Currently I am targeting only the latest betas of Xcode and iOS and focusing on the new Libre 3. Please refer to the [**TODOs**](https://github.com/gui-dos/DiaBLE/blob/main/TODO.md) list for the up-to-date status of all the current limitations and known bugs of this **prototype**.
 
 **Warnings:**
