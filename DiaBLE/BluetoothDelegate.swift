@@ -421,7 +421,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                         default: sensor.type = .libre2
                             // TODO: .libre2US / .libre2CA
                         }
-                        sensor.family = SensorFamily(rawValue: family) ?? .libre
+                        sensor.family = SensorFamily(rawValue: family) ?? .libre2
                     }
                 }
             }
