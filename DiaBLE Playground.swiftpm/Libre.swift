@@ -8,6 +8,29 @@ typealias SensorUid = Data
 typealias PatchInfo = Data
 
 
+extension SensorType {
+    init(patchInfo: PatchInfo) {
+        self = switch patchInfo[0] {
+        case 0xDF, 0xA2: .libre1
+        case 0xE5, 0xE6: .libreUS14day
+        case 0x70:       .libreProH
+        case 0x9D, 0xC5: .libre2
+        case 0x76, 0x2B:
+            patchInfo[3] == 2 ? .libre2US :
+            patchInfo[3] == 4 ? .libre2CA :
+            patchInfo[2] >> 4 == 7 ? .libreSense :
+                .unknown
+        default:
+            if patchInfo.count == 24 {
+                .libre3
+            } else {
+                .unknown
+            }
+        }
+    }
+}
+
+
 // https://github.com/UPetersen/LibreMonitor/blob/Swift4/LibreMonitor/Model/SensorSerialNumber.swift
 
 func serialNumber(uid: SensorUid, family: SensorFamily = .libre1) -> String {

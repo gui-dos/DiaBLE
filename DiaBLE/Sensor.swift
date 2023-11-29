@@ -19,26 +19,6 @@ enum SensorType: String, CustomStringConvertible {
     case dexcomG7     = "Dexcom G7"
     case unknown      = "unknown"
 
-    init(patchInfo: PatchInfo) {
-        self = switch patchInfo[0] {
-        case 0xDF, 0xA2: .libre1
-        case 0xE5, 0xE6: .libreUS14day
-        case 0x70:       .libreProH
-        case 0x9D, 0xC5: .libre2
-        case 0x76, 0x2B:
-            patchInfo[3] == 2 ? .libre2US :
-            patchInfo[3] == 4 ? .libre2CA :
-            patchInfo[2] >> 4 == 7 ? .libreSense :
-                .unknown
-        default:
-            if patchInfo.count == 24 {
-                .libre3
-            } else {
-                .unknown
-            }
-        }
-    }
-
     var description: String { rawValue }
 }
 
