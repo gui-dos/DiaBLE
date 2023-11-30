@@ -234,6 +234,7 @@ struct Monitor: View {
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {
                             settings.caffeinated.toggle()
+                            UIApplication.shared.isIdleTimerDisabled = settings.caffeinated
                         } label: {
                             Image(systemName: settings.caffeinated ? "cup.and.saucer.fill" : "cup.and.saucer" )
                         }
