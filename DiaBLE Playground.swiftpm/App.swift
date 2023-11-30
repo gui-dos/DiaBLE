@@ -21,6 +21,9 @@ struct DiaBLEApp: App {
                 .environment(main.settings)
         }
         .onChange(of: scenePhase) {
+            if scenePhase == .active {
+                UIApplication.shared.isIdleTimerDisabled = main.settings.caffeinated
+            }
             if scenePhase == .background {
                 if main.settings.userLevel >= .devel {
                     main.debugLog("DEBUG: app went background at \(Date.now.shortTime)")

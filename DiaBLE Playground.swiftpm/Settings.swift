@@ -106,7 +106,7 @@ import Foundation
     }
 
     var caffeinated: Bool = UserDefaults.standard.bool(forKey: "caffeinated") {
-        didSet { UserDefaults.standard.set(self.stoppedBluetooth, forKey: "caffeinated") }
+        didSet { UserDefaults.standard.set(self.caffeinated, forKey: "caffeinated") }
     }
 
     var selectedTab: Tab = Tab(rawValue: UserDefaults.standard.string(forKey: "selectedTab")!)! {
