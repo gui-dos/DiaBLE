@@ -579,7 +579,9 @@ import CoreBluetooth
             break
         }
 
-
+        if let sensor = sensor as? DexcomG6 {
+            sensor.read(data, for: uuid)
+        }
         if let sensor = sensor as? DexcomONE {
             sensor.read(data, for: uuid)
         }

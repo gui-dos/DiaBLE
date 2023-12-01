@@ -184,7 +184,7 @@ class LibreLinkUp: Logging {
                        let authTicketDict = data["authTicket"] as? [String: Any],
                        let authTicketData = try? JSONSerialization.data(withJSONObject: authTicketDict),
                        let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
-                        self.log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
+                        log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
                         DispatchQueue.main.async { [self] in
                             settings.libreLinkUpPatientId = id
                             settings.libreLinkUpCountry = country
@@ -221,7 +221,7 @@ class LibreLinkUp: Logging {
                         }
 
                         if settings.libreLinkUpFollowing {
-                            self.log("LibreLinkUp: getting connections for follower user id: \(id)")
+                            log("LibreLinkUp: getting connections for follower user id: \(id)")
                             var request = URLRequest(url: URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)")!)
                             var authenticatedHeaders = headers
                             authenticatedHeaders["Authorization"] = "Bearer \(settings.libreLinkUpToken)"
@@ -406,7 +406,7 @@ class LibreLinkUp: Logging {
                             if settings.libreLinkUpScrapingLogbook,
                                let ticketDict = json["ticket"] as? [String: Any],
                                let token = ticketDict["token"] as? String {
-                                self.log("LibreLinkUp: new token for logbook: \(token)")
+                                log("LibreLinkUp: new token for logbook: \(token)")
                                 request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
                                 request.url = URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)/\(settings.libreLinkUpPatientId)/logbook")!
                                 debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")

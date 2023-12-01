@@ -15,7 +15,9 @@ TODO
 
 * Apple Watch app:
   - workout and extended runtime background sessions, complications
+  - ["Get timely alerts from Bluetooth devices in watchOS" - WWDC 2022](https://developer.apple.com/wwdc22/10135/)
   - new watchOS 10 NavigationSplitViews and TabViews
+* Switch from `DispatchQueue.main.async` to `Task { @MainActor }`
 * alarm snooze, public timers instead of SwiftUI private ones
 * scrollable graph, offline trend arrow, landscape mode, realtime RSSI
 * smooth the historic values and project the trend ones (see [LibreTransmitter](https://github.com/dabear/LibreTransmitter/commit/49b50d7995955b76861440e5e34a0accd064d18f))
