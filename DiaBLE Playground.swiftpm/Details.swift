@@ -164,10 +164,10 @@ struct Details: View {
                         Row("UID", app.sensor.uid.hex)
 
                         Group {
-                            if app.sensor.type == .libre3 && (app.sensor as! Libre3).receiverId != 0 {
+                            if app.sensor.type == .libre3 && (app.sensor as? Libre3)?.receiverId ?? 0 != 0 {
                                 Row("Receiver ID", "\((app.sensor as! Libre3).receiverId)")
                             }
-                            if app.sensor.type == .libre3 && !(app.sensor as! Libre3).blePIN.isEmpty {
+                            if app.sensor.type == .libre3 && ((app.sensor as? Libre3)?.blePIN ?? Data()).count != 0 {
                                 Row("BLE PIN", "\((app.sensor as! Libre3).blePIN.hex)")
                             }
                             if !app.sensor.patchInfo.isEmpty {
