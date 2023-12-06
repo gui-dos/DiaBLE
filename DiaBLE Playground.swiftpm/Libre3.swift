@@ -14,28 +14,28 @@ extension String {
 
 
     enum State: UInt8, CustomStringConvertible {
-        case manufacturing      = 0    // PATCH_STATE_MANUFACTURING
+        case manufacturing      = 0
 
         /// out of package, not activated yet
-        case storage            = 1    // PATCH_STATE_STORAGE
+        case storage            = 1
 
-        case insertionDetection = 2    // PATCH_STATE_INSERTION_DETECTION
-        case insertionFailed    = 3    // PATCH_STATE_INSERTION_FAILED
+        case insertionDetection = 2
+        case insertionFailed    = 3
 
         /// advertising via BLE already 10/15 minutes after activation
-        case paired             = 4    // PATCH_STATE_PAIRED
+        case paired             = 4
 
         /// if Trident is not run on the 15th day, still advertising further than 12 hours, almost 24
-        case expired            = 5    // PATCH_STATE_EXPIRED
+        case expired            = 5
 
         /// Trident sent the shutdown command as soon as run on the 15th day or
         /// the sensor stopped advertising via BLE by itself on the 16th day anyway
-        case terminated         = 6    // PATCH_STATE_TERMINATED_NORMAL
+        case terminated         = 6
 
         /// detected for a sensor that fell off
-        case error              = 7    // PATCH_STATE_ERROR
+        case error              = 7
 
-        case errorTerminated    = 8    // PATCH_STATE_ERROR_TERMINATED
+        case errorTerminated    = 8
 
         var description: String {
             switch self {
@@ -53,12 +53,12 @@ extension String {
     }
 
 
-    enum Condition: Int, CustomStringConvertible {   // SensorCondition
-        case ok      = 0    // LIBRE3_SENSOR_CONDITION_OK        - OK
-        case invalid = 1    // LIBRE3_SENSOR_CONDITION_INVALID   - INVALID
+    enum Condition: Int, CustomStringConvertible {
+        case ok      = 0
+        case invalid = 1
 
         /// Early Signal Attenuation
-        case esa     = 2    // LIBRE3_SENSOR_CONDITION_ESA_CHECK - ESA
+        case esa     = 2
 
         var description: String {
             switch self {
@@ -84,9 +84,9 @@ extension String {
 
 
     enum ResultRange: Int, CustomStringConvertible {
-        case `in`    = 0    // IN_RANGE
-        case below   = 1    // BELOW_RANGE
-        case above   = 2    // ABOVE_RANGE
+        case `in`    = 0
+        case below   = 1
+        case above   = 2
         case noRange = 3
 
         var description: String {
@@ -101,15 +101,6 @@ extension String {
 
 
     // TODO: var members, struct references, enums
-
-    // libre3DPCRLInterface
-
-    struct ActivationInfo {
-        let signatureActivation: Int
-        let signatureEnableBle: Int
-        let wearDuration: Int
-        let obpState: Int
-    }
 
 
     struct PatchInfo {
@@ -175,11 +166,6 @@ extension String {
         let lifeCount: Int
     }
 
-
-    // - The payload to append to `A8` to activate a sensor (CMD_SWITCH_RECEIVER)
-    //   is formed by the activation time - 1 (4 bytes), the `receiverID` (4 bytes)
-    //   and a final CRC (NFC_ACTIVATION_COMMAND_PAYLOAD_SIZE = 10 bytes)
-    // - The 18-byte reply starts with the dummy bytes `A5 00` and ends in a CRC16
 
     struct ActivationResponse {
         let bdAddress: Data         // 6 bytes
@@ -271,14 +257,14 @@ extension String {
 
 
     enum PacketType: UInt8 {
-        case controlCommand   = 0    // PACKET_TYPE_CONTROL_COMMAND
-        case controlResponse  = 1    // PACKET_TYPE_CONTROL_RESPONSE
-        case patchStatus      = 2    // PACKET_TYPE_PATCH_STATUS
-        case currentGlucose   = 3    // PACKET_TYPE_CURRENT_GLUCOSE
-        case backfillHistoric = 4    // PACKET_TYPE_BACKFILL_HISTORIC
-        case backfillClinical = 5    // PACKET_TYPE_BACKFILL_CLINICAL
-        case eventLog         = 6    // PACKET_TYPE_EVENT_LOG
-        case factoryData      = 7    // PACKET_TYPE_FACTORY_DATA
+        case controlCommand   = 0
+        case controlResponse  = 1
+        case patchStatus      = 2
+        case currentGlucose   = 3
+        case backfillHistoric = 4
+        case backfillClinical = 5
+        case eventLog         = 6
+        case factoryData      = 7
     }
 
     static let packetDescriptors: [[UInt8]] = [
@@ -329,67 +315,22 @@ extension String {
 
     enum UUID: String, CustomStringConvertible, CaseIterable {
 
-        /// Advertised primary data service
-        case data = "089810CC-EF89-11E9-81B4-2A2AE2DBCCE4"
+        case data             = "089810CC-EF89-11E9-81B4-2A2AE2DBCCE4"
+        case patchControl     = "08981338-EF89-11E9-81B4-2A2AE2DBCCE4"
+        case patchStatus      = "08981482-EF89-11E9-81B4-2A2AE2DBCCE4"
+        case oneMinuteReading = "0898177A-EF89-11E9-81B4-2A2AE2DBCCE4"
+        case historicalData   = "0898195A-EF89-11E9-81B4-2A2AE2DBCCE4"
+        case clinicalData     = "08981AB8-EF89-11E9-81B4-2A2AE2DBCCE4"
+        case eventLog         = "08981BEE-EF89-11E9-81B4-2A2AE2DBCCE4"
+        case factoryData      = "08981D24-EF89-11E9-81B4-2A2AE2DBCCE4"
 
-        /// Requests data by writing 13 bytes embedding a "patch control command" (7 bytes)
-        /// and a final sequential Int (starting by 01 00) since it is enqueued
-        /// Notifies at the end of the data stream 10 bytes ending in the enqueued id
-        /// (for example 01 00 and 02 00 when receiving historic and clinical data on 195A and 1AB8)
-        case patchControl = "08981338-EF89-11E9-81B4-2A2AE2DBCCE4"  // ["Notify", "Write"]
+        case security         = "0898203A-EF89-11E9-81B4-2A2AE2DBCCE4"
+        case securityCommands = "08982198-EF89-11E9-81B4-2A2AE2DBCCE4"
+        case challengeData    = "089822CE-EF89-11E9-81B4-2A2AE2DBCCE4"
+        case certificateData  = "089823FA-EF89-11E9-81B4-2A2AE2DBCCE4"
 
-        // Receiving "Encryption is insufficient" error when activating notifications before the security commands
-        /// Notifies one or more 18-byte packets during a connection
-        case patchStatus = "08981482-EF89-11E9-81B4-2A2AE2DBCCE4"  // ["Notify", "Read"]
-
-        /// Notifies every minute 35 bytes as two packets of 15 + 20 bytes ending in a sequential id
-        case oneMinuteReading = "0898177A-EF89-11E9-81B4-2A2AE2DBCCE4"  // ["Notify"]
-
-        /// Notifies a first stream of historic data
-        /// Very probably 6 readings of 3 bytes are indexed in each packet (12 readings = 2 packets per hour) and sent as FastData on .clinicalData
-        /// (`ABT_HISTORICAL_POINTS_PER_NOTIFICATION` = 6)
-        case historicalData = "0898195A-EF89-11E9-81B4-2A2AE2DBCCE4"  // ["Notify"]
-
-        /// Notifies a second longer stream of clinical data (max 120 packets when reconnecting aftert some hours)
-        case clinicalData = "08981AB8-EF89-11E9-81B4-2A2AE2DBCCE4"  // ["Notify"]
-
-        /// Notifies 20 + 20 bytes towards the end of activation
-        /// Notifies 20 bytes when shutting down a sensor (CTRL_CMD_SHUTDOWN_PATCH)
-        /// and at the first connection after activation
-        case eventLog = "08981BEE-EF89-11E9-81B4-2A2AE2DBCCE4"  // ["Notify"]
-
-        /// Notifies the final stream of data during activation
-        case factoryData = "08981D24-EF89-11E9-81B4-2A2AE2DBCCE4"  // ["Notify"]
-
-        /// Security service
-        case security = "0898203A-EF89-11E9-81B4-2A2AE2DBCCE4"
-
-        /// - Writes a single byte command as defined in libre3SecurityConstants' `CMD_`
-        /// - May notify two bytes: the successful status (also defined as `CMD_READY/DONE/FAILURE`)
-        ///   and the effective length of the payload streamed on 22CE / 23FA
-        /// - 01: very first command when activating a sensor
-        /// - 02: written immediately after 01
-        /// - 03: third command sent during activation
-        /// - 04: notified immediately after 03
-        /// - 08: read the final 67-byte session info, notifies 08 43 -> 22CE notifies 67 bytes + prefixes
-        /// - 09: during activation notifies A0 8C -> 23FA notifies 140 bytes + prefixes
-        /// - 0D: during activation is written before 0E
-        /// - 0E: during activation notifies 0F 41 -> 23FA notifies 65 bytes + prefixes
-        /// - 11: read the 23-byte security challenge, notifies 08 17
-        case securityCommands = "08982198-EF89-11E9-81B4-2A2AE2DBCCE4"  // ["Notify", "Write"]
-
-        /// Notifies the 23-byte security challenge + prefixes
-        /// Writes the 40-byte challenge response + prefixes
-        /// Notifies the 67-byte session info + prefixes
-        /// The first two of the last seven notified bytes (16 + 7, 60 + 7) are a progressive Int since activation
-        case challengeData = "089822CE-EF89-11E9-81B4-2A2AE2DBCCE4"  // ["Notify", "Write"]
-
-        /// Writes and notifies 20-byte packets during activation and repairing a sensor
-        case certificateData = "089823FA-EF89-11E9-81B4-2A2AE2DBCCE4"  // ["Notify", "Write"]
-
-        // TODO:
-        case debug = "08982400-EF89-11E9-81B4-2A2AE2DBCCE4"
-        case bleLogin = "F001"
+        case debug            = "08982400-EF89-11E9-81B4-2A2AE2DBCCE4"
+        case bleLogin         = "F001"
 
         var description: String {
             switch self {
@@ -502,8 +443,6 @@ extension String {
     // write  1338  13 bytes            // command ending in 04 00
 
 
-    /// Single byte command written to the .securityCommands characteristic 0x2198
-    /// Can be sent sequentially during both the initial activation and when repairing a sensor
     enum SecurityCommand: UInt8, CustomStringConvertible {
 
         case security_01         = 0x01
@@ -548,24 +487,24 @@ extension String {
         }
     }
 
-    /// 13 bytes written to the .patchControl characteristic 0x1338:
+    /// 13 bytes written to .patchControl:
     /// - PATCH_CONTROL_COMMAND_SIZE = 7
     /// - a final sequential Int starting by 01 00 since it is enqueued
     enum ControlCommand {
-        /// - 010001 EC2C 0000 requests historical data from lifeCount 11500 (0x2CEC)
-        case historic(Data)       // type 1 - CTRL_CMD_HISTORIC
+        /// - 010001 EC2C 0000 requests historical data from lifeCount 11520 (0x2CEC)
+        case historic(Data)       // type 1
 
         /// Requests past clinical data
         /// - 010101 9B48 0000 requests clinical data from lifeCount 18587 (0x489B)
-        case backfill(Data)       // type 2 - CTRL_CMD_BACKFILL
+        case backfill(Data)       // type 2
 
         /// - 040100 0000 0000
-        case eventLog(Data)       // type 3 - CTRL_CMD_EVENTLOG
+        case eventLog(Data)       // type 3
 
         /// - 060000 0000 0000
-        case factoryData(Data)    // type 4 - CTRL_CMD_FACTORY_DATA
+        case factoryData(Data)    // type 4
 
-        case shutdownPatch(Data)  // type 5 - CTRL_CMD_SHUTDOWN_PATCH
+        case shutdownPatch(Data)  // type 5
     }
 
     // TODO
@@ -574,7 +513,6 @@ extension String {
     //      int8_t arg;
     //      int32_t from;
     //  }
-
 
     var receiverId: UInt32 = 0    // fnv32Hash of LibreView ID string
 
@@ -783,6 +721,7 @@ extension String {
                         send(securityCommand: .readChallenge)
                         // TODO
                     }
+
                 case .readChallenge:
 
                     // getting: df4bd2f783178e3ab918183e5fed2b2b c201 0000 e703a7
@@ -808,6 +747,7 @@ extension String {
                         send(securityCommand: .challengeLoadDone)
                     }
 
+
                 case .challengeLoadDone:
                     let first = payload.subdata(in:  0 ..< 60)
                     let nonce = payload.subdata(in: 60 ..< 67)
@@ -821,7 +761,6 @@ extension String {
                     // let r1    = decr.subdata(in: 16 ..< 32)
                     // let kEnc  = decr.subdata(in: 32 ..< 48)
                     // let ivEnc = decr.subdata(in: 48 ..< 56)
-                    transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.patchStatus.rawValue]!)
                     transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.patchStatus.rawValue]!)
                     log("\(type) \(transmitter!.peripheral!.name!): enabling notifications on the patch status characteristic")
                     currentSecurityCommand = nil
@@ -1167,47 +1106,6 @@ extension String {
     func process2(command: Int, _ d1: Data?, _ d2: Data?) -> Data {
         return Data()
     }
-
-
-    // Trident ISecurityContext
-    static let IV_ENC_SIZE = 8
-    static let MODE_DECRYPT = 2
-    static let MODE_ENCRYPT = 1
-    static let PACKET_TYPE_CONTROL_COMMAND = 0
-    static let PACKET_TYPE_CONTROL_RESPONSE = 1
-    static let PACKET_TYPE_PATCH_STATUS = 2
-    static let PACKET_TYPE_CURRENT_GLUCOSE = 3
-    static let PACKET_TYPE_BACKFILL_HISTORIC = 4
-    static let PACKET_TYPE_BACKFILL_CLINICAL = 5
-    static let PACKET_TYPE_EVENT_LOG = 6
-    static let PACKET_TYPE_FACTORY_DATA = 7
-
-
-    // Trident MSLibre3ActivationResponse
-    static let LIBRE3_ACTIVATION_ERROR_INCOMPATIBLE     = 1
-    static let LIBRE3_ACTIVATION_ERROR_TERMINATED       = 2
-    static let LIBRE3_ACTIVATION_ERROR_SCAN_ERROR       = 3
-    static let LIBRE3_ACTIVATION_ERROR_SENSOR_ERROR     = 4
-    static let LIBRE3_ACTIVATION_ERROR_NOT_YOURS        = 5
-    static let LIBRE3_ACTIVATION_ERROR_INSERTION_FAILED = 6
-    static let LIBRE3_ACTIVATION_ERROR_SENSOR_EXPIRED   = 7
-
-
-    // Libre3SensorDriver
-    static let L3_ACTIVATION_ERROR_CRC_FAILURE: UInt = 0xDEADBEEF    // Trident
-    static let L3_ACTIVATION_ERROR_LOW_BATTERY: UInt = 0xDEADBEEF
-    static let L3_ACTIVATION_ERROR_MANUFACTURING_STATE: UInt = 0xDEADBEEF
-    static let L3_ACTIVATION_ERROR_INSERTION_DETECTION_STATE: UInt = 0xDEADBEEF
-    static let L3_ACTIVATION_ERROR_PAIRED_STATE: UInt = 0xDEADBEEF
-    static let L3_ACTIVATION_ERROR_EXPIRED_STATE: UInt = 0xDEADBEEF
-    static let L3_ACTIVATION_ERROR_TERMINATION_NORMAL: UInt = 0xDEADBEEF
-    static let L3_ACTIVATION_ERROR_TERMINATION_ERROR: UInt = 0xDEADBEEF
-    static let L3_ACTIVATION_ERROR_NFC_COMMUNICATION_FAILURE: UInt = 0xDEADBEEF
-    static let L3_ACTIVATION_ERROR_CRL_ERROR: UInt = 0xDEADBEEF
-    static let L3_ACTIVATION_ERROR_REPLACE_SENSOR: UInt = 0xDEADBEEF
-    static let L3_ACTIVATION_ERROR_INCOMPATIBLE_SENSOR: UInt = 0xDEADBEEF
-    static let L3_ACTIVATION_ERROR_SENSOR_NOT_YOURS: UInt = 0xDEADBEEF
-    static let L3_ACTIVATION_ERROR_NOT_MEASUREMENT_STATE: UInt = 0xDEADBEEF
 
 
 }
