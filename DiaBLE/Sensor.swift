@@ -160,6 +160,8 @@ enum SensorState: UInt8, CustomStringConvertible {
     var factoryHistory: [Glucose] { history.map { factoryGlucose(rawGlucose: $0, calibrationInfo: calibrationInfo) }}
 
     var encryptedFram: Data = Data()
+
+    @ObservationIgnored
     var fram: Data = Data() {
         didSet {
             encryptedFram = Data()
