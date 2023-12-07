@@ -267,7 +267,7 @@ struct Details: View {
                                 if app.main.nfc.isAvailable {
                                     settings.logging = true
                                     settings.selectedTab = .console
-                                    if ((app.device as? Abbott)?.sensor as? Libre3) != nil {
+                                    if app.sensor as? Libre3 == nil {
                                         showingRePairConfirmationDialog = true
                                     } else {
                                         app.main.nfc.taskRequest = .enableStreaming
