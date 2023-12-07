@@ -7,6 +7,7 @@ struct Details: View {
     @Environment(Settings.self) var settings: Settings
 
     @State private var showingNFCAlert = false
+    @State private var showingRePairConfirmationDialog = false
     @State private var showingCalibrationInfoForm = false
 
     @State private var readingCountdown: Int = 0
@@ -264,8 +265,13 @@ struct Details: View {
                             Button {
                                 ((app.device as? Abbott)?.sensor as? Libre3)?.pair()
                                 if app.main.nfc.isAvailable {
-                                    app.main.nfc.taskRequest = .enableStreaming
+                                    settings.logging = true
                                     settings.selectedTab = .console
+                                    if ((app.device as? Abbott)?.sensor as? Libre3) != nil {
+                                        showingRePairConfirmationDialog = true
+                                    } else {
+                                        app.main.nfc.taskRequest = .enableStreaming
+                                    }
                                 } else {
                                     showingNFCAlert = true
                                 }
@@ -279,6 +285,11 @@ struct Details: View {
                             .alert("NFC not supported", isPresented: $showingNFCAlert) {
                             } message: {
                                 Text("This device doesn't allow scanning the Libre.")
+                            }
+                            .confirmationDialog("Pairing the Libre 2 with this device will break LibreLink and other apps' pairings and you will have to uninstall and reinstall them to get their alarms back again.", isPresented: $showingRePairConfirmationDialog, titleVisibility: .visible) {
+                                Button("RePair", role: .destructive) {
+                                    app.main.nfc.taskRequest = .enableStreaming
+                                }
                             }
                             Spacer()
                         }.padding(.vertical, 4)

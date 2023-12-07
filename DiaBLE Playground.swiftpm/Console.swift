@@ -23,6 +23,7 @@ struct Console: View {
     @Environment(\.colorScheme) var colorScheme
 
     @State private var showingNFCAlert = false
+    @State private var showingRePairConfirmationDialog = false
     @State private var showingUnlockConfirmationDialog = false
     @State private var showingResetConfirmationDialog = false
     @State private var showingProlongConfirmationDialog = false
@@ -145,7 +146,12 @@ struct Console: View {
                         ((app.device as? Abbott)?.sensor as? Libre3)?.pair()
                         if app.main.nfc.isAvailable {
                             settings.logging = true
-                            app.main.nfc.taskRequest = .enableStreaming
+                            settings.selectedTab = .console
+                            if ((app.device as? Abbott)?.sensor as? Libre3) != nil {
+                                showingRePairConfirmationDialog = true
+                            } else {
+                                app.main.nfc.taskRequest = .enableStreaming
+                            }
                         } else {
                             showingNFCAlert = true
                         }
@@ -244,6 +250,11 @@ struct Console: View {
         .alert("NFC not supported", isPresented: $showingNFCAlert) {
         } message: {
             Text("This device doesn't allow scanning the Libre.")
+        }
+        .confirmationDialog("Pairing the Libre 2 with this device will break LibreLink and other apps' pairings and you will have to uninstall and reinstall them to get their alarms back again.", isPresented: $showingRePairConfirmationDialog, titleVisibility: .visible) {
+            Button("RePair", role: .destructive) {
+                app.main.nfc.taskRequest = .enableStreaming
+            }
         }
         .confirmationDialog("Unlocking the Libre 2 is not reversible and will make it unreadable by LibreLink and other apps.", isPresented: $showingUnlockConfirmationDialog, titleVisibility: .visible) {
             Button("Unlock", role: .destructive) {
