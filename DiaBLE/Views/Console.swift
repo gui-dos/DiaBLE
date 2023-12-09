@@ -181,7 +181,7 @@ struct Console: View {
         } message: {
             Text("This device doesn't allow scanning the Libre.")
         }
-        .confirmationDialog("Pairing the Libre 2 with this device will break LibreLink and other apps' pairings and you will have to uninstall and reinstall them to get their alarms back again.", isPresented: $showingRePairConfirmationDialog, titleVisibility: .visible) {
+        .confirmationDialog("Pairing a Libre 2 with this device will break LibreLink and other apps' pairings and you will have to uninstall and reinstall them to get their alarms back again.", isPresented: $showingRePairConfirmationDialog, titleVisibility: .visible) {
             Button("RePair", role: .destructive) {
                 app.main.nfc.taskRequest = .enableStreaming
             }
