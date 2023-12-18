@@ -29,8 +29,17 @@ enum NFCError: LocalizedError {
 
 extension Sensor {
 
+    var backdoor: Data {
+        switch self.type {
+        case .libre1:    Data([0xc2, 0xad, 0x75, 0x21])
+        default:         Data([0xde, 0xad, 0xbe, 0xef])
+        }
+    }
+
     var activationCommand: NFCCommand {
         switch self.type {
+        case .libre1:
+            NFCCommand(code: 0xA0, parameters: backdoor, description: "activate")
         case .libre2:
             nfcCommand(.activate)
         case .libre3:
@@ -43,10 +52,27 @@ extension Sensor {
     var universalCommand: NFCCommand    { NFCCommand(code: 0xA1, description: "A1 universal prefix") }
     var getPatchInfoCommand: NFCCommand { NFCCommand(code: 0xA1, description: "get patch info") }
 
-    // Libre 2
+    // Libre 1
+    var lockCommand: NFCCommand         { NFCCommand(code: 0xA2, parameters: backdoor, description: "lock") }
+    var readRawCommand: NFCCommand      { NFCCommand(code: 0xA3, parameters: backdoor, description: "read raw") }
+    var unlockCommand: NFCCommand       { NFCCommand(code: 0xA4, parameters: backdoor, description: "unlock") }
+
+    // Libre 2 / Pro
     // SEE: custom commands C0-C4 in TI RF430FRL15xH Firmware User's Guide
     var readBlockCommand: NFCCommand    { NFCCommand(code: 0xB0, description: "B0 read block") }
     var readBlocksCommand: NFCCommand   { NFCCommand(code: 0xB3, description: "B3 read blocks") }
+
+    /// replies with error 0x12 (.contentCannotBeChanged)
+    var writeBlockCommand: NFCCommand   { NFCCommand(code: 0xB1, description: "B1 write block") }
+
+    /// replies with errors 0x12 (.contentCannotBeChanged) or 0x0f (.unknown)
+    /// writing three blocks is not supported because it exceeds the 32-byte input buffer
+    var writeBlocksCommand: NFCCommand  { NFCCommand(code: 0xB4, description: "B4 write blocks") }
+
+    /// Usual 1252 blocks limit:
+    /// block 04e3 => error 0x11 (.blockAlreadyLocked)
+    /// block 04e4 => error 0x10 (.blockNotAvailable)
+    var lockBlockCommand: NFCCommand   { NFCCommand(code: 0xB2, description: "B2 lock block") }
 
 
     enum Subcommand: UInt8, CustomStringConvertible {
@@ -138,6 +164,10 @@ extension Error {
 enum TaskRequest {
     case enableStreaming
     case readFRAM
+    case unlock
+    case dump
+    case reset
+    case prolong
     case activate
 }
 
@@ -355,7 +385,11 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
                 }
 
-                if taskRequest == .activate {
+                if taskRequest == .unlock ||
+                    taskRequest == .dump ||
+                    taskRequest == .reset ||
+                    taskRequest == .prolong ||
+                    taskRequest == .activate {
 
                     var invalidateMessage = ""
 
@@ -565,42 +599,154 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
     }
 
 
-    func execute(_ taskRequest: TaskRequest) async throws {
+    // MARK: - Libre 1 and Pro only
 
-        switch taskRequest {
+    func readRaw(_ address: Int, _ bytes: Int) async throws -> (Int, Data) {
 
-
-        case .activate:
-
-            if sensor.type == .libre2 || sensor.securityGeneration == 2 {
-                log("Activating a \(sensor.type) is not supported anymore")
-                throw NFCError.commandNotSupported
-            }
-
-            do {
-
-                let output = try await send(sensor.activationCommand)
-                log("NFC: after trying to activate received \(output.hex) for the patch info \(sensor.patchInfo.hex)")
-
-                if sensor.type != .libre3 {
-                    let (_, data) = try await read(fromBlock: 0, count: 43)
-                    sensor.fram = Data(data)
-                } else {
-                    (sensor as! Libre3).parseActivation(output: output)
-                }
-
-            } catch {
-
-                // TODO: manage errors and verify integrity
-
-            }
-
-
-        default:
-            break
-
+        if sensor.type != .libre1 && sensor.type != .libreProH {
+            debugLog("readRaw() A3 command not supported by \(sensor.type)")
+            throw NFCError.commandNotSupported
         }
 
+        var buffer = Data()
+        var remainingBytes = bytes
+        let retries = 5
+        var retry = 0
+
+        while remainingBytes > 0 && retry <= retries {
+
+            let addressToRead = address + buffer.count
+            let bytesToRead = min(remainingBytes, 24)
+
+            var remainingWords = remainingBytes / 2
+            if remainingBytes % 2 == 1 || ( remainingBytes % 2 == 0 && addressToRead % 2 == 1 ) { remainingWords += 1 }
+            let wordsToRead = min(remainingWords, 12)   // real limit is 15
+
+            let readRawCommand = NFCCommand(code: 0xA3, parameters: sensor.backdoor + [UInt8(addressToRead & 0xFF), UInt8(addressToRead >> 8), UInt8(wordsToRead)])
+
+            if buffer.count == 0 { debugLog("NFC: sending '\(readRawCommand.code.hex) \(readRawCommand.parameters.hex)' custom command (\(sensor.type) read raw)") }
+
+            do {
+                let output = try await connectedTag?.customCommand(requestFlags: .highDataRate, customCommandCode: readRawCommand.code, customRequestParameters: readRawCommand.parameters)
+                var data = Data(output!)
+
+                if addressToRead % 2 == 1 { data = data.subdata(in: 1 ..< data.count) }
+                if data.count - bytesToRead == 1 { data = data.subdata(in: 0 ..< data.count - 1) }
+
+                buffer += data
+                remainingBytes -= data.count
+
+            } catch {
+                debugLog("NFC: error while reading \(wordsToRead) words at raw memory 0x\(addressToRead.hex): \(error.localizedDescription) (ISO 15693 error 0x\(error.iso15693Code.hex): \(error.iso15693Description))")
+
+                retry += 1
+                if retry <= retries {
+                    AudioServicesPlaySystemSound(1520)    // "pop" vibration
+                    log("NFC: retry # \(retry)...")
+                    try await Task.sleep(nanoseconds: 250_000_000)
+                } else {
+                    throw NFCError.customCommandError
+                }
+            }
+        }
+
+        return (address, buffer)
+
+    }
+
+
+    // Libre 1 only: overwrite mirrored FRAM blocks
+
+    func writeRaw(_ address: Int, _ data: Data) async throws {
+
+        if sensor.type != .libre1 {
+            debugLog("FRAM overwriting not supported by \(sensor.type)")
+            throw NFCError.commandNotSupported
+        }
+
+        do {
+
+            try await send(sensor.unlockCommand)
+
+            let addressToRead = (address / 8) * 8
+            let startOffset = address % 8
+            let endAddressToRead = ((address + data.count - 1) / 8) * 8 + 7
+            let blocksToRead = (endAddressToRead - addressToRead) / 8 + 1
+
+            let (readAddress, readData) = try await readRaw(addressToRead, blocksToRead * 8)
+            var msg = readData.hexDump(header: "NFC: blocks to overwrite:", address: readAddress)
+            var bytesToWrite = readData
+            bytesToWrite.replaceSubrange(startOffset ..< startOffset + data.count, with: data)
+            msg += "\(bytesToWrite.hexDump(header: "\nwith blocks:", address: addressToRead))"
+            debugLog(msg)
+
+            let startBlock = addressToRead / 8
+            let blocks = bytesToWrite.count / 8
+
+            if address >= 0xF860 {    // write to FRAM blocks
+
+                let requestBlocks = 2    // 3 doesn't work
+
+                let requests = Int(ceil(Double(blocks) / Double(requestBlocks)))
+                let remainder = blocks % requestBlocks
+                var blocksToWrite = [Data](repeating: Data(), count: blocks)
+
+                for i in 0 ..< blocks {
+                    blocksToWrite[i] = Data(bytesToWrite[i * 8 ... i * 8 + 7])
+                }
+
+                for i in 0 ..< requests {
+
+                    let startIndex = startBlock - 0xF860 / 8 + i * requestBlocks
+                    // TODO: simplify by using min()
+                    let endIndex = startIndex + (i == requests - 1 ? (remainder == 0 ? requestBlocks : remainder) : requestBlocks) - (requestBlocks > 1 ? 1 : 0)
+                    let blockRange = NSRange(startIndex ... endIndex)
+
+                    var dataBlocks = [Data]()
+                    for j in startIndex ... endIndex { dataBlocks.append(blocksToWrite[j - startIndex]) }
+
+                    do {
+                        try await connectedTag?.writeMultipleBlocks(requestFlags: .highDataRate, blockRange: blockRange, dataBlocks: dataBlocks)
+                        debugLog("NFC: wrote blocks 0x\(startIndex.hex) - 0x\(endIndex.hex) \(dataBlocks.reduce("", { $0 + $1.hex })) at 0x\(((startBlock + i * requestBlocks) * 8).hex)")
+                    } catch {
+                        log("NFC: error while writing multiple blocks 0x\(startIndex.hex)-0x\(endIndex.hex) \(dataBlocks.reduce("", { $0 + $1.hex })) at 0x\(((startBlock + i * requestBlocks) * 8).hex): \(error.localizedDescription)")
+                        throw NFCError.write
+                    }
+                }
+            }
+
+            try await send(sensor.lockCommand)
+
+        } catch {
+
+            // TODO: manage errors
+
+            debugLog(error.localizedDescription)
+        }
+
+    }
+
+
+    func write(fromBlock startBlock: Int, _ data: Data) async throws {
+        var startIndex = startBlock
+        let endBlock = startBlock + data.count / 8 - 1
+        let requestBlocks = 2    // 3 doesn't work
+        while startIndex <= endBlock {
+            let endIndex = min(startIndex + requestBlocks - 1, endBlock)
+            var dataBlocks = [Data]()
+            for i in startIndex ... endIndex {
+                dataBlocks.append(Data(data[(i - startBlock) * 8 ... (i - startBlock) * 8 + 7]))
+            }
+            let blockRange = NSRange(startIndex ... endIndex)
+            do {
+                try await connectedTag?.writeMultipleBlocks(requestFlags: .highDataRate, blockRange: blockRange, dataBlocks: dataBlocks)
+                debugLog("NFC: wrote blocks 0x\(startIndex.hex) - 0x\(endIndex.hex) \(dataBlocks.reduce("", { $0 + $1.hex }))")
+            } catch {
+                log("NFC: error while writing multiple blocks 0x\(startIndex.hex)-0x\(endIndex.hex) \(dataBlocks.reduce("", { $0 + $1.hex }))")
+                throw NFCError.write
+            }
+            startIndex = endIndex + 1
+        }
     }
 
 

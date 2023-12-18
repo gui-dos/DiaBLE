@@ -15,6 +15,8 @@
 		C55D12B429ACB5E00050F567 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55D12B329ACB5E00050F567 /* Crypto.swift */; };
 		C55D12B529ACB5E00050F567 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55D12B329ACB5E00050F567 /* Crypto.swift */; };
 		C55D12B729ACB9CB0050F567 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C55D12B629ACB9CB0050F567 /* CryptoSwift */; };
+		C568696A2B30469000B11687 /* NFCTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56869692B30469000B11687 /* NFCTools.swift */; };
+		C568696B2B30469000B11687 /* NFCTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56869692B30469000B11687 /* NFCTools.swift */; };
 		C581D5862B0E699C002A4633 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C581D5852B0E699C002A4633 /* WidgetKit.framework */; };
 		C581D5882B0E699C002A4633 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C581D5872B0E699C002A4633 /* SwiftUI.framework */; };
 		C581D58B2B0E699C002A4633 /* DiaBLEWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C581D58A2B0E699C002A4633 /* DiaBLEWidgetBundle.swift */; };
@@ -150,6 +152,7 @@
 		C535AEB72AB343AE00AB61AD /* Realm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Realm.swift; sourceTree = "<group>"; };
 		C53F77C529894478004F275A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C55D12B329ACB5E00050F567 /* Crypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
+		C56869692B30469000B11687 /* NFCTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NFCTools.swift; sourceTree = "<group>"; };
 		C581D5842B0E699C002A4633 /* DiaBLEWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DiaBLEWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C581D5852B0E699C002A4633 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		C581D5872B0E699C002A4633 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -338,6 +341,7 @@
 				C5E4008A29825EC40021C6B7 /* Events.swift */,
 				C5E4008C29825ED00021C6B7 /* Health.swift */,
 				C5E4008F29825EED0021C6B7 /* NFC.swift */,
+				C56869692B30469000B11687 /* NFCTools.swift */,
 				C535AEB72AB343AE00AB61AD /* Realm.swift */,
 				C50B9AD22AA7396500FF1EA3 /* ConsoleTools.swift */,
 				C5E4009529825F120021C6B7 /* LibreLink.swift */,
@@ -570,6 +574,7 @@
 				C5B7CE332AEE498F00227392 /* Dexcom.swift in Sources */,
 				C55D12B529ACB5E00050F567 /* Crypto.swift in Sources */,
 				C5916E5229827E860051AC06 /* Graph.swift in Sources */,
+				C568696B2B30469000B11687 /* NFCTools.swift in Sources */,
 				C5E4007A29825E450021C6B7 /* Sensor.swift in Sources */,
 				C5DB4E4F2B168E08005AD792 /* Libre.swift in Sources */,
 				C5E4009729825F120021C6B7 /* LibreLink.swift in Sources */,
@@ -601,6 +606,7 @@
 				C5E4007129825DF50021C6B7 /* BluetoothDelegate.swift in Sources */,
 				C5B7CE322AEE498F00227392 /* Dexcom.swift in Sources */,
 				C5E4005929825C930021C6B7 /* DataView.swift in Sources */,
+				C568696A2B30469000B11687 /* NFCTools.swift in Sources */,
 				C5E4006229825C930021C6B7 /* ContentView.swift in Sources */,
 				C5E4008D29825ED00021C6B7 /* Health.swift in Sources */,
 				C5E4008229825E8B0021C6B7 /* Libre2.swift in Sources */,

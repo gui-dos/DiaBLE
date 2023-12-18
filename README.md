@@ -3,9 +3,7 @@
 
 To build the project you have to duplicate the file _DiaBLE.xcconfig_, rename the copy to _DiaBLEOverride.xcconfig_ (the missing reference displayed by Xcode in red should then point to it) and edit it by deleting the last line `#include?... ` and replacing `##TEAM_ID##` with your Apple Team ID so that the first line should read for example `DEVELOPMENT_TEAM = Z25SC9UDC8`.
 
-The NFC capabilities require a paid Apple Developer Program annual membership. A public beta is availaBLE at **[TestFlight](https://testflight.apple.com/join/H48doU3l)** but the simplest way to get invited to the alpha internal builds is to sponsor me $-)
-
-If you own an iPad you can download the [zipped archive](https://github.com/gui-dos/DiaBLE/archive/refs/heads/main.zip) of this repository and just tap _DiaBLE Playground.swiftpm_. A past complete fork of this repository hosting the same legacy code and still buildaBLE for the iPhone is availaBLE at [DiaBLE-Legacy](https://github.com/gui-dos/DiaBLE-Legacy).
+The NFC capabilities require a paid Apple Developer Program annual membership. A public beta is availaBLE at **[TestFlight](https://testflight.apple.com/join/H48doU3l)** and if you own an iPad you can download the [zipped archive](https://github.com/gui-dos/DiaBLE/archive/refs/heads/main.zip) of this repository and just tap _DiaBLE Playground.swiftpm_.
 
 Currently I am targeting only the latest betas of Xcode and iOS and focusing on the new Libre 3. Please refer to the [**TODOs**](https://github.com/gui-dos/DiaBLE/blob/main/TODO.md) list for the up-to-date status of all the current limitations and known bugs of this **prototype**.
 
