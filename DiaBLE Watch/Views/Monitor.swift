@@ -119,7 +119,7 @@ struct Monitor: View {
                         }
                     }
 
-                    if app.device != nil {
+                    if app.device != nil && (app.device.battery > -1 || app.device.rssi != 0) {
                         VStack(spacing: -4) {
                             if app.device.battery > -1 {
                                 let battery = app.device.battery
