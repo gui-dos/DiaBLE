@@ -24,6 +24,8 @@ struct Console: View {
 
     @State private var showingNFCAlert = false
     @State private var showingRePairConfirmationDialog = false
+    @State private var showingUnlockConfirmationDialog = false
+
     @State private var showingFilterField = false
     @State private var filterString = ""
 
@@ -109,6 +111,7 @@ struct Console: View {
                             }
                         }
                     }
+
                 }
             }
             #if targetEnvironment(macCatalyst)
@@ -169,6 +172,36 @@ struct Console: View {
                     }
 
 
+                    Menu {
+
+                        Button {
+                            if app.main.nfc.isAvailable {
+                                settings.logging = true
+                                showingUnlockConfirmationDialog = true
+                            } else {
+                                showingNFCAlert = true
+                            }
+                        } label: {
+                            Label("Unlock", systemImage: "lock.open")
+                        }
+
+                    } label: {
+                        Label("Hacks", systemImage: "wand.and.stars")
+                    }
+
+
+                    Button {
+                        if app.main.nfc.isAvailable {
+                            settings.logging = true
+                            app.main.nfc.taskRequest = .dump
+                        } else {
+                            showingNFCAlert = true
+                        }
+                    } label: {
+                        Label("Dump Memory", systemImage: "cpu")
+                    }
+
+
                 } label: {
                     VStack(spacing: 0) {
                         Image(systemName: "wrench.and.screwdriver")
@@ -184,6 +217,11 @@ struct Console: View {
         .confirmationDialog("Pairing a Libre 2 with this device will break LibreLink and other apps' pairings and you will have to uninstall and reinstall them to get their alarms back again.", isPresented: $showingRePairConfirmationDialog, titleVisibility: .visible) {
             Button("RePair", role: .destructive) {
                 app.main.nfc.taskRequest = .enableStreaming
+            }
+        }
+        .confirmationDialog("Unlocking the Libre 2 is not reversible and will make it unreadable by LibreLink and other apps.", isPresented: $showingUnlockConfirmationDialog, titleVisibility: .visible) {
+            Button("Unlock", role: .destructive) {
+                app.main.nfc.taskRequest = .unlock
             }
         }
 
