@@ -192,6 +192,7 @@ struct Monitor: View {
         // .navigationTitle { Text("Monitor") }
         .accentColor(.blue)
         .onAppear {
+            settings.selectedTab = .monitor
             timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
             minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
             if app.lastReadingDate != Date.distantPast {

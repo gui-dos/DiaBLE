@@ -171,6 +171,9 @@ struct DataView: View {
         .font(.footnote)
         .navigationTitle { Text("Data") }
         .accentColor(.blue)
+        .onAppear {
+            settings.selectedTab = .data
+        }
     }
 }
 

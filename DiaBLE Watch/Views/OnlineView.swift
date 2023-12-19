@@ -335,6 +335,9 @@ struct OnlineView: View {
         .buttonStyle(.plain)
         .navigationTitle { Text("Online") }
         .accentColor(.blue)
+        .onAppear {
+            settings.selectedTab = .online
+        }
     }
 }
 

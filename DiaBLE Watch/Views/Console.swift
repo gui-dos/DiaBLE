@@ -237,6 +237,9 @@ struct Console: View {
         .edgesIgnoringSafeArea(.bottom)
         .navigationTitle { Text("Console") }
         .accentColor(.blue)
+        .onAppear {
+            settings.selectedTab = .console
+        }
     }
 }
 
