@@ -32,6 +32,7 @@ extension Sensor {
     var backdoor: Data {
         switch self.type {
         case .libre1:    Data([0xc2, 0xad, 0x75, 0x21])
+        case .libreProH: Data([0xc2, 0xad, 0x00, 0x90])
         default:         Data([0xde, 0xad, 0xbe, 0xef])
         }
     }
@@ -40,6 +41,8 @@ extension Sensor {
         switch self.type {
         case .libre1:
             NFCCommand(code: 0xA0, parameters: backdoor, description: "activate")
+        case .libreProH:
+            NFCCommand(code: 0xA0, parameters: backdoor + readerSerial, description: "activate")
         case .libre2:
             nfcCommand(.activate)
         case .libre3:
