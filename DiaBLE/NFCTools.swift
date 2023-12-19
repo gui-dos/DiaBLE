@@ -244,7 +244,7 @@ extension NFC {
             }
 
             do {
-                let output = try await send(sensor.unlockCommand)
+                let output = try await send(sensor.nfcCommand(.unlock))
 
                 // Libre 2
                 if output.count == 0 {
