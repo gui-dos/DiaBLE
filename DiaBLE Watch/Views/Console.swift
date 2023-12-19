@@ -233,7 +233,7 @@ struct Console: View {
 
             }.font(.footnote)
         }
-        // FIXME: Filter toolbnar item disapeearing
+        // FIXME: Filter toolbar item disappearing
         // .padding(.top, -4)
         .edgesIgnoringSafeArea(.bottom)
         .navigationTitle { Text("Console") }
