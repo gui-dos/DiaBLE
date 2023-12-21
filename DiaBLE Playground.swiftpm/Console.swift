@@ -130,6 +130,14 @@ struct Console: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Console")
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    settings.caffeinated.toggle()
+                    UIApplication.shared.isIdleTimerDisabled = settings.caffeinated
+                } label: {
+                    Image(systemName: settings.caffeinated ? "cup.and.saucer.fill" : "cup.and.saucer" )
+                }
+            }
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 Button {
                     withAnimation { showingFilterField.toggle() }
