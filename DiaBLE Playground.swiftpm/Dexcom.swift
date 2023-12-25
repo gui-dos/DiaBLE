@@ -311,7 +311,7 @@ import CoreBluetooth
                 sensor?.trend = [item]
                 app.currentGlucose = item.value
                 app.lastReadingDate = item.date
-                sensor?.lastReadingDate = app.lastConnectionDate
+                sensor?.lastReadingDate = app.lastReadingDate
                 main.history.factoryTrend = [item]
                 main.healthKit?.write([item])
 
@@ -334,7 +334,7 @@ import CoreBluetooth
                 sensor?.trend = [item]
                 app.currentGlucose = item.value
                 app.lastReadingDate = item.date
-                sensor?.lastReadingDate = app.lastConnectionDate
+                sensor?.lastReadingDate = app.lastReadingDate
                 main.history.factoryTrend = [item]
                 main.healthKit?.write([item])
 
