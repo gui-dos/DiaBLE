@@ -312,7 +312,7 @@ import CoreBluetooth
                 app.lastReadingDate = item.date
                 sensor?.lastReadingDate = app.lastReadingDate
                 main.history.factoryTrend.insert(item, at: 0)
-                main.history.factoryValues = main.history.factoryTrend
+                main.history.factoryValues = main.history.factoryTrend // TODO: backfill
                 main.healthKit?.write([item])
 
             case .glucoseG6Rx:
