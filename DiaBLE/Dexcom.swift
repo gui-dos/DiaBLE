@@ -315,7 +315,7 @@ import CoreBluetooth
                 if main.history.factoryValues.count == 0 || main.history.factoryValues[0].id < item.id {
                     main.history.factoryValues = [item] + main.history.factoryValues
                 }
-                main.healthKit?.write([item])
+                main.healthKit?.write([item]); main.healthKit?.read()
 
             case .glucoseG6Rx:
                 let status = data[1]  // 0: ok, 0x81: lowBattery
@@ -341,7 +341,7 @@ import CoreBluetooth
                 if main.history.factoryValues.count == 0 || main.history.factoryValues[0].id < item.id {
                     main.history.factoryValues = [item] + main.history.factoryValues
                 }
-                main.healthKit?.write([item])
+                main.healthKit?.write([item]); main.healthKit?.read()
 
 
             case .calibrationDataTx:  // G7
