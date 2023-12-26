@@ -305,14 +305,16 @@ import CoreBluetooth
                 let predictedValue: UInt16? = predictionData != 0xffff ? predictionData & 0xfff : nil
                 let calibration = data[18]
                 log("\(name): glucose response (EGV): status: 0x\(status.hex), message timestamp: \(messageTimestamp.formattedInterval), sensor activation date: \(activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(age) seconds, timestamp: \(timestamp.formattedInterval), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), state: \(AlgorithmState(rawValue: state)?.description ?? "unknown") (0x\(state.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
-                // TODO: move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
+                // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                 let item = Glucose(value != nil ? Int(value!) : -1, trendRate: Double(trend ?? 0), id: Int(Double(timestamp) / 60 / 5), date: date)
                 sensor?.trend.insert(item, at: 0)
                 app.currentGlucose = item.value
                 app.lastReadingDate = item.date
                 sensor?.lastReadingDate = app.lastReadingDate
                 main.history.factoryTrend.insert(item, at: 0)
-                main.history.factoryValues = main.history.factoryTrend // TODO: backfill
+                if main.history.factoryValues.count == 0 || main.history.factoryValues[0].id < item.id {
+                    main.history.factoryValues = [item] + main.history.factoryValues
+                }
                 main.healthKit?.write([item])
 
             case .glucoseG6Rx:
@@ -329,14 +331,16 @@ import CoreBluetooth
                 let predictionData = UInt16(data[14...15])
                 let predictedValue: UInt16? = predictionData != 0xffff ? predictionData & 0xfff : nil
                 log("\(name): glucose response (EGV): status: 0x\(status.hex), sequence number: \(sequenceNumber), timestamp: \(timestamp.formattedInterval), date: \(date.local), glucose value: \(value), is display only: \(glucoseIsDisplayOnly), state: \(AlgorithmState(rawValue: state)?.description ?? "unknown") (0x\(state.hex)), trend: \(trend), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"),  valid CRC: \(data.dropLast(2).crc == UInt16(data.suffix(2)))")
-                // TODO: move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
+                // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                 let item = Glucose(value, trendRate: Double(trend), id: Int(Double(timestamp) / 60 / 5), date: date)
                 sensor?.trend.insert(item, at: 0)
                 app.currentGlucose = item.value
                 app.lastReadingDate = item.date
                 sensor?.lastReadingDate = app.lastReadingDate
                 main.history.factoryTrend.insert(item, at: 0)
-                main.history.factoryValues = main.history.factoryTrend // TODO: backfill
+                if main.history.factoryValues.count == 0 || main.history.factoryValues[0].id < item.id {
+                    main.history.factoryValues = [item] + main.history.factoryValues
+                }
                 main.healthKit?.write([item])
 
 
@@ -430,7 +434,7 @@ import CoreBluetooth
                         history.append(item)
                     }
                     log("\(name): backfilled history (\(history.count) values): \(history)")
-                    // TODO: merge; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
+                    // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                     main.history.factoryValues = history.reversed()
                 }
 
@@ -479,7 +483,7 @@ import CoreBluetooth
                     }
                 }
                 log("\(name): backfilled history (\(history.count) values): \(history)")
-                // TODO: merge; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
+                // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                 main.history.factoryValues = history.reversed()
                 buffer = Data()
 
