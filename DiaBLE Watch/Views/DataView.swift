@@ -21,7 +21,7 @@ struct DataView: View {
 
             HStack {
 
-                if app.status.hasPrefix("Scanning") {
+                if app.status.hasPrefix("Scanning") && !(readingCountdown > 0) {
                     Text("Scanning...").foregroundColor(.orange)
                 } else {
                     HStack {
