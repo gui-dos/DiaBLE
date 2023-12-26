@@ -430,6 +430,9 @@ import CoreBluetooth
                         history.append(item)
                     }
                     log("\(name): backfilled history (\(history.count) values): \(history)")
+                    // TODO: merge; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
+                    main.history.factoryValues = history.reversed()
+                    main.history.factoryTrend = main.history.factoryTrend + main.history.factoryValues
 
                 }
 
@@ -478,8 +481,11 @@ import CoreBluetooth
                     }
                 }
                 log("\(name): backfilled history (\(history.count) values): \(history)")
+                // TODO: merge; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
+                main.history.factoryValues = history.reversed()
+                main.history.factoryTrend = main.history.factoryTrend + main.history.factoryValues
                 buffer = Data()
-                // TODO
+
 
 
             case .batteryStatusTx:  // G7 Tx/Rx
