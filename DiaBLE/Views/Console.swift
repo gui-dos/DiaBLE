@@ -25,6 +25,9 @@ struct Console: View {
     @State private var showingNFCAlert = false
     @State private var showingRePairConfirmationDialog = false
     @State private var showingUnlockConfirmationDialog = false
+    @State private var showingResetConfirmationDialog = false
+    @State private var showingProlongConfirmationDialog = false
+    @State private var showingActivateConfirmationDialog = false
 
     @State private var showingFilterField = false
     @State private var filterString = ""
@@ -193,6 +196,40 @@ struct Console: View {
                             Label("Unlock", systemImage: "lock.open")
                         }
 
+                        Button {
+                            if app.main.nfc.isAvailable {
+                                settings.logging = true
+                                showingResetConfirmationDialog = true
+                            } else {
+                                showingNFCAlert = true
+                            }
+                        } label: {
+                            Label("Reset", systemImage: "00.circle")
+                        }
+
+                        Button {
+                            if app.main.nfc.isAvailable {
+                                settings.logging = true
+                                showingProlongConfirmationDialog = true
+                            } else {
+                                showingNFCAlert = true
+                            }
+                        } label: {
+                            Label("Prolong", systemImage: "infinity.circle")
+                        }
+
+                        Button {
+                            if app.main.nfc.isAvailable {
+                                settings.logging = true
+                                showingActivateConfirmationDialog = true
+                            } else {
+                                showingNFCAlert = true
+                            }
+                        } label: {
+                            Label("Activate", systemImage: "bolt.circle")
+                        }
+
+
                     } label: {
                         Label("Hacks", systemImage: "wand.and.stars")
                     }
@@ -230,6 +267,21 @@ struct Console: View {
         .confirmationDialog("Unlocking the Libre 2 is not reversible and will make it unreadable by LibreLink and other apps.", isPresented: $showingUnlockConfirmationDialog, titleVisibility: .visible) {
             Button("Unlock", role: .destructive) {
                 app.main.nfc.taskRequest = .unlock
+            }
+        }
+        .confirmationDialog("Resetting the sensor will clear its measurements memory and put it in an inactivated state.", isPresented: $showingResetConfirmationDialog, titleVisibility: .visible) {
+            Button("Reset", role: .destructive) {
+                app.main.nfc.taskRequest = .reset
+            }
+        }
+        .confirmationDialog("Prolonging the sensor will overwrite its maximum life to 0xFFFF minutes (≈ 45.5 days)", isPresented: $showingProlongConfirmationDialog, titleVisibility: .visible) {
+            Button("Prolong", role: .destructive) {
+                app.main.nfc.taskRequest = .prolong
+            }
+        }
+        .confirmationDialog("Activating a fresh/ened sensor will put it in the usual warming-up state for 60 minutes.", isPresented: $showingActivateConfirmationDialog, titleVisibility: .visible) {
+            Button("Activate", role: .destructive) {
+                app.main.nfc.taskRequest = .activate
             }
         }
 

@@ -3,17 +3,6 @@ import SwiftUI
 
 struct HamburgerMenu: View {
 
-    let credits = [
-        "@dabear": "https://github.com/dabear",
-        "@ivalkou": "https://github.com/ivalkou",
-        "@j-kaltes": "https://github.com/j-kaltes",
-        "LibreMonitor": "https://github.com/UPetersen/LibreMonitor/tree/Swift4",
-        "Loop": "https://github.com/LoopKit/Loop",
-        "Nightscout LibreLinkUp Uploader": "https://github.com/timoschlueter/nightscout-librelink-up",
-        "xDrip+": "https://github.com/NightscoutFoundation/xDrip",
-        "xDrip4iO5": "https://github.com/JohanDegraeve/xdripswift"
-    ]
-
     var body: some View {
 
         NavigationStack {
@@ -111,21 +100,6 @@ struct HamburgerMenu: View {
                         Image(systemName: "giftcard")
                         Link(Data(base64Encoded: "aHR0cHM6Ly9wYXlwYWwubWUvZ3Vpc29y")!.string, destination: URL(string: Data(base64Encoded: "aHR0cHM6Ly9wYXlwYWwubWUvZ3Vpc29y")!.string)!)
                             .foregroundColor(.blue)
-                    }
-
-                    VStack {
-                        Text("Credits:")
-                        ScrollView {
-                            ForEach(credits.sorted(by: <), id: \.key) { name, url in
-                                VStack {
-                                    Text(name)
-                                    Link((url), destination: URL(string: url)!)
-                                        .foregroundColor(.blue)
-                                }
-                                .font(.footnote)
-                                .padding(.vertical, 6)
-                            }
-                        }
                     }
 
                 }

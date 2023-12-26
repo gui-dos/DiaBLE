@@ -10,17 +10,6 @@ struct HamburgerMenu: View {
     @State private var showingHelp = false
     @State private var showingAbout = false
 
-    let credits = [
-        "@dabear": "https://github.com/dabear",
-        "@ivalkou": "https://github.com/ivalkou",
-        "@j-kaltes": "https://github.com/j-kaltes",
-        "LibreMonitor": "https://github.com/UPetersen/LibreMonitor/tree/Swift4",
-        "Loop": "https://github.com/LoopKit/Loop",
-        "Nightscout LibreLinkUp Uploader": "https://github.com/timoschlueter/nightscout-librelink-up",
-        "xDrip+": "https://github.com/NightscoutFoundation/xDrip",
-        "xDrip4iO5": "https://github.com/JohanDegraeve/xdripswift"
-    ]
-
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
 
@@ -100,17 +89,6 @@ struct HamburgerMenu: View {
                         VStack {
                             Image(systemName: "giftcard")
                             Link("PayPal", destination: URL(string: Data(base64Encoded: "aHR0cHM6Ly9wYXlwYWwubWUvZ3Vpc29y")!.string)!)
-                        }
-
-                        VStack {
-                            Text("Credits:")
-                            ScrollView {
-                                ForEach(credits.sorted(by: <), id: \.key) { name, url in
-                                    Link(name, destination: URL(string: url)!)
-                                        .padding(.horizontal, 32)
-                                }
-                            }
-                            .frame(height: 130)
                         }
 
                     }
