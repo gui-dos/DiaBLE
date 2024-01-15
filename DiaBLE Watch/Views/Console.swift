@@ -11,7 +11,7 @@ struct Console: View {
     @State private var readingCountdown: Int = 0
 
     @State private var showingFilterField = false
-    @State private var filterString = ""
+    @State private var filterText = ""
 
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -25,11 +25,12 @@ struct Console: View {
 
                         HStack {
                             Image(systemName: "magnifyingglass").foregroundColor(Color(.lightGray))
-                            TextField("Filter", text: $filterString)
+                            TextField("Filter", text: $filterText)
                                 .foregroundColor(.blue)
-                            if filterString.count > 0 {
+                                .textInputAutocapitalization(.never)
+                            if filterText.count > 0 {
                                 Button {
-                                    filterString = ""
+                                    filterText = ""
                                 } label: {
                                     Image(systemName: "xmark.circle.fill")
                                 }
@@ -43,7 +44,7 @@ struct Console: View {
                         // TODO: picker to filter labels
                         ForEach(Array(log.labels), id: \.self) { label in
                             Button {
-                                filterString = label
+                                filterText = label
                             } label: {
                                 Text(label).font(.caption).foregroundColor(.blue)
                             }
@@ -54,12 +55,12 @@ struct Console: View {
                 ScrollViewReader { proxy in
                     ScrollView(showsIndicators: true) {
                         LazyVStack(alignment: .leading, spacing: 10) {
-                            if filterString.isEmpty {
+                            if filterText.isEmpty {
                                 ForEach(log.entries) { entry in
                                     Text(entry.message)
                                 }
                             } else {
-                                let pattern = filterString.lowercased()
+                                let pattern = filterText.lowercased()
                                 ForEach(log.entries.filter { $0.message.lowercased().contains(pattern) }) { entry in
                                     Text(entry.message)
                                 }
@@ -98,7 +99,7 @@ struct Console: View {
                     Button {
                         withAnimation { showingFilterField.toggle() }
                     } label: {
-                        Image(systemName: filterString.isEmpty ? "line.horizontal.3.decrease.circle" : "line.horizontal.3.decrease.circle.fill").font(.title3)
+                        Image(systemName: filterText.isEmpty ? "line.horizontal.3.decrease.circle" : "line.horizontal.3.decrease.circle.fill").font(.title3)
                         Text("Filter")
                     }
                 }

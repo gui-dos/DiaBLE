@@ -19,7 +19,7 @@ class EventKit: Logging {
 
         store.requestFullAccessToEvents { [self] granted, error  in
             guard granted else {
-                debugLog("EventKit: full access not granted")
+                debugLog("EventKit: full access not granted, error: \(error?.localizedDescription ?? "nil"), full access to calendar events authorization status: \(["notDetermined", "restricted", "denied", "fullAccess", "writeOnly"][EKEventStore.authorizationStatus(for: .event).rawValue])")
                 return
             }
 

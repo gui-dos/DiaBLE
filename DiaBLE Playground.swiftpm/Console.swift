@@ -30,7 +30,7 @@ struct Console: View {
     @State private var showingActivateConfirmationDialog = false
 
     @State private var showingFilterField = false
-    @State private var filterString = ""
+    @State private var filterText = ""
 
     var body: some View {
 
@@ -45,12 +45,12 @@ struct Console: View {
 
                         HStack {
                             Image(systemName: "magnifyingglass").padding(.leading).foregroundColor(Color(.lightGray))
-                            TextField("Filter", text: $filterString)
-                                .autocapitalization(.none)
+                            TextField("Filter", text: $filterText)
+                                .textInputAutocapitalization(.never)
                                 .foregroundColor(.accentColor)
-                            if filterString.count > 0 {
+                            if filterText.count > 0 {
                                 Button {
-                                    filterString = ""
+                                    filterText = ""
                                 } label: {
                                     Image(systemName: "xmark.circle.fill").padding(.trailing)
                                 }
@@ -62,7 +62,7 @@ struct Console: View {
                         HStack {
                             ForEach(Array(log.labels), id: \.self) { label in
                                 Button {
-                                    filterString = label
+                                    filterText = label
                                 } label: {
                                     Text(label).font(.footnote).foregroundColor(.blue)
                                 }
@@ -76,13 +76,13 @@ struct Console: View {
                 ScrollViewReader { proxy in
                     ScrollView(showsIndicators: true) {
                         LazyVStack(alignment: .leading, spacing: 20) {
-                            if filterString.isEmpty {
+                            if filterText.isEmpty {
                                 ForEach(log.entries) { entry in
                                     Text(entry.message)
                                         .textSelection(.enabled)
                                 }
                             } else {
-                                let pattern = filterString.lowercased()
+                                let pattern = filterText.lowercased()
                                 ForEach(log.entries.filter { $0.message.lowercased().contains(pattern) }) { entry in
                                     Text(entry.message)
                                         .textSelection(.enabled)
@@ -143,7 +143,7 @@ struct Console: View {
                     withAnimation { showingFilterField.toggle() }
                 } label: {
                     VStack(spacing: 0) {
-                        Image(systemName: filterString.isEmpty ? "line.horizontal.3.decrease.circle" : "line.horizontal.3.decrease.circle.fill")
+                        Image(systemName: filterText.isEmpty ? "line.horizontal.3.decrease.circle" : "line.horizontal.3.decrease.circle.fill")
                         Text("Filter").font(.footnote)
                     }
                 }

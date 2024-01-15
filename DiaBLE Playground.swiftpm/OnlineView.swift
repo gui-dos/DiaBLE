@@ -131,6 +131,7 @@ struct OnlineView: View {
                                     TextField("email", text: $settings.libreLinkUpEmail)
                                         .keyboardType(.emailAddress)
                                         .textContentType(.emailAddress)
+                                        .textInputAutocapitalization(.never)
                                         .autocorrectionDisabled(true)
                                         .onSubmit {
                                             settings.libreLinkUpPatientId = ""

@@ -177,6 +177,7 @@ struct OnlineView: View {
                     } else if settings.selectedService == .libreLinkUp {
                         TextField("email", text: $settings.libreLinkUpEmail)
                             .textContentType(.emailAddress)
+                            .textInputAutocapitalization(.never)
                             .onSubmit {
                                 settings.libreLinkUpPatientId = ""
                                 libreLinkUpResponse = "[Logging in...]"

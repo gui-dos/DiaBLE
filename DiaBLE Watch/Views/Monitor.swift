@@ -212,7 +212,12 @@ struct Monitor: View {
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
-                Image(systemName: "line.horizontal.3").foregroundColor(.blue)
+                Button {
+                    settings.caffeinated.toggle()
+                    // UIApplication.shared.isIdleTimerDisabled = settings.caffeinated
+                } label: {
+                    Image(systemName: settings.caffeinated ? "cup.and.saucer.fill" : "cup.and.saucer" ).foregroundColor(.blue)
+                }
                     .hidden() // trick to center time
             }
 

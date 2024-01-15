@@ -625,7 +625,7 @@ extension String {
                     // when reactivating a sensor received 20 * 10 + 17 bytes
                     // otherwise receiving 20 * 11 + 12 bytes with the latest firmwares
                     if buffer.count == 217 || buffer.count == 232 {
-                        log("\(type) \(transmitter!.peripheral!.name!): received \(packets.count) packets of factory data, payload: \(Data(packets.joined()).hexBytes)")
+                        log("\(type) \(transmitter!.peripheral!.name!): received \(packets.count) packets of factory data (\(buffer.count) bytes), payload: \(Data(packets.joined()).hexBytes)")
                     }
                 }
                 buffer = Data()
