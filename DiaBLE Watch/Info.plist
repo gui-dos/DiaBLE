@@ -17,6 +17,7 @@
 	<array>
 		<string>audio</string>
 		<string>bluetooth-central</string>
+		<string>remote-notification</string>
 	</array>
 	<key>WKBackgroundModes</key>
 	<array>
