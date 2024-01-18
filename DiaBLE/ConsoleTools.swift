@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import TabularData
 
 
 // TODO: rename to Copilot when smarter :-)
@@ -15,6 +16,7 @@ struct ShellView: View {
     @State private var showingStack = false
 
     @State private var showingFileImporter = false
+    @State private var libreviewCSV = ""
     @State private var tridentContainer = ""
 
     @State private var showingRealmKeyPrompt = false
@@ -25,7 +27,43 @@ struct ShellView: View {
         VStack(spacing: 0) {
 
             if showingStack {
-                VStack {
+                VStack (spacing: 0) {
+
+                    HStack {
+
+                        TextField("LibreView CSV", text: $libreviewCSV)
+                            .textFieldStyle(.roundedBorder)
+                            .truncationMode(.head)
+
+                        Button {
+                            showingFileImporter = true
+                        } label: {
+                            Image(systemName: "doc.circle")
+                                .font(.system(size: 32))
+                        }
+                        .fileImporter(
+                            isPresented: $showingFileImporter,
+                            allowedContentTypes: [.commaSeparatedText]
+                        ) { result in
+                            switch result {
+                            case .success(let file):
+                                if !file.startAccessingSecurityScopedResource() { return }
+                                libreviewCSV = file.path
+                                let fileManager = FileManager.default
+                                if let csvData = fileManager.contents(atPath: libreviewCSV) {
+                                    app.main.log("cat \(libreviewCSV)\n\(csvData.prefix(800).string)\n[...]\n\(csvData.suffix(800).string)")
+                                }
+
+                                file.stopAccessingSecurityScopedResource()
+
+                            case .failure(let error):
+                                app.main.log("\(error.localizedDescription)")
+                            }
+                        }
+
+                    }
+                    .padding(4)
+
                     HStack {
 
                         TextField("Trident Container", text: $tridentContainer)
