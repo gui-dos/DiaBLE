@@ -54,12 +54,18 @@ struct ShellView: View {
                                 if !file.startAccessingSecurityScopedResource() { return }
                                 libreviewCSV = file.path
                                 let fileManager = FileManager.default
-                                if let csvData = fileManager.contents(atPath: libreviewCSV) {
+                                if var csvData = fileManager.contents(atPath: libreviewCSV) {
                                     app.main.log("cat \(libreviewCSV)\n\(csvData.prefix(800).string)\n[...]\n\(csvData.suffix(800).string)")
+                                    csvData = csvData[(csvData.firstIndex(of: 10)! + 1)...]  //trim first line
+                                    do {
+                                        let dataFrame = try DataFrame(csvData: csvData)
+                                        app.main.log("TabularData: column names: \(dataFrame.columns.map(\.name))" )
+                                        app.main.log("TabularData:\n\(dataFrame)" )
+                                    } catch {
+                                        app.main.log("TabularData: error: \(error.localizedDescription)")
+                                    }
                                 }
-
                                 file.stopAccessingSecurityScopedResource()
-
                             case .failure(let error):
                                 app.main.log("\(error.localizedDescription)")
                             }
