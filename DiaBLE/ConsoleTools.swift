@@ -17,6 +17,8 @@ struct ShellView: View {
 
     @State private var showingFileImporter = false
     @State private var libreviewCSV = ""
+
+    @State private var showingFolderImporter = false
     @State private var tridentContainer = ""
 
     @State private var showingRealmKeyPrompt = false
@@ -94,13 +96,13 @@ struct ShellView: View {
                             .truncationMode(.head)
 
                         Button {
-                            showingFileImporter = true
+                            showingFolderImporter = true
                         } label: {
                             Image(systemName: "folder.circle")
                                 .font(.system(size: 32))
                         }
                         .fileImporter(
-                            isPresented: $showingFileImporter,
+                            isPresented: $showingFolderImporter,
                             allowedContentTypes: [.folder]  // .directory doesn't work
                         ) { result in
                             switch result {
@@ -140,7 +142,7 @@ struct ShellView: View {
                                                                 // $ adb shell  # sudo waydroid shell
                                                                 // $ su
                                                                 // # chmod 755 /data/local/tmp/frida-server
-                                                                // # /data/local/tmp/frida-server &
+                                                                // # /data/local/tmp/frida-server &
                                                                 //
                                                                 // $ frida -U "Libre 3"
                                                                 // Frida-> Java.perform(function(){}) // Seems necessary to use Java.use
@@ -248,7 +250,7 @@ struct ShellView: View {
 
                     Button {
                         showingRealmKeyPrompt = false
-                        showingFileImporter = true
+                        showingFolderImporter = true
                     } label: {
                         Label {
                             Text("Try again").fontWeight(.bold)
@@ -351,4 +353,3 @@ struct CrcCalculator: View {
         .onChange(of: hexString) { updateCRC() }
     }
 }
-
