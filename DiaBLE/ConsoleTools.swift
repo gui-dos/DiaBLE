@@ -54,9 +54,15 @@ struct ShellView: View {
                                     app.main.log("cat \(libreviewCSV)\n\(csvData.prefix(800).string)\n[...]\n\(csvData.suffix(800).string)")
                                     csvData = csvData[(csvData.firstIndex(of: 10)! + 1)...]  //trim first line
                                     do {
-                                        let dataFrame = try DataFrame(csvData: csvData)
-                                        app.main.log("TabularData: column names: \(dataFrame.columns.map(\.name))" )
-                                        app.main.log("TabularData:\n\(dataFrame)" )
+                                        var options = CSVReadingOptions()
+                                        options.addDateParseStrategy(
+                                            Date.ParseStrategy(format: "\(day: .twoDigits)-\(month: .twoDigits)-\(year: .defaultDigits) \(hour: .twoDigits(clock: .twentyFourHour, hourCycle: .zeroBased)):\(minute: .twoDigits)", timeZone: .current)
+                                        )
+                                        let dataFrame = try DataFrame(csvData: csvData, options: options)
+                                        app.main.log("TabularData: column names: \(dataFrame.columns.map(\.name))")
+                                        app.main.log("TabularData:\n\(dataFrame)")
+                                        let history = try DataFrame(csvData: csvData, columns: ["Device Timestamp", "Record Type", "Historic Glucose mg/dL"], options: options).sorted(on: "Device Timestamp", order: .descending)
+                                        app.main.log("TabularData:\n\(history)")
                                     } catch {
                                         app.main.log("TabularData: error: \(error.localizedDescription)")
                                     }
