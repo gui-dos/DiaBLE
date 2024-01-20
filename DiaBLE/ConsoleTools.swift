@@ -63,19 +63,25 @@ struct ShellView: View {
                                         app.main.log("TabularData: column names: \(dataFrame.columns.map(\.name))")
                                         app.main.log("TabularData:\n\(dataFrame)")
                                         let lastRow = dataFrame.rows.last!
-                                        let lastDeviceSerial = lastRow["Serial Number"]!
+                                        let lastDeviceSerial = lastRow["Serial Number"] as! String
                                         app.main.log("TabularData: last device serial: \(lastDeviceSerial)")
                                         var history = try DataFrame(csvData: csvData,
-                                                                    columns: ["Device Timestamp", "Record Type", "Historic Glucose mg/dL"],
-                                                                    types: ["Device Timestamp": .date, "Record Type": .integer, "Historic Glucose mg/dL": .integer],
+                                                                    columns: ["Serial Number", "Device Timestamp", "Record Type", "Historic Glucose mg/dL"],
+                                                                    types: ["Serial Number": .string, "Device Timestamp": .date, "Record Type": .integer, "Historic Glucose mg/dL": .integer],
                                                                     options: options)
                                             .sorted(on: "Device Timestamp", order: .descending)
                                         history.renameColumn("Device Timestamp", to: "Date")
                                         history.renameColumn("Record Type", to: "Type")
                                         history.renameColumn("Historic Glucose mg/dL", to: "Glucose")
-                                        var formattingOptions = FormattingOptions(maximumLineWidth: 40, includesColumnTypes: false)
+                                        var formattingOptions = FormattingOptions(maximumLineWidth: 80, includesColumnTypes: false)
                                         formattingOptions.includesRowIndices = false
                                         app.main.log("TabularData: history:\n\(history.description(options: formattingOptions))")
+                                        let filteredHistory = history
+                                            .filter(on: "Serial Number", String.self) { $0! == lastDeviceSerial }
+                                            .filter(on: "Glucose", Int.self) { $0 != nil }
+                                            .selecting(columnNames: ["Date", "Glucose"])
+                                        formattingOptions.maximumLineWidth = 32
+                                        app.main.log("TabularData: filtered history:\n\(filteredHistory.description(options: formattingOptions))")
                                     } catch {
                                         app.main.log("TabularData: error: \(error.localizedDescription)")
                                     }
