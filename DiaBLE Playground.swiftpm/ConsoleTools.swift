@@ -59,14 +59,25 @@ struct ShellView: View {
                                     csvData = csvData[(csvData.firstIndex(of: 10)! + 1)...]  //trim first line
                                     do {
                                         var options = CSVReadingOptions()
-                                        options.addDateParseStrategy(
-                                            Date.ParseStrategy(format: "\(day: .twoDigits)-\(month: .twoDigits)-\(year: .defaultDigits) \(hour: .twoDigits(clock: .twentyFourHour, hourCycle: .zeroBased)):\(minute: .twoDigits)", timeZone: .current)
-                                        )
+                                        options.addDateParseStrategy(Date.ParseStrategy(format: "\(day: .twoDigits)-\(month: .twoDigits)-\(year: .defaultDigits) \(hour: .twoDigits(clock: .twentyFourHour, hourCycle: .zeroBased)):\(minute: .twoDigits)", timeZone: .current))
                                         let dataFrame = try DataFrame(csvData: csvData, options: options)
+                                        // ["Device", "Serial Number", "Device Timestamp", "Record Type", "Historic Glucose mg/dL", "Scan Glucose mg/dL", "Non-numeric Rapid-Acting Insulin", "Rapid-Acting Insulin (units)", "Non-numeric Food", "Carbohydrates (grams)", "Carbohydrates (servings)", "Non-numeric Long-Acting Insulin", "Long-Acting Insulin (units)", "Notes", "Strip Glucose mg/dL", "Ketone mmol/L", "Meal Insulin (units)", "Correction Insulin (units)", "User Change Insulin (units)"]
                                         app.main.log("TabularData: column names: \(dataFrame.columns.map(\.name))")
                                         app.main.log("TabularData:\n\(dataFrame)")
-                                        let history = try DataFrame(csvData: csvData, columns: ["Device Timestamp", "Record Type", "Historic Glucose mg/dL"], options: options).sorted(on: "Device Timestamp", order: .descending)
-                                        app.main.log("TabularData:\n\(history)")
+                                        let lastRow = dataFrame.rows.last!
+                                        let lastDeviceSerial = lastRow["Serial Number"]!
+                                        app.main.log("TabularData: last device serial: \(lastDeviceSerial)")
+                                        var history = try DataFrame(csvData: csvData,
+                                                                    columns: ["Device Timestamp", "Record Type", "Historic Glucose mg/dL"],
+                                                                    types: ["Device Timestamp": .date, "Record Type": .integer, "Historic Glucose mg/dL": .integer],
+                                                                    options: options)
+                                            .sorted(on: "Device Timestamp", order: .descending)
+                                        history.renameColumn("Device Timestamp", to: "Date")
+                                        history.renameColumn("Record Type", to: "Type")
+                                        history.renameColumn("Historic Glucose mg/dL", to: "Glucose")
+                                        var formattingOptions = FormattingOptions(maximumLineWidth: 40, includesColumnTypes: false)
+                                        formattingOptions.includesRowIndices = false
+                                        app.main.log("TabularData: history:\n\(history.description(options: formattingOptions))")
                                     } catch {
                                         app.main.log("TabularData: error: \(error.localizedDescription)")
                                     }
