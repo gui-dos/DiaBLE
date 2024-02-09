@@ -186,20 +186,20 @@ import CoreBluetooth
                     }
                     peripheral?.setNotifyValue(true, for: characteristics[Dexcom.UUID.control.rawValue]!)
 
-                    if sensor?.type == .dexcomG7 {
+                    if sensor?.type == .dexcomG7 || sensor?.type == .dexcomONEPlus {
                         log("DEBUG: sending \(name) the 'transmitterTimeTx' command (opcode 0x\(Opcode.transmitterTimeTx.rawValue.hex))")
                         write(Opcode.transmitterTimeTx.data, .withResponse) // FIXME: returns just 2402
                     }
 
                     log("DEBUG: sending \(name) the 'transmitterVersion' command (opcode 0x\(Opcode.transmitterVersionTx.rawValue.hex))")
-                    if sensor?.type == .dexcomG7 {
+                    if sensor?.type == .dexcomG7 || sensor?.type == .dexcomONEPlus {
                         write(Opcode.transmitterVersionTx.data, .withResponse)
                     } else {
                         write(Opcode.transmitterVersionTx.data.appendingCRC, .withResponse)
                     }
 
                     log("DEBUG: sending \(name) the 'transmitterVersionExtended' command (opcode 0x\(Opcode.transmitterVersionExtended.rawValue.hex))")
-                    if sensor?.type == .dexcomG7 {
+                    if sensor?.type == .dexcomG7 || sensor?.type == .dexcomONEPlus {
                         write(Opcode.transmitterVersionExtended.data, .withResponse)
                     } else {
                         write(Opcode.transmitterVersionExtended.data.appendingCRC, .withResponse)
@@ -207,7 +207,7 @@ import CoreBluetooth
                     peripheral?.setNotifyValue(true, for: characteristics[Dexcom.UUID.backfill.rawValue]!)
 
                     log("DEBUG: sending \(name) the 'batteryStatusTx' command (opcode 0x\(Opcode.batteryStatusTx.rawValue.hex))")
-                    if sensor?.type == .dexcomG7 {
+                    if sensor?.type == .dexcomG7 || sensor?.type == .dexcomONEPlus {
                         write(Opcode.batteryStatusTx.data, .withResponse)
                     } else {
                         write(Opcode.batteryStatusTx.data.appendingCRC, .withResponse)
@@ -383,7 +383,7 @@ import CoreBluetooth
 
                 // TODO: DataStreamType and DataStreamFilterType first bytes
 
-                if sensor?.type == .dexcomG7 {
+                if sensor?.type == .dexcomG7 || sensor?.type == .dexcomONEPlus {
                     // TODO: i. e. 510000a01600009a44ea430200ec5f0200 (17 bytes)
                     let status = data[1]
                     let backfillStatus = data[2]
@@ -584,7 +584,7 @@ import CoreBluetooth
             } else {
                 buffer += data
             }
-            let index = sensor?.type != .dexcomG7 ? Int(data[0]) : data.count == 9 ? buffer.count / 9 : Int(ceil(Double(buffer.count) / 20))
+            let index = (sensor?.type != .dexcomG7 && sensor?.type != .dexcomONEPlus) ? Int(data[0]) : data.count == 9 ? buffer.count / 9 : Int(ceil(Double(buffer.count) / 20))
             log("\(name): backfill stream: received packet # \(index), partial buffer size: \(buffer.count)")
 
 
@@ -609,6 +609,9 @@ import CoreBluetooth
             sensor.read(data, for: uuid)
         }
         if let sensor = sensor as? DexcomG7 {
+            sensor.read(data, for: uuid)
+        }
+        if let sensor = sensor as? DexcomONEPlus {
             sensor.read(data, for: uuid)
         }
     }
@@ -863,6 +866,23 @@ import CoreBluetooth
 
 
 @Observable class DexcomG7: Sensor {
+
+    /// called by Dexcom Transmitter class
+    func read(_ data: Data, for uuid: String) {
+
+        switch Dexcom.UUID(rawValue: uuid) {
+
+        default:
+            break
+
+        }
+
+    }
+
+}
+
+
+@Observable class DexcomONEPlus: Sensor {
 
     /// called by Dexcom Transmitter class
     func read(_ data: Data, for uuid: String) {

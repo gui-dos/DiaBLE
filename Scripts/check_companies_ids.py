@@ -2,6 +2,7 @@ import yaml
 import json
 
 # https://bitbucket.org/bluetooth-SIG/public/src/main/assigned_numbers/company_identifiers/company_identifiers.yaml
+# https://github.com/NordicSemiconductor/bluetooth-numbers-database/blob/master/v1/company_ids.json
 
 with open('company_identifiers.yaml', 'r') as file:
     companies_yaml= yaml.safe_load(file)
