@@ -415,7 +415,7 @@ class LibreLinkUp: Logging {
                                 let (data, response) = try await URLSession.shared.data(for: request)
                                 debugLog("LibreView: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
                                 if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                                   let status = json["status"] as? Int,
+                                   // let status = json["status"] as? Int,
                                    let data = json["data"] as? [String: Any] {
                                     let lastUpload = data["lastUpload"] as! Int
                                     let lastUploadDate = Date(timeIntervalSince1970: Double(lastUpload))
@@ -426,7 +426,25 @@ class LibreLinkUp: Logging {
                                     let reminderSent = data["reminderSent"] as! Bool
                                     let devices = data["devices"] as! [Int]
                                     let periods = data["periods"] as! [[String: Any]]
-                                    debugLog("LibreView: last upload date: \(lastUploadDate.local), last uppload CGM date: \(lastUploadCGMDate.local), last uppload pro date: \(lastUploadProDate.local), reminder sent: \(reminderSent), devices: \(devices), periods: \(periods.count)")
+                                    debugLog("LibreView: last upload date: \(lastUploadDate.local), last upload CGM date: \(lastUploadCGMDate.local), last upload pro date: \(lastUploadProDate.local), reminder sent: \(reminderSent), devices: \(devices), periods: \(periods.count)")
+                                    var i = 0
+                                    for period in periods {
+                                        let dateEnd = period["dateEnd"] as! Int
+                                        let endDate = Date(timeIntervalSince1970: Double(dateEnd))
+                                        let dateStart = period["dateStart"] as! Int
+                                        let startDate = Date(timeIntervalSince1970: Double(dateStart))
+                                        let daysOfData = period["daysOfData"] as! Int
+                                        let data = period["data"] as! [String: Any]
+                                        let blocks = data["blocks"] as! [[[String: Any]]]
+                                        i += 1
+                                        debugLog("LibreView: period # \(i) of \(periods.count), start date: \(startDate.local), end date: \(endDate.local), days of data: \(daysOfData)")
+                                        var j = 0
+                                        for block in blocks {
+                                            j += 1
+                                            debugLog("LibreView: block # \(j) of period # \(i): \(block.count) percentiles times: \(block.map { $0["time"] as! Int })")
+
+                                        }
+                                    }
                                 }
                             }
 
