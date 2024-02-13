@@ -279,7 +279,7 @@ class LibreLinkUp: Logging {
         var logbookAlarms: [LibreLinkUpAlarm] = []
 
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")  // https://github.com/creepymonster/GlucoseDirect/commit/b84deb7
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "M/d/yyyy h:mm:ss a"
 
         do {
@@ -402,6 +402,33 @@ class LibreLinkUp: Logging {
                             }
                             history.append(lastGlucose)
                             log("LibreLinkUp: graph values: \(history.map { ($0.glucose.id, $0.glucose.value, $0.glucose.date.shortDateTime, $0.color) })")
+
+                            // TODO: https://api.libreview.io/glucoseHistory?numPeriods=5&period=90
+                            let period = 15
+                            let numPeriods = 2
+                            if let ticketDict = json["ticket"] as? [String: Any],
+                               let token = ticketDict["token"] as? String {
+                                log("LibreView: new token for glucoseHistory: \(token)")
+                                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+                                request.url = URL(string: "https://api.libreview.io/glucoseHistory?numPeriods=\(numPeriods)&period=\(period)")!
+                                debugLog("LibreView: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
+                                let (data, response) = try await URLSession.shared.data(for: request)
+                                debugLog("LibreView: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
+                                if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                                   let status = json["status"] as? Int,
+                                   let data = json["data"] as? [String: Any] {
+                                    let lastUpload = data["lastUpload"] as! Int
+                                    let lastUploadDate = Date(timeIntervalSince1970: Double(lastUpload))
+                                    let lastUploadCGM = data["lastUploadCGM"] as! Int
+                                    let lastUploadCGMDate = Date(timeIntervalSince1970: Double(lastUploadCGM))
+                                    let lastUploadPro = data["lastUploadPro"] as! Int
+                                    let lastUploadProDate = Date(timeIntervalSince1970: Double(lastUploadPro))
+                                    let reminderSent = data["reminderSent"] as! Bool
+                                    let devices = data["devices"] as! [Int]
+                                    let periods = data["periods"] as! [[String: Any]]
+                                    debugLog("LibreView: last upload date: \(lastUploadDate.local), last uppload CGM date: \(lastUploadCGMDate.local), last uppload pro date: \(lastUploadProDate.local), reminder sent: \(reminderSent), devices: \(devices), periods: \(periods.count)")
+                                }
+                            }
 
                             if settings.libreLinkUpScrapingLogbook,
                                let ticketDict = json["ticket"] as? [String: Any],

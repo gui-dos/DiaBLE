@@ -342,7 +342,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
     }
 
     public func extendedRuntimeSessionWillExpire(_ extendedRuntimeSession: WKExtendedRuntimeSession) {
-        debugLog("Watch: extended session wiil expire")
+        debugLog("Watch: extended session will expire")
     }
 
     public func extendedRuntimeSession(_ extendedRuntimeSession: WKExtendedRuntimeSession, didInvalidateWith reason: WKExtendedRuntimeSessionInvalidationReason, error: Error?) {
