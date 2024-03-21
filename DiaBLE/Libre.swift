@@ -18,6 +18,7 @@ extension SensorType {
         case 0x76, 0x2B:
             patchInfo[3] == 2 ? .libre2US :
             patchInfo[3] == 4 ? .libre2CA :
+            patchInfo[3] == 8 ? .libre2RU :
             patchInfo[2] >> 4 == 7 ? .libreSense :
                 .unknown
         default:
