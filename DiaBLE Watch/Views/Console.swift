@@ -119,7 +119,8 @@ struct Console: View {
                             Image("Bluetooth").renderingMode(.template).resizable().frame(width: 24, height: 24)
                         }
                     }
-                }.foregroundColor(.blue)
+                }
+                .foregroundColor(.blue)
 
                 if (app.status.hasPrefix("Scanning") || app.status.hasSuffix("retrying...")) && app.main.centralManager.state != .poweredOff {
                     Button {
@@ -129,7 +130,8 @@ struct Console: View {
                     } label: {
                         Image(systemName: "octagon").resizable().frame(width: 24, height: 24)
                             .overlay((Image(systemName: "hand.raised.fill").resizable().frame(width: 12, height: 12).offset(x: 1)))
-                    }.foregroundColor(.red)
+                    }
+                    .foregroundColor(.red)
 
                 } else if app.deviceState == "Connected" || app.deviceState == "Reconnecting..." || app.status.hasSuffix("retrying...") {
                     Button {
@@ -188,7 +190,7 @@ struct Console: View {
                     settings.userLevel = UserLevel(rawValue:(settings.userLevel.rawValue + 1) % UserLevel.allCases.count)!
                 } label: {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 5).fill(settings.userLevel != .basic ? Color.blue : Color.clear)
+                        RoundedRectangle(cornerRadius: 5).fill(settings.userLevel != .basic ? .blue : .clear)
                         Image(systemName: ["doc.plaintext", "ladybug", "testtube.2"][settings.userLevel.rawValue]).resizable().frame(width: 22, height: 22).foregroundColor(settings.userLevel != .basic ? .black : .blue)
                     }.frame(width: 24, height: 24)
                 }
@@ -217,8 +219,8 @@ struct Console: View {
                     log.entries.reverse()
                 } label: {
                     ZStack {
-                        RoundedRectangle(cornerRadius: 5).fill(settings.reversedLog ? Color.blue : Color.clear)
-                        RoundedRectangle(cornerRadius: 5).stroke(settings.reversedLog ? Color.clear : Color.blue, lineWidth: 2)
+                        RoundedRectangle(cornerRadius: 5).fill(settings.reversedLog ? .blue : .clear)
+                        RoundedRectangle(cornerRadius: 5).stroke(settings.reversedLog ? .clear : .blue, lineWidth: 2)
                         Image(systemName: "backward.fill").resizable().frame(width: 12, height: 12).foregroundColor(settings.reversedLog ? .black : .blue)
                     }.frame(width: 24, height: 24)
                 }

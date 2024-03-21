@@ -52,7 +52,7 @@ struct Monitor: View {
                             .foregroundColor(.black)
                             .padding(.vertical, 0).padding(.horizontal, 4)
                             .background(app.currentGlucose > 0 && (app.currentGlucose > Int(settings.alarmHigh) || app.currentGlucose < Int(settings.alarmLow)) ?
-                                        Color.red : Color.blue)
+                                        .red : .blue)
                             .cornerRadius(6)
 
                         // TODO: display both delta and trend arrow
@@ -68,7 +68,8 @@ struct Monitor: View {
                                 Text(app.trendArrow.symbol).font(.system(size: 28)).bold()
                                     .frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 10)
                             }
-                        }.foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
+                        }
+                        .foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
                             .red : .blue)
 
                     }

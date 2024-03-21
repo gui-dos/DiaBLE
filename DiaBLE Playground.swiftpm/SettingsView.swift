@@ -53,10 +53,11 @@ struct SettingsView: View {
                                 .padding(.horizontal, 12)
                                 .frame(alignment: .center)
                         }
-                    }.foregroundColor(.accentColor)
-#if targetEnvironment(macCatalyst)
-                        .padding(.horizontal, 15)
-#endif
+                    }
+                    .foregroundColor(.accentColor)
+                    #if targetEnvironment(macCatalyst)
+                    .padding(.horizontal, 15)
+                    #endif
 
                     NavigationLink(destination: Details()) {
                         Text("Details").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))

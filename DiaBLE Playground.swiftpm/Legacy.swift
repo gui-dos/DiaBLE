@@ -551,7 +551,8 @@ struct WatlaaDetailsView: View {
                     TextField("Low", value: $device.alarmLow, formatter: NumberFormatter())
                     // FIXME: doesn't update when changing unit
                     Text(" \(device.unit.description)")
-                }.foregroundColor(.red)
+                }
+                .foregroundColor(.red)
                 HStack {
                     Image(systemName: "speaker.zzz.fill")
                     Spacer().frame(maxWidth: .infinity)
@@ -560,7 +561,8 @@ struct WatlaaDetailsView: View {
                     Text("Low: ")
                     TextField("Low", value: $device.snoozeLow, formatter: NumberFormatter())
                     Text(" min")
-                }.foregroundColor(.yellow)
+                }
+                .foregroundColor(.yellow)
             }
             Section(header: Text("Vibrations")) {
                 HStack {

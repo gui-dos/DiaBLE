@@ -59,7 +59,8 @@ struct DataView: View {
                                             (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                         }
                                     }.frame(maxWidth: .infinity, alignment: .topLeading)
-                                }.foregroundColor(.blue)
+                                }
+                                .foregroundColor(.blue)
                             }
 
                             if history.factoryValues.count > 0 {
@@ -70,7 +71,8 @@ struct DataView: View {
                                             (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                         }
                                     }.frame(maxWidth: .infinity, alignment: .topLeading)
-                                }.foregroundColor(.orange)
+                                }
+                                .foregroundColor(.orange)
                             }
 
                         }
@@ -83,7 +85,8 @@ struct DataView: View {
                                         (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                     }
                                 }.frame(maxWidth: .infinity, alignment: .topLeading)
-                            }.foregroundColor(.yellow)
+                            }
+                            .foregroundColor(.yellow)
                         }
                     }
 
@@ -99,7 +102,8 @@ struct DataView: View {
                                             (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                         }
                                     }.frame(maxWidth: .infinity, alignment: .topLeading)
-                                }.foregroundColor(.orange)
+                                }
+                                .foregroundColor(.orange)
                             }
 
                             if history.calibratedValues.count > 0 {
@@ -110,7 +114,8 @@ struct DataView: View {
                                             (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                         }
                                     }.frame(maxWidth: .infinity, alignment: .topLeading)
-                                }.foregroundColor(.purple)
+                                }
+                                .foregroundColor(.purple)
                             }
 
                         }
@@ -125,7 +130,8 @@ struct DataView: View {
                                             (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                         }
                                     }.frame(maxWidth: .infinity, alignment: .topLeading)
-                                }.foregroundColor(.yellow)
+                                }
+                                .foregroundColor(.yellow)
                             }
 
                             if history.calibratedTrend.count > 0 {
@@ -136,7 +142,8 @@ struct DataView: View {
                                             (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                         }
                                     }.frame(maxWidth: .infinity, alignment: .topLeading)
-                                }.foregroundColor(.purple)
+                                }
+                                .foregroundColor(.purple)
                             }
 
                         }
@@ -154,8 +161,9 @@ struct DataView: View {
                                     }
                                 }
                                 .frame(maxWidth: .infinity, alignment: .topLeading)
-                            }.foregroundColor(.red)
-                                .onAppear { if let healthKit = app.main?.healthKit { healthKit.read() } }
+                            }
+                            .foregroundColor(.red)
+                            .onAppear { if let healthKit = app.main?.healthKit { healthKit.read() } }
                         }
 
                         if history.nightscoutValues.count > 0 {
@@ -168,8 +176,9 @@ struct DataView: View {
                                     }
                                     .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
-                            }.foregroundColor(.cyan)
-                                .onAppear { if let nightscout = app.main?.nightscout { nightscout.read() } }
+                            }
+                            .foregroundColor(.cyan)
+                            .onAppear { if let nightscout = app.main?.nightscout { nightscout.read() } }
                         }
                     }
                     .listStyle(.plain)

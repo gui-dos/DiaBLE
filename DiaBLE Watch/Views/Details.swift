@@ -301,8 +301,13 @@ struct Details: View {
 
                         Button {
                             app.main.rescan()
-                        } label: { Label { Text("RePair") } icon: { Image("Bluetooth").renderingMode(.template).resizable().frame(width: 32, height: 32)
-                        }.foregroundColor(.blue)
+                        } label: {
+                            Label {
+                                Text("RePair")
+                            } icon: {
+                                Image("Bluetooth").renderingMode(.template).resizable().frame(width: 32, height: 32)
+                            }
+                            .foregroundColor(.blue)
                         }
                     }
                 }

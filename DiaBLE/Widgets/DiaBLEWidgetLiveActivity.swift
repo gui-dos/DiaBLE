@@ -21,8 +21,8 @@ struct DiaBLEWidgetLiveActivity: Widget {
             VStack {
                 Text("Hello \(context.state.emoji)")
             }
-            .activityBackgroundTint(Color.cyan)
-            .activitySystemActionForegroundColor(Color.black)
+            .activityBackgroundTint(.cyan)
+            .activitySystemActionForegroundColor(.black)
 
         } dynamicIsland: { context in
             DynamicIsland {
@@ -46,7 +46,7 @@ struct DiaBLEWidgetLiveActivity: Widget {
                 Text(context.state.emoji)
             }
             .widgetURL(URL(string: "http://www.apple.com"))
-            .keylineTint(Color.red)
+            .keylineTint(.red)
         }
     }
 }

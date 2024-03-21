@@ -57,7 +57,7 @@ struct Monitor: View {
                                 .foregroundColor(.black)
                                 .padding(5)
                                 .background(app.currentGlucose > 0 && (app.currentGlucose > Int(settings.alarmHigh) || app.currentGlucose < Int(settings.alarmLow)) ?
-                                            Color.red : Color.blue)
+                                            .red : .blue)
                                 .cornerRadius(8)
 
                             // TODO: display both delta and trend arrow
@@ -72,7 +72,8 @@ struct Monitor: View {
                                     Text(app.trendArrow.symbol).font(.largeTitle).bold()
                                         .frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 12)
                                 }
-                            }.foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
+                            }
+                            .foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
                                 .red : .blue)
 
                         }
@@ -165,7 +166,7 @@ struct Monitor: View {
                             Toggle(isOn: $settings.usingOOP.animation()) {
                                 Text("OOP")
                             }
-                            .toggleStyle(SwitchToggleStyle(tint: Color.blue))
+                            .toggleStyle(SwitchToggleStyle(tint: .blue))
                             .onChange(of: settings.usingOOP) {
                                 Task {
                                     await app.main.applyOOP(sensor: app.sensor)
@@ -289,7 +290,7 @@ struct CalibrationView: View {
             Toggle(isOn: $settings.calibrating.animation()) {
                 Text("Calibration")
             }
-            .toggleStyle(SwitchToggleStyle(tint: Color.purple))
+            .toggleStyle(SwitchToggleStyle(tint: .purple))
             .onChange(of: settings.calibrating) {
 
                 if !settings.calibrating {
@@ -432,7 +433,9 @@ struct CalibrationView: View {
                     Button {
                         withAnimation { showingCalibrationParameters.toggle() }
                     } label: {
-                        Text("Parameters")}.foregroundColor(.purple)
+                        Text("Parameters")
+                    }
+                    .foregroundColor(.purple)
                 }
 
             }

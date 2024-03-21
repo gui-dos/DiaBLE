@@ -322,7 +322,8 @@ struct ConsoleSidebar: View {
                         Text("Scan")
                     }
                 }
-            }.foregroundColor(.accentColor)
+            }
+            .foregroundColor(.accentColor)
 
 
             if (app.status.hasPrefix("Scanning") || app.status.hasSuffix("retrying...")) && app.main.centralManager.state != .poweredOff {
@@ -333,7 +334,8 @@ struct ConsoleSidebar: View {
                 } label: {
                     Image(systemName: "octagon").resizable().frame(width: 32, height: 32)
                         .overlay((Image(systemName: "hand.raised.fill").resizable().frame(width: 18, height: 18).offset(x: 1)))
-                }.foregroundColor(.red)
+                }
+                .foregroundColor(.red)
 
             } else if app.deviceState == "Connected" || app.deviceState == "Reconnecting..." || app.status.hasSuffix("retrying...") {
                 Button {
@@ -384,7 +386,7 @@ struct ConsoleSidebar: View {
                     Text(["Basic", "Devel", "Test  "][settings.userLevel.rawValue]).font(.caption).offset(y: -4)
                 }
             }
-            .background(settings.userLevel != .basic ? Color.accentColor : Color.clear)
+            .background(settings.userLevel != .basic ? Color.accentColor : .clear)
             .clipShape(RoundedRectangle(cornerRadius: 5))
             .foregroundColor(settings.userLevel != .basic ? Color(.systemBackground) : .accentColor)
             .padding(.bottom, 6)
@@ -422,7 +424,7 @@ struct ConsoleSidebar: View {
                     Text(" REV ").offset(y: -2)
                 }
             }
-            .background(settings.reversedLog ? Color.accentColor : Color.clear)
+            .background(settings.reversedLog ? Color.accentColor : .clear)
             .border(Color.accentColor, width: 3)
             .cornerRadius(5)
             .foregroundColor(settings.reversedLog ? Color(.systemBackground) : .accentColor)
@@ -435,7 +437,8 @@ struct ConsoleSidebar: View {
                 VStack {
                     Image(systemName: settings.logging ? "stop.circle" : "play.circle").resizable().frame(width: 32, height: 32)
                 }
-            }.foregroundColor(settings.logging ? .red : .green)
+            }
+            .foregroundColor(settings.logging ? .red : .green)
 
             Spacer()
 

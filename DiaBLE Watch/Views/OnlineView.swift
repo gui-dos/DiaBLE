@@ -222,7 +222,7 @@ struct OnlineView: View {
                                 PointMark(x: .value("Time", $0.date),
                                           y: .value("Glucose", $0.value)
                                 )
-                                .foregroundStyle(Color.cyan)
+                                .foregroundStyle(.cyan)
                                 .symbolSize(6)
                             }
                             .chartXAxis {

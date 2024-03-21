@@ -29,7 +29,7 @@ struct Graph: View {
                     let height = geometry.size.height
                     let yScale = (height - 20) / yMax()
                     path.addRect(CGRect(x: 1 + 30, y: height - settings.targetHigh * yScale + 1.0, width: width - 2, height: (settings.targetHigh - settings.targetLow) * yScale - 1))
-                }.fill(Color.green).opacity(0.15)
+                }.fill(.green).opacity(0.15)
             }
 
             // Target glucose low and high labels at the right, timespan on the left
@@ -78,7 +78,7 @@ struct Graph: View {
                                 }
                             }
                         }
-                    }.stroke(Color.yellow).opacity(0.6)
+                    }.stroke(.yellow).opacity(0.6)
                 }
             }
 
@@ -105,7 +105,7 @@ struct Graph: View {
                                 }
                             }
                         }
-                    }.stroke(Color.orange).opacity(0.75)
+                    }.stroke(.orange).opacity(0.75)
                 }
             }
 
@@ -132,7 +132,7 @@ struct Graph: View {
                                 }
                             }
                         }
-                    }.stroke(Color.purple).opacity(0.75)
+                    }.stroke(.purple).opacity(0.75)
                 }
             }
 
@@ -162,7 +162,7 @@ struct Graph: View {
                             }
                         }
                     }
-                }.stroke(Color.blue)
+                }.stroke(.blue)
             }
         }
     }
