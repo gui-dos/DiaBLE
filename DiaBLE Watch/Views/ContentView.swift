@@ -19,33 +19,39 @@ struct ContentView: View {
                 SettingsView()
                     .tabItem {
                         Label("Settings", systemImage: "gear")
-                    }.tag(Tab.settings)
+                    }
+                    .tag(Tab.settings)
 
                 Monitor()
                     .tabItem {
                         Label("Monitor", systemImage: "gauge")
-                    }.tag(Tab.monitor)
+                    }
+                    .tag(Tab.monitor)
 
                 OnlineView()
                     .tabItem {
                         Label("Online", systemImage: "globe")
-                    }.tag(Tab.online)
+                    }
+                    .tag(Tab.online)
 
                 Console()
                     .tabItem {
                         Label("Console", systemImage: "terminal")
-                    }.tag(Tab.console)
+                    }
+                    .tag(Tab.console)
 
                 DataView()
                     .tabItem {
                         Label("Data", systemImage: "tray.full.fill")
-                    }.tag(Tab.data)
+                    }
+                    .tag(Tab.data)
 
                 //  Plan()
                 //      .tabItem {
                 //          Image(systemName: "map")
                 //          Text("Plan")
-                //  }.tag(Tab.plan)
+                //  }
+                //  .tag(Tab.plan)
 
             }
             .toolbarBackground(.hidden, for: .navigationBar)

@@ -507,7 +507,8 @@ struct WatlaaDetailsView: View {
                     HStack {
                         Text("Sensor serial")
                         Spacer()
-                        Text(device.transmitter!.sensor!.serial).foregroundColor(.yellow)
+                        Text(device.transmitter!.sensor!.serial)
+                            .foregroundColor(.yellow)
                     }
                 }
             }
@@ -520,7 +521,8 @@ struct WatlaaDetailsView: View {
                         ForEach(GlucoseUnit.allCases) { unit in
                             Text(unit.description).tag(unit)
                         }
-                    }.pickerStyle(SegmentedPickerStyle())
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
                 }
             }
 
@@ -538,7 +540,8 @@ struct WatlaaDetailsView: View {
                         TextField("Slope", value: $device.slope, formatter: settings.numberFormatter)
                             .foregroundColor(.purple)
                     }
-                }.keyboardType(.numbersAndPunctuation)
+                }
+                .keyboardType(.numbersAndPunctuation)
             }
 
             Section(header: Text("Alarms")) {

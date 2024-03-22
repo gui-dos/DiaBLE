@@ -27,7 +27,8 @@ struct SettingsView: View {
                         app.main.rescan()
                     }
                 } label: {
-                    Image("Bluetooth").renderingMode(.template).resizable().frame(width: 28, height: 28).foregroundColor(.blue)
+                    Image("Bluetooth").renderingMode(.template).resizable().frame(width: 28, height: 28)
+                        .foregroundColor(.blue)
                         .overlay(settings.stoppedBluetooth ? Image(systemName: "line.diagonal").resizable().frame(width: 18, height: 18).rotationEffect(.degrees(90)) : nil).foregroundColor(.red)
                 }
                 .padding(.horizontal, -8)
@@ -55,7 +56,8 @@ struct SettingsView: View {
                 HStack {
                     NavigationLink(destination: Monitor()) {
                         Image(systemName: "timer").resizable().frame(width: 20, height: 20)
-                    }.simultaneousGesture(TapGesture().onEnded {
+                    }
+                    .simultaneousGesture(TapGesture().onEnded {
                         // settings.selectedTab = (settings.preferredTransmitter != .none) ? .monitor : .log
                         app.main.rescan()
                     })
@@ -71,15 +73,20 @@ struct SettingsView: View {
                                 id: \.self) { t in
                             Text("\(t) min")
                         }
-                    }.labelsHidden().frame(width: 60, height: 20)
-                }.font(.footnote).foregroundColor(.orange)
+                    }
+                    .labelsHidden()
+                    .frame(width: 60, height: 20)
+                }
+                .font(.footnote)
+                .foregroundColor(.orange)
 
                 Spacer()
 
                 Button {
                     settings.onlineInterval = settings.onlineInterval != 0 ? 0 : 5
                 } label: {
-                    Image(systemName: settings.onlineInterval != 0 ? "network" : "wifi.slash").resizable().frame(width: 20, height: 20).foregroundColor(.cyan)
+                    Image(systemName: settings.onlineInterval != 0 ? "network" : "wifi.slash").resizable().frame(width: 20, height: 20)
+                        .foregroundColor(.cyan)
                 }
 
                 Picker(selection: $settings.onlineInterval, label: Text("")) {
@@ -98,28 +105,34 @@ struct SettingsView: View {
             VStack {
                 VStack(spacing: 0) {
                     HStack(spacing: 20) {
-                        Image(systemName: "hand.thumbsup.fill").foregroundColor(.green)
+                        Image(systemName: "hand.thumbsup.fill")
+                            .foregroundColor(.green)
                             .offset(x: -10) // align to the bell
-                        Text("\(settings.targetLow.units) - \(settings.targetHigh.units)").foregroundColor(.green)
+                        Text("\(settings.targetLow.units) - \(settings.targetHigh.units)")
+                            .foregroundColor(.green)
                         Spacer().frame(width: 20)
                     }
                     HStack {
                         Slider(value: $settings.targetLow,  in: 40 ... 99, step: 1).frame(height: 20).scaleEffect(0.6)
                         Slider(value: $settings.targetHigh, in: 120 ... 300, step: 1).frame(height: 20).scaleEffect(0.6)
                     }
-                }.accentColor(.green)
+                }
+                .accentColor(.green)
 
                 VStack(spacing: 0) {
                     HStack(spacing: 20) {
-                        Image(systemName: "bell.fill").foregroundColor(.red)
-                        Text("< \(settings.alarmLow.units)   > \(settings.alarmHigh.units)").foregroundColor(.red)
+                        Image(systemName: "bell.fill")
+                            .foregroundColor(.red)
+                        Text("< \(settings.alarmLow.units)   > \(settings.alarmHigh.units)")
+                            .foregroundColor(.red)
                         Spacer().frame(width: 20)
                     }
                     HStack {
                         Slider(value: $settings.alarmLow,  in: 40 ... 99, step: 1).frame(height: 20).scaleEffect(0.6)
                         Slider(value: $settings.alarmHigh, in: 120 ... 300, step: 1).frame(height: 20).scaleEffect(0.6)
                     }
-                }.accentColor(.red)
+                }
+                .accentColor(.red)
             }
 
             HStack {
@@ -138,7 +151,8 @@ struct SettingsView: View {
                 Button {
                     settings.mutedAudio.toggle()
                 } label: {
-                    Image(systemName: settings.mutedAudio ? "speaker.slash.fill" : "speaker.2.fill").resizable().frame(width: 20, height: 20).foregroundColor(.blue)
+                    Image(systemName: settings.mutedAudio ? "speaker.slash.fill" : "speaker.2.fill").resizable().frame(width: 20, height: 20)
+                        .foregroundColor(.blue)
                 }
 
                 Spacer()
@@ -154,15 +168,18 @@ struct SettingsView: View {
                             // )
                         }
                     }) {
-                        Image(systemName: settings.disabledNotifications ? "zzz" : "app.badge.fill").resizable().frame(width: 20, height: 20).foregroundColor(.blue)
+                        Image(systemName: settings.disabledNotifications ? "zzz" : "app.badge.fill").resizable().frame(width: 20, height: 20)
+                            .foregroundColor(.blue)
                     }
                     if settings.disabledNotifications {
                         Picker(selection: $settings.alarmSnoozeInterval, label: Text("")) {
                             ForEach([5, 15, 30, 60, 120], id: \.self) { t in
                                 Text("\([5: "5m", 15: "15 m", 30: "30m", 60: "1h", 120: "2h"][t]!)")
                             }
-                        }.labelsHidden().frame(width: 48, height: 20)
-                            .font(.footnote).foregroundColor(.blue)
+                        }
+                        .labelsHidden().frame(width: 48, height: 20)
+                        .font(.footnote)
+                        .foregroundColor(.blue)
                     }
                 }
 

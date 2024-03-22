@@ -44,7 +44,9 @@ struct Console: View {
                     HStack {
 
                         HStack {
-                            Image(systemName: "magnifyingglass").padding(.leading).foregroundColor(Color(.lightGray))
+                            Image(systemName: "magnifyingglass")
+                                .padding(.leading)
+                                .foregroundColor(Color(.lightGray))
                             TextField("Filter", text: $filterText)
                                 .textInputAutocapitalization(.never)
                                 .foregroundColor(.accentColor)
@@ -52,7 +54,8 @@ struct Console: View {
                                 Button {
                                     filterText = ""
                                 } label: {
-                                    Image(systemName: "xmark.circle.fill").padding(.trailing)
+                                    Image(systemName: "xmark.circle.fill")
+                                        .padding(.trailing)
                                 }
                             }
                         }
@@ -64,7 +67,9 @@ struct Console: View {
                                 Button {
                                     filterText = label
                                 } label: {
-                                    Text(label).font(.footnote).foregroundColor(.blue)
+                                    Text(label)
+                                        .font(.footnote)
+                                        .foregroundColor(.blue)
                                 }
                             }
                         }
@@ -91,7 +96,8 @@ struct Console: View {
                         }
                         .padding(4)
                     }
-                    .font(.system(.footnote, design: .monospaced)).foregroundColor(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
+                    .font(.system(.footnote, design: .monospaced))
+                    .foregroundColor(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
                     .onChange(of: log.entries.count) {
                         if !settings.reversedLog {
                             withAnimation {
@@ -359,17 +365,22 @@ struct ConsoleSidebar: View {
                     Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                          "\(readingCountdown) s" : "")
                     .fixedSize()
-                    .font(Font.caption.monospacedDigit()).foregroundColor(.orange)
+                    .font(.caption.monospacedDigit())
+                    .foregroundColor(.orange)
                     .onReceive(timer) { _ in
                         readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
                     }
                 } else {
-                    Text("").fixedSize().font(Font.caption.monospacedDigit()).hidden()
+                    Text("")
+                        .fixedSize()
+                        .font(.caption.monospacedDigit())
+                        .hidden()
                 }
 
                 Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
                     .fixedSize()
-                    .foregroundColor(.cyan).font(Font.caption.monospacedDigit())
+                    .foregroundColor(.cyan)
+                    .font(.caption.monospacedDigit())
                     .onReceive(timer) { _ in
                         onlineCountdown = settings.onlineInterval * 60 - Int(Date().timeIntervalSince(settings.lastOnlineDate))
                     }
@@ -442,7 +453,8 @@ struct ConsoleSidebar: View {
 
             Spacer()
 
-        }.font(.footnote)
+        }
+        .font(.footnote)
     }
 }
 

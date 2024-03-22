@@ -23,11 +23,13 @@ struct DataView: View {
                 HStack {
 
                     if app.status.hasPrefix("Scanning") && !(readingCountdown > 0) {
-                        Text("Scanning...").foregroundColor(.orange)
+                        Text("Scanning...")
+                            .foregroundColor(.orange)
                     } else {
                         HStack {
                             if !app.deviceState.isEmpty && app.deviceState != "Connected" {
-                                Text(app.deviceState).foregroundColor(.red)
+                                Text(app.deviceState)
+                                    .foregroundColor(.red)
                             }
                             Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                                  "\(readingCountdown) s" : " ")
@@ -58,7 +60,8 @@ struct DataView: View {
                                         ForEach(history.values) { glucose in
                                             (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                         }
-                                    }.frame(maxWidth: .infinity, alignment: .topLeading)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
                                 .foregroundColor(.blue)
                             }
@@ -70,7 +73,8 @@ struct DataView: View {
                                         ForEach(history.factoryValues) { glucose in
                                             (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                         }
-                                    }.frame(maxWidth: .infinity, alignment: .topLeading)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
                                 .foregroundColor(.orange)
                             }
@@ -84,7 +88,8 @@ struct DataView: View {
                                     ForEach(history.rawValues) { glucose in
                                         (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                     }
-                                }.frame(maxWidth: .infinity, alignment: .topLeading)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .topLeading)
                             }
                             .foregroundColor(.yellow)
                         }
@@ -101,7 +106,8 @@ struct DataView: View {
                                         ForEach(history.factoryTrend) { glucose in
                                             (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                         }
-                                    }.frame(maxWidth: .infinity, alignment: .topLeading)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
                                 .foregroundColor(.orange)
                             }
@@ -113,7 +119,8 @@ struct DataView: View {
                                         ForEach(history.calibratedValues) { glucose in
                                             (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                         }
-                                    }.frame(maxWidth: .infinity, alignment: .topLeading)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
                                 .foregroundColor(.purple)
                             }
@@ -129,7 +136,8 @@ struct DataView: View {
                                         ForEach(history.rawTrend) { glucose in
                                             (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                         }
-                                    }.frame(maxWidth: .infinity, alignment: .topLeading)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
                                 .foregroundColor(.yellow)
                             }
@@ -141,7 +149,8 @@ struct DataView: View {
                                         ForEach(history.calibratedTrend) { glucose in
                                             (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold())
                                         }
-                                    }.frame(maxWidth: .infinity, alignment: .topLeading)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
                                 .foregroundColor(.purple)
                             }
@@ -191,7 +200,8 @@ struct DataView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Data")
 
-        }.navigationViewStyle(.stack)
+        }
+        .navigationViewStyle(.stack)
     }
 }
 

@@ -102,14 +102,16 @@ struct OnlineView: View {
 
                 VStack(spacing: 0) {
 
-                    Text("\(settings.selectedService.rawValue)").foregroundColor(.accentColor)
+                    Text("\(settings.selectedService.rawValue)")
+                        .foregroundColor(.accentColor)
 
                     HStack {
 
                         Button {
                             withAnimation { showingCredentials.toggle() }
                         } label: {
-                            Image(systemName: showingCredentials ? "person.crop.circle.fill" : "person.crop.circle").resizable().frame(width: 20, height: 20).foregroundColor(.blue)
+                            Image(systemName: showingCredentials ? "person.crop.circle.fill" : "person.crop.circle").resizable().frame(width: 20, height: 20)
+                                .foregroundColor(.blue)
                         }
 
                         Button {
@@ -121,12 +123,14 @@ struct OnlineView: View {
                                 }
                             }
                         } label: {
-                            Image(systemName: settings.libreLinkUpScrapingLogbook ? "book.closed.circle.fill" : "book.closed.circle").resizable().frame(width: 20, height: 20).foregroundColor(.blue)
+                            Image(systemName: settings.libreLinkUpScrapingLogbook ? "book.closed.circle.fill" : "book.closed.circle").resizable().frame(width: 20, height: 20)
+                                .foregroundColor(.blue)
                         }
 
                         Text(onlineCountdown > -1 ? "\(onlineCountdown) s" : "...")
                             .fixedSize()
-                            .foregroundColor(.cyan).font(Font.footnote.monospacedDigit())
+                            .foregroundColor(.cyan)
+                            .font(.footnote.monospacedDigit())
                             .onReceive(timer) { _ in
                                 // workaround: watchOS fails converting the interval to an Int32
                                 if settings.lastOnlineDate == Date.distantPast {
@@ -149,7 +153,8 @@ struct OnlineView: View {
                     Text(app.deviceState != "Disconnected" && (readingCountdown > 0 || app.deviceState == "Reconnecting...") ?
                          "\(readingCountdown) s" : "...")
                     .fixedSize()
-                    .foregroundColor(.orange).font(Font.footnote.monospacedDigit())
+                    .foregroundColor(.orange)
+                    .font(.footnote.monospacedDigit())
                     .onReceive(timer) { _ in
                         // workaround: watchOS fails converting the interval to an Int32
                         if app.lastConnectionDate == Date.distantPast {
@@ -193,7 +198,8 @@ struct OnlineView: View {
                                 }
                             }
                     }
-                }.font(.footnote)
+                }
+                .font(.footnote)
 
                 Toggle(isOn: $settings.libreLinkUpFollowing) {
                     Text("Follower")
@@ -319,9 +325,10 @@ struct OnlineView: View {
                         .frame(minHeight: 64)
 
                         Text(libreLinkUpResponse)
-
-                        // .font(.system(.footnote, design: .monospaced)).foregroundColor(Color(.lightGray))
-                            .font(.footnote).foregroundColor(Color(.lightGray))
+                        //  .font(.system(.footnote, design: .monospaced))
+                        //  .foregroundColor(Color(.lightGray))
+                            .font(.footnote)
+                            .foregroundColor(Color(.lightGray))
                     }
 
                 }

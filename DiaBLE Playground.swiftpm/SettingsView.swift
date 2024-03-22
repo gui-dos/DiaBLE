@@ -32,7 +32,8 @@ struct SettingsView: View {
                                     app.main.rescan()
                                 }
                             } label: {
-                                Image("Bluetooth").renderingMode(.template).resizable().frame(width: 32, height: 32).foregroundColor(.blue)
+                                Image("Bluetooth").renderingMode(.template).resizable().frame(width: 32, height: 32)
+                                    .foregroundColor(.blue)
                                     .overlay(settings.stoppedBluetooth ? Image(systemName: "line.diagonal").resizable().frame(width: 24, height: 24).rotationEffect(.degrees(90)) : nil).foregroundColor(.red)
                             }
 
@@ -130,32 +131,43 @@ struct SettingsView: View {
                         .pickerStyle(.segmented)
                         .frame(width: 160)
                         Spacer()
-                    }.padding(.bottom)
+                    }
+                    .padding(.bottom)
 
                     VStack(spacing: 0) {
-                        Image(systemName: "hand.thumbsup.fill").foregroundColor(.green).padding(4)
-                        Text("\(settings.targetLow.units) - \(settings.targetHigh.units)").foregroundColor(.green)
+                        Image(systemName: "hand.thumbsup.fill")
+                            .foregroundColor(.green)
+                            .padding(4)
+                        Text("\(settings.targetLow.units) - \(settings.targetHigh.units)")
+                            .foregroundColor(.green)
                         HStack {
                             Slider(value: $settings.targetLow,  in: 40 ... 99, step: 1)
                             Slider(value: $settings.targetHigh, in: 120 ... 300, step: 1)
                         }
-                    }.accentColor(.green)
+                    }
+                    .accentColor(.green)
 
                     VStack(spacing: 0) {
-                        Image(systemName: "bell.fill").foregroundColor(.red).padding(4)
-                        Text("< \(settings.alarmLow.units)   > \(settings.alarmHigh.units)").foregroundColor(.red)
+                        Image(systemName: "bell.fill")
+                            .foregroundColor(.red)
+                            .padding(4)
+                        Text("< \(settings.alarmLow.units)   > \(settings.alarmHigh.units)")
+                            .foregroundColor(.red)
                         HStack {
                             Slider(value: $settings.alarmLow,  in: 40 ... 99, step: 1)
                             Slider(value: $settings.alarmHigh, in: 120 ... 300, step: 1)
                         }
-                    }.accentColor(.red)
-                }.padding(.horizontal, 40)
+                    }
+                    .accentColor(.red)
+                }
+                .padding(.horizontal, 40)
 
                 HStack(spacing: 24) {
                     Button {
                         settings.mutedAudio.toggle()
                     } label: {
-                        Image(systemName: settings.mutedAudio ? "speaker.slash.fill" : "speaker.2.fill").resizable().frame(width: 24, height: 24).foregroundColor(.accentColor)
+                        Image(systemName: settings.mutedAudio ? "speaker.slash.fill" : "speaker.2.fill").resizable().frame(width: 24, height: 24)
+                            .foregroundColor(.accentColor)
                     }
 
                     HStack(spacing: 0) {
@@ -169,21 +181,24 @@ struct SettingsView: View {
                                 )
                             }
                         } label: {
-                            Image(systemName: settings.disabledNotifications ? "zzz" : "app.badge.fill").resizable().frame(width: 24, height: 24).foregroundColor(.accentColor)
+                            Image(systemName: settings.disabledNotifications ? "zzz" : "app.badge.fill").resizable().frame(width: 24, height: 24)
+                                .foregroundColor(.accentColor)
                         }
                         if settings.disabledNotifications {
                             Picker(selection: $settings.alarmSnoozeInterval, label: Text("")) {
                                 ForEach([5, 15, 30, 60, 120], id: \.self) { t in
                                     Text("\([5: "5 min", 15: "15 min", 30: "30 min", 60: "1 h", 120: "2 h"][t]!)")
                                 }
-                            }.labelsHidden()
+                            }
+                            .labelsHidden()
                         }
                     }
 
                     Button {
                         showingCalendarPicker = true
                     } label: {
-                        Image(systemName: settings.calendarTitle != "" ? "calendar.circle.fill" : "calendar.circle").resizable().frame(width: 32, height: 32).foregroundColor(.accentColor)
+                        Image(systemName: settings.calendarTitle != "" ? "calendar.circle.fill" : "calendar.circle").resizable().frame(width: 32, height: 32)
+                            .foregroundColor(.accentColor)
                     }
                     .popover(isPresented: $showingCalendarPicker, arrowEdge: .bottom) {
                         VStack {
@@ -205,7 +220,9 @@ struct SettingsView: View {
                             }
                             Section {
                                 HStack {
-                                    Image(systemName: "bell.fill").foregroundColor(.red).padding(8)
+                                    Image(systemName: "bell.fill")
+                                        .foregroundColor(.red)
+                                        .padding(8)
                                     Toggle("High / Low", isOn: $settings.calendarAlarmIsOn)
                                         .disabled(settings.calendarTitle == "")
                                 }
@@ -218,18 +235,22 @@ struct SettingsView: View {
                                     Text(settings.calendarTitle == "" ? "Don't remind" : "Remind").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2)).animation(.default, value: settings.calendarTitle)
                                 }
 
-                            }.padding(.top, 40)
-                        }.padding(60)
+                            }
+                            .padding(.top, 40)
+                        }
+                        .padding(60)
                     }
-                }.padding(.top, 16)
+                }
+                .padding(.top, 16)
 
                 Spacer()
 
             }
-            .font(Font.body.monospacedDigit())
+            .font(.body.monospacedDigit())
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Settings")
-        }.navigationViewStyle(.stack)
+        }
+        .navigationViewStyle(.stack)
     }
 }
 

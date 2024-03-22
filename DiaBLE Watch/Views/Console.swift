@@ -24,7 +24,8 @@ struct Console: View {
                     ScrollView {
 
                         HStack {
-                            Image(systemName: "magnifyingglass").foregroundColor(Color(.lightGray))
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(Color(.lightGray))
                             TextField("Filter", text: $filterText)
                                 .foregroundColor(.blue)
                                 .textInputAutocapitalization(.never)
@@ -46,7 +47,9 @@ struct Console: View {
                             Button {
                                 filterText = label
                             } label: {
-                                Text(label).font(.caption).foregroundColor(.blue)
+                                Text(label)
+                                    .font(.caption)
+                                    .foregroundColor(.blue)
                             }
                         }
                     }
@@ -67,8 +70,10 @@ struct Console: View {
                             }
                         }
                     }
-                    // .font(.system(.footnote, design: .monospaced)).foregroundColor(Color(.lightGray))
-                    .font(.footnote).foregroundColor(Color(.lightGray))
+                    // .font(.system(.footnote, design: .monospaced))
+                    // ..foregroundColor(Color(.lightGray))
+                    .font(.footnote)
+                    .foregroundColor(Color(.lightGray))
                     .onChange(of: log.entries.count) {
                         if !settings.reversedLog {
                             withAnimation {
@@ -156,7 +161,8 @@ struct Console: View {
                         Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                              "s" : " ")
                     }
-                    .font(Font.footnote.monospacedDigit()).foregroundColor(.orange)
+                    .font(.footnote.monospacedDigit())
+                    .foregroundColor(.orange)
                     .frame(width: 24, height: 24)
                     .allowsTightening(true)
                     .fixedSize()
@@ -174,7 +180,8 @@ struct Console: View {
 
                 Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
                     .fixedSize()
-                    .foregroundColor(.cyan).font(Font.footnote.monospacedDigit())
+                    .foregroundColor(.cyan)
+                    .font(.footnote.monospacedDigit())
                     .onReceive(timer) { _ in
                         // workaround: watchOS fails converting the interval to an Int32
                         if settings.lastOnlineDate == Date.distantPast {
@@ -191,8 +198,10 @@ struct Console: View {
                 } label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 5).fill(settings.userLevel != .basic ? .blue : .clear)
-                        Image(systemName: ["doc.plaintext", "ladybug", "testtube.2"][settings.userLevel.rawValue]).resizable().frame(width: 22, height: 22).foregroundColor(settings.userLevel != .basic ? .black : .blue)
-                    }.frame(width: 24, height: 24)
+                        Image(systemName: ["doc.plaintext", "ladybug", "testtube.2"][settings.userLevel.rawValue]).resizable().frame(width: 22, height: 22)
+                            .foregroundColor(settings.userLevel != .basic ? .black : .blue)
+                    }
+                    .frame(width: 24, height: 24)
                 }
 
                 //      Button {
@@ -210,7 +219,8 @@ struct Console: View {
                     print("Log cleared \(Date().local)")
                 } label: {
                     VStack {
-                        Image(systemName: "clear").resizable().foregroundColor(.blue).frame(width: 24, height: 24)
+                        Image(systemName: "clear").resizable().frame(width: 24, height: 24)
+                            .foregroundColor(.blue)
                     }
                 }
 
@@ -221,8 +231,10 @@ struct Console: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 5).fill(settings.reversedLog ? .blue : .clear)
                         RoundedRectangle(cornerRadius: 5).stroke(settings.reversedLog ? .clear : .blue, lineWidth: 2)
-                        Image(systemName: "backward.fill").resizable().frame(width: 12, height: 12).foregroundColor(settings.reversedLog ? .black : .blue)
-                    }.frame(width: 24, height: 24)
+                        Image(systemName: "backward.fill").resizable().frame(width: 12, height: 12)
+                            .foregroundColor(settings.reversedLog ? .black : .blue)
+                    }
+                    .frame(width: 24, height: 24)
                 }
 
                 Button {
@@ -230,11 +242,13 @@ struct Console: View {
                     app.main.log("\(settings.logging ? "Log started" : "Log stopped") \(Date().local)")
                 } label: {
                     VStack {
-                        Image(systemName: settings.logging ? "stop.circle" : "play.circle").resizable().frame(width: 24, height: 24).foregroundColor(settings.logging ? .red : .green)
+                        Image(systemName: settings.logging ? "stop.circle" : "play.circle").resizable().frame(width: 24, height: 24)
+                            .foregroundColor(settings.logging ? .red : .green)
                     }
                 }
 
-            }.font(.footnote)
+            }
+            .font(.footnote)
         }
         // FIXME: Filter toolbar item disappearing
         // .padding(.top, -4)

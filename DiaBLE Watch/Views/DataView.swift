@@ -22,16 +22,18 @@ struct DataView: View {
             HStack {
 
                 if app.status.hasPrefix("Scanning") && !(readingCountdown > 0) {
-                    Text("Scanning...").foregroundColor(.orange)
+                    Text("Scanning...")
+                        .foregroundColor(.orange)
                 } else {
                     HStack {
                         if !app.deviceState.isEmpty && app.deviceState != "Connected" {
-                            Text(app.deviceState).foregroundColor(.red)
+                            Text(app.deviceState)
+                                .foregroundColor(.red)
                         }
                         Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                              "\(readingCountdown) s" : " ")
                         .foregroundColor(.orange)
-                        // .font(Font.caption.monospacedDigit())
+                        // .font(.caption.monospacedDigit())
                         .onReceive(timer) { _ in
                             // workaround: watchOS fails converting the interval to an Int32
                             if app.lastConnectionDate == Date.distantPast {
@@ -67,7 +69,8 @@ struct DataView: View {
                                     ForEach(history.factoryTrend) { glucose in
                                         (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold()).frame(maxWidth: .infinity, alignment: .leading)
                                     }
-                                }.frame(maxWidth: .infinity, alignment: .topLeading)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .topLeading)
                             }
                             .foregroundColor(.orange)
                         }
@@ -83,13 +86,15 @@ struct DataView: View {
                                     ForEach(history.rawTrend) { glucose in
                                         (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold()).frame(maxWidth: .infinity, alignment: .leading)
                                     }
-                                }.frame(maxWidth: .infinity, alignment: .topLeading)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .topLeading)
                             }
                             .foregroundColor(.yellow)
                         }
 
                     }
-                }.frame(idealHeight: 300)
+                }
+                .frame(idealHeight: 300)
             }
 
 
@@ -124,7 +129,8 @@ struct DataView: View {
                     .foregroundColor(.cyan)
                     .onAppear { if let nightscout = app.main?.nightscout { nightscout.read() } }
                 }
-            }.frame(idealHeight: 300)
+            }
+            .frame(idealHeight: 300)
 
             HStack {
 
@@ -137,7 +143,8 @@ struct DataView: View {
                                 ForEach(history.values) { glucose in
                                     (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold()).frame(maxWidth: .infinity, alignment: .leading)
                                 }
-                            }.frame(maxWidth: .infinity, alignment: .topLeading)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
                         }
                         .foregroundColor(.blue)
                     }
@@ -163,11 +170,13 @@ struct DataView: View {
                             ForEach(history.rawValues) { glucose in
                                 (Text("\(glucose.id) \(glucose.date.shortDateTime)") + Text(glucose.value > -1 ? "  \(glucose.value, specifier: "%3d")" : "   … ").bold()).frame(maxWidth: .infinity, alignment: .leading)
                             }
-                        }.frame(maxWidth: .infinity, alignment: .topLeading)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
                     .foregroundColor(.yellow)
                 }
-            }.frame(idealHeight: 300)
+            }
+            .frame(idealHeight: 300)
 
         }
         .padding(.top, -4)

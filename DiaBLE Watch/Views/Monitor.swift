@@ -39,7 +39,9 @@ struct Monitor: View {
                                 Text("---")
                             }
                         }
-                        .font(.footnote).frame(maxWidth: .infinity, alignment: .trailing ).foregroundColor(Color(.lightGray))
+                        .font(.footnote)
+                        .frame(maxWidth: .infinity, alignment: .trailing )
+                        .foregroundColor(Color(.lightGray))
                         .onChange(of: app.lastReadingDate) {
                             minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate)/60)
                         }
@@ -63,7 +65,9 @@ struct Monitor: View {
                                         .fontWeight(.black)
                                         .fixedSize()
                                     Text("\(app.trendDeltaMinutes)m").font(.footnote)
-                                }.frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 10)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.leading, 10)
                             } else {
                                 Text(app.trendArrow.symbol).font(.system(size: 28)).bold()
                                     .frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 10)
@@ -85,13 +89,15 @@ struct Monitor: View {
                         if !app.deviceState.isEmpty {
                             Text(app.deviceState)
                                 .foregroundColor(app.deviceState == "Connected" ? .green : .red)
-                                .font(.footnote).fixedSize()
+                                .font(.footnote)
+                                .fixedSize()
                         }
                         if !app.deviceState.isEmpty && app.deviceState != "Disconnected" {
                             Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                                  "\(readingCountdown) s" : "")
                             .fixedSize()
-                            .font(Font.footnote.monospacedDigit()).foregroundColor(.orange)
+                            .font(.footnote.monospacedDigit())
+                            .foregroundColor(.orange)
                             .onReceive(timer) { _ in
                                 // workaround: watchOS fails converting the interval to an Int32
                                 if app.lastConnectionDate == Date.distantPast {
@@ -141,7 +147,9 @@ struct Monitor: View {
                         }
                     }
 
-                }.font(.footnote).foregroundColor(.yellow)
+                }
+                .font(.footnote)
+                .foregroundColor(.yellow)
 
                 HStack {
 
@@ -162,7 +170,8 @@ struct Monitor: View {
                             app.main.status("Stopped scanning")
                             app.main.log("Bluetooth: stopped scanning")
                         } label: {
-                            Image(systemName: "stop.circle").resizable().frame(width: 16, height: 16).foregroundColor(.red)
+                            Image(systemName: "stop.circle").resizable().frame(width: 16, height: 16)
+                                .foregroundColor(.red)
                         }
                         .frame(height: 16)
                     }
@@ -170,8 +179,10 @@ struct Monitor: View {
                     Spacer()
 
                     NavigationLink(destination: Details()) {
-                        Image(systemName: "info.circle").resizable().frame(width: 16, height: 16).foregroundColor(.blue)
-                    }.frame(height: 16)
+                        Image(systemName: "info.circle").resizable().frame(width: 16, height: 16)
+                            .foregroundColor(.blue)
+                    }
+                    .frame(height: 16)
 
                     Spacer()
                     Spacer()
@@ -209,7 +220,8 @@ struct Monitor: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 NavigationLink(destination: HamburgerMenu()) {
-                    Image(systemName: "line.horizontal.3").foregroundColor(.blue)
+                    Image(systemName: "line.horizontal.3")
+                        .foregroundColor(.blue)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
@@ -217,7 +229,8 @@ struct Monitor: View {
                     settings.caffeinated.toggle()
                     // UIApplication.shared.isIdleTimerDisabled = settings.caffeinated
                 } label: {
-                    Image(systemName: settings.caffeinated ? "cup.and.saucer.fill" : "cup.and.saucer" ).foregroundColor(.blue)
+                    Image(systemName: settings.caffeinated ? "cup.and.saucer.fill" : "cup.and.saucer")
+                        .foregroundColor(.blue)
                 }
                     .hidden() // trick to center time
             }

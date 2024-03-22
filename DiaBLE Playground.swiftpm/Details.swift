@@ -24,7 +24,8 @@ struct Details: View {
             HStack {
                 Text(label)
                 Spacer()
-                Text(value).foregroundColor(foregroundColor)
+                Text(value)
+                    .foregroundColor(foregroundColor)
             }
         } else {
             EmptyView()
@@ -47,7 +48,8 @@ struct Details: View {
                     if app.device == nil && app.sensor == nil {
                         HStack {
                             Spacer()
-                            Text("No device connected").foregroundColor(.red)
+                            Text("No device connected")
+                                .foregroundColor(.red)
                             Spacer()
                         }
                     }
@@ -116,7 +118,8 @@ struct Details: View {
                                 foregroundColor: app.device.battery > 10 ? .green : .red)
                         }
 
-                    }.font(.callout)
+                    }
+                    .font(.callout)
                 }
 
 
@@ -178,7 +181,8 @@ struct Details: View {
                             }
                         }
 
-                    }.font(.callout)
+                    }
+                    .font(.callout)
                 }
 
                 if app.device != nil && app.device.type == .transmitter(.abbott) || settings.preferredTransmitter == .abbott {
@@ -191,7 +195,9 @@ struct Details: View {
 
                             HStack {
                                 Text("Patch Info")
-                                TextField("Patch Info", value: $settings.activeSensorInitialPatchInfo, formatter: HexDataFormatter()).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                TextField("Patch Info", value: $settings.activeSensorInitialPatchInfo, formatter: HexDataFormatter())
+                                    .multilineTextAlignment(.trailing)
+                                    .foregroundColor(.blue)
                             }
 
                             HStack {
@@ -279,7 +285,8 @@ struct Details: View {
                                 VStack(spacing: 0) {
                                     Image(systemName: "sensor.tag.radiowaves.forward.fill").padding(.horizontal, 12).padding(.vertical, 6)
                                     Text("RePair").font(.footnote).bold().padding(.bottom, 4)
-                                }.overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentColor, lineWidth: 2.5))
+                                }
+                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentColor, lineWidth: 2.5))
                             }
                             .foregroundColor(.accentColor)
                             .alert("NFC not supported", isPresented: $showingNFCAlert) {
@@ -292,9 +299,11 @@ struct Details: View {
                                 }
                             }
                             Spacer()
-                        }.padding(.vertical, 4)
+                        }
+                        .padding(.vertical, 4)
 
-                    }.font(.callout)
+                    }
+                    .font(.callout)
                 }
 
 
@@ -329,13 +338,16 @@ struct Details: View {
                                 VStack(spacing: 0) {
                                     Image("Bluetooth").renderingMode(.template).resizable().frame(width: 32, height: 32) .padding(.horizontal, 12)
                                     Text("RePair").font(.footnote).bold().padding(.bottom, 4)
-                                }.overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentColor, lineWidth: 2.5))
+                                }
+                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentColor, lineWidth: 2.5))
                             }
                             .foregroundColor(.accentColor)
                             Spacer()
-                        }.padding(.vertical, 4)
+                        }
+                        .padding(.vertical, 4)
 
-                    }.font(.callout)
+                    }
+                    .font(.callout)
                 }
 
 
@@ -350,7 +362,9 @@ struct Details: View {
                         List {
                             ForEach(app.main.bluetoothDelegate.knownDevices.sorted(by: { $0.key < $1.key }), id: \.key) { uuid, device in
                                 HStack {
-                                    Text(device.name).font(.callout).foregroundColor((app.device != nil) && uuid == app.device!.peripheral!.identifier.uuidString ? .yellow : .blue)
+                                    Text(device.name)
+                                        .font(.callout)
+                                        .foregroundColor((app.device != nil) && uuid == app.device!.peripheral!.identifier.uuidString ? .yellow : .blue)
                                         .onTapGesture {
                                             // TODO: navigate to peripheral details
                                             if let peripheral = app.main.centralManager.retrievePeripherals(withIdentifiers: [UUID(uuidString: uuid)!]).first {
@@ -364,10 +378,12 @@ struct Details: View {
                                         }
                                     if !device.isConnectable {
                                         Spacer()
-                                        Image(systemName: "nosign").foregroundColor(.red)
+                                        Image(systemName: "nosign")
+                                            .foregroundColor(.red)
                                     } else if device.isIgnored {
                                         Spacer()
-                                        Image(systemName: "hand.raised.slash.fill").foregroundColor(.red)
+                                        Image(systemName: "hand.raised.slash.fill")
+                                            .foregroundColor(.red)
                                             .onTapGesture {
                                                 app.main.bluetoothDelegate.knownDevices[uuid]!.isIgnored.toggle()
                                             }
@@ -394,13 +410,15 @@ struct Details: View {
                         self.timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
                         self.minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
                     } label: {
-                        Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 32, height: 32).foregroundColor(.accentColor)
+                        Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 32, height: 32)
+                            .foregroundColor(.accentColor)
                     }
 
                     Text(!app.deviceState.isEmpty && app.deviceState != "Disconnected" && (readingCountdown > 0 || app.deviceState == "Reconnecting...") ?
                          "\(readingCountdown) s" : "...")
                     .fixedSize()
-                    .foregroundColor(.orange).font(Font.caption.monospacedDigit())
+                    .foregroundColor(.orange)
+                    .font(.caption.monospacedDigit())
                     .onReceive(timer) { _ in
                         readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
                     }
@@ -418,7 +436,8 @@ struct Details: View {
 
                 Spacer()
 
-            }.padding(.bottom, 8)
+            }
+            .padding(.bottom, 8)
 
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle("Details")

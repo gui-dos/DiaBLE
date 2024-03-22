@@ -113,7 +113,8 @@ struct OnlineView: View {
 
                             if settings.selectedService == .nightscout {
                                 HStack(alignment: .firstTextBaseline, spacing: 0) {
-                                    Text("https://").foregroundColor(Color(.lightGray))
+                                    Text("https://")
+                                        .foregroundColor(Color(.lightGray))
                                     TextField("Nightscout URL", text: $settings.nightscoutSite)
                                         .keyboardType(.URL)
                                         .textContentType(.URL)
@@ -174,7 +175,8 @@ struct OnlineView: View {
 
                             Text(onlineCountdown > -1 ? "\(onlineCountdown) s" : "...")
                                 .fixedSize()
-                                .foregroundColor(.cyan).font(.caption.monospacedDigit())
+                                .foregroundColor(.cyan)
+                                .font(.caption.monospacedDigit())
                                 .onReceive(timer) { _ in
                                     onlineCountdown = settings.onlineInterval * 60 - Int(Date().timeIntervalSince(settings.lastOnlineDate))
                                 }
@@ -193,7 +195,8 @@ struct OnlineView: View {
                             Text(!app.deviceState.isEmpty && app.deviceState != "Disconnected" && (readingCountdown > 0 || app.deviceState == "Reconnecting...") ?
                                  "\(readingCountdown) s" : "...")
                             .fixedSize()
-                            .foregroundColor(.orange).font(Font.caption.monospacedDigit())
+                            .foregroundColor(.orange)
+                            .font(.caption.monospacedDigit())
                             .onReceive(timer) { _ in
                                 readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
                             }
@@ -244,7 +247,8 @@ struct OnlineView: View {
                             .frame(maxWidth: .infinity, alignment: .topLeading)
                         }
                         .listStyle(.plain)
-                        .font(.system(.caption, design: .monospaced)).foregroundColor(.cyan)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(.cyan)
                         #if targetEnvironment(macCatalyst)
                         .padding(.leading, 15)
                         #endif
@@ -256,7 +260,8 @@ struct OnlineView: View {
                         VStack {
                             ScrollView(showsIndicators: true) {
                                 Text(libreLinkUpResponse)
-                                    .font(.system(.footnote, design: .monospaced)).foregroundColor(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
+                                    .font(.system(.footnote, design: .monospaced))
+                                    .foregroundColor(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
                                     .textSelection(.enabled)
                             }
                             #if targetEnvironment(macCatalyst)
@@ -309,7 +314,8 @@ struct OnlineView: View {
                                             let glucose = libreLinkUpGlucose.glucose
                                             (Text("\(String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)])) \(glucose.date.shortDateTime)") + Text("  \(glucose.value, specifier: "%3d") ").bold() + Text(libreLinkUpGlucose.trendArrow!.symbol).font(.subheadline))
                                                 .foregroundColor(libreLinkUpGlucose.color.color)
-                                                .fixedSize(horizontal: false, vertical: true).listRowInsets(EdgeInsets())
+                                                .fixedSize(horizontal: false, vertical: true)
+                                                .listRowInsets(EdgeInsets())
                                         }
                                         .frame(maxWidth: .infinity, alignment: .topLeading)
                                     }
@@ -330,7 +336,8 @@ struct OnlineView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Online")
-        }.navigationViewStyle(.stack)
+        }
+        .navigationViewStyle(.stack)
     }
 }
 

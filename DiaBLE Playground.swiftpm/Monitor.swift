@@ -47,7 +47,9 @@ struct Monitor: View {
                                     Text("---")
                                 }
                             }
-                            .frame(maxWidth: .infinity, alignment: .trailing).padding(.trailing, 12).foregroundColor(Color(.lightGray))
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding(.trailing, 12)
+                            .foregroundColor(Color(.lightGray))
                             .onChange(of: app.lastReadingDate) {
                                 minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate)/60)
                             }
@@ -67,7 +69,9 @@ struct Monitor: View {
                                         Text("\(app.trendDelta > 0 ? "+ " : app.trendDelta < 0 ? "- " : "")\(app.trendDelta == 0 ? "→" : abs(app.trendDelta).units)")
                                             .fontWeight(.black)
                                         Text("\(app.trendDeltaMinutes) min").font(.footnote)
-                                    }.frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 12)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.leading, 12)
                                 } else {
                                     Text(app.trendArrow.symbol).font(.largeTitle).bold()
                                         .frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 12)
@@ -91,7 +95,8 @@ struct Monitor: View {
                                 Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                                      "\(readingCountdown) s" : "")
                                 .fixedSize()
-                                .font(Font.callout.monospacedDigit()).foregroundColor(.orange)
+                                .font(.callout.monospacedDigit())
+                                .foregroundColor(.orange)
                                 .onReceive(timer) { _ in
                                     readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
                                 }
@@ -139,7 +144,9 @@ struct Monitor: View {
                                     }
                                 }
 
-                            }.font(.footnote).foregroundColor(.yellow)
+                            }
+                            .font(.footnote)
+                            .foregroundColor(.yellow)
 
                             Text(app.status)
                                 .font(.footnote)
@@ -192,7 +199,9 @@ struct Monitor: View {
                             app.main.rescan()
 
                         } label: {
-                            Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 32, height: 32).padding(.bottom, 8).foregroundColor(.accentColor)
+                            Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 32, height: 32)
+                                .padding(.bottom, 8)
+                                .foregroundColor(.accentColor)
                         }
 
                         if (app.status.hasPrefix("Scanning") || app.status.hasSuffix("retrying...")) && app.main.centralManager.state != .poweredOff {
@@ -202,7 +211,9 @@ struct Monitor: View {
                                 app.main.log("Bluetooth: stopped scanning")
                             } label: {
                                 Image(systemName: "stop.circle").resizable().frame(width: 32, height: 32)
-                            }.padding(.bottom, 8).foregroundColor(.red)
+                            }
+                            .padding(.bottom, 8)
+                            .foregroundColor(.red)
                         }
 
                     }
@@ -262,7 +273,8 @@ struct Monitor: View {
                     .frame(width: 180)
                     .offset(x: showingHamburgerMenu ? 0 : -180)
             }
-        }.navigationViewStyle(.stack)
+        }
+        .navigationViewStyle(.stack)
     }
 }
 
@@ -383,8 +395,9 @@ struct CalibrationView: View {
                                 }
                             }
                         }
-                    }.font(.footnote)
-                        .keyboardType(.numbersAndPunctuation)
+                    }
+                    .font(.footnote)
+                    .keyboardType(.numbersAndPunctuation)
 
                     if editingCalibration || history.calibratedValues.count == 0 {
                         Spacer()
@@ -426,7 +439,8 @@ struct CalibrationView: View {
                                 }
                             }
 
-                        }.font(.footnote)
+                        }
+                        .font(.footnote)
                     }
 
                 } label: {

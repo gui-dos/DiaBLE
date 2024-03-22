@@ -15,14 +15,20 @@ struct HamburgerMenu: View {
                         NavigationLink(destination: Monitor()) {
                             VStack {
                                 Image(systemName: "gauge").resizable().frame(width: 40, height: 40).offset(y: 4)
-                                Text("Monitor").bold().foregroundColor(.blue)
-                            }.frame(maxWidth: .infinity)
+                                Text("Monitor")
+                                    .bold()
+                                    .foregroundColor(.blue)
+                            }
+                            .frame(maxWidth: .infinity)
                         }
                         NavigationLink(destination: Details()) {
                             VStack {
                                 Image("Bluetooth").renderingMode(.template).resizable().frame(width: 40, height: 40).offset(y: 4)
-                                Text("Details").bold().foregroundColor(.blue)
-                            }.frame(maxWidth: .infinity)
+                                Text("Details")
+                                    .bold()
+                                    .foregroundColor(.blue)
+                            }
+                            .frame(maxWidth: .infinity)
                         }
                     }
                     .padding(.top, -4)
@@ -31,14 +37,20 @@ struct HamburgerMenu: View {
                         NavigationLink(destination: Console()) {
                             VStack {
                                 Image(systemName: "terminal").resizable().frame(width: 40, height: 40).offset(y: 4)
-                                Text("Console").bold().foregroundColor(.blue)
-                            }.frame(maxWidth: .infinity)
+                                Text("Console")
+                                    .bold()
+                                    .foregroundColor(.blue)
+                            }
+                            .frame(maxWidth: .infinity)
                         }
                         NavigationLink(destination: SettingsView()) {
                             VStack {
                                 Image(systemName: "gear").resizable().frame(width: 40, height: 40).offset(y: 4)
-                                Text("Settings").bold().foregroundColor(.blue)
-                            }.frame(maxWidth: .infinity)
+                                Text("Settings")
+                                    .bold()
+                                    .foregroundColor(.blue)
+                            }
+                            .frame(maxWidth: .infinity)
                         }
                     }
 
@@ -46,14 +58,20 @@ struct HamburgerMenu: View {
                         NavigationLink(destination: DataView()) {
                             VStack {
                                 Image(systemName: "tray.full.fill").resizable().frame(width: 40, height: 40).offset(y: 4)
-                                Text("Data").bold().foregroundColor(.blue)
-                            }.frame(maxWidth: .infinity)
+                                Text("Data")
+                                    .bold()
+                                    .foregroundColor(.blue)
+                            }
+                            .frame(maxWidth: .infinity)
                         }
                         NavigationLink(destination: OnlineView()) {
                             VStack {
                                 Image(systemName: "globe").resizable().frame(width: 40, height: 40).offset(y: 4)
-                                Text("Online").bold().foregroundColor(.blue)
-                            }.frame(maxWidth: .infinity)
+                                Text("Online")
+                                    .bold()
+                                    .foregroundColor(.blue)
+                            }
+                            .frame(maxWidth: .infinity)
                         }
                     }
 
@@ -61,12 +79,18 @@ struct HamburgerMenu: View {
                     // HStack(spacing: 10) {
                     //     VStack {
                     //         Image(systemName: "questionmark.circle").resizable().frame(width: 40, height: 40).offset(y: 4)
-                    //         Text("Help").bold().foregroundColor(.blue)
-                    //     }.frame(maxWidth: .infinity)
+                    //         Text("Help")
+                    //             .bold()
+                    //             .foregroundColor(.blue)
+                    //     }
+                    //     .frame(maxWidth: .infinity)
                     //     VStack {
                     //         Image(systemName: "info.circle").resizable().frame(width: 40, height: 40).offset(y: 4)
-                    //         Text("About").bold().foregroundColor(.blue)
-                    //     }.frame(maxWidth: .infinity)
+                    //         Text("About")
+                    //             .bold()
+                    //             .foregroundColor(.blue)
+                    //     }
+                    //     .frame(maxWidth: .infinity)
                     // }
                 }
                 .foregroundColor(.red)

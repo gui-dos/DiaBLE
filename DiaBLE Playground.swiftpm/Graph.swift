@@ -29,7 +29,9 @@ struct Graph: View {
                     let height = geometry.size.height
                     let yScale = (height - 20) / yMax()
                     path.addRect(CGRect(x: 1 + 30, y: height - settings.targetHigh * yScale + 1.0, width: width - 2, height: (settings.targetHigh - settings.targetLow) * yScale - 1))
-                }.fill(.green).opacity(0.15)
+                }
+                .fill(.green)
+                .opacity(0.15)
             }
 
             // Target glucose low and high labels at the right, timespan on the left
@@ -52,7 +54,9 @@ struct Graph: View {
                                 .position(x: 5, y: geometry.size.height - geometry.size.height / 2 - 8)
                         }
                     }
-                }.font(.footnote).foregroundColor(.gray)
+                }
+                .font(.footnote)
+                .foregroundColor(.gray)
             }
 
             // Historic raw values
@@ -78,7 +82,9 @@ struct Graph: View {
                                 }
                             }
                         }
-                    }.stroke(.yellow).opacity(0.6)
+                    }
+                    .stroke(.yellow)
+                    .opacity(0.6)
                 }
             }
 
@@ -105,7 +111,9 @@ struct Graph: View {
                                 }
                             }
                         }
-                    }.stroke(.orange).opacity(0.75)
+                    }
+                    .stroke(.orange)
+                    .opacity(0.75)
                 }
             }
 
@@ -132,7 +140,9 @@ struct Graph: View {
                                 }
                             }
                         }
-                    }.stroke(.purple).opacity(0.75)
+                    }
+                    .stroke(.purple)
+                    .opacity(0.75)
                 }
             }
 
@@ -162,7 +172,8 @@ struct Graph: View {
                             }
                         }
                     }
-                }.stroke(.blue)
+                }
+                .stroke(.blue)
             }
         }
     }
