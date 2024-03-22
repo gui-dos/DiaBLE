@@ -33,10 +33,13 @@ struct Monitor: View {
 
                             VStack {
                                 if app.lastReadingDate != Date.distantPast {
-                                    Text(app.lastReadingDate.shortTime).monospacedDigit()
-                                    Text("\(minutesSinceLastReading) min ago").font(.footnote).monospacedDigit()
+                                    Text(app.lastReadingDate.shortTime)
+                                        .monospacedDigit()
+                                    Text("\(minutesSinceLastReading) min ago")
+                                        .font(.footnote)
+                                        .monospacedDigit()
                                         .onReceive(minuteTimer) { _ in
-                                            minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate)/60)
+                                            minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate) / 60)
                                         }
                                 } else {
                                     Text("---")
@@ -46,11 +49,12 @@ struct Monitor: View {
                             .padding(.trailing, 12)
                             .foregroundColor(Color(.lightGray))
                             .onChange(of: app.lastReadingDate) {
-                                minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate)/60)
+                                minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate) / 60)
                             }
 
                             Text(app.currentGlucose > 0 ? "\(app.currentGlucose.units) " : "--- ")
-                                .font(.system(size: 42, weight: .black)).monospacedDigit()
+                                .font(.system(size: 42, weight: .black))
+                                .monospacedDigit()
                                 .foregroundColor(.black)
                                 .padding(5)
                                 .background(app.currentGlucose > 0 && (app.currentGlucose > Int(settings.alarmHigh) || app.currentGlucose < Int(settings.alarmLow)) ?
@@ -63,13 +67,17 @@ struct Monitor: View {
                                     VStack {
                                         Text("\(app.trendDelta > 0 ? "+ " : app.trendDelta < 0 ? "- " : "")\(app.trendDelta == 0 ? "→" : abs(app.trendDelta).units)")
                                             .fontWeight(.black)
-                                        Text("\(app.trendDeltaMinutes) min").font(.footnote)
+                                        Text("\(app.trendDeltaMinutes) min")
+                                            .font(.footnote)
                                     }
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding(.leading, 12)
                                 } else {
-                                    Text(app.trendArrow.symbol).font(.largeTitle).bold()
-                                        .frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 12)
+                                    Text(app.trendArrow.symbol)
+                                        .font(.largeTitle)
+                                        .bold()
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding(.leading, 12)
                                 }
                             }
                             .foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
@@ -99,7 +107,8 @@ struct Monitor: View {
                         }
                     }
 
-                    Graph().frame(width: 31 * 7 + 60, height: 150)
+                    Graph()
+                        .frame(width: 31 * 7 + 60, height: 150)
 
                     VStack {
 
@@ -147,8 +156,13 @@ struct Monitor: View {
                             .frame(maxWidth: .infinity)
 
                         NavigationLink(destination: Details()) {
-                            Text("Details").font(.footnote).bold().fixedSize()
-                                .padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                            Text("Details")
+                                .font(.footnote)
+                                .bold()
+                                .fixedSize()
+                                .padding(.horizontal, 4)
+                                .padding(2)
+                                .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
                         }
                     }
 
@@ -188,7 +202,7 @@ struct Monitor: View {
                     timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
                     minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
                     if app.lastReadingDate != Date.distantPast {
-                        minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate)/60)
+                        minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate) / 60)
                     }
                 }
                 .onDisappear {

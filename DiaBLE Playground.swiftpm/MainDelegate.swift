@@ -9,10 +9,11 @@ protocol Logging {
 }
 
 extension Logging {
-    func log(_ msg: String) { main?.log(msg) }
+    func log(_ msg: String)      { main?.log(msg) }
     func debugLog(_ msg: String) { main?.debugLog(msg) }
-    var app: AppState { main.app }
-    var settings: Settings { main.settings }
+
+    var app: AppState            { main.app }
+    var settings: Settings       { main.settings }
 }
 
 

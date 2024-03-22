@@ -30,10 +30,14 @@ struct Monitor: View {
 
                         VStack(spacing: 0) {
                             if app.lastReadingDate != Date.distantPast {
-                                Text(app.lastReadingDate.shortTime).monospacedDigit()
-                                Text("\(minutesSinceLastReading) min ago").font(.system(size: 10)).monospacedDigit().lineLimit(1)
+                                Text(app.lastReadingDate.shortTime)
+                                    .monospacedDigit()
+                                Text("\(minutesSinceLastReading) min ago")
+                                    .font(.system(size: 10))
+                                    .monospacedDigit()
+                                    .lineLimit(1)
                                     .onReceive(minuteTimer) { _ in
-                                        minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate)/60)
+                                        minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate) / 60)
                                     }
                             } else {
                                 Text("---")
@@ -43,16 +47,18 @@ struct Monitor: View {
                         .frame(maxWidth: .infinity, alignment: .trailing )
                         .foregroundColor(Color(.lightGray))
                         .onChange(of: app.lastReadingDate) {
-                            minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate)/60)
+                            minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate) / 60)
                         }
 
                         Text(app.currentGlucose > 0 ? "\(app.currentGlucose.units)" : "---")
-                            .font(.system(size: 26, weight: .black)).monospacedDigit()
-                        // avoid truncation in 40 mm models
+                            .font(.system(size: 26, weight: .black))
+                            .monospacedDigit()
+                            // avoid truncation in 40 mm models
                             .scaledToFill()
                             .minimumScaleFactor(0.85)
                             .foregroundColor(.black)
-                            .padding(.vertical, 0).padding(.horizontal, 4)
+                            .padding(.vertical, 0)
+                            .padding(.horizontal, 4)
                             .background(app.currentGlucose > 0 && (app.currentGlucose > Int(settings.alarmHigh) || app.currentGlucose < Int(settings.alarmLow)) ?
                                         .red : .blue)
                             .cornerRadius(6)
@@ -64,13 +70,17 @@ struct Monitor: View {
                                     Text("\(app.trendDelta > 0 ? "+ " : app.trendDelta < 0 ? "- " : "")\(app.trendDelta == 0 ? "→" : abs(app.trendDelta).units)")
                                         .fontWeight(.black)
                                         .fixedSize()
-                                    Text("\(app.trendDeltaMinutes)m").font(.footnote)
+                                    Text("\(app.trendDeltaMinutes)m")
+                                        .font(.footnote)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.leading, 10)
                             } else {
-                                Text(app.trendArrow.symbol).font(.system(size: 28)).bold()
-                                    .frame(maxWidth: .infinity, alignment: .leading).padding(.leading, 10)
+                                Text(app.trendArrow.symbol)
+                                    .font(.system(size: 28))
+                                    .bold()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.leading, 10)
                             }
                         }
                         .foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
@@ -110,7 +120,8 @@ struct Monitor: View {
                     }
                 }
 
-                Graph().frame(width: 31 * 4 + 60, height: 80)
+                Graph()
+                    .frame(width: 31 * 4 + 60, height: 80)
                     .padding(.vertical, 2)
 
                 HStack(spacing: 2) {
@@ -159,7 +170,8 @@ struct Monitor: View {
                     Button {
                         app.main.rescan()
                     } label: {
-                        Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 16, height: 16).foregroundColor(.blue)
+                        Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 16, height: 16)
+                            .foregroundColor(.blue)
                     }
                     .frame(height: 16)
 

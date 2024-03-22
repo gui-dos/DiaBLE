@@ -177,7 +177,7 @@ class LibreLinkUp: Logging {
                         continue loop
                     }
 
-                    if let data = data,
+                    if let data,
                        let user = data["user"] as? [String: Any],
                        let id = user["id"] as? String,
                        let country = user["country"] as? String,

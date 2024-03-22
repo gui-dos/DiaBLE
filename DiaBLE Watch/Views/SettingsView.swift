@@ -113,8 +113,12 @@ struct SettingsView: View {
                         Spacer().frame(width: 20)
                     }
                     HStack {
-                        Slider(value: $settings.targetLow,  in: 40 ... 99, step: 1).frame(height: 20).scaleEffect(0.6)
-                        Slider(value: $settings.targetHigh, in: 120 ... 300, step: 1).frame(height: 20).scaleEffect(0.6)
+                        Slider(value: $settings.targetLow,  in: 40 ... 99, step: 1)
+                            .frame(height: 20)
+                            .scaleEffect(0.6)
+                        Slider(value: $settings.targetHigh, in: 120 ... 300, step: 1)
+                            .frame(height: 20)
+                            .scaleEffect(0.6)
                     }
                 }
                 .accentColor(.green)

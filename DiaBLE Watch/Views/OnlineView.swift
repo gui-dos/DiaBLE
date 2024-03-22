@@ -222,8 +222,7 @@ struct OnlineView: View {
                         if history.nightscoutValues.count > 0 {
                             let twelveHours = Double(12 * 60 * 60)  // TODO: the same as LLU
                             let now = Date()
-                            let nightscoutHistory = history.nightscoutValues.filter { now.timeIntervalSince($0.date) <=
-                                twelveHours }
+                            let nightscoutHistory = history.nightscoutValues.filter { now.timeIntervalSince($0.date) <= twelveHours }
                             Chart(nightscoutHistory) {
                                 PointMark(x: .value("Time", $0.date),
                                           y: .value("Glucose", $0.value)

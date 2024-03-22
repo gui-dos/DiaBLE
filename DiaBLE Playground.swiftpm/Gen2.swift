@@ -50,19 +50,19 @@ class Gen2 {
 
         var ordinal: Int {
             switch self {
-            case .GEN2_ERROR_AUTH_CONTEXT:        return 1
-            case .GEN2_ERROR_KEY_NOT_FOUND:       return 2
-            case .GEN2_SEC_ERROR_INIT:            return 3
-            case .GEN2_SEC_ERROR_CMD:             return 4
-            case .GEN2_SEC_ERROR_RESPONSE_SIZE:   return 5
-            case .GEN2_ERROR_INSUFFICIENT_BUFFER: return 6
-            case .GEN2_ERROR_MISSING_NATIVE:      return 7
-            case .GEN2_SEC_ERROR_KDF:             return 8
-            case .GEN2_ERROR_PRNG_ERROR:          return 9
-            case .GEN2_ERROR_CRC_MISMATCH:        return 10
-            case .GEN2_ERROR_SKB_ERROR:           return 11
-            case .GEN2_ERROR_INVALID_RESPONSE:    return 12
-            case .GEN2_ERROR_PROCESS_ERROR:       return 13
+            case .GEN2_ERROR_AUTH_CONTEXT:        1
+            case .GEN2_ERROR_KEY_NOT_FOUND:       2
+            case .GEN2_SEC_ERROR_INIT:            3
+            case .GEN2_SEC_ERROR_CMD:             4
+            case .GEN2_SEC_ERROR_RESPONSE_SIZE:   5
+            case .GEN2_ERROR_INSUFFICIENT_BUFFER: 6
+            case .GEN2_ERROR_MISSING_NATIVE:      7
+            case .GEN2_SEC_ERROR_KDF:             8
+            case .GEN2_ERROR_PRNG_ERROR:          9
+            case .GEN2_ERROR_CRC_MISMATCH:        10
+            case .GEN2_ERROR_SKB_ERROR:           11
+            case .GEN2_ERROR_INVALID_RESPONSE:    12
+            case .GEN2_ERROR_PROCESS_ERROR:       13
             }
         }
 
