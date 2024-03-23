@@ -9,7 +9,7 @@ struct DiaBLEWidgetAttributes: ActivityAttributes {
         // Dynamic stateful properties about your activity go here!
         var emoji: String
     }
-
+    
     // Fixed non-changing properties about your activity go here!
     var name: String
 }
@@ -23,7 +23,7 @@ struct DiaBLEWidgetLiveActivity: Widget {
             }
             .activityBackgroundTint(.cyan)
             .activitySystemActionForegroundColor(.black)
-
+            
         } dynamicIsland: { context in
             DynamicIsland {
                 // Expanded UI goes here.  Compose the expanded UI through
@@ -60,15 +60,15 @@ extension DiaBLEWidgetAttributes {
 extension DiaBLEWidgetAttributes.ContentState {
     fileprivate static var smiley: DiaBLEWidgetAttributes.ContentState {
         DiaBLEWidgetAttributes.ContentState(emoji: "😀")
-     }
-     
-     fileprivate static var starEyes: DiaBLEWidgetAttributes.ContentState {
-         DiaBLEWidgetAttributes.ContentState(emoji: "🤩")
-     }
+    }
+    
+    fileprivate static var starEyes: DiaBLEWidgetAttributes.ContentState {
+        DiaBLEWidgetAttributes.ContentState(emoji: "🤩")
+    }
 }
 
 #Preview("Notification", as: .content, using: DiaBLEWidgetAttributes.preview) {
-   DiaBLEWidgetLiveActivity()
+    DiaBLEWidgetLiveActivity()
 } contentStates: {
     DiaBLEWidgetAttributes.ContentState.smiley
     DiaBLEWidgetAttributes.ContentState.starEyes

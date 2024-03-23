@@ -6,48 +6,48 @@ struct ContentView: View {
     @Environment(Log.self) var log: Log
     @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
-
+    
     var body: some View {
-
+        
         @Bindable var settings = settings
-
+        
         TabView(selection: $settings.selectedTab) {
             Monitor()
                 .tabItem {
                     Label("Monitor", systemImage: "gauge")
                 }
                 .tag(Tab.monitor)
-
+            
             OnlineView()
                 .tabItem {
                     Label("Online", systemImage: "globe")
                 }
                 .tag(Tab.online)
-
+            
             ConsoleTab()
                 .tabItem {
                     Label("Console", systemImage: "terminal")
                 }
                 .tag(Tab.console)
-
+            
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
                 .tag(Tab.settings)
-
+            
             DataView()
                 .tabItem {
                     Label("Data", systemImage: "tray.full.fill")
                 }
                 .tag(Tab.data)
-
+            
             Plan()
                 .tabItem {
                     Label("Plan", systemImage: "map")
                 }
                 .tag(Tab.plan)
-
+            
         }
         .toolbarRole(.navigationStack)
     }

@@ -18,19 +18,19 @@ struct OnlineView: View {
     @Environment(AppState.self) var app: AppState
     @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
-
+    
     @State private var onlineCountdown: Int = 0
     @State private var readingCountdown: Int = 0
-
+    
     @State private var libreLinkUpResponse: String = "[...]"
     @State private var libreLinkUpHistory: [LibreLinkUpGlucose] = []
     @State private var libreLinkUpLogbookHistory: [LibreLinkUpGlucose] = []
     @State private var showingCredentials: Bool = false
-
+    
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
-
-
+    
+    
     func reloadLibreLinkUp() async {
         if let libreLinkUp = await app.main?.libreLinkUp {
             var dataString = ""
@@ -87,33 +87,33 @@ struct OnlineView: View {
         } while retries == 1
         }
     }
-
-
+    
+    
     var body: some View {
         VStack {
-
+            
             HStack {
-
+                
                 Button {
                     settings.selectedService = settings.selectedService == .nightscout ? .libreLinkUp : .nightscout
                 } label: {
                     Image(settings.selectedService.rawValue).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
                 }
-
+                
                 VStack(spacing: 0) {
-
+                    
                     Text("\(settings.selectedService.rawValue)")
                         .foregroundColor(.accentColor)
-
+                    
                     HStack {
-
+                        
                         Button {
                             withAnimation { showingCredentials.toggle() }
                         } label: {
                             Image(systemName: showingCredentials ? "person.crop.circle.fill" : "person.crop.circle").resizable().frame(width: 20, height: 20)
                                 .foregroundColor(.blue)
                         }
-
+                        
                         Button {
                             withAnimation { settings.libreLinkUpScrapingLogbook.toggle() }
                             if settings.libreLinkUpScrapingLogbook {
@@ -126,7 +126,7 @@ struct OnlineView: View {
                             Image(systemName: settings.libreLinkUpScrapingLogbook ? "book.closed.circle.fill" : "book.closed.circle").resizable().frame(width: 20, height: 20)
                                 .foregroundColor(.blue)
                         }
-
+                        
                         Text(onlineCountdown > -1 ? "\(onlineCountdown) s" : "...")
                             .fixedSize()
                             .foregroundColor(.cyan)
@@ -142,7 +142,7 @@ struct OnlineView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-
+                
                 VStack(spacing: 0) {
                     Button {
                         app.main.rescan()
@@ -164,20 +164,20 @@ struct OnlineView: View {
                         }
                     }
                 }
-
+                
             }
-
+            
             if showingCredentials {
-
+                
                 @Bindable var settings = settings
                 
                 HStack {
-
+                    
                     if settings.selectedService == .nightscout {
                         TextField("Nightscout URL", text: $settings.nightscoutSite)
                             .textContentType(.URL)
                         SecureField("token", text: $settings.nightscoutToken)
-
+                        
                     } else if settings.selectedService == .libreLinkUp {
                         TextField("email", text: $settings.libreLinkUpEmail)
                             .textContentType(.emailAddress)
@@ -200,7 +200,7 @@ struct OnlineView: View {
                     }
                 }
                 .font(.footnote)
-
+                
                 Toggle(isOn: $settings.libreLinkUpFollowing) {
                     Text("Follower")
                 }
@@ -212,13 +212,13 @@ struct OnlineView: View {
                     }
                 }
             }
-
+            
             if settings.selectedService == .nightscout {
-
+                
                 ScrollView(showsIndicators: true) {
-
+                    
                     VStack(spacing: 0) {
-
+                        
                         if history.nightscoutValues.count > 0 {
                             let twelveHours = Double(12 * 60 * 60)  // TODO: the same as LLU
                             let now = Date()
@@ -240,7 +240,7 @@ struct OnlineView: View {
                             .padding()
                             .frame(maxHeight: 64)
                         }
-
+                        
                         List {
                             ForEach(history.nightscoutValues) { glucose in
                                 (Text("\(String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)])) \(glucose.date.shortDateTime)") + Text("  \(glucose.value, specifier: "%3d")").bold())
@@ -255,17 +255,17 @@ struct OnlineView: View {
                 .foregroundColor(.cyan)
                 .onAppear { if let nightscout = app.main?.nightscout { nightscout.read()
                     app.main.log("nightscoutValues count \(history.nightscoutValues.count)")
-
+                    
                 } }
             }
-
-
+            
+            
             if settings.selectedService == .libreLinkUp {
-
+                
                 ScrollView(showsIndicators: true) {
-
+                    
                     VStack(spacing: 0) {
-
+                        
                         if libreLinkUpHistory.count > 0 {
                             Chart(libreLinkUpHistory) {
                                 PointMark(x: .value("Time", $0.glucose.date),
@@ -284,7 +284,7 @@ struct OnlineView: View {
                             .padding()
                             .frame(maxHeight: 64)
                         }
-
+                        
                         HStack {
                             List {
                                 ForEach(libreLinkUpHistory) { libreLinkUpGlucose in
@@ -305,7 +305,7 @@ struct OnlineView: View {
                                     }
                                 }
                             }
-
+                            
                             if settings.libreLinkUpScrapingLogbook {
                                 // TODO: alarms
                                 List {
@@ -322,14 +322,14 @@ struct OnlineView: View {
                         }
                         // .font(.system(.footnote, design: .monospaced))
                         .frame(minHeight: 64)
-
+                        
                         Text(libreLinkUpResponse)
                         //  .font(.system(.footnote, design: .monospaced))
                         //  .foregroundColor(Color(.lightGray))
                             .font(.footnote)
                             .foregroundColor(Color(.lightGray))
                     }
-
+                    
                 }
                 .task {
                     await reloadLibreLinkUp()

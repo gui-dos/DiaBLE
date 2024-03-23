@@ -19,30 +19,30 @@ struct Console: View {
     @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
-
+    
     @Environment(\.colorScheme) var colorScheme
-
+    
     @State private var showingNFCAlert = false
     @State private var showingRePairConfirmationDialog = false
     @State private var showingUnlockConfirmationDialog = false
     @State private var showingResetConfirmationDialog = false
     @State private var showingProlongConfirmationDialog = false
     @State private var showingActivateConfirmationDialog = false
-
+    
     @State private var showingFilterField = false
     @State private var filterText = ""
-
+    
     var body: some View {
-
+        
         HStack(spacing: 0) {
-
+            
             VStack(spacing: 0) {
-
+                
                 ShellView()
-
+                
                 if showingFilterField {
                     HStack {
-
+                        
                         HStack {
                             Image(systemName: "magnifyingglass")
                                 .padding(.leading)
@@ -61,7 +61,7 @@ struct Console: View {
                         }
                         .background(Color(.secondarySystemBackground))
                         .cornerRadius(10)
-
+                        
                         HStack {
                             ForEach(Array(log.labels), id: \.self) { label in
                                 Button {
@@ -73,11 +73,11 @@ struct Console: View {
                                 }
                             }
                         }
-
+                        
                     }
                     .padding(.vertical, 6)
                 }
-
+                
                 ScrollViewReader { proxy in
                     ScrollView(showsIndicators: true) {
                         LazyVStack(alignment: .leading, spacing: 20) {
@@ -120,18 +120,18 @@ struct Console: View {
                             }
                         }
                     }
-
+                    
                 }
             }
-            #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
             .padding(.horizontal, 15)
-            #endif
-
+#endif
+            
             ConsoleSidebar(showingNFCAlert: $showingNFCAlert)
-            #if targetEnvironment(macCatalyst)
-            .padding(.trailing, 15)
-            #endif
-
+#if targetEnvironment(macCatalyst)
+                .padding(.trailing, 15)
+#endif
+            
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Console")
@@ -153,9 +153,9 @@ struct Console: View {
                         Text("Filter").font(.footnote)
                     }
                 }
-
+                
                 Menu {
-
+                    
                     Button {
                         ((app.device as? Abbott)?.sensor as? Libre3)?.pair()
                         if app.main.nfc.isAvailable {
@@ -172,7 +172,7 @@ struct Console: View {
                     } label: {
                         Label("RePair Streaming", systemImage: "sensor.tag.radiowaves.forward.fill")
                     }
-
+                    
                     Button {
                         if app.main.nfc.isAvailable {
                             settings.logging = true
@@ -183,10 +183,10 @@ struct Console: View {
                     } label: {
                         Label("Read FRAM", systemImage: "memorychip")
                     }
-
-
+                    
+                    
                     Menu {
-
+                        
                         Button {
                             if app.main.nfc.isAvailable {
                                 settings.logging = true
@@ -197,7 +197,7 @@ struct Console: View {
                         } label: {
                             Label("Unlock", systemImage: "lock.open")
                         }
-
+                        
                         Button {
                             if app.main.nfc.isAvailable {
                                 settings.logging = true
@@ -208,7 +208,7 @@ struct Console: View {
                         } label: {
                             Label("Reset", systemImage: "00.circle")
                         }
-
+                        
                         Button {
                             if app.main.nfc.isAvailable {
                                 settings.logging = true
@@ -219,7 +219,7 @@ struct Console: View {
                         } label: {
                             Label("Prolong", systemImage: "infinity.circle")
                         }
-
+                        
                         Button {
                             if app.main.nfc.isAvailable {
                                 settings.logging = true
@@ -230,13 +230,13 @@ struct Console: View {
                         } label: {
                             Label("Activate", systemImage: "bolt.circle")
                         }
-
-
+                        
+                        
                     } label: {
                         Label("Hacks", systemImage: "wand.and.stars")
                     }
-
-
+                    
+                    
                     Button {
                         if app.main.nfc.isAvailable {
                             settings.logging = true
@@ -247,8 +247,8 @@ struct Console: View {
                     } label: {
                         Label("Dump Memory", systemImage: "cpu")
                     }
-
-
+                    
+                    
                 } label: {
                     VStack(spacing: 0) {
                         Image(systemName: "wrench.and.screwdriver")
@@ -286,7 +286,7 @@ struct Console: View {
                 app.main.nfc.taskRequest = .activate
             }
         }
-
+        
     }
 }
 
@@ -295,21 +295,21 @@ struct ConsoleSidebar: View {
     @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
-
+    
     @Binding var showingNFCAlert: Bool
-
+    
     @State private var onlineCountdown: Int = 0
     @State private var readingCountdown: Int = 0
-
+    
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
+    
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
-
+            
             Spacer()
-
+            
             VStack(spacing: 0) {
-
+                
                 Button {
                     if app.main.nfc.isAvailable {
                         app.main.nfc.startSession()
@@ -319,7 +319,7 @@ struct ConsoleSidebar: View {
                 } label: {
                     Image(systemName: "sensor.tag.radiowaves.forward.fill").resizable().frame(width: 26, height: 18).padding(.init(top: 10, leading: 6, bottom: 14, trailing: 0))
                 }
-
+                
                 Button {
                     app.main.rescan()
                 } label: {
@@ -330,8 +330,8 @@ struct ConsoleSidebar: View {
                 }
             }
             .foregroundColor(.accentColor)
-
-
+            
+            
             if (app.status.hasPrefix("Scanning") || app.status.hasSuffix("retrying...")) && app.main.centralManager.state != .poweredOff {
                 Button {
                     app.main.centralManager.stopScan()
@@ -342,7 +342,7 @@ struct ConsoleSidebar: View {
                         .overlay((Image(systemName: "hand.raised.fill").resizable().frame(width: 18, height: 18).offset(x: 1)))
                 }
                 .foregroundColor(.red)
-
+                
             } else if app.deviceState == "Connected" || app.deviceState == "Reconnecting..." || app.status.hasSuffix("retrying...") {
                 Button {
                     if app.device != nil {
@@ -353,14 +353,14 @@ struct ConsoleSidebar: View {
                     Image(systemName: "escape").resizable().padding(5).frame(width: 32, height: 32)
                         .foregroundColor(.blue)
                 }
-
+                
             } else {
                 Image(systemName: "octagon").resizable().frame(width: 32, height: 32)
                     .hidden()
             }
-
+            
             VStack(spacing: 6) {
-
+                
                 if !app.deviceState.isEmpty && app.deviceState != "Disconnected" {
                     Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                          "\(readingCountdown) s" : "")
@@ -376,7 +376,7 @@ struct ConsoleSidebar: View {
                         .font(.caption.monospacedDigit())
                         .hidden()
                 }
-
+                
                 Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
                     .fixedSize()
                     .foregroundColor(.cyan)
@@ -384,11 +384,11 @@ struct ConsoleSidebar: View {
                     .onReceive(timer) { _ in
                         onlineCountdown = settings.onlineInterval * 60 - Int(Date().timeIntervalSince(settings.lastOnlineDate))
                     }
-
+                
             }
-
+            
             Spacer()
-
+            
             Button {
                 settings.userLevel = UserLevel(rawValue: (settings.userLevel.rawValue + 1) % UserLevel.allCases.count)!
             } label: {
@@ -401,9 +401,9 @@ struct ConsoleSidebar: View {
             .clipShape(RoundedRectangle(cornerRadius: 5))
             .foregroundColor(settings.userLevel != .basic ? Color(.systemBackground) : .accentColor)
             .padding(.bottom, 6)
-
+            
             VStack(spacing: 0) {
-
+                
                 Button {
                     UIPasteboard.general.string = log.entries.map(\.message).joined(separator: "\n \n")
                 } label: {
@@ -412,7 +412,7 @@ struct ConsoleSidebar: View {
                         Text("Copy").offset(y: -6)
                     }
                 }
-
+                
                 Button {
                     log.entries = [LogEntry(message: "Log cleared \(Date().local)")]
                     log.labels = []
@@ -423,9 +423,9 @@ struct ConsoleSidebar: View {
                         Text("Clear").offset(y: -6)
                     }
                 }
-
+                
             }
-
+            
             Button {
                 settings.reversedLog.toggle()
                 log.entries.reverse()
@@ -439,8 +439,8 @@ struct ConsoleSidebar: View {
             .border(Color.accentColor, width: 3)
             .cornerRadius(5)
             .foregroundColor(settings.reversedLog ? Color(.systemBackground) : .accentColor)
-
-
+            
+            
             Button {
                 settings.logging.toggle()
                 app.main.log("\(settings.logging ? "Log started" : "Log stopped") \(Date().local)")
@@ -450,9 +450,9 @@ struct ConsoleSidebar: View {
                 }
             }
             .foregroundColor(settings.logging ? .red : .green)
-
+            
             Spacer()
-
+            
         }
         .font(.footnote)
     }

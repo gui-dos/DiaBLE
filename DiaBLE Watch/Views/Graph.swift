@@ -5,8 +5,8 @@ import SwiftUI
 struct Graph: View {
     @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
-
-
+    
+    
     func yMax() -> Double {
         let maxValues = [
             history.rawValues.map(\.value).max() ?? 0,
@@ -16,11 +16,11 @@ struct Graph: View {
         ]
         return Double(maxValues.max()!)
     }
-
-
+    
+    
     var body: some View {
         ZStack {
-
+            
             // Glucose range rect in the background
             GeometryReader { geometry in
                 Path { path in
@@ -32,7 +32,7 @@ struct Graph: View {
                 .fill(.green)
                 .opacity(0.15)
             }
-
+            
             // Target glucose low and high labels at the right, timespan on the left
             GeometryReader { geometry in
                 ZStack {
@@ -57,7 +57,7 @@ struct Graph: View {
                 .font(.footnote)
                 .foregroundColor(.gray)
             }
-
+            
             // Historic raw values
             GeometryReader { geometry in
                 let count = history.rawValues.count
@@ -86,7 +86,7 @@ struct Graph: View {
                     .opacity(0.6)
                 }
             }
-
+            
             // Historic factory values
             GeometryReader { geometry in
                 let count = history.factoryValues.count
@@ -115,7 +115,7 @@ struct Graph: View {
                     .opacity(0.75)
                 }
             }
-
+            
             // Frame and historic OOP values
             GeometryReader { geometry in
                 Path { path in

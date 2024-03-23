@@ -6,23 +6,23 @@ struct Console: View {
     @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
-
+    
     @State private var onlineCountdown: Int = 0
     @State private var readingCountdown: Int = 0
-
+    
     @State private var showingFilterField = false
     @State private var filterText = ""
-
+    
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
+    
     var body: some View {
         VStack(spacing: 0) {
-
+            
             VStack(spacing: 0) {
-
+                
                 if showingFilterField {
                     ScrollView {
-
+                        
                         HStack {
                             Image(systemName: "magnifyingglass")
                                 .foregroundColor(Color(.lightGray))
@@ -41,7 +41,7 @@ struct Console: View {
                                 .foregroundColor(.blue)
                             }
                         }
-
+                        
                         // TODO: picker to filter labels
                         ForEach(Array(log.labels), id: \.self) { label in
                             Button {
@@ -54,7 +54,7 @@ struct Console: View {
                         }
                     }
                 }
-
+                
                 ScrollViewReader { proxy in
                     ScrollView(showsIndicators: true) {
                         LazyVStack(alignment: .leading, spacing: 10) {
@@ -97,7 +97,7 @@ struct Console: View {
                         }
                     }
                 }
-
+                
             }
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
@@ -111,12 +111,12 @@ struct Console: View {
             }
             .buttonStyle(.plain)
             .foregroundColor(.blue)
-
-
+            
+            
             HStack(alignment: .center, spacing: 0) {
-
+                
                 VStack(spacing: 0) {
-
+                    
                     Button {
                         app.main.rescan()
                     } label: {
@@ -126,7 +126,7 @@ struct Console: View {
                     }
                 }
                 .foregroundColor(.blue)
-
+                
                 if (app.status.hasPrefix("Scanning") || app.status.hasSuffix("retrying...")) && app.main.centralManager.state != .poweredOff {
                     Button {
                         app.main.centralManager.stopScan()
@@ -137,7 +137,7 @@ struct Console: View {
                             .overlay((Image(systemName: "hand.raised.fill").resizable().frame(width: 12, height: 12).offset(x: 1)))
                     }
                     .foregroundColor(.red)
-
+                    
                 } else if app.deviceState == "Connected" || app.deviceState == "Reconnecting..." || app.status.hasSuffix("retrying...") {
                     Button {
                         if app.device != nil {
@@ -148,12 +148,12 @@ struct Console: View {
                         Image(systemName: "escape").resizable().padding(3).frame(width: 24, height: 24)
                             .foregroundColor(.blue)
                     }
-
+                    
                 } else {
                     Image(systemName: "octagon").resizable().frame(width: 24, height: 24)
                         .hidden()
                 }
-
+                
                 if onlineCountdown <= 0 && !app.deviceState.isEmpty && app.deviceState != "Disconnected" {
                     VStack(spacing: 0) {
                         Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
@@ -177,7 +177,7 @@ struct Console: View {
                 } else {
                     Spacer()
                 }
-
+                
                 Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
                     .fixedSize()
                     .foregroundColor(.cyan)
@@ -190,9 +190,9 @@ struct Console: View {
                             onlineCountdown = settings.onlineInterval * 60 - Int(Date().timeIntervalSince(settings.lastOnlineDate))
                         }
                     }
-
+                
                 Spacer()
-
+                
                 Button {
                     settings.userLevel = UserLevel(rawValue:(settings.userLevel.rawValue + 1) % UserLevel.allCases.count)!
                 } label: {
@@ -203,7 +203,7 @@ struct Console: View {
                     }
                     .frame(width: 24, height: 24)
                 }
-
+                
                 //      Button {
                 //          UIPasteboard.general.string = log.entries.map(\.message).joined(separator: "\n \n")
                 //      } label: {
@@ -212,7 +212,7 @@ struct Console: View {
                 //              Text("Copy").offset(y: -6)
                 //          }
                 //      }
-
+                
                 Button {
                     log.entries = [LogEntry(message: "Log cleared \(Date().local)")]
                     log.labels = []
@@ -223,7 +223,7 @@ struct Console: View {
                             .foregroundColor(.blue)
                     }
                 }
-
+                
                 Button {
                     settings.reversedLog.toggle()
                     log.entries.reverse()
@@ -236,7 +236,7 @@ struct Console: View {
                     }
                     .frame(width: 24, height: 24)
                 }
-
+                
                 Button {
                     settings.logging.toggle()
                     app.main.log("\(settings.logging ? "Log started" : "Log stopped") \(Date().local)")
@@ -246,7 +246,7 @@ struct Console: View {
                             .foregroundColor(settings.logging ? .red : .green)
                     }
                 }
-
+                
             }
             .font(.footnote)
         }

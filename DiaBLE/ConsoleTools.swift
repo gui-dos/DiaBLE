@@ -8,35 +8,35 @@ import TabularData
 
 
 struct ShellView: View {
-
+    
     @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
-
+    
     @State private var showingStack = false
-
+    
     @State private var showingFileImporter = false
     @State private var libreviewCSV = ""
-
+    
     @State private var showingFolderImporter = false
     @State private var tridentContainer = ""
-
+    
     @State private var showingRealmKeyPrompt = false
     @AppStorage("tridentRealmKey") var tridentRealmKey = ""  // 128-char hex
-
+    
     var body: some View {
-
+        
         VStack(spacing: 0) {
-
+            
             if showingStack {
                 VStack (spacing: 0) {
-
+                    
                     HStack {
-
+                        
                         TextField("LibreView CSV", text: $libreviewCSV)
                             .textFieldStyle(.roundedBorder)
                             .truncationMode(.head)
-
+                        
                         Button {
                             showingFileImporter = true
                         } label: {
@@ -91,16 +91,16 @@ struct ShellView: View {
                                 app.main.log("\(error.localizedDescription)")
                             }
                         }
-
+                        
                     }
                     .padding(4)
-
+                    
                     HStack {
-
+                        
                         TextField("Trident Container", text: $tridentContainer)
                             .textFieldStyle(.roundedBorder)
                             .truncationMode(.head)
-
+                        
                         Button {
                             showingFolderImporter = true
                         } label: {
@@ -118,9 +118,9 @@ struct ShellView: View {
                                 let fileManager = FileManager.default
                                 let containerDirs = try! fileManager.contentsOfDirectory(atPath: tridentContainer)
                                 app.main.log("ls \(tridentContainer)\n\(containerDirs)")
-
+                                
                                 for dir in containerDirs {
-
+                                    
                                     if dir == "Library" {
                                         let libraryDirs = try! fileManager.contentsOfDirectory(atPath: "\(tridentContainer)/Library")
                                         app.main.log("ls Library\n\(libraryDirs)")
@@ -136,7 +136,7 @@ struct ShellView: View {
                                                                 let realmEncryptionKey = libre3Plist["RealmEncryptionKey"] as! [UInt8]
                                                                 let realmEncryptionKeyInt8 = realmEncryptionKey.map { Int8(bitPattern: $0) }
                                                                 app.main.log("realmEncryptionKey:\n\(realmEncryptionKey)\nas Int8 array:\n\(realmEncryptionKeyInt8)")
-
+                                                                
                                                                 // https://frdmtoplay.com/freeing-glucose-data-from-the-freestyle-libre-3/
                                                                 //
                                                                 // Assuming that `python3` is available after installing the Xcode Command Line Tools
@@ -161,7 +161,7 @@ struct ShellView: View {
                                                                 // let unwrappedInt8: [Int8] = [<unwrapped>]
                                                                 // let unwrappedUInt8: [UInt8] = unwrappedInt8.map { UInt8(bitPattern: $0) }
                                                                 // print(Data(unwrappedUInt8).reduce("", { $0 + String(format: "%02x", $1) }))
-
+                                                                
                                                                 // TODO: parse rest of libre3Plist
                                                             }
                                                         }
@@ -170,13 +170,13 @@ struct ShellView: View {
                                             }
                                         }
                                     }
-
+                                    
                                     if dir == "Documents" {
                                         let documentsFiles = try! fileManager.contentsOfDirectory(atPath: "\(tridentContainer)/Documents")
                                         app.main.log("ls Documents\n\(documentsFiles)")
-
+                                        
                                         for file in documentsFiles {
-
+                                            
                                             if file.hasSuffix(".realm") && !file.contains("backup") {
                                                 var realm: Realm
                                                 var config = Realm.Configuration.defaultConfiguration
@@ -209,7 +209,7 @@ struct ShellView: View {
                                                     }
                                                 }
                                             }
-
+                                            
                                             if file == "trident.json" {
                                                 if let tridentJson = fileManager.contents(atPath: "\(tridentContainer)/Documents/\(file)") {
                                                     (app.sensor as? Libre3 ?? Libre3(main: app.main)).parseRealmFlattedJson(data: tridentJson)
@@ -217,24 +217,24 @@ struct ShellView: View {
                                             }
                                         }
                                     }
-
+                                    
                                 }
-
+                                
                                 directory.stopAccessingSecurityScopedResource()
-
-
+                                
+                                
                             case .failure(let error):
                                 app.main.log("\(error.localizedDescription)")
                             }
                         }
-
+                        
                     }
                     .padding(4)
                 }
-
+                
                 CrcCalculator()
                     .padding(4)
-
+                
             }
         }
         .background(.thinMaterial, ignoresSafeAreaEdges: [])
@@ -247,13 +247,13 @@ struct ShellView: View {
                     .padding()
                 HStack {
                     Spacer()
-
+                    
                     Button {
                         showingRealmKeyPrompt = false
                     } label: {
                         Text("Cancel")
                     }
-
+                    
                     Button {
                         showingRealmKeyPrompt = false
                         showingFolderImporter = true
@@ -293,14 +293,14 @@ struct ShellView: View {
 
 
 struct CrcCalculator: View {
-
+    
     @State private var hexString = ""
     @State private var crc = "0000"
     @State private var computedCrc = "0000"
     @State private var trailingCrc = true
-
+    
     @FocusState private var focused: Bool
-
+    
     func updateCRC() {
         hexString = hexString.filter { $0.isHexDigit || $0 == " " }
         var validated = hexString == "" ? "00" : hexString
@@ -320,10 +320,10 @@ struct CrcCalculator: View {
             computedCrc = validatedBytes.dropFirst(2).crc16.hex
         }
     }
-
-
+    
+    
     var body: some View {
-
+        
         VStack {
             TextField("Hexadecimal string", text: $hexString, axis: .vertical)
                 .textFieldStyle(.roundedBorder)
@@ -337,23 +337,23 @@ struct CrcCalculator: View {
                         }
                     }
                 }
-
+            
             HStack {
-
+                
                 VStack(alignment: .leading) {
                     Text("CRC: \(crc == "0000" ? "---" : crc)")
                     Text("Computed: \(crc == "0000" ? "---" : computedCrc)")
                 }
                 .foregroundColor(crc != "0000" && crc == computedCrc ? .green : .primary)
-
+                
                 Spacer()
-
+                
                 Toggle("Trailing CRC", isOn: $trailingCrc)
                     .controlSize(.mini)
                     .fixedSize()
                     .onChange(of: trailingCrc) { updateCRC() }
             }
-
+            
         }
         .font(.subheadline)
         .onChange(of: hexString) { updateCRC() }

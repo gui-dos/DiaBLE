@@ -9,7 +9,7 @@ enum LibreLinkUpError: LocalizedError {
     case noConnection
     case notAuthenticated
     case jsonDecoding
-
+    
     var errorDescription: String? {
         switch self {
         case .noConnection:     "no connection"
@@ -74,21 +74,21 @@ struct LibreLinkUpAlarm: Identifiable, Codable, CustomStringConvertible {
 
 
 class LibreLinkUp: Logging {
-
+    
     var main: MainDelegate!
-
+    
     let siteURL = "https://api.libreview.io"
     let loginEndpoint = "llu/auth/login"
     let configEndpoint = "llu/config"
     let connectionsEndpoint = "llu/connections"
     let measurementsEndpoint = "lsl/api/measurements"
-
+    
     let regions = ["ae", "ap", "au", "ca", "de", "eu", "eu2", "fr", "jp", "us"]  // eu2: GB and IE
-
+    
     var regionalSiteURL: String { "https://api-\(settings.libreLinkUpRegion).libreview.io" }
-
+    
     var unit: GlucoseUnit = .mgdl
-
+    
     let headers = [
         "User-Agent": "Mozilla/5.0",
         "Content-Type": "application/json",
@@ -99,13 +99,13 @@ class LibreLinkUp: Logging {
         "Pragma": "no-cache",
         "Cache-Control": "no-cache",
     ]
-
-
+    
+    
     init(main: MainDelegate) {
         self.main = main
     }
-
-
+    
+    
     @discardableResult
     func login() async throws -> (Any, URLResponse) {
         var request = URLRequest(url: URL(string: "\(siteURL)/\(loginEndpoint)")!)
@@ -137,9 +137,9 @@ class LibreLinkUp: Logging {
             do {
                 if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                    let status = json["status"] as? Int {
-
+                    
                     let data = json["data"] as? [String: Any]
-
+                    
                     if status == 2 || status == 429 || status == 911 {
                         // {"status":2,"error":{"message":"notAuthenticated"}}
                         // {"status":429,"data":{"code":60,"data":{"failures":3,"interval":60,"lockout":300},"message":"locked"}}
@@ -154,17 +154,17 @@ class LibreLinkUp: Logging {
                                     // TODO: warn the user to wait 5 minutes before reattempting
                                 }
                             }
-
+                            
                         }
                         throw LibreLinkUpError.notAuthenticated
                     }
-
+                    
                     // TODO: status 4 requires accepting new Terms of Use: api.libreview.io/auth/continue/tou
                     if status == 4 {
                         log("LibreLinkUp: Terms of Use have been updated and must be accepted by running LibreLink (tip: log out and re-login)")
                         throw LibreLinkUpError.notAuthenticated
                     }
-
+                    
                     // {"status":0,"data":{"redirect":true,"region":"fr"}}
                     if let redirect = data?["redirect"] as? Bool,
                        let region = data?["region"] as? String {
@@ -176,7 +176,7 @@ class LibreLinkUp: Logging {
                         request.url = URL(string: "\(regionalSiteURL)/\(loginEndpoint)")!
                         continue loop
                     }
-
+                    
                     if let data,
                        let user = data["user"] as? [String: Any],
                        let id = user["id"] as? String,
@@ -191,11 +191,11 @@ class LibreLinkUp: Logging {
                             settings.libreLinkUpToken = authTicket.token
                             settings.libreLinkUpTokenExpirationDate = Date(timeIntervalSince1970: Double(authTicket.expires))
                         }
-
+                        
                         if !settings.libreLinkUpCountry.isEmpty {
                             // default "de" and "fr" regional servers
                             let defaultRegion = regions.contains(country.lowercased()) ? country.lowercased() : settings.libreLinkUpRegion
-
+                            
                             var request = URLRequest(url: URL(string: "\(siteURL)/\(configEndpoint)/country?country=\(settings.libreLinkUpCountry)")!)
                             for (header, value) in headers {
                                 request.setValue(value, forHTTPHeaderField: header)
@@ -219,7 +219,7 @@ class LibreLinkUp: Logging {
                                 throw LibreLinkUpError.jsonDecoding
                             }
                         }
-
+                        
                         if settings.libreLinkUpFollowing {
                             log("LibreLinkUp: getting connections for follower user id: \(id)")
                             var request = URLRequest(url: URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)")!)
@@ -243,7 +243,7 @@ class LibreLinkUp: Logging {
                                 }
                             }
                         }
-
+                        
                     }
                 }
                 return (data, response)
@@ -261,8 +261,8 @@ class LibreLinkUp: Logging {
             throw LibreLinkUpError.noConnection
         }
     }
-
-
+    
+    
     /// - Returns: (data, response, history, logbookData, logbookHistory, logbookAlarms)
     func getPatientGraph() async throws -> (Any, URLResponse, [LibreLinkUpGlucose], Any, [LibreLinkUpGlucose], [LibreLinkUpAlarm]) {
         var request = URLRequest(url: URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)/\(settings.libreLinkUpPatientId)/graph")!)
@@ -272,16 +272,16 @@ class LibreLinkUp: Logging {
             request.setValue(value, forHTTPHeaderField: header)
         }
         debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
-
+        
         var history: [LibreLinkUpGlucose] = []
         var logbookData: Data = Data()
         var logbookHistory: [LibreLinkUpGlucose] = []
         var logbookAlarms: [LibreLinkUpAlarm] = []
-
+        
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "M/d/yyyy h:mm:ss a"
-
+        
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
             let status = (response as! HTTPURLResponse).statusCode
@@ -402,7 +402,7 @@ class LibreLinkUp: Logging {
                             }
                             history.append(lastGlucose)
                             log("LibreLinkUp: graph values: \(history.map { ($0.glucose.id, $0.glucose.value, $0.glucose.date.shortDateTime, $0.color) })")
-
+                            
                             // TODO: https://api-eu.libreview.io/glucoseHistory?from=1700092800&numPeriods=5&period=14
                             if settings.userLevel >= .test {
                                 let period = 15
@@ -448,7 +448,7 @@ class LibreLinkUp: Logging {
                                     }
                                 }
                             }
-
+                            
                             if settings.libreLinkUpScrapingLogbook,
                                let ticketDict = json["ticket"] as? [String: Any],
                                let token = ticketDict["token"] as? String {
@@ -463,9 +463,9 @@ class LibreLinkUp: Logging {
                                    let data = json["data"] as? [[String: Any]] {
                                     for entry in data {
                                         let type = entry["type"] as! Int
-
+                                        
                                         // TODO: type 3 has also an alarmType: 0 = fixedLow, 1 = low, 2 = high
-
+                                        
                                         if type == 1 || type == 3 {  // measurement
                                             if let measurementData = try? JSONSerialization.data(withJSONObject: entry),
                                                let measurement = try? JSONDecoder().decode(GlucoseMeasurement.self, from: measurementData) {
@@ -474,7 +474,7 @@ class LibreLinkUp: Logging {
                                                 logbookHistory.append(LibreLinkUpGlucose(glucose: Glucose(measurement.valueInMgPerDl, id: i, date: date, source: "LibreLinkUp"), color: measurement.measurementColor, trendArrow: measurement.trendArrow))
                                                 debugLog("LibreLinkUp: logbook measurement # \(i - history.count) of \(data.count): \(measurement) (JSON: \(entry))")
                                             }
-
+                                            
                                         } else if type == 2 {  // alarm
                                             if let alarmData = try? JSONSerialization.data(withJSONObject: entry),
                                                var alarm = try? JSONDecoder().decode(LibreLinkUpAlarm.self, from: alarmData) {
@@ -501,5 +501,5 @@ class LibreLinkUp: Logging {
             throw LibreLinkUpError.noConnection
         }
     }
-
+    
 }

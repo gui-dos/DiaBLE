@@ -101,7 +101,7 @@ func writeBits(_ buffer: Data, _ byteOffset: Int, _ bitOffset: Int, _ bitCount: 
 
 
 @Observable class Libre: Sensor {
-
+    
 }
 
 
@@ -128,15 +128,15 @@ func decodeStatusCode(_ code: String) -> UInt64 {
 
 func checksummedFRAM(_ data: Data) -> Data {
     var fram = data
-
+    
     let headerCRC = crc16(fram[         2 ..<  3 * 8])
     let bodyCRC =   crc16(fram[ 3 * 8 + 2 ..< 40 * 8])
     let footerCRC = crc16(fram[40 * 8 + 2 ..< 43 * 8])
-
+    
     fram[0 ... 1] = headerCRC.data
     fram[3 * 8 ... 3 * 8 + 1] = bodyCRC.data
     fram[40 * 8 ... 40 * 8 + 1] = footerCRC.data
-
+    
     if fram.count > 43 * 8 {
         let commandsCRC = crc16(fram[43 * 8 + 2 ..< (244 - 6) * 8])    // Libre 1 DF: 429e, A2: f9ae
         fram[43 * 8 ... 43 * 8 + 1] = commandsCRC.data

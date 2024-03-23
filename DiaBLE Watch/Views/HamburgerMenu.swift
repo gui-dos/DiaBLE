@@ -2,15 +2,15 @@ import SwiftUI
 
 
 struct HamburgerMenu: View {
-
+    
     var body: some View {
-
+        
         NavigationStack {
-
+            
             ScrollView {
-
+                
                 VStack(spacing: 4) {
-
+                    
                     HStack(spacing: 10) {
                         NavigationLink(destination: Monitor()) {
                             VStack {
@@ -32,7 +32,7 @@ struct HamburgerMenu: View {
                         }
                     }
                     .padding(.top, -4)
-
+                    
                     HStack(spacing: 10) {
                         NavigationLink(destination: Console()) {
                             VStack {
@@ -53,7 +53,7 @@ struct HamburgerMenu: View {
                             .frame(maxWidth: .infinity)
                         }
                     }
-
+                    
                     HStack(spacing: 10) {
                         NavigationLink(destination: DataView()) {
                             VStack {
@@ -74,7 +74,7 @@ struct HamburgerMenu: View {
                             .frame(maxWidth: .infinity)
                         }
                     }
-
+                    
                     // TODO: Help and About sheets
                     // HStack(spacing: 10) {
                     //     VStack {
@@ -94,14 +94,14 @@ struct HamburgerMenu: View {
                     // }
                 }
                 .foregroundColor(.red)
-
+                
                 Spacer(minLength: 30)
-
+                
                 VStack(spacing: 20) {
                     VStack {
-
+                        
                         Text("DiaBLE  \(Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String)  (\(Bundle.main.infoDictionary!["CFBundleVersion"] as! String))")
-
+                        
                         // TODO: get AppIcon 1024x1024
                         // Image("AppIcon").resizable().frame(width: 100, height: 100)
                         // FIXME: crashes in TestFlight (not in Release scheme)
@@ -112,33 +112,33 @@ struct HamburgerMenu: View {
                              destination: URL(string: "https://github.com/gui-dos/DiaBLE")!)
                         .foregroundColor(.blue)
                     }
-
+                    
                     VStack {
                         Image(systemName: "envelope.fill")
                         Link(Data(base64Encoded: "Z3VpZG8uc29yYW56aW9AZ21haWwuY29t")!.string,
                              destination: URL(string: "mailto:\(Data(base64Encoded: "Z3VpZG8uc29yYW56aW9AZ21haWwuY29t")!.string)")!)
                         .foregroundColor(.blue)
                     }
-
+                    
                     VStack {
                         Image(systemName: "giftcard")
                         Link(Data(base64Encoded: "aHR0cHM6Ly9wYXlwYWwubWUvZ3Vpc29y")!.string, destination: URL(string: Data(base64Encoded: "aHR0cHM6Ly9wYXlwYWwubWUvZ3Vpc29y")!.string)!)
                             .foregroundColor(.blue)
                     }
-
+                    
                 }
                 .foregroundColor(.white)
-
+                
             }
             .buttonStyle(.borderless)
             .navigationTitle { Text("DiaBLE") }
             .tint(.blue)
             .navigationBarTitleDisplayMode(.inline)
-
+            
         }
         .padding(.top, -4)
         .edgesIgnoringSafeArea([.bottom])
-
+        
     }
 }
 

@@ -5,19 +5,19 @@ import SwiftUI
 struct Details: View {
     @Environment(AppState.self) var app: AppState
     @Environment(Settings.self) var settings: Settings
-
+    
     @State private var showingNFCAlert = false
     @State private var showingRePairConfirmationDialog = false
     @State private var showingCalibrationInfoForm = false
-
+    
     @State private var readingCountdown: Int = 0
     @State private var secondsSinceLastConnection: Int = 0
     @State private var minutesSinceLastReading: Int = 0
-
+    
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
-
-
+    
+    
     // TODO:
     @ViewBuilder func Row(_ label: String, _ value: String, foregroundColor: Color? = .yellow) -> some View {
         if !(value.isEmpty || value == "unknown") {
@@ -31,15 +31,15 @@ struct Details: View {
             EmptyView()
         }
     }
-
-
+    
+    
     var body: some View {
         VStack {
-
+            
             Spacer()
-
+            
             Form {
-
+                
                 if app.status.starts(with: "Scanning") {
                     HStack {
                         Text("\(app.status)").font(.footnote)
@@ -54,18 +54,18 @@ struct Details: View {
                         }
                     }
                 }
-
-
+                
+                
                 if app.device != nil {
-
+                    
                     Section(header: Text("Device").font(.headline)) {
-
+                        
                         Group {
                             Row("Name", app.device.peripheral?.name ?? app.device.name)
-
+                            
                             Row("State", (app.device.peripheral?.state ?? app.device.state).description.capitalized,
                                 foregroundColor: (app.device.peripheral?.state ?? app.device.state) == .connected ? .green : .red)
-
+                            
                             if app.device.lastConnectionDate != .distantPast {
                                 HStack {
                                     Text("Since")
@@ -82,18 +82,18 @@ struct Details: View {
                                         }
                                 }
                             }
-
+                            
                             if settings.userLevel > .basic && app.device.peripheral != nil {
                                 Row("Identifier", app.device.peripheral!.identifier.uuidString)
                             }
-
+                            
                             if app.device.name != app.device.peripheral?.name ?? "Unnamed" {
                                 Row("Type", app.device.name)
                             }
                         }
-
+                        
                         Row("Serial", app.device.serial)
-
+                        
                         Group {
                             if !app.device.company.isEmpty && app.device.company != "< Unknown >" {
                                 Row("Company", app.device.company)
@@ -104,32 +104,32 @@ struct Details: View {
                             Row("Hardware", app.device.hardware)
                             Row("Software", app.device.software)
                         }
-
+                        
                         if app.device.macAddress.count > 0 {
                             Row("MAC Address", app.device.macAddress.hexAddress)
                         }
-
+                        
                         if app.device.rssi != 0 {
                             Row("RSSI", "\(app.device.rssi) dB")
                         }
-
+                        
                         if app.device.battery > -1 {
                             Row("Battery", "\(app.device.battery)%",
                                 foregroundColor: app.device.battery > 10 ? .green : .red)
                         }
-
+                        
                     }
                     .font(.callout)
                 }
-
-
+                
+                
                 if app.sensor != nil {
-
+                    
                     Section(header: Text("Sensor").font(.headline)) {
-
+                        
                         Row("State", app.sensor.state.description,
                             foregroundColor: app.sensor.state == .active ? .green : .red)
-
+                        
                         if app.sensor.state == .failure && app.sensor.fram.count > 8 {
                             let fram = app.sensor.fram
                             let errorCode = fram[6]
@@ -138,19 +138,19 @@ struct Details: View {
                             Row("Failure", "\(decodeFailure(error: errorCode).capitalized) (0x\(errorCode.hex)) at \(failureInterval)",
                                 foregroundColor: .red)
                         }
-
+                        
                         Row("Type", "\(app.sensor.type.description)\(app.sensor.patchInfo.hex.hasPrefix("a2") ? " (new 'A2' kind)" : "")")
-
+                        
                         Row("Serial", app.sensor.serial)
-
+                        
                         Row("Reader Serial", app.sensor.readerSerial.count >= 16 ? app.sensor.readerSerial[...13].string : "")
-
+                        
                         Row("Region", app.sensor.region.description)
-
+                        
                         if app.sensor.maxLife > 0 {
                             Row("Maximum Life", app.sensor.maxLife.formattedInterval)
                         }
-
+                        
                         if app.sensor.age > 0 {
                             Group {
                                 Row("Age", (app.sensor.age + minutesSinceLastReading).formattedInterval)
@@ -164,9 +164,9 @@ struct Details: View {
                                 minutesSinceLastReading = Int(Date().timeIntervalSince(app.sensor.lastReadingDate)/60)
                             }
                         }
-
+                        
                         Row("UID", app.sensor.uid.hex)
-
+                        
                         Group {
                             if app.sensor.type == .libre3 && (app.sensor as? Libre3)?.receiverId ?? 0 != 0 {
                                 Row("Receiver ID", "\((app.sensor as! Libre3).receiverId)")
@@ -180,26 +180,26 @@ struct Details: View {
                                 Row("Security Generation", "\(app.sensor.securityGeneration)")
                             }
                         }
-
+                        
                     }
                     .font(.callout)
                 }
-
+                
                 if app.device != nil && app.device.type == .transmitter(.abbott) || settings.preferredTransmitter == .abbott {
-
+                    
                     Section(header: Text("BLE Setup").font(.headline)) {
-
+                        
                         @Bindable var settings = settings
-
+                        
                         if app.sensor?.type != .libre3 {
-
+                            
                             HStack {
                                 Text("Patch Info")
                                 TextField("Patch Info", value: $settings.activeSensorInitialPatchInfo, formatter: HexDataFormatter())
                                     .multilineTextAlignment(.trailing)
                                     .foregroundColor(.blue)
                             }
-
+                            
                             HStack {
                                 Text("Calibration Info")
                                 Spacer()
@@ -254,7 +254,7 @@ struct Details: View {
                                     }
                                 }
                             }
-
+                            
                             HStack {
                                 Text("Unlock Code")
                                 TextField("Unlock Code", value: $settings.activeSensorStreamingUnlockCode, formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
@@ -263,9 +263,9 @@ struct Details: View {
                                 Text("Unlock Count")
                                 TextField("Unlock Count", value: $settings.activeSensorStreamingUnlockCount, formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
                             }
-
+                            
                         }
-
+                        
                         HStack {
                             Spacer()
                             Button {
@@ -301,26 +301,26 @@ struct Details: View {
                             Spacer()
                         }
                         .padding(.vertical, 4)
-
+                        
                     }
                     .font(.callout)
                 }
-
-
+                
+                
                 // TODO
                 if (app.device != nil && app.device.type == .transmitter(.dexcom)) || settings.preferredTransmitter == .dexcom {
-
+                    
                     Section(header: Text("BLE Setup").font(.headline)) {
-
+                        
                         @Bindable var settings = settings
-
+                        
                         HStack {
                             Text("Transmitter Serial")
                             TextField("Transmitter Serial", text: $settings.activeTransmitterSerial)
                                 .multilineTextAlignment(.trailing)
                                 .foregroundColor(.blue)
                         }
-
+                        
                         HStack {
                             Text("Sensor Code")
                             TextField("Sensor Code", text: $settings.activeSensorCode)
@@ -328,7 +328,7 @@ struct Details: View {
                                 .multilineTextAlignment(.trailing)
                                 .foregroundColor(.blue)
                         }
-
+                        
                         HStack {
                             Spacer()
                             Button {
@@ -345,18 +345,18 @@ struct Details: View {
                             Spacer()
                         }
                         .padding(.vertical, 4)
-
+                        
                     }
                     .font(.callout)
                 }
-
-
+                
+                
                 // Embed a specific device setup panel
                 // if app.device?.type == Custom.type {
                 //     CustomDetailsView(device: app.device as! Custom)
                 //     .font(.callout)
                 // }
-
+                
                 if !app.main.bluetoothDelegate.knownDevices.isEmpty {
                     Section(header: Text("Known Devices").font(.headline)) {
                         List {
@@ -393,18 +393,18 @@ struct Details: View {
                         }
                     }
                 }
-
+                
             }
             .foregroundColor(.secondary)
-
+            
             Spacer()
-
+            
             HStack(alignment: .top, spacing: 40) {
-
+                
                 Spacer()
-
+                
                 VStack(spacing: 0) {
-
+                    
                     Button {
                         app.main.rescan()
                         self.timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -413,7 +413,7 @@ struct Details: View {
                         Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 32, height: 32)
                             .foregroundColor(.accentColor)
                     }
-
+                    
                     Text(!app.deviceState.isEmpty && app.deviceState != "Disconnected" && (readingCountdown > 0 || app.deviceState == "Reconnecting...") ?
                          "\(readingCountdown) s" : "...")
                     .fixedSize()
@@ -423,7 +423,7 @@ struct Details: View {
                         readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
                     }
                 }
-
+                
                 Button {
                     if app.device != nil {
                         app.main.bluetoothDelegate.knownDevices[app.device.peripheral!.identifier.uuidString]!.isIgnored = true
@@ -433,14 +433,14 @@ struct Details: View {
                     Image(systemName: "escape").resizable().frame(width: 28, height: 28)
                         .foregroundColor(.blue)
                 }
-
+                
                 Spacer()
-
+                
             }
             .padding(.bottom, 8)
-
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle("Details")
+            
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Details")
         }
         .onAppear {
             if app.sensor != nil {

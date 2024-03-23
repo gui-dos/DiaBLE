@@ -7,30 +7,30 @@ struct Monitor: View {
     @Environment(Log.self) var log: Log
     @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
-
+    
     @State var showingHamburgerMenu = false
-
+    
     @State private var showingNFCAlert = false
-
+    
     @State private var readingCountdown: Int = 0
     @State private var minutesSinceLastReading: Int = 0
-
+    
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
-
+    
     var body: some View {
         NavigationView {
-
+            
             ZStack(alignment: .topLeading) {
-
+                
                 VStack {
-
+                    
                     Spacer()
-
+                    
                     VStack {
-
+                        
                         HStack {
-
+                            
                             VStack {
                                 if app.lastReadingDate != Date.distantPast {
                                     Text(app.lastReadingDate.shortTime)
@@ -51,16 +51,16 @@ struct Monitor: View {
                             .onChange(of: app.lastReadingDate) {
                                 minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate) / 60)
                             }
-
+                            
                             Text(app.currentGlucose > 0 ? "\(app.currentGlucose.units) " : "--- ")
                                 .font(.system(size: 42, weight: .black))
                                 .monospacedDigit()
                                 .foregroundColor(.black)
                                 .padding(5)
                                 .background(app.currentGlucose > 0 && (app.currentGlucose > Int(settings.alarmHigh) || app.currentGlucose < Int(settings.alarmLow)) ?
-                                            .red : .blue)
+                                    .red : .blue)
                                 .cornerRadius(8)
-
+                            
                             // TODO: display both delta and trend arrow
                             Group {
                                 if app.trendDeltaMinutes > 0 {
@@ -82,18 +82,18 @@ struct Monitor: View {
                             }
                             .foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
                                 .red : .blue)
-
+                            
                         }
-
+                        
                         Text("\(app.glycemicAlarm.description.replacingOccurrences(of: "_", with: " "))\(app.glycemicAlarm.description != "" ? " - " : "")\(app.trendArrow.description.replacingOccurrences(of: "_", with: " "))")
                             .foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
                                 .red : .blue)
-
+                        
                         HStack {
                             Text(app.deviceState)
                                 .foregroundColor(app.deviceState == "Connected" ? .green : .red)
                                 .fixedSize()
-
+                            
                             if !app.deviceState.isEmpty && app.deviceState != "Disconnected" {
                                 Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                                      "\(readingCountdown) s" : "")
@@ -106,25 +106,25 @@ struct Monitor: View {
                             }
                         }
                     }
-
+                    
                     Graph()
                         .frame(width: 31 * 7 + 60, height: 150)
-
+                    
                     VStack {
-
+                        
                         HStack(spacing: 12) {
-
+                            
                             if app.sensor != nil && (app.sensor.state != .unknown || app.sensor.serial != "") {
                                 VStack {
                                     Text(app.sensor.state.description)
                                         .foregroundColor(app.sensor.state == .active ? .green : .red)
-
+                                    
                                     if app.sensor.age > 0 {
                                         Text(app.sensor.age.shortFormattedInterval)
                                     }
                                 }
                             }
-
+                            
                             if app.device != nil && (app.device.battery > -1 || app.device.rssi != 0) {
                                 VStack {
                                     if app.device.battery > -1 {
@@ -145,16 +145,16 @@ struct Monitor: View {
                                     }
                                 }
                             }
-
+                            
                         }
                         .font(.footnote)
                         .foregroundColor(.yellow)
-
+                        
                         Text(app.status)
                             .font(.footnote)
                             .padding(.vertical, 5)
                             .frame(maxWidth: .infinity)
-
+                        
                         NavigationLink(destination: Details()) {
                             Text("Details")
                                 .font(.footnote)
@@ -165,21 +165,21 @@ struct Monitor: View {
                                 .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
                         }
                     }
-
+                    
                     Spacer()
                     Spacer()
-
+                    
                     HStack {
-
+                        
                         Button {
                             app.main.rescan()
-
+                            
                         } label: {
                             Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 32, height: 32)
                                 .padding(.bottom, 8)
                                 .foregroundColor(.accentColor)
                         }
-
+                        
                         if (app.status.hasPrefix("Scanning") || app.status.hasSuffix("retrying...")) && app.main.centralManager.state != .poweredOff {
                             Button {
                                 app.main.centralManager.stopScan()
@@ -191,9 +191,9 @@ struct Monitor: View {
                             .padding(.bottom, 8)
                             .foregroundColor(.red)
                         }
-
+                        
                     }
-
+                    
                 }
                 .multilineTextAlignment(.center)
                 .navigationBarTitleDisplayMode(.inline)
@@ -210,7 +210,7 @@ struct Monitor: View {
                     minuteTimer.upstream.connect().cancel()
                 }
                 .toolbar {
-
+                    
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {
                             withAnimation(.easeOut(duration: 0.15)) { showingHamburgerMenu.toggle() }
@@ -218,7 +218,7 @@ struct Monitor: View {
                             Image(systemName: "line.horizontal.3")
                         }
                     }
-
+                    
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button {
                             settings.caffeinated.toggle()
@@ -227,7 +227,7 @@ struct Monitor: View {
                             Image(systemName: settings.caffeinated ? "cup.and.saucer.fill" : "cup.and.saucer" )
                         }
                     }
-
+                    
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             if app.main.nfc.isAvailable {
@@ -244,7 +244,7 @@ struct Monitor: View {
                 } message: {
                     Text("This device doesn't allow scanning the Libre.")
                 }
-
+                
                 HamburgerMenu(showingHamburgerMenu: $showingHamburgerMenu)
                     .frame(width: 180)
                     .offset(x: showingHamburgerMenu ? 0 : -180)

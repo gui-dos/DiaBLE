@@ -7,27 +7,27 @@ struct Monitor: View {
     @Environment(Log.self) var log: Log
     @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
-
+    
     @Environment(\.dismiss) var dismiss
-
+    
     @State private var showingHamburgerMenu = false
-
+    
     @State private var readingCountdown: Int = 0
     @State private var minutesSinceLastReading: Int = 0
-
+    
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
-
+    
     var body: some View {
-
+        
         ScrollView {
-
+            
             VStack(spacing: 0) {
-
+                
                 VStack(spacing: 0) {
-
+                    
                     HStack {
-
+                        
                         VStack(spacing: 0) {
                             if app.lastReadingDate != Date.distantPast {
                                 Text(app.lastReadingDate.shortTime)
@@ -49,20 +49,20 @@ struct Monitor: View {
                         .onChange(of: app.lastReadingDate) {
                             minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate) / 60)
                         }
-
+                        
                         Text(app.currentGlucose > 0 ? "\(app.currentGlucose.units)" : "---")
                             .font(.system(size: 26, weight: .black))
                             .monospacedDigit()
-                            // avoid truncation in 40 mm models
+                        // avoid truncation in 40 mm models
                             .scaledToFill()
                             .minimumScaleFactor(0.85)
                             .foregroundColor(.black)
                             .padding(.vertical, 0)
                             .padding(.horizontal, 4)
                             .background(app.currentGlucose > 0 && (app.currentGlucose > Int(settings.alarmHigh) || app.currentGlucose < Int(settings.alarmLow)) ?
-                                        .red : .blue)
+                                .red : .blue)
                             .cornerRadius(6)
-
+                        
                         // TODO: display both delta and trend arrow
                         Group {
                             if app.trendDeltaMinutes > 0 {
@@ -85,16 +85,16 @@ struct Monitor: View {
                         }
                         .foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
                             .red : .blue)
-
+                        
                     }
-
+                    
                     if app.glycemicAlarm.description.count + app.trendArrow.description.count != 0 {
                         Text("\(app.glycemicAlarm.description.replacingOccurrences(of: "_", with: " "))\(app.glycemicAlarm.description != "" ? " - " : "")\(app.trendArrow.description.replacingOccurrences(of: "_", with: " "))")
                             .font(.footnote).foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
                                 .red : .blue).lineLimit(1)
                             .padding(.vertical, -3)
                     }
-
+                    
                     HStack {
                         if !app.deviceState.isEmpty {
                             Text(app.deviceState)
@@ -119,24 +119,24 @@ struct Monitor: View {
                         }
                     }
                 }
-
+                
                 Graph()
                     .frame(width: 31 * 4 + 60, height: 80)
                     .padding(.vertical, 2)
-
+                
                 HStack(spacing: 2) {
-
+                    
                     if app.sensor != nil && (app.sensor.state != .unknown || app.sensor.serial != "") {
                         VStack(spacing: -4) {
                             Text(app.sensor.state.description)
                                 .foregroundColor(app.sensor.state == .active ? .green : .red)
-
+                            
                             if app.sensor.age > 0 {
                                 Text(app.sensor.age.shortFormattedInterval)
                             }
                         }
                     }
-
+                    
                     if app.device != nil && (app.device.battery > -1 || app.device.rssi != 0) {
                         VStack(spacing: -4) {
                             if app.device.battery > -1 {
@@ -157,16 +157,16 @@ struct Monitor: View {
                             }
                         }
                     }
-
+                    
                 }
                 .font(.footnote)
                 .foregroundColor(.yellow)
-
+                
                 HStack {
-
+                    
                     Spacer()
                     Spacer()
-
+                    
                     Button {
                         app.main.rescan()
                     } label: {
@@ -174,7 +174,7 @@ struct Monitor: View {
                             .foregroundColor(.blue)
                     }
                     .frame(height: 16)
-
+                    
                     if (app.status.hasPrefix("Scanning") || app.status.hasSuffix("retrying...")) && app.main.centralManager.state != .poweredOff {
                         Spacer()
                         Button {
@@ -187,27 +187,27 @@ struct Monitor: View {
                         }
                         .frame(height: 16)
                     }
-
+                    
                     Spacer()
-
+                    
                     NavigationLink(destination: Details()) {
                         Image(systemName: "info.circle").resizable().frame(width: 16, height: 16)
                             .foregroundColor(.blue)
                     }
                     .frame(height: 16)
-
+                    
                     Spacer()
                     Spacer()
                 }
-
+                
                 Text(app.status.hasPrefix("Scanning") ? app.status : app.status.replacingOccurrences(of: "\n", with: " "))
                     .font(.footnote)
                     .lineLimit(app.status.hasPrefix("Scanning") ? 3 : 1)
                     .truncationMode(app.status.hasPrefix("Scanning") ?.tail : .head)
                     .frame(maxWidth: .infinity)
-
+                
             }
-
+            
         }
         .edgesIgnoringSafeArea([.bottom])
         .padding(.top, -26)
@@ -244,9 +244,9 @@ struct Monitor: View {
                     Image(systemName: settings.caffeinated ? "cup.and.saucer.fill" : "cup.and.saucer")
                         .foregroundColor(.blue)
                 }
-                    .hidden() // trick to center time
+                .hidden() // trick to center time
             }
-
+            
         }
     }
 }

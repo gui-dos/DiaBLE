@@ -6,9 +6,9 @@ import CoreNFC
 
 
 class Gen2 {
-
+    
     static let GEN_SECURITY_CMD_GET_SESSION_INFO      =  0x1f
-
+    
     static let GEN2_CMD_DECRYPT_BLE_DATA              =   773
     static let GEN2_CMD_DECRYPT_NFC_DATA              = 12545
     static let GEN2_CMD_DECRYPT_NFC_STREAM            =  6520
@@ -20,9 +20,9 @@ class Gen2 {
     static let GEN2_CMD_GET_PVALUES                   =  6145
     static let GEN2_CMD_INIT_LIB                      =     0
     static let GEN2_CMD_VERIFY_RESPONSE               = 22321
-//  static let GEN2_CMD_PERFORM_SENSOR_CONTEXT_CRYPTO = 18712
-
-
+    //  static let GEN2_CMD_PERFORM_SENSOR_CONTEXT_CRYPTO = 18712
+    
+    
     enum Gen2Error: Int, Error, CaseIterable {
         case GEN2_SEC_ERROR_INIT            = -1
         case GEN2_SEC_ERROR_CMD             = -2
@@ -37,7 +37,7 @@ class Gen2 {
         case GEN2_ERROR_CRC_MISMATCH        = -17
         case GEN2_ERROR_MISSING_NATIVE      = -98
         case GEN2_ERROR_PROCESS_ERROR       = -99
-
+        
         init(_ value: Int) {
             for error in Gen2Error.allCases {
                 if value == error.rawValue {
@@ -47,7 +47,7 @@ class Gen2 {
             }
             self = .GEN2_ERROR_MISSING_NATIVE
         }
-
+        
         var ordinal: Int {
             switch self {
             case .GEN2_ERROR_AUTH_CONTEXT:        1
@@ -65,35 +65,35 @@ class Gen2 {
             case .GEN2_ERROR_PROCESS_ERROR:       13
             }
         }
-
+        
     }
-
+    
     struct Result {
         let data: Data?
         let error: Gen2Error?
     }
-
-
+    
+    
     // TODO: newer Gen2 P1/P2 require a further final random token array
     // https://github.com/j-kaltes/Juggluco/commit/9ff9c9d
-
+    
     static func p1(command: Int, _ i2: Int, _ d1: Data?, _ d2: Data?) -> Int {
         return 0
     }
-
+    
     static func p2(command: Int, p1: Int, _ d1: Data, _ d2: Data?) -> Result {
         return Result(data: Data(), error: nil)
     }
-
-
+    
+    
     static func createSecureSession(context: Int, _ i2: Int, data: Data) -> Int {
         return p1(command: GEN2_CMD_GET_CREATE_SESSION, context, Data([UInt8(i2)]), data)
     }
-
+    
     static func endSession(context: Int) -> Int {
         return p1(command: GEN2_CMD_END_SESSION, context, nil, nil)
     }
-
+    
     static func getNfcAuthenticatedCommandBLE(command: Int, uid: SensorUid, i2: Int, challenge: Data, output: inout Data) -> Int {
         let authContext = p1(command: GEN2_CMD_GET_AUTH_CONTEXT, i2, uid, nil)
         if authContext < 0 {
@@ -108,7 +108,7 @@ class Gen2 {
         output = result.data!
         return authContext
     }
-
+    
     static func getNfcAuthenticatedCommandNfc(command: Int, uid: SensorUid, i2: Int, challenge: Data, output: inout Data) -> Int {
         let authContext = p1(command: GEN2_CMD_GET_AUTH_CONTEXT, i2, uid, nil)
         if authContext < 0 {
@@ -125,10 +125,10 @@ class Gen2 {
         output[0 ... 3] = Data([2, 0xA1, manufacturerCode, UInt8(command)])
         return authContext
     }
-
-
+    
+    
 #if !os(watchOS)
-
+    
     static func getAuthenticatedCommand(nfc: NFC, command: Int, output: inout Data) async throws -> Int {
         let attribute = try await nfc.send(nfc.sensor.nfcCommand(.readAttribute))
         if attribute.count == 0 {
@@ -141,7 +141,7 @@ class Gen2 {
         }
         return getNfcAuthenticatedCommandNfc(command: command, uid: nfc.sensor.uid, i2: i, challenge: challenge, output: &output)
     }
-
+    
     static func communicateWithPatch(nfc: NFC) async throws -> Int {
         var getSessionInfoCommand = nfc.sensor.nfcCommand(.getSessionInfo)
         var commandData = Data()
@@ -156,27 +156,27 @@ class Gen2 {
             if errorContext < 0 {
                 nfc.log("NFC: failed session creation due to error \(errorContext)")
             }
-
+            
             // TODO: detect errors and close session
-
+            
         } catch {
             nfc.debugLog("Scan error - authenticated command failed")
             if context > 0 {
                 _ = endSession(context: context)
             }
         }
-
+        
         return context
     }
-
+    
 #endif
-
-
+    
+    
     static func decrytpNfcData(context: Int, fromBlock: Int, count: Int, data: Data) -> Result {
         return p2(command: GEN2_CMD_DECRYPT_NFC_STREAM, p1: context, Data([UInt8(fromBlock), UInt8(count)]), data)
     }
-
-
+    
+    
     static func createSecureStreamingSession(sensor: Sensor, data: Data) -> Int {
         if createSecureSession(context: sensor.streamingContext, 1, data: data) != 0 {
             _ = endSession(context: sensor.streamingContext)
@@ -184,8 +184,8 @@ class Gen2 {
         }
         return sensor.streamingContext
     }
-
-
+    
+    
     // TODO:
     static func getStreamingUnlockPayload(sensor: Sensor, challenge: Data) -> Data {
         if sensor.streamingContext > 0 {
@@ -207,8 +207,8 @@ class Gen2 {
         }
         return payload
     }
-
-
+    
+    
     static func verifyCommandResponse(context: Int, _ i2: Int, challenge: Data, output: inout Data) -> Int {
         let commandArg = Data([UInt8(i2), UInt8(output.count)])
         let result = p2(command: GEN2_CMD_VERIFY_RESPONSE, p1: context, commandArg, challenge)
@@ -219,8 +219,8 @@ class Gen2 {
         output = result.data!
         return output.count
     }
-
-
+    
+    
     // TODO: newer version returns a Boolean and passes 9 as arg
     static func verifyEnableStreamingResponse(context: Int, challenge: Data, authenticationData: inout Data, output: inout Data) -> Int {
         var verifyOutput = Data(count: 9)
@@ -241,11 +241,11 @@ class Gen2 {
         output[0 ..< 6] = Data(verifyOutput.prefix(6))
         return 0
     }
-
-
+    
+    
     static func decryptStreamingData(context: Int, data: Data) -> Result {
         return p2(command: GEN2_CMD_DECRYPT_BLE_DATA, p1: context, data, nil)
     }
-
-
+    
+    
 }

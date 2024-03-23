@@ -11,57 +11,57 @@ protocol Logging {
 extension Logging {
     func log(_ msg: String)      { main?.log(msg) }
     func debugLog(_ msg: String) { main?.debugLog(msg) }
-
+    
     var app: AppState            { main.app }
     var settings: Settings       { main.settings }
 }
 
 
 public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSessionDelegate {
-
+    
     var app: AppState
     var logger: Logger
     var log: Log
     var history: History
     var settings: Settings
-
+    
     var extendedSession: WKExtendedRuntimeSession! // TODO
-
+    
     var centralManager: CBCentralManager
     var bluetoothDelegate: BluetoothDelegate
     var healthKit: HealthKit?
     var libreLinkUp: LibreLinkUp?
     var nightscout: Nightscout?
-
-
+    
+    
     override init() {
-
+        
         UserDefaults.standard.register(defaults: Settings.defaults)
-
+        
         settings = Settings()
         logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Debug")
         log = Log()
         history = History()
         app = AppState()
-
+        
         extendedSession = WKExtendedRuntimeSession()
-
+        
         bluetoothDelegate = BluetoothDelegate()
         centralManager = CBCentralManager(delegate: bluetoothDelegate,
                                           queue: nil,
                                           options: [CBCentralManagerOptionRestoreIdentifierKey: "DiaBLE"])
-
+        
         healthKit = HealthKit()
-
+        
         super.init()
-
+        
         log.entries = [LogEntry(message: "Welcome to DiaBLE!"), LogEntry(message: "\(settings.logging ? "Log started" : "Log stopped") \(Date().local)")]
         debugLog("User defaults: \(Settings.defaults.keys.map { [$0, UserDefaults.standard.dictionaryRepresentation()[$0]!] }.sorted{($0[0] as! String) < ($1[0] as! String) })")
-
+        
         app.main = self
         extendedSession.delegate = self
         bluetoothDelegate.main = self
-
+        
         if let healthKit {
             healthKit.main = self
             healthKit.authorize { [self] in
@@ -73,23 +73,23 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
         } else {
             log("HealthKit: not available")
         }
-
+        
         libreLinkUp = LibreLinkUp(main: self)
         nightscout = Nightscout(main: self)
         nightscout!.read()
-
+        
         let numberFormatter = NumberFormatter()
         numberFormatter.minimumFractionDigits = 8
         settings.numberFormatter = numberFormatter
-
+        
         // features currently in beta testing
         if settings.userLevel >= .test {
             Libre3.testAESCCM()
         }
-
+        
     }
-
-
+    
+    
     public func log(_ msg: String, level: LogLevel = .info, label: String = "") {
         if settings.logging || msg.hasPrefix("Log") {
             let entry = LogEntry(message: msg, level: level, label: label)
@@ -109,20 +109,20 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
             }
         }
     }
-
-
+    
+    
     public func debugLog(_ msg: String) {
         if settings.userLevel > .basic {
             log(msg, level: .debug)
         }
     }
-
+    
     public func status(_ text: String) {
         Task { @MainActor in
             app.status = text
         }
     }
-
+    
     public func errorStatus(_ text: String) {
         if !app.status.contains(text) {
             Task { @MainActor in
@@ -130,13 +130,13 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
             }
         }
     }
-
-
+    
+    
     public func handle(_ backgroundTasks: Set<WKRefreshBackgroundTask>) {
         log("TODO: handling background tasks")
     }
-
-
+    
+    
     public func rescan() {
         if let device = app.device {
             centralManager.cancelPeripheralConnection(device.peripheral!)
@@ -169,8 +169,8 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
         healthKit?.read()
         nightscout?.read()
     }
-
-
+    
+    
     public func playAlarm() {
         let currentGlucose = app.currentGlucose
         if !settings.mutedAudio {
@@ -202,19 +202,19 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
             }
         }
     }
-
-
+    
+    
     func parseSensorData(_ sensor: Sensor) {
-
+        
         sensor.detailFRAM()
-
+        
         if sensor.history.count > 0 || sensor.trend.count > 0 {
-
+            
             let calibrationInfo = sensor.calibrationInfo
             if sensor.serial == settings.activeSensorSerial {
                 settings.activeSensorCalibrationInfo = calibrationInfo
             }
-
+            
             history.rawTrend = sensor.trend
             log("Raw trend: \(sensor.trend.map(\.rawValue))")
             debugLog("Raw trend temperatures: \(sensor.trend.map(\.rawTemperature))")
@@ -229,7 +229,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
             history.factoryValues = factoryHistory
             log("Factory history: \(factoryHistory.map(\.value))")
             log("Historic temperatures: \(factoryHistory.map { Double(String(format: "%.1f", $0.temperature))! })")
-
+            
             // TODO
             debugLog("Trend has errors: \(sensor.trend.map(\.hasError))")
             debugLog("Trend data quality: [\n\(sensor.trend.map(\.dataQuality.description).joined(separator: ",\n"))\n]")
@@ -238,47 +238,47 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
             debugLog("History data quality: [\n\(sensor.history.map(\.dataQuality.description).joined(separator: ",\n"))\n]")
             debugLog("History quality flags: [\(sensor.history.map { "0" + String($0.dataQualityFlags,radix: 2).suffix(2) }.joined(separator: ", "))]")
         }
-
+        
         debugLog("Sensor uid: \(sensor.uid.hex), saved uid: \(settings.patchUid.hex), patch info: \(sensor.patchInfo.hex.count > 0 ? sensor.patchInfo.hex : "<nil>"), saved patch info: \(settings.patchInfo.hex)")
-
+        
         if sensor.uid.count > 0 && sensor.patchInfo.count > 0 {
             settings.patchUid = sensor.uid
             settings.patchInfo = sensor.patchInfo
         }
-
+        
         if sensor.uid.count == 0 || settings.patchUid.count > 0 {
             if sensor.uid.count == 0 {
                 sensor.uid = settings.patchUid
             }
-
+            
             if sensor.uid == settings.patchUid {
                 sensor.patchInfo = settings.patchInfo
             }
         }
-
+        
         Task {
-
+            
             didParseSensor(sensor)
-
+            
         }
-
+        
     }
-
-
+    
+    
     func didParseSensor(_ sensor: Sensor?) {
-
+        
         guard let sensor else {
             extendedSession.start(at: max(app.lastReadingDate, app.lastConnectionDate) + Double(settings.readingInterval * 60) - 5.0)
             log("Watch: extended session to be started in \(Double(settings.readingInterval * 60) - 5.0) seconds")
             return
         }
-
+        
         if history.factoryTrend.count > 0 {
             app.currentGlucose = history.factoryTrend[0].value
         }
-
+        
         let currentGlucose = app.currentGlucose
-
+        
         // TODO: delete mirrored implementation from Abbott Device
         // TODO: compute accurate delta and update trend arrow
         if history.factoryTrend.count > 6 {
@@ -287,23 +287,23 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
             app.trendDeltaMinutes = deltaMinutes
             app.trendDelta = delta
         }
-
+        
         // var title = currentGlucose > 0 ? currentGlucose.units : "---"
-
+        
         let snoozed = settings.lastAlarmDate.timeIntervalSinceNow >= -Double(settings.alarmSnoozeInterval * 60) && settings.disabledNotifications
-
+        
         if currentGlucose > 0 && (currentGlucose > Int(settings.alarmHigh) || currentGlucose < Int(settings.alarmLow)) {
             log("ALARM: current glucose: \(currentGlucose.units) (settings: high: \(settings.alarmHigh.units), low: \(settings.alarmLow.units), muted audio: \(settings.mutedAudio ? "yes" : "no")), \(snoozed ? "" : "not ")snoozed")
-
+            
             if !snoozed {
                 playAlarm()
             }
         }
-
+        
         if !snoozed {
             settings.lastAlarmDate = Date.now
         }
-
+        
         if history.values.count > 0 || history.factoryValues.count > 0 || currentGlucose > 0 {
             var entries = [Glucose]()
             if history.values.count > 0 {
@@ -313,14 +313,14 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
             }
             entries += history.factoryTrend.dropFirst() + [Glucose(currentGlucose, date: sensor.lastReadingDate)]
             entries = entries.filter { $0.value > 0 && $0.id > -1 }
-
+            
             // TODO
             let newEntries = (entries.filter { $0.date > healthKit?.lastDate ?? Calendar.current.date(byAdding: .hour, value: -8, to: Date())! })
             if newEntries.count > 0 {
                 healthKit?.write(newEntries)
                 healthKit?.read()
             }
-
+            
             nightscout?.read { [self] values in
                 let newEntries = values.count > 0 ? entries.filter { $0.date > values[0].date } : entries
                 if newEntries.count > 0 {
@@ -331,21 +331,21 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
                 }
             }
         }
-
+        
         // TODO:
         extendedSession.start(at: max(app.lastReadingDate, app.lastConnectionDate) + Double(settings.readingInterval * 60) - 5.0)
         log("Watch: extended session to be started in \(Double(settings.readingInterval * 60) - 5.0) seconds")
     }
-
-
+    
+    
     public func extendedRuntimeSessionDidStart(_ extendedRuntimeSession: WKExtendedRuntimeSession) {
         debugLog("Watch: extended session did start")
     }
-
+    
     public func extendedRuntimeSessionWillExpire(_ extendedRuntimeSession: WKExtendedRuntimeSession) {
         debugLog("Watch: extended session will expire")
     }
-
+    
     public func extendedRuntimeSession(_ extendedRuntimeSession: WKExtendedRuntimeSession, didInvalidateWith reason: WKExtendedRuntimeSessionInvalidationReason, error: Error?) {
         let errorDescription = error != nil ? error!.localizedDescription : "undefined"
         debugLog("Watch: extended session did invalidate: reason: \(reason), error: \(errorDescription)")

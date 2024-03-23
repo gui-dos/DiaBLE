@@ -3,15 +3,15 @@ import CoreBluetooth
 
 
 enum DeviceType: CaseIterable, Hashable, Identifiable {
-
+    
     case none
     case transmitter(TransmitterType)
     case watch(WatchType)
-
+    
     static var allCases: [DeviceType] {
         return TransmitterType.allCases.map { .transmitter($0) } // + WatchType.allCases.map{ .watch($0) }
     }
-
+    
     var id: String {
         switch self {
         case .none:                  "none"
@@ -19,7 +19,7 @@ enum DeviceType: CaseIterable, Hashable, Identifiable {
         case .watch(let type):       type.id
         }
     }
-
+    
     var type: AnyClass {
         switch self {
         case .none:                  Device.self
@@ -31,31 +31,31 @@ enum DeviceType: CaseIterable, Hashable, Identifiable {
 
 
 @Observable class Device: Logging {
-
+    
     class var type: DeviceType { DeviceType.none }
     class var name: String { "Unknown" }
-
+    
     class var knownUUIDs: [String] { [] }
     class var dataServiceUUID: String { "" }
     class var dataReadCharacteristicUUID: String { "" }
     class var dataWriteCharacteristicUUID: String { "" }
-
+    
     var type: DeviceType = DeviceType.none
     var name: String = "Unknown"
-
-
+    
+    
     var main: MainDelegate!
-
+    
     var peripheral: CBPeripheral?
     var characteristics = [String: CBCharacteristic]()
-
+    
     /// Updated when notified by the Bluetooth manager
     var state: CBPeripheralState = .disconnected
     var lastConnectionDate: Date = Date.distantPast
-
+    
     var readCharacteristic: CBCharacteristic?
     var writeCharacteristic: CBCharacteristic?
-
+    
     var battery: Int = -1
     var rssi: Int = 0
     var company: String = ""
@@ -66,27 +66,27 @@ enum DeviceType: CaseIterable, Hashable, Identifiable {
     var software: String = ""
     var manufacturer: String = ""
     var macAddress: Data = Data()
-
+    
     var buffer = Data()
-
+    
     init(peripheral: CBPeripheral, main: MainDelegate) {
         self.type = Self.type
         self.name = Self.name
         self.peripheral = peripheral
         self.main = main
     }
-
+    
     init() {
         self.type = Self.type
         self.name = Self.name
     }
-
+    
     // For log while testing
     convenience init(main: MainDelegate) {
         self.init()
         self.main = main
     }
-
+    
     func write(_ data: Data, for uuid: String = "", _ writeType: CBCharacteristicWriteType = .withoutResponse) {
         if uuid.isEmpty {
             if writeCharacteristic != nil {
@@ -98,10 +98,10 @@ enum DeviceType: CaseIterable, Hashable, Identifiable {
             peripheral?.writeValue(data, for: characteristics[uuid]!, type: writeType)
         }
     }
-
+    
     func read(_ data: Data, for uuid: String) {
     }
-
+    
     func readValue(for uuid: String = "") {
         if let characteristic = characteristics[uuid] ?? readCharacteristic {
             peripheral?.readValue(for: characteristic)
@@ -110,14 +110,14 @@ enum DeviceType: CaseIterable, Hashable, Identifiable {
             debugLog("\(name): cannot read value for unknown characteristic \(uuid)")
         }
     }
-
+    
     /// varying reading interval
     func readCommand(interval: Int = 5) -> Data { Data() }
-
+    
     func parseManufacturerData(_ data: Data) {
         log("Bluetooth: \(name)'s advertised manufacturer data: \(data.hex)" )
     }
-
+    
 }
 
 

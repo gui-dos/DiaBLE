@@ -8,7 +8,7 @@ import WebKit
 enum NightscoutError: LocalizedError {
     case noConnection
     case jsonDecoding
-
+    
     var errorDescription: String? {
         switch self {
         case .noConnection: "no connection"
@@ -19,31 +19,31 @@ enum NightscoutError: LocalizedError {
 
 
 class Nightscout: NSObject, Logging {
-
+    
     var main: MainDelegate!
-
+    
 #if !os(watchOS)
     var webView: WKWebView?
 #endif
-
-
+    
+    
     init(main: MainDelegate) {
         self.main = main
     }
-
-
+    
+    
     // https://github.com/ps2/rileylink_ios/blob/master/NightscoutUploadKit/NightscoutUploader.swift
     // https://github.com/JohanDegraeve/xdripswift/blob/master/xdrip/Managers/NightScout/NightScoutUploadManager.swift
-
-
+    
+    
     // TODO: use URLQueryItems paramaters
     func request(_ endpoint: String = "", _ query: String = "", handler: @escaping (Data?, URLResponse?, Error?, [Any]) -> Void) {
         var url = "https://\(settings.nightscoutSite)"
-
+        
         if !endpoint.isEmpty { url += ("/" + endpoint) }
         if !query.isEmpty    { url += ("?" + query) }
         if !settings.nightscoutToken.isEmpty { url += "&token=" + settings.nightscoutToken }
-
+        
         var request = URLRequest(url: URL(string: url)!)
         debugLog("Nightscout: URL request: \(request.url!.absoluteString)")
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
@@ -65,15 +65,15 @@ class Nightscout: NSObject, Logging {
             }
         }.resume()
     }
-
-
+    
+    
     func request(_ endpoint: String = "", _ query: String = "") async throws -> (Any, URLResponse) {
         var url = "https://\(settings.nightscoutSite)"
-
+        
         if !endpoint.isEmpty { url += ("/" + endpoint) }
         if !query.isEmpty    { url += ("?" + query) }
         if !settings.nightscoutToken.isEmpty { url += "&token=" + settings.nightscoutToken }
-
+        
         var request = URLRequest(url: URL(string: url)!)
         debugLog("Nightscout: URL request: \(request.url!.absoluteString)")
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
@@ -95,8 +95,8 @@ class Nightscout: NSObject, Logging {
         }
         return (["": ""], URLResponse())
     }
-
-
+    
+    
     func read(handler: (([Glucose]) -> Void)? = nil) {
         guard settings.onlineInterval > 0 else { return }
         request("api/v1/entries.json", "count=100") { data, response, error, array in
@@ -115,7 +115,7 @@ class Nightscout: NSObject, Logging {
             }
         }
     }
-
+    
     func read() async throws -> ([Glucose], URLResponse) {
         guard settings.onlineInterval > 0 else { return ([Glucose](), URLResponse()) }
         let (data, response) = try await request("api/v1/entries.json", "count=100")
@@ -135,8 +135,8 @@ class Nightscout: NSObject, Logging {
         }
         return (values, response)
     }
-
-
+    
+    
     func post(_ endpoint: String = "", _ jsonObject: Any, handler: (((Data?, URLResponse?, Error?) -> Void))? = nil) {
         let json = try! JSONSerialization.data(withJSONObject: jsonObject, options: [])
         var request = URLRequest(url: URL(string: "https://\(settings.nightscoutSite)/\(endpoint)")!)
@@ -162,8 +162,8 @@ class Nightscout: NSObject, Logging {
             }
         }.resume()
     }
-
-
+    
+    
     func post(_ endpoint: String, _ jsonObject: Any) async throws -> (Any, URLResponse) {
         let url = "https://" + settings.nightscoutSite
         let token = settings.nightscoutToken.sha1
@@ -201,8 +201,8 @@ class Nightscout: NSObject, Logging {
         }
         return (["": ""], URLResponse())
     }
-
-
+    
+    
     func post(entries: [Glucose], handler: (((Data?, URLResponse?, Error?) -> Void))? = nil) {
         guard settings.onlineInterval > 0 else { return }
         let dictionaryArray = entries.map { [
@@ -219,8 +219,8 @@ class Nightscout: NSObject, Logging {
             }
         }
     }
-
-
+    
+    
     func post(entries: [Glucose]) async throws {
         guard settings.onlineInterval > 0 else { return }
         let dictionaryArray = entries.map { [
@@ -234,14 +234,14 @@ class Nightscout: NSObject, Logging {
         let (json, response) = try await post("api/v1/entries", dictionaryArray)
         debugLog("Nightscout: received JSON: \(json), HTTP response: \(response)")
     }
-
-
+    
+    
     func delete(_ endpoint: String = "api/v1/entries", _ query: String = "", handler: (((Data?, URLResponse?, Error?) -> Void))? = nil) {
         var url = "https://\(settings.nightscoutSite)"
-
+        
         if !endpoint.isEmpty { url += ("/" + endpoint) }
         if !query.isEmpty    { url += ("?" + query) }
-
+        
         var request = URLRequest(url: URL(string: url)!)
         debugLog("Nightscout: DELETE request: \(request.url!.absoluteString)")
         request.httpMethod = "DELETE"
@@ -266,8 +266,8 @@ class Nightscout: NSObject, Logging {
             }
         }.resume()
     }
-
-
+    
+    
     // TODO:
     func test(handler: (((Data?, URLResponse?, Error?) -> Void))? = nil) {
         var request = URLRequest(url: URL(string: "https://\(settings.nightscoutSite)/api/v1/entries.json?token=\(settings.nightscoutToken)")!)
@@ -292,32 +292,32 @@ class Nightscout: NSObject, Logging {
             }
         }.resume()
     }
-
+    
 }
 
 
 #if !os(watchOS)
 
 extension Nightscout: WKNavigationDelegate, WKUIDelegate {
-
+    
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         debugLog("Nightscout: decide policy for action: \(navigationAction)")
         decisionHandler(.allow)
         debugLog("Nightscout: allowed action: \(navigationAction)")
-
+        
     }
-
+    
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         debugLog("Nightscout: decide policy for response: \(navigationResponse)")
         decisionHandler(.allow)
         debugLog("Nightscout: allowed response: \(navigationResponse)")
-
+        
     }
-
+    
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         log("Nightscout: webView did fail: \(error.localizedDescription)")
     }
-
+    
     func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
         log("Nightscout: create veb view for action: \(navigationAction)")
         //        if navigationAction.targetFrame == nil {
@@ -325,7 +325,7 @@ extension Nightscout: WKNavigationDelegate, WKUIDelegate {
         //        }
         return nil
     }
-
+    
     func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
         log("Nightscout: JavaScript alert panel message: \(message)")
         app.JavaScriptConfirmAlertMessage = message
@@ -333,7 +333,7 @@ extension Nightscout: WKNavigationDelegate, WKUIDelegate {
         // TODO: block web page updates
         completionHandler()
     }
-
+    
     func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
         log("Nightscout: TODO: JavaScript confirm panel message: \(message)")
         app.JavaScriptConfirmAlertMessage = message

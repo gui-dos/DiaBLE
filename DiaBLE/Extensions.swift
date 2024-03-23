@@ -8,7 +8,7 @@ extension Data {
     var hexBytes: String { String(self.reduce("", { $0 + $1.hex + " " }).dropLast(1)) }
     var hexAddress: String { String(self.reduce("", { $0 + $1.hex + ":" }).dropLast(1)) }
     var sha1: String { Insecure.SHA1.hash(data: self).makeIterator().reduce("", { $0 + String(format: "%02x", $1) }) }
-
+    
     func hexDump(header: String = "", address: Int = -1, startBlock: Int = -1, escaping: Bool = false) -> String {
         var offset = startIndex
         var offsetEnd = offset
@@ -29,9 +29,9 @@ extension Data {
         }
         return str
     }
-
+    
     func dump() { try! self.write(to: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("dump.bin")) }
-
+    
     var crc16: UInt16 {
         var crc: UInt16 = 0xffff
         for byte in self {
@@ -41,7 +41,7 @@ extension Data {
         }
         return crc
     }
-
+    
 }
 
 
@@ -55,17 +55,17 @@ extension UInt16 {
     init(_ high: UInt8, _ low: UInt8) {
         self = UInt16(low) + UInt16(high) << 8
     }
-
+    
     /// init from bytes[low...high]
     init(_ bytes: [UInt8]) {
         self = UInt16(bytes[bytes.startIndex]) + UInt16(bytes[bytes.startIndex + 1]) << 8
     }
-
+    
     /// init from data[low...high]
     init(_ data: Data) {
         self = UInt16(data[data.startIndex]) + UInt16(data[data.startIndex + 1]) << 8
     }
-
+    
     var hex: String { String(format: "%04x", self) }
     var data: Data { Data([UInt8(self & 0xFF), UInt8(self >> 8)]) }
 }
@@ -91,7 +91,7 @@ extension String {
     var base64: String? { self.data(using: .utf8)?.base64EncodedString() }
     var base64Data: Data? { Data(base64Encoded: self) }
     var sha1: String { self.data(using: .ascii)!.sha1 }
-
+    
     /// Converts also spaced strings and hexDump() output
     var bytes: Data {
         var bytes = [UInt8]()
@@ -112,7 +112,7 @@ extension String {
         }
         return Data(bytes)
     }
-
+    
     func matches(_ pattern: String) -> Bool {
         self.split(separator: " ").contains { substring in
             pattern.split(separator: " ").contains { substring.lowercased().contains($0.lowercased()) }
@@ -134,7 +134,7 @@ extension Double {
         formatter.unitsStyle = .abbreviated
         return formatter.string(from: TimeInterval(self))!
     }
-
+    
 }
 
 

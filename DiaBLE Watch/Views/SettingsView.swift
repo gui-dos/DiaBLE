@@ -5,18 +5,18 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(AppState.self) var app: AppState
     @Environment(Settings.self) var settings: Settings
-
+    
     @State private var showingCalendarPicker = false
-
-
+    
+    
     var body: some View {
-
+        
         @Bindable var settings = settings
-
+        
         VStack(spacing: 8) {
-
+            
             HStack {
-
+                
                 Button {
                     settings.stoppedBluetooth.toggle()
                     if settings.stoppedBluetooth {
@@ -32,7 +32,7 @@ struct SettingsView: View {
                         .overlay(settings.stoppedBluetooth ? Image(systemName: "line.diagonal").resizable().frame(width: 18, height: 18).rotationEffect(.degrees(90)) : nil).foregroundColor(.red)
                 }
                 .padding(.horizontal, -8)
-
+                
                 Picker(selection: $settings.preferredTransmitter, label: Text("Preferred")) {
                     ForEach(TransmitterType.allCases) { t in
                         Text(t.name).tag(t)
@@ -41,18 +41,18 @@ struct SettingsView: View {
                 .frame(height: 20)
                 .labelsHidden()
                 .disabled(settings.stoppedBluetooth)
-
+                
                 TextField("device name pattern", text: $settings.preferredDevicePattern)
                     .frame(height: 20)
                     .disabled(settings.stoppedBluetooth)
-
+                
             }
             .font(.footnote)
             .foregroundColor(.blue)
             .padding(.top, 16)
-
+            
             HStack  {
-
+                
                 HStack {
                     NavigationLink(destination: Monitor()) {
                         Image(systemName: "timer").resizable().frame(width: 20, height: 20)
@@ -61,7 +61,7 @@ struct SettingsView: View {
                         // settings.selectedTab = (settings.preferredTransmitter != .none) ? .monitor : .log
                         app.main.rescan()
                     })
-
+                    
                     Picker(selection: $settings.readingInterval, label: Text("")) {
                         ForEach(Array(stride(from: 1,
                                              through: settings.preferredTransmitter == .abbott || (settings.preferredTransmitter == .none && app.transmitter != nil && app.transmitter.type == .transmitter(.abbott)) ? 1 :
@@ -69,7 +69,7 @@ struct SettingsView: View {
                                              :
                                                 15,
                                              by: 1)),
-
+                                
                                 id: \.self) { t in
                             Text("\(t) min")
                         }
@@ -79,16 +79,16 @@ struct SettingsView: View {
                 }
                 .font(.footnote)
                 .foregroundColor(.orange)
-
+                
                 Spacer()
-
+                
                 Button {
                     settings.onlineInterval = settings.onlineInterval != 0 ? 0 : 5
                 } label: {
                     Image(systemName: settings.onlineInterval != 0 ? "network" : "wifi.slash").resizable().frame(width: 20, height: 20)
                         .foregroundColor(.cyan)
                 }
-
+                
                 Picker(selection: $settings.onlineInterval, label: Text("")) {
                     ForEach([0, 1, 2, 3, 4, 5, 10, 15, 20, 30, 45, 60],
                             id: \.self) { t in
@@ -99,9 +99,9 @@ struct SettingsView: View {
                 .foregroundColor(.cyan)
                 .labelsHidden()
                 .frame(width: 62, height: 20)
-
+                
             }
-
+            
             VStack {
                 VStack(spacing: 0) {
                     HStack(spacing: 20) {
@@ -122,7 +122,7 @@ struct SettingsView: View {
                     }
                 }
                 .tint(.green)
-
+                
                 VStack(spacing: 0) {
                     HStack(spacing: 20) {
                         Image(systemName: "bell.fill")
@@ -138,9 +138,9 @@ struct SettingsView: View {
                 }
                 .tint(.red)
             }
-
+            
             HStack {
-
+                
                 Picker(selection: $settings.displayingMillimoles, label: Text("Unit")) {
                     ForEach(GlucoseUnit.allCases) { unit in
                         Text(unit.description).tag(unit == .mmoll)
@@ -149,18 +149,18 @@ struct SettingsView: View {
                 .font(.footnote)
                 .labelsHidden()
                 .frame(width: 68, height: 20)
-
+                
                 Spacer()
-
+                
                 Button {
                     settings.mutedAudio.toggle()
                 } label: {
                     Image(systemName: settings.mutedAudio ? "speaker.slash.fill" : "speaker.2.fill").resizable().frame(width: 20, height: 20)
                         .foregroundColor(.blue)
                 }
-
+                
                 Spacer()
-
+                
                 HStack(spacing: 6) {
                     Button(action: {
                         withAnimation { settings.disabledNotifications.toggle() }
@@ -186,11 +186,11 @@ struct SettingsView: View {
                         .foregroundColor(.blue)
                     }
                 }
-
+                
                 Spacer()
-
+                
             }
-
+            
         }
         .padding(.top, -4)
         .edgesIgnoringSafeArea([.bottom])

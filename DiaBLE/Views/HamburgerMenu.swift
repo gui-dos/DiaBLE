@@ -2,21 +2,21 @@ import SwiftUI
 
 
 struct HamburgerMenu: View {
-
+    
     @Environment(\.colorScheme) var colorScheme
-
+    
     @Binding var showingHamburgerMenu: Bool
-
+    
     @State private var showingHelp = false
     @State private var showingAbout = false
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-
+            
             HStack {
                 Spacer()
             }
-
+            
             Button {
                 withAnimation { showingHelp = true }
             } label: {
@@ -44,7 +44,7 @@ struct HamburgerMenu: View {
                             withAnimation { showingHelp = false }
                         } label: {
                             Text("Close")
-
+                            
                         }
                     }
                     .onAppear {
@@ -56,7 +56,7 @@ struct HamburgerMenu: View {
                     }
                 }
             }
-
+            
             Button {
                 withAnimation { showingAbout = true }
             } label: {
@@ -67,9 +67,9 @@ struct HamburgerMenu: View {
                 NavigationView {
                     VStack(spacing: 40) {
                         VStack {
-
+                            
                             Text("DiaBLE  \(Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String)  (\(Bundle.main.infoDictionary!["CFBundleVersion"] as! String))")
-
+                            
                             // TODO: get AppIcon 1024x1024
                             // Image("AppIcon").resizable().frame(width: 100, height: 100)
                             // FIXME: crashes in TestFlight (not in Release scheme)
@@ -79,18 +79,18 @@ struct HamburgerMenu: View {
                             Link("https://github.com/gui-dos/DiaBLE",
                                  destination: URL(string: "https://github.com/gui-dos/DiaBLE")!)
                         }
-
+                        
                         VStack {
                             Image(systemName: colorScheme == .dark ? "envelope.fill" : "envelope")
                             Link(Data(base64Encoded: "Z3VpZG8uc29yYW56aW9AZ21haWwuY29t")!.string,
                                  destination: URL(string: "mailto:\(Data(base64Encoded: "Z3VpZG8uc29yYW56aW9AZ21haWwuY29t")!.string)")!)
                         }
-
+                        
                         VStack {
                             Image(systemName: "giftcard")
                             Link("PayPal", destination: URL(string: Data(base64Encoded: "aHR0cHM6Ly9wYXlwYWwubWUvZ3Vpc29y")!.string)!)
                         }
-
+                        
                     }
                     .navigationBarTitleDisplayMode(.inline)
                     .navigationTitle("About")
@@ -100,7 +100,7 @@ struct HamburgerMenu: View {
                             withAnimation { showingAbout = false }
                         } label: {
                             Text("Close")
-
+                            
                         }
                     }
                 }
@@ -112,17 +112,17 @@ struct HamburgerMenu: View {
                     withAnimation { showingAbout = false }
                 }
             }
-
+            
             Spacer()
-
+            
         }
         .background(Color(.secondarySystemBackground))
-
+        
         // TODO: swipe gesture
         .onLongPressGesture(minimumDuration: 0) {
             withAnimation(.easeOut(duration: 0.15)) { showingHamburgerMenu = false }
         }
-
+        
     }
 }
 

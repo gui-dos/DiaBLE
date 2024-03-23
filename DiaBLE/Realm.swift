@@ -11,7 +11,7 @@ class AlarmConfigEntity: Object {
     @objc dynamic var _tolerance: Double = 0
     @objc dynamic var _f_high: Double = 0
     @objc dynamic var _overrideDND: Bool = false
-
+    
     override static func primaryKey() -> String? {
         return "_alarmType"
     }
@@ -23,13 +23,13 @@ class AppConfigEntity: Object {
     @objc dynamic var _configType: Int = 0
     @objc dynamic var _configValue: String = ""
     @objc dynamic var _source: Int = 0                // ConfigSource 1: build, 2: runtime
-
+    
     override static func primaryKey() -> String? {
         return "_configName"
     }
-
+    
     // TODO
-
+    
     /// [_configName]
     static let keys = [
         ["_libreviewAccountIdKey_"],
@@ -150,7 +150,7 @@ class AppConfigEntity: Object {
         ["userMaxGlucoseRange"],
         ["userMinGlucoseRange"]
     ]
-
+    
 }
 
 class AppEventEntity: Object {
@@ -163,11 +163,11 @@ class AppEventEntity: Object {
     @objc dynamic var _eventParams: String = ""
     @objc dynamic var _eventData: String = ""
     @objc dynamic var _display: Bool = false
-
+    
     override static func primaryKey() -> String? {
         return "_id"
     }
-
+    
     override static func indexedProperties() -> [String] {
         return ["_eventType", "_eventErrorCode", "_timestampUTC", "_timeZone"]
     }
@@ -208,11 +208,11 @@ class GlucoseReadingEntity: Object {
     @objc dynamic var _userResultRange: Int = 0
     let _stateMap = List<Int>()
     @objc dynamic var _isHistoric: Bool = false
-
+    
     override static func primaryKey() -> String? {
         return "_compositeKey"
     }
-
+    
     override static func indexedProperties() -> [String] {
         return ["_id", "_lifeCount", "_timestampUTC", "_timestampLocal"]
     }
@@ -224,7 +224,7 @@ class NoteElementEntity: Object {
     @objc dynamic var _subType: Int = 0
     @objc dynamic var _value: Double = 0
     @objc dynamic var _servingSize: Double = 0
-
+    
     override static func primaryKey() -> String? {
         return "_id"
     }
@@ -239,7 +239,7 @@ class NotesEntity: Object {
     @objc dynamic var _glucoseReading: GlucoseReadingEntity?
     let _noteElements = List<NoteElementEntity>()
     @objc dynamic var _isDeleted: Bool = false
-
+    
     override static func primaryKey() -> String? {
         return "_id"
     }
@@ -256,7 +256,7 @@ class ReminderEntity: Object {
     @objc dynamic var _intervalType: Int = 0
     @objc dynamic var _createdTime: Int = 0
     @objc dynamic var _timeZone: String = ""
-
+    
     override static func primaryKey() -> String? {
         return "_id"
     }
@@ -283,7 +283,7 @@ class SensorEntity: Object {
     @objc dynamic var _factoryData: String = ""      // 148 bytes hex (final CRC)
     @objc dynamic var _securityVersion: Int = 0
     @objc dynamic var _lastEvent: Int = 0
-
+    
     override static func primaryKey() -> String? {
         return "_id"
     }
@@ -296,7 +296,7 @@ class SensorEventEntity: Object {
     @objc dynamic var _timestampUTC: Int = 0
     @objc dynamic var _eventCode: Int = 0           // SensorEventType
     @objc dynamic var _eventValue: Double = 0       // same SensorEventType
-
+    
     override static func primaryKey() -> String? {
         return "_id"
     }
@@ -320,7 +320,7 @@ class UploadQueueRecordEntity: Object {
     @objc dynamic var _id: Int = 0
     @objc dynamic var _recordNumber: Int = 0
     @objc dynamic var _recordType: String = ""
-
+    
     override static func primaryKey() -> String? {
         return "_id"
     }
@@ -330,7 +330,7 @@ class UploadQueueRecordEntity: Object {
 // TODO: verify raw values
 
 extension Libre3 {
-
+    
     enum UserAccountType {
         case accountUser
         case accountLess
@@ -338,12 +338,12 @@ extension Libre3 {
         case accountSwitched
         case accountNotDefined
     }
-
+    
     enum ConfigSource: Int {
         case build    = 1
         case runtime  = 2
     }
-
+    
     enum LifeState: Int {
         case missing         = 1
         case warmup          = 2
@@ -353,7 +353,7 @@ extension Libre3 {
         case ended           = 6
         case insertionFailed = 7
     }
-
+    
     enum AppEventType: Int {
         case none                = 0
         case bleConnect          = 1
@@ -374,7 +374,7 @@ extension Libre3 {
         //   AppException(13),
         //   AlarmStateChanged(14);
     }
-
+    
     enum EventType: Int {
         case sensorException      = 0
         case newYuUploadFailure   = 1
@@ -382,7 +382,7 @@ extension Libre3 {
         case AppException         = 3
         //   SensorScanUdoLogError(4);
     }
-
+    
     enum SensorEventType: Int {
         case none         = 0
         case activated    = 1
@@ -401,9 +401,9 @@ extension Libre3 {
         //   EXPIRED(6),
         //   TERMINATED(7),
         //   ERROR(8);
-
+        
     }
-
+    
     // same as App's GlycemicAlarm
     enum GlycemicAlarmStatus: Int {
         case alarmNotDetermined   = 0
@@ -413,14 +413,14 @@ extension Libre3 {
         case projectedHighGlucose = 4
         case highGlucose          = 5
     }
-
+    
     enum AlarmFlag {
         case lowAlarm
         case highAlarm
         case urgentLowAlarm
         case signalLossAlarm
     }
-
+    
     struct GlucoseAlarmState {
         var isPresented: Bool
         var isInEpisode: Bool
@@ -428,7 +428,7 @@ extension Libre3 {
         var isCleared: Bool
         var isUserCleared: Bool
     }
-
+    
     struct SignalLossAlarmState {
         var isPresented: Bool
         var isCleared: Bool
@@ -436,22 +436,22 @@ extension Libre3 {
         var isAutoDismissed: Bool
         var isUserDismissed: Bool
     }
-
+    
     struct AlarmStates {
         let lowGlucose: GlucoseAlarmState
         let highGlucose: GlucoseAlarmState
         let fixedLowGlucose: GlucoseAlarmState
         let signalLoss: SignalLossAlarmState
     }
-
+    
     struct AlarmStateDictionary {
         let episodeFlag: Int
         var states: AlarmStates
     }
-
+    
     // TODO: lowGucoseAlarm, highGlucoseAlarm, fixedLowAlarm, signalLossAlarm JSON decoding when eventType = 4
-
-
+    
+    
     static let RealmEntityNames = [
         "AlarmConfigEntity",
         "AppConfigEntity",
@@ -465,8 +465,8 @@ extension Libre3 {
         "SequenceEntity",
         "UploadQueueRecordEntity"
     ]
-
-
+    
+    
     // class Libre3.AlarmConfigEntity {
     //     var _id: Swift.Int32
     //     var _alarmType: Swift.Int32
@@ -478,8 +478,8 @@ extension Libre3 {
     //     var _f_high: Swift.Double
     //     var _overrideDND: Swift.Bool
     // }
-
-
+    
+    
     // class Libre3.AppConfigEntity {
     //     var _id: Swift.Int32
     //     var _configName: Swift.String
@@ -487,8 +487,8 @@ extension Libre3 {
     //     var _configValue: Swift.String
     //     var _source: Swift.Int32
     // }
-
-
+    
+    
     // class Libre3.AppEventEntity {
     //     var _id: Swift.Int32
     //     var _eventType: Swift.Int32
@@ -500,8 +500,8 @@ extension Libre3 {
     //     var _eventData: Swift.String
     //     var _display: Swift.Bool
     // }
-
-
+    
+    
     // class Libre3.GlucoseReadingEntity {
     //     var _id: Swift.Int32
     //     var _sensor: Libre3.SensorEntity?
@@ -538,8 +538,8 @@ extension Libre3 {
     //     var _stateMap: RealmSwift.List<Swift.Int8>
     //     var _isHistoric: Swift.Bool
     // }
-
-
+    
+    
     // class Libre3.NoteElementEntity {
     //     var _id: Swift.Int32
     //     var _noteType: Libre3.NoteItemType
@@ -547,8 +547,8 @@ extension Libre3 {
     //     var _value: Swift.Double
     //     var _servingSize: Swift.Double
     // }
-
-
+    
+    
     // class Libre3.NotesEntity {
     //     var _id: Swift.Int32
     //     var _timestampUTC: Swift.Int64
@@ -561,8 +561,8 @@ extension Libre3 {
     //     var reading: Libre3.Reading?
     //     let glucoseReading: RealmSwift.LinkingObjects<Libre3.GlucoseReadingEntity>
     // }
-
-
+    
+    
     // class Libre3.ReminderEntity {
     //     var _id: Swift.Int32
     //     var _reminderType: Swift.Int32
@@ -575,8 +575,8 @@ extension Libre3 {
     //     var _createdTime: Swift.Int64
     //     var _timeZone: Swift.String
     // }
-
-
+    
+    
     // class Libre3.SensorEntity {
     //     var _id: Swift.Int32
     //     var _serialNumber: Swift.String
@@ -599,8 +599,8 @@ extension Libre3 {
     //     var _securityVersion: Swift.Int32
     //     var _lastEvent: Swift.Int32
     // }
-
-
+    
+    
     // class Libre3.SensorEventEntity {
     //     var _id: Swift.Int32
     //     var _sensor: Libre3.SensorEntity?
@@ -609,8 +609,8 @@ extension Libre3 {
     //     var _eventCode: Swift.Int32
     //     var _eventValue: Swift.Double
     // }
-
-
+    
+    
     // class Libre3.SequenceEntity {
     //     var _id: Swift.Int32
     //     var _nextSensorId: Swift.Int32
@@ -624,17 +624,17 @@ extension Libre3 {
     //     var _nextReminderId: Swift.Int32
     //     var _nextUploadQueueId: Swift.Int32
     // }
-
-
+    
+    
     // class Libre3.UploadQueueRecordEntity {
     //     var _id: Swift.Int32
     //     var _recordNumber: Swift.Int64
     //     var _recordType: Swift.String
     // }
-
-
+    
+    
     // TODO: parse flatted JSON: https://github.com/WebReflection/flatted
-
+    
     func parseRealmFlattedJson(data: Data) {
         var entityRowsCount: [String: Int] = [:]
         var entityStartIndex: [String: Int] = [:]
@@ -648,10 +648,10 @@ extension Libre3 {
                 entityStartIndex[entity.key] = Int(indexes.first ?? "0")
                 entityRowsCount[entity.key] = rowsCount
                 log("\(entity.key): \(indexes.count) rows, indexes: \(indexes.first ?? "0") - \(indexes.last ?? "0")")
-
+                
                 switch entity.key {
-
-
+                    
+                    
                 case "AppConfigEntity":
                     for i in 0 ..< rowsCount {
                         let entityJson = json[entityStartIndex[entity.key]! + i] as! [String: Any]
@@ -659,8 +659,8 @@ extension Libre3 {
                         let configValue = json[Int(entityJson["_configValue"]! as! String)!] as! String
                         log("Realm: \(entity.key) #\(i+1) of \(rowsCount) JSON: \(entityJson), configName = \(configName), configValue = \(configValue)")
                     }
-
-
+                    
+                    
                 case "GlucoseReadingEntity":
                     var sensorsCount: Int64 = 0
                     for i in 0 ..< rowsCount {
@@ -684,14 +684,14 @@ extension Libre3 {
                         let projectedGlucose = entityJson["_projectedGlucose"]! as! Double
                         let temperature = entityJson["_temperature"]! as! Int
                         let rawData = (json[Int(entityJson["_rawData"]! as! String)!] as! String).trimmingCharacters(in: .whitespaces)
-
+                        
                         let date = Date(timeIntervalSince1970: Double(timestampUTC) / 1000)
                         let trendArrow = TrendArrow(rawValue: trend)!
                         let glycemicAlarm = GlycemicAlarm(rawValue: glycemicAlarmStatus)!
                         log("Realm: \(entity.key) #\(j+1) of \(rowsCount) JSON: \(entityJson), lifeCount: \(lifeCount), currentGlucose: \(currentGlucose), historicGlucose: \(historicGlucose), date: \(date.local), trend arrow: \(trendArrow), rate of change: \(rateOfChange / 100), glycemic alarm: \(glycemicAlarm), projected glucose: \(projectedGlucose / 100), temperature: \(Double(temperature) / 100), raw data: \(rawData), sensor id: \(sensorID)")
                     }
-
-
+                    
+                    
                 case "SensorEntity":
                     for i in 0 ..< rowsCount {
                         let entityJson = json[entityStartIndex[entity.key]! + i] as! [String: Any]
@@ -704,16 +704,16 @@ extension Libre3 {
                         let factoryData = (json[Int(entityJson["_factoryData"]! as! String)!] as! String).trimmingCharacters(in: .whitespaces)
                         log("Realm: \(entity.key) #\(i+1) of \(rowsCount) JSON: \(entityJson), serialNumber: \(serialNumber), sensorUID: \(sensorUID), hwVersion: \(hwVersion), swVersion: \(swVersion), fwVersion: \(fwVersion),  blePIN: \(blePIN), factoryData: \(factoryData)")
                     }
-
-
+                    
+                    
                 default:
                     break
                 }
-
+                
                 index += rowsCount
             }
-
+            
         }
     }
-
+    
 }

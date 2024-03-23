@@ -7,20 +7,20 @@ struct DataView: View {
     @Environment(History.self) var history: History
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
-
+    
     @State private var onlineCountdown: Int = 0
     @State private var readingCountdown: Int = 0
-
+    
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
-
+    
+    
     var body: some View {
         ScrollView {
-
+            
             Text("\((app.lastReadingDate != Date.distantPast ? app.lastReadingDate : Date()).dateTime)")
-
+            
             HStack {
-
+                
                 if app.status.hasPrefix("Scanning") && !(readingCountdown > 0) {
                     Text("Scanning...")
                         .foregroundColor(.orange)
@@ -43,7 +43,7 @@ struct DataView: View {
                             }
                         }
                     }
-
+                    
                     Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
                         .foregroundColor(.cyan)
                         .onReceive(timer) { _ in
@@ -56,12 +56,12 @@ struct DataView: View {
                         }
                 }
             }
-
+            
             if history.factoryTrend.count + history.rawTrend.count > 0 {
                 HStack {
-
+                    
                     VStack {
-
+                        
                         if history.factoryTrend.count > 0 {
                             VStack(spacing: 4) {
                                 Text("Trend").bold()
@@ -74,11 +74,11 @@ struct DataView: View {
                             }
                             .foregroundColor(.orange)
                         }
-
+                        
                     }
-
+                    
                     VStack {
-
+                        
                         if history.rawTrend.count > 0 {
                             VStack(spacing: 4) {
                                 Text("Raw trend").bold()
@@ -91,15 +91,15 @@ struct DataView: View {
                             }
                             .foregroundColor(.yellow)
                         }
-
+                        
                     }
                 }
                 .frame(idealHeight: 300)
             }
-
-
+            
+            
             HStack {
-
+                
                 if history.storedValues.count > 0 {
                     VStack(spacing: 4) {
                         Text("HealthKit").bold()
@@ -114,7 +114,7 @@ struct DataView: View {
                     .foregroundColor(.red)
                     .onAppear { if let healthKit = app.main?.healthKit { healthKit.read() } }
                 }
-
+                
                 if history.nightscoutValues.count > 0 {
                     VStack(spacing: 4) {
                         Text("Nightscout").bold()
@@ -131,11 +131,11 @@ struct DataView: View {
                 }
             }
             .frame(idealHeight: 300)
-
+            
             HStack {
-
+                
                 VStack {
-
+                    
                     if history.values.count > 0 {
                         VStack(spacing: 4) {
                             Text("OOP history").bold()
@@ -148,7 +148,7 @@ struct DataView: View {
                         }
                         .foregroundColor(.blue)
                     }
-
+                    
                     if history.factoryValues.count > 0 {
                         VStack(spacing: 4) {
                             Text("History").bold()
@@ -160,9 +160,9 @@ struct DataView: View {
                         }
                         .foregroundColor(.orange)
                     }
-
+                    
                 }
-
+                
                 if history.rawValues.count > 0 {
                     VStack(spacing: 4) {
                         Text("Raw history").bold()
@@ -177,7 +177,7 @@ struct DataView: View {
                 }
             }
             .frame(idealHeight: 300)
-
+            
         }
         .padding(.top, -4)
         .edgesIgnoringSafeArea([.bottom])

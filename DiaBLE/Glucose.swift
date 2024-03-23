@@ -4,7 +4,7 @@ import Foundation
 enum GlucoseUnit: String, CustomStringConvertible, CaseIterable, Identifiable {
     case mgdl, mmoll
     var id: String { rawValue}
-
+    
     var description: String {
         switch self {
         case .mgdl:  "mg/dL"
@@ -36,13 +36,13 @@ struct CalibrationInfo: Codable, Equatable {
     var i4: Int = 0
     var i5: Int = 0
     var i6: Int = 0
-
+    
     static var empty = CalibrationInfo()
 }
 
 
 struct Glucose: Identifiable, Codable {
-
+    
     // enum iSAS.DataQuality {
     //     case ok
     //     case sd14FifoOverflow
@@ -59,13 +59,13 @@ struct Glucose: Identifiable, Codable {
     //     case tempLow
     //     case invalidData
     // }
-
+    
     struct DataQuality: OptionSet, Codable, CustomStringConvertible {
-
+        
         let rawValue: Int
-
+        
         static let OK = DataQuality([])
-
+        
         // lower 9 of 11 bits in the measurement field 0xe/0xb
         static let SD14_FIFO_OVERFLOW  = DataQuality(rawValue: 0x0001)
         /// delta between two successive of 4 filament measurements (1-2, 2-3, 3-4) > fram[332] (Libre 1: 90)
@@ -81,15 +81,15 @@ struct Glucose: Identifiable, Codable {
         static let SIGNAL_SATURATED    = DataQuality(rawValue: 0x0080)
         /// 4 times averaged raw reading < fram[330] (minimumThreshold: 150)
         static let SENSOR_SIGNAL_LOW   = DataQuality(rawValue: 0x0100)
-
+        
         /// as an error code it actually indicates that one or more errors occurred in the
         /// last measurement cycle and is stored in the measurement bit 0x19/0x1 ("hasError")
         static let THERMISTOR_OUT_OF_RANGE = DataQuality(rawValue: 0x0800)
-
+        
         static let TEMP_HIGH           = DataQuality(rawValue: 0x2000)
         static let TEMP_LOW            = DataQuality(rawValue: 0x4000)
         static let INVALID_DATA        = DataQuality(rawValue: 0x8000)
-
+        
         var description: String {
             var d = [String: Bool]()
             d["OK"]                  = self == .OK
@@ -108,9 +108,9 @@ struct Glucose: Identifiable, Codable {
             d["INVALID_DATA"]        = self.contains(.INVALID_DATA)
             return "0x\(rawValue.hex): \(d.filter{$1}.keys.joined(separator: ", "))"
         }
-
+        
     }
-
+    
     /// id: minutes since sensor start
     let id: Int
     let date: Date
@@ -125,7 +125,7 @@ struct Glucose: Identifiable, Codable {
     var trendRate: Double = 0
     var trendArrow: Int = 0  // TODO: enum
     var source: String = "DiaBLE"
-
+    
     init(rawValue: Int, rawTemperature: Int = 0, temperatureAdjustment: Int = 0, trendRate: Double = 0, trendArrow: Int = 0, id: Int = 0, date: Date = Date(), hasError: Bool = false, dataQuality: DataQuality = .OK, dataQualityFlags: Int = 0) {
         self.id = id
         self.date = date
@@ -139,14 +139,14 @@ struct Glucose: Identifiable, Codable {
         self.dataQuality = dataQuality
         self.dataQualityFlags = dataQualityFlags
     }
-
+    
     init(bytes: [UInt8], id: Int = 0, date: Date = Date()) {
         let rawValue = Int(bytes[0]) + Int(bytes[1] & 0x1F) << 8
         let rawTemperature = Int(bytes[3]) + Int(bytes[4] & 0x3F) << 8
         // TODO: temperatureAdjustment
         self.init(rawValue: rawValue, rawTemperature: rawTemperature, id: id, date: date)
     }
-
+    
     init(_ value: Int, temperature: Double = 0, trendRate: Double = 0, trendArrow: Int = 0, id: Int = 0, date: Date = Date(), dataQuality: Glucose.DataQuality = .OK, source: String = "DiaBLE") {
         self.init(rawValue: value * 10, id: id, date: date, dataQuality: dataQuality)
         self.temperature = temperature
@@ -154,32 +154,32 @@ struct Glucose: Identifiable, Codable {
         self.trendArrow = trendArrow
         self.source = source
     }
-
+    
 }
 
 
 func factoryGlucose(rawGlucose: Glucose, calibrationInfo: CalibrationInfo) -> Glucose {
-
+    
     guard rawGlucose.id >= 0 && rawGlucose.rawValue > 0 && calibrationInfo != .empty else { return rawGlucose }
-
+    
     guard calibrationInfo.i2 != 0 else { return rawGlucose }
-
+    
     let x: Double = 1000 + 71500
     let y: Double = 1000
-
+    
     let ca = 0.0009180023
     let cb = 0.0001964561
     let cc = 0.0000007061775
     let cd = 0.00000005283566
-
+    
     let R = ((Double(rawGlucose.rawTemperature) * x) / Double(rawGlucose.temperatureAdjustment + calibrationInfo.i6)) - y
     let logR = Darwin.log(R)
     let d = pow(logR, 3) * cd + pow(logR, 2) * cc + logR * cb + ca
     let temperature = 1 / d - 273.15
-
-
+    
+    
     // https://github.com/JohanDegraeve/xdripswift/blob/master/xdrip/BluetoothTransmitter/CGM/Libre/Utilities/LibreMeasurement.swift
-
+    
     let t1 = [
         0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5,
         0.75, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.5,
@@ -306,7 +306,7 @@ func factoryGlucose(rawGlucose: Glucose, calibrationInfo: CalibrationInfo) -> Gl
         1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3,
         1, 1.25, 1.5, 1.75, 2, 2.25, 2.5, 2.75, 3
     ]
-
+    
     let t2 = [
         0.037744199999999999, 0.037744199999999999, 0.037744199999999999, 0.037744199999999999, 0.037744199999999999, 0.037744199999999999, 0.037744199999999999, 0.037744199999999999,
         0.038121700000000001, 0.038121700000000001, 0.038121700000000001, 0.038121700000000001, 0.038121700000000001, 0.038121700000000001, 0.038121700000000001, 0.038121700000000001,
@@ -433,18 +433,18 @@ func factoryGlucose(rawGlucose: Glucose, calibrationInfo: CalibrationInfo) -> Gl
         0.1270744, 0.1270744, 0.1270744, 0.1270744, 0.1270744, 0.1270744, 0.1270744, 0.1270744, 0.1270744,
         0.12834519999999999, 0.12834519999999999, 0.12834519999999999, 0.12834519999999999, 0.12834519999999999, 0.12834519999999999, 0.12834519999999999, 0.12834519999999999, 0.12834519999999999
     ]
-
+    
     let g1 = 65 * Double(rawGlucose.rawValue - calibrationInfo.i3) / Double(calibrationInfo.i4 - calibrationInfo.i3)
     let g2 = pow(1.045, 32.5 - temperature)
     let g3 = g1 * g2
-
+    
     let v1 = t1[calibrationInfo.i2 - 1]
     let v2 = t2[calibrationInfo.i2 - 1]
     let value = Int(round((g3 - v1) / v2))
-
+    
     var glucose = rawGlucose
     glucose.value = value
     glucose.temperature = temperature
-
+    
     return glucose
 }

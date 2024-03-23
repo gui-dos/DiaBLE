@@ -3,14 +3,14 @@ import CoreBluetooth
 
 
 class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate, Logging {
-
+    
     var main: MainDelegate!
     var centralManager: CBCentralManager { main.centralManager }
-
+    
     /// [uuid: (name, peripheral, isConnectable, isIgnored)]
     @Published var knownDevices: [String: (name: String, peripheral: CBPeripheral, isConnectable: Bool, isIgnored: Bool)] = [:]
-
-
+    
+    
     public func centralManagerDidUpdateState(_ manager: CBCentralManager) {
         switch manager.state {
         case .poweredOff:
@@ -41,7 +41,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                         centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
                     } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]).first {
                         log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
-                          centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
+                        centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
                     } else {
                         log("Bluetooth: scanning for a Libre/Dexcom...")
                         main.status("Scanning for a Libre/Dexcom...")
@@ -57,8 +57,8 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             log("Bluetooth: state: unknown")
         }
     }
-
-
+    
+    
     public func centralManager(_ manager: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData advertisement: [String: Any], rssi: NSNumber) {
         peripheral.delegate = self
         var name = peripheral.name
@@ -68,11 +68,11 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         if name == nil && advertisedLocalName != nil {
             name = advertisedLocalName
         }
-
+        
         if let dataServiceUUIDs, dataServiceUUIDs.count > 0, dataServiceUUIDs[0].uuidString == Libre3.UUID.data.rawValue {
             name = "ABBOTT\(name ?? "unnamedLibre")"    // Libre 3 device name is 12 chars long (hexadecimal MAC address)
         }
-
+        
         if let dataServiceUUIDs = dataServiceUUIDs, dataServiceUUIDs.count > 0, dataServiceUUIDs[0].uuidString == Dexcom.UUID.advertisement.rawValue {
             // Dexcom G7 device name starts with "DXCM" instead of "Dexcom" (both end in the last two chars of the serial number)
             if name!.hasPrefix("DXCM") {
@@ -83,9 +83,9 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 name = "DEXCOMONE+\(name!.suffix(2))"
             }
         }
-
+        
         var didFindATransmitter = false
-
+        
         if let name {
             for transmitterType in TransmitterType.allCases {
                 if name.matches(transmitterType.id) {
@@ -96,20 +96,20 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 }
             }
         }
-
+        
         var companyId = BLE.companies.count - 1 // "< Unknown >"
         if let manufacturerData {
             companyId = Int(manufacturerData[0]) + Int(manufacturerData[1]) << 8
             if companyId >= BLE.companies.count { companyId = BLE.companies.count - 1 }    // when 0xFFFF
         }
-
+        
         if name == nil {
             name = "an unnamed peripheral"
             if BLE.companies[companyId].name != "< Unknown >" {
                 name = "\(BLE.companies[companyId].name)'s unnamed peripheral"
             }
         }
-
+        
         let identifier = peripheral.identifier
         let deviceIsConnectable = advertisement[CBAdvertisementDataIsConnectable] as? Int ?? 1 != 0
         var deviceIsIgnored = false
@@ -125,7 +125,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             deviceIsIgnored = knownDevices[identifier.uuidString]!.isIgnored
         }
         debugLog("\(msg)")
-
+        
         if !deviceIsConnectable
             || deviceIsIgnored
             || (didFindATransmitter && !settings.preferredDevicePattern.isEmpty && !name!.matches(settings.preferredDevicePattern))
@@ -152,7 +152,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             log(msg)
             return
         }
-
+        
         centralManager.stopScan()
         if name!.lowercased().hasPrefix("abbott") {
             app.transmitter = Abbott(peripheral: peripheral, main: main)
@@ -178,7 +178,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 }
             }
             settings.activeSensorSerial = app.device.serial
-
+            
         } else if name!.lowercased().hasPrefix("dexcom") {
             app.transmitter = Dexcom(peripheral: peripheral, main: main)
             app.device = app.transmitter
@@ -198,19 +198,19 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             } else {
                 app.device.serial = settings.activeTransmitterSerial
             }
-
+            
             // } else if name.matches("custom") {
             //    custom = Custom(peripheral: peripheral, main: main)
             //    app.device = custom
             //    app.device.name = peripheral.name!
             //    app.transmitter = custom.transmitter
             //    app.transmitter.name = "bridge"
-
+            
         } else {
             app.device = Device(peripheral: peripheral, main: main)
             app.device.name = name!.replacingOccurrences(of: "an unnamed", with: "Unnamed")
         }
-
+        
         app.device.rssi = Int(truncating: rssi)
         app.device.company = BLE.companies[companyId].name
         msg = "Bluetooth: found \(name!): RSSI: \(rssi), advertised data: \(advertisement)"
@@ -236,8 +236,8 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         app.device.state = app.device.peripheral!.state
         app.deviceState = app.device.state.description.capitalized + "..."
     }
-
-
+    
+    
     public func centralManager(_ manager: CBCentralManager, didConnect peripheral: CBPeripheral) {
         let name = peripheral.name ?? "an unnamed peripheral"
         var msg = "Bluetooth: \(name) has connected"
@@ -249,13 +249,13 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         peripheral.discoverServices(nil)
         log(msg)
     }
-
-
+    
+    
     public func centralManager(_ manager: CBCentralManager, willRestoreState dict: [String: Any]) {
         log("Bluetooth: will restore state to \(dict.debugDescription)")
     }
-
-
+    
+    
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         let name = peripheral.name ?? "unnamed peripheral"
         if app.device.name == "Unnamed peripheral" && name != "unnamed peripheral" {
@@ -286,33 +286,33 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             }
         }
     }
-
+    
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         guard let characteristics = service.characteristics else {
             log("Bluetooth: unable to retrieve service characteristics")
             return
         }
-
+        
         let serviceUUID = service.uuid.uuidString
         var serviceDescription = serviceUUID
         if serviceUUID == type(of: app.device).dataServiceUUID || serviceUUID == Libre3.UUID.data.rawValue {
             serviceDescription = "data"
         }
-
+        
         for characteristic in characteristics {
             let uuid = characteristic.uuid.uuidString
-
+            
             var msg = "Bluetooth: discovered \(app.device.name) \(serviceDescription) service's characteristic \(uuid)"
             msg += (", properties: \(characteristic.properties)")
-
+            
             if Libre3.knownUUIDs.contains(uuid) {
                 msg += " (\(Libre3.UUID(rawValue: uuid)!.description))"
             }
-
+            
             if Dexcom.knownUUIDs.contains(uuid) {
                 msg += " (\(Dexcom.UUID(rawValue: uuid)!.description))"
                 let transmitterIsAuthenticated = (app.transmitter as? Dexcom)?.authenticated ?? false
-
+                
                 if uuid == Dexcom.UUID.control.rawValue {
                     app.device.readCharacteristic = characteristic
                     app.device.writeCharacteristic = characteristic
@@ -322,7 +322,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                     } else {
                         msg += "; avoid enabling notifications because of 'Encryption is insufficient' error"
                     }
-
+                    
                 } else if uuid == Dexcom.UUID.backfill.rawValue
                             || uuid == Dexcom.UUID.communication.rawValue {
                     if settings.userLevel >= .test && transmitterIsAuthenticated {
@@ -331,58 +331,58 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                     } else {
                         msg += "; avoid enabling notifications because of 'Encryption is insufficient' error"
                     }
-
+                    
                 } else {
                     peripheral.setNotifyValue(true, for: characteristic)
                     msg += "; enabling notifications"
                 }
-
+                
             } else if uuid == Libre3.UUID.patchStatus.rawValue {
                 msg += "; avoid enabling notifications because of 'Encryption is insufficient' error"
-
+                
             } else if uuid == Abbott.dataReadCharacteristicUUID {
                 app.device.readCharacteristic = characteristic
                 msg += " (data read)"
-
+                
                 // enable notifications only in didWriteValueFor() unless sniffing the Libre 2 in TEST mode
                 if uuid != Abbott.dataReadCharacteristicUUID || settings.userLevel >= .test {
                     app.device.peripheral?.setNotifyValue(true, for: app.device.readCharacteristic!)
                     msg += "; enabling notifications"
                 }
-
+                
             } else if uuid == Abbott.dataWriteCharacteristicUUID {
                 msg += " (data write)"
                 app.device.writeCharacteristic = characteristic
-
-
-            // } else if let uuid = Custom.UUID(rawValue: uuid) {
-            //    msg += " (\(uuid))"
-            //    if uuid.description.contains("unknown") {
-            //        if characteristic.properties.contains(.notify) {
-            //            app.device.peripheral?.setNotifyValue(true, for: characteristic)
-            //        }
-            //        if characteristic.properties.contains(.read) {
-            //            app.device.peripheral?.readValue(for: characteristic)
-            //            msg += "; reading it"
-            //        }
-            //    }
-
-
+                
+                
+                // } else if let uuid = Custom.UUID(rawValue: uuid) {
+                //    msg += " (\(uuid))"
+                //    if uuid.description.contains("unknown") {
+                //        if characteristic.properties.contains(.notify) {
+                //            app.device.peripheral?.setNotifyValue(true, for: characteristic)
+                //        }
+                //        if characteristic.properties.contains(.read) {
+                //            app.device.peripheral?.readValue(for: characteristic)
+                //            msg += "; reading it"
+                //        }
+                //    }
+                
+                
             } else if let uuid = BLE.UUID(rawValue: uuid) {
                 if uuid == .batteryLevel {
                     app.device.peripheral?.setNotifyValue(true, for: characteristic)
                 }
-
+                
                 if app.device.characteristics[uuid.rawValue] != nil {
                     msg += " (\(uuid)); already read it"
                 } else {
                     app.device.peripheral?.readValue(for: characteristic)
                     msg += " (\(uuid)); reading it"
                 }
-
+                
                 // } else if let uuid = OtherDevice.UUID(rawValue: uuid) {
                 //    msg += " (\(uuid))"
-
+                
             } else {
                 if characteristic.properties.contains(.notify) {
                     peripheral.setNotifyValue(true, for: characteristic)
@@ -393,13 +393,13 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                     msg += "; reading it"
                 }
             }
-
+            
             log(msg)
-
+            
             app.device.characteristics[uuid] = characteristic
-
+            
         }
-
+        
         if app.device.type == .transmitter(.abbott) && (serviceUUID == Abbott.dataServiceUUID || serviceUUID == Libre3.UUID.data.rawValue || serviceUUID == Libre3.UUID.security.rawValue) {
             var sensor: Sensor! = app.sensor
             if app.sensor == nil || (app.sensor.transmitter?.type != app.device.type && sensor.uid != (app.device as! Abbott).sensorUid) {
@@ -413,11 +413,11 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 sensor.uid = (app.device as! Abbott).sensorUid
                 // TODO
                 settings.patchUid = sensor.uid
-
+                
                 if settings.activeSensorSerial == app.device.serial {
                     if !app.device.serial.isEmpty && !settings.patchInfo.isEmpty {
                         sensor.patchInfo = settings.patchInfo
-
+                        
                     } else {
                         sensor.serial = app.device.serial
                         let family = Int(app.device.serial.prefix(1)) ?? 0
@@ -432,9 +432,9 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                     }
                 }
             }
-
+            
             app.transmitter.sensor = sensor
-
+            
             if !app.device.serial.isEmpty && app.device.serial == settings.activeSensorSerial {
                 sensor.initialPatchInfo = settings.activeSensorInitialPatchInfo
                 sensor.streamingUnlockCode = UInt32(settings.activeSensorStreamingUnlockCode)
@@ -444,14 +444,14 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 log("Bluetooth: the active sensor \(app.device.serial) has reconnected: restoring settings: initial patch info: \(sensor.initialPatchInfo.hex), current patch info: \(sensor.patchInfo.hex), unlock count: \(sensor.streamingUnlockCount)")
                 app.device.macAddress = settings.activeSensorAddress
             }
-
+            
             if serviceUUID == Libre3.UUID.security.rawValue {
                 if sensor.transmitter == nil { sensor.transmitter = app.transmitter }
                 if settings.userLevel < .test { // not sniffing Trident
                     ((app.device as? Abbott)?.sensor as? Libre3)?.send(securityCommand: .readChallenge)
                     // ((app.device as? Abbott)?.sensor as? Libre3)?.pair()  // TEST
                 }
-
+                
             } else if (app.transmitter as! Abbott).securityGeneration == 2 && (app.transmitter as! Abbott).authenticationState == .notAuthenticated {
                 app.device.peripheral?.setNotifyValue(true, for: app.device.writeCharacteristic!)
                 (app.transmitter as! Abbott).authenticationState = .enableNotification
@@ -460,7 +460,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 (app.transmitter as! Abbott).authenticationState = .challengeResponse
                 app.device.write(Data([0x20]), .withResponse)
                 debugLog("Bluetooth: sent \(app.device.name) read security challenge")
-
+                
             } else if sensor.uid.count > 0 && settings.activeSensorInitialPatchInfo.count > 0 {
                 if settings.userLevel < .test {  // not sniffing Libre 2
                     sensor.streamingUnlockCount += 1
@@ -471,7 +471,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 }
             }
         }
-
+        
         if app.device.type == .transmitter(.dexcom) && serviceUUID == Dexcom.dataServiceUUID {
             var sensor: Sensor! = app.sensor
             if sensor == nil || sensor.type != .dexcomG6 || sensor.type != .dexcomONE || sensor.type != .dexcomG7 || sensor.type != .dexcomONEPlus {
@@ -490,16 +490,16 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             }
             app.transmitter.sensor = sensor
             if settings.userLevel < .test { // not sniffing
-
+                
                 // TEST: first JPake phase: send exchangePakePayload + 00 phase
                 if sensor.type == .dexcomONE || sensor.type == .dexcomG7 || sensor.type == .dexcomONEPlus {
                     log("DEBUG: sending \(app.device.name) 'exchangePakePayload phase zero' command")
                     app.device.write(Dexcom.Opcode.exchangePakePayload.data + Dexcom.PakePhase.zero.rawValue.data, for: Dexcom.UUID.authentication.rawValue, .withResponse)
                 }
-
+                
                 // FIXME: The Dexcom ONE and G7 use authRequest2Tx (0x02)
                 // see: https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/message/AuthRequestTxMessage2.java
-
+                
                 var message = (sensor.type == .dexcomONE || sensor.type == .dexcomG7 || sensor.type == .dexcomONEPlus) ? Dexcom.Opcode.authRequest2Tx.data : Dexcom.Opcode.authRequestTx.data
                 let singleUseToken = UUID().uuidString.data(using: .utf8)!.prefix(8)
                 message += singleUseToken
@@ -509,8 +509,8 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             }
         }
     }
-
-
+    
+    
     public func centralManager(_ manager: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         let name = peripheral.name ?? "an unnamed peripheral"
         app.device?.state = peripheral.state
@@ -552,17 +552,17 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             // app.transmitter = nil
         }
     }
-
+    
     public func centralManager(_ manager: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
         let name = peripheral.name ?? "an unnamed peripheral"
         var msg = "Bluetooth: failed to connect to \(name)"
         var errorCode: CBError.Code?
-
+        
         if let error {
             errorCode = CBError.Code(rawValue: (error as NSError).code)
             msg += ", error type \(errorCode!.rawValue): \(error.localizedDescription)"
         }
-
+        
         if let errorCode, errorCode == .peerRemovedPairingInformation {  // i.e. BluCon
             main.errorStatus("Failed to connect: \(error!.localizedDescription)")
         } else {
@@ -570,11 +570,11 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             main.errorStatus("Failed to connect, retrying...")
             centralManager.connect(app.device.peripheral!, options: nil)
         }
-
+        
         log(msg)
     }
-
-
+    
+    
     public func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         let name = peripheral.name ?? "an unnamed peripheral"
         var characteristicString = characteristic.uuid.uuidString
@@ -597,8 +597,8 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             }
         }
     }
-
-
+    
+    
     public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         let name = peripheral.name ?? "an unnamed peripheral"
         var characteristicString = characteristic.uuid.uuidString
@@ -624,8 +624,8 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         }
         log(msg)
     }
-
-
+    
+    
     public func peripheral(_ peripheral: CBPeripheral, didReadRSSI rssi: NSNumber, error: Error?) {
         let name = peripheral.name ?? "an unnamed peripheral"
         if let error {
@@ -635,12 +635,12 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             app.device.rssi = Int(truncating: rssi)
         }
     }
-
-
+    
+    
     public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         let name = peripheral.name ?? "an unnamed peripheral"
         var characteristicString = characteristic.uuid.uuidString
-
+        
         if [Abbott.dataReadCharacteristicUUID].contains(characteristicString) {
             characteristicString = "data read"
         }
@@ -650,23 +650,23 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         if let characteristicDescription = Dexcom.UUID(rawValue: characteristicString)?.description {
             characteristicString = characteristicDescription
         }
-
+        
         guard let data = characteristic.value else {
             log("Bluetooth: \(name)'s error updating value for \(characteristicString) characteristic: \(error!.localizedDescription)")
             return
         }
-
+        
         var msg = "Bluetooth: \(name) did update value for \(characteristicString) characteristic (\(data.count) bytes received):"
         if data.count > 0 {
             msg += " hex: \(data.hex),"
         }
-
+        
         if let uuid = BLE.UUID(rawValue: characteristic.uuid.uuidString) {
-
+            
             log("\(msg) \(uuid): \(uuid != .batteryLevel ? "\"\(data.string)\"" : String(Int(data[0])))")
-
+            
             switch uuid {
-
+                
             case .batteryLevel:
                 app.device.battery = Int(data[0])
             case .model:
@@ -685,37 +685,37 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 app.device.software = data.string
             case .manufacturer:
                 app.device.manufacturer = data.string
-
+                
             default:
                 break
             }
-
+            
         } else {
-
+            
             log("\(msg) string: \"\(data.string)\"")
-
-
+            
+            
             if app.device == nil { return }     // the connection timed out in the meantime
-
+            
             app.device.lastConnectionDate = Date()
             if Int(app.lastConnectionDate.distance(to: app.device.lastConnectionDate)) >= settings.readingInterval * 60 - 5 {
                 app.device.peripheral!.readRSSI()
             }
             app.lastConnectionDate = app.device.lastConnectionDate
-
+            
             app.device.read(data, for: characteristic.uuid.uuidString)
-
+            
             if app.device.type == .transmitter(.abbott) {
                 if app.transmitter.buffer.count == 46 {
                     main.didParseSensor(app.transmitter.sensor!)
                     app.transmitter.buffer = Data()
                 }
-
+                
             } else if app.device.type == .transmitter(.dexcom) {
                 // TODO:
                 // main.didParseSensor(app.transmitter.sensor!)
                 return
-
+                
             } else if app.transmitter?.sensor != nil {
                 main.didParseSensor(app.transmitter.sensor!)
                 app.transmitter.buffer = Data()

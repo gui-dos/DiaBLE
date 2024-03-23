@@ -5,23 +5,23 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(AppState.self) var app: AppState
     @Environment(Settings.self) var settings: Settings
-
+    
     @State private var showingCalendarPicker = false
-
-
+    
+    
     var body: some View {
-
+        
         @Bindable var settings = settings
-
+        
         NavigationView {
             VStack {
-
+                
                 Spacer()
-
+                
                 VStack(spacing: 20) {
                     VStack {
                         HStack(spacing: 0) {
-
+                            
                             Button {
                                 settings.stoppedBluetooth.toggle()
                                 if settings.stoppedBluetooth {
@@ -36,7 +36,7 @@ struct SettingsView: View {
                                     .foregroundColor(.blue)
                                     .overlay(settings.stoppedBluetooth ? Image(systemName: "line.diagonal").resizable().frame(width: 24, height: 24).rotationEffect(.degrees(90)) : nil).foregroundColor(.red)
                             }
-
+                            
                             Picker(selection: $settings.preferredTransmitter, label: Text("Preferred")) {
                                 ForEach(TransmitterType.allCases) { t in
                                     Text(t.name).tag(t)
@@ -56,19 +56,19 @@ struct SettingsView: View {
                         }
                     }
                     .foregroundColor(.accentColor)
-                    #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
                     .padding(.horizontal, 15)
-                    #endif
-
+#endif
+                    
                     NavigationLink(destination: Details()) {
                         Text("Details").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
                     }
                 }
-
+                
                 Spacer()
-
+                
                 VStack {
-
+                    
                     HStack {
                         Spacer()
                         Stepper(value: $settings.readingInterval,
@@ -88,7 +88,7 @@ struct SettingsView: View {
                         .frame(maxWidth: 200)
                         Spacer()
                     }
-
+                    
                     HStack {
                         Spacer()
                         Stepper {
@@ -105,22 +105,22 @@ struct SettingsView: View {
                         .frame(maxWidth: 200)
                         Spacer()
                     }
-
+                    
                 }
-
+                
                 Spacer()
-
+                
                 Button {
                     settings.selectedTab = (settings.preferredTransmitter != .none) ? .monitor : .console
                     app.main.rescan()
                 } label: {
                     Text("Rescan").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
                 }
-
+                
                 Spacer()
-
+                
                 VStack {
-
+                    
                     HStack {
                         Spacer()
                         Picker(selection: $settings.displayingMillimoles, label: Text("Unit")) {
@@ -133,7 +133,7 @@ struct SettingsView: View {
                         Spacer()
                     }
                     .padding(.bottom)
-
+                    
                     VStack(spacing: 0) {
                         Image(systemName: "hand.thumbsup.fill")
                             .foregroundColor(.green)
@@ -146,7 +146,7 @@ struct SettingsView: View {
                         }
                     }
                     .tint(.green)
-
+                    
                     VStack(spacing: 0) {
                         Image(systemName: "bell.fill")
                             .foregroundColor(.red)
@@ -161,7 +161,7 @@ struct SettingsView: View {
                     .tint(.red)
                 }
                 .padding(.horizontal, 40)
-
+                
                 HStack(spacing: 24) {
                     Button {
                         settings.mutedAudio.toggle()
@@ -169,7 +169,7 @@ struct SettingsView: View {
                         Image(systemName: settings.mutedAudio ? "speaker.slash.fill" : "speaker.2.fill").resizable().frame(width: 24, height: 24)
                             .foregroundColor(.accentColor)
                     }
-
+                    
                     HStack(spacing: 0) {
                         Button {
                             withAnimation { settings.disabledNotifications.toggle() }
@@ -193,7 +193,7 @@ struct SettingsView: View {
                             .labelsHidden()
                         }
                     }
-
+                    
                     Button {
                         showingCalendarPicker = true
                     } label: {
@@ -237,7 +237,7 @@ struct SettingsView: View {
                                     Text(settings.calendarTitle == "" ? "Don't remind" : "Remind").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
                                         .animation(.default, value: settings.calendarTitle)
                                 }
-
+                                
                             }
                             .padding(.top, 40)
                         }
@@ -245,9 +245,9 @@ struct SettingsView: View {
                     }
                 }
                 .padding(.top, 16)
-
+                
                 Spacer()
-
+                
             }
             .font(.body.monospacedDigit())
             .navigationBarTitleDisplayMode(.inline)

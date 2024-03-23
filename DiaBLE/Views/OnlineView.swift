@@ -18,21 +18,21 @@ struct OnlineView: View {
     @Environment(AppState.self) var app: AppState
     @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
-
+    
     @Environment(\.colorScheme) var colorScheme
-
+    
     @State private var showingNFCAlert = false
     @State private var onlineCountdown: Int = 0
     @State private var readingCountdown: Int = 0
-
+    
     @State private var libreLinkUpResponse: String = "[...]"
     @State private var libreLinkUpHistory: [LibreLinkUpGlucose] = []
     @State private var libreLinkUpLogbookHistory: [LibreLinkUpGlucose] = []
-
+    
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
-
-
+    
+    
     func reloadLibreLinkUp() async {
         if let libreLinkUp = await app.main?.libreLinkUp {
             var dataString = ""
@@ -89,28 +89,28 @@ struct OnlineView: View {
         } while retries == 1
         }
     }
-
-
+    
+    
     var body: some View {
         NavigationView {
-
+            
             // Workaround to avoid top textfields scrolling offscreen in iOS 14
             GeometryReader { _ in
                 VStack(spacing: 0) {
-
+                    
                     HStack(alignment: .top, spacing: 2) {
-
+                        
                         Button {
                             settings.selectedService = settings.selectedService == .nightscout ? .libreLinkUp : .nightscout
                         } label: {
                             Image(settings.selectedService.rawValue).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
                         }
                         .padding(.top, 8).padding(.trailing, 4)
-
+                        
                         VStack(spacing: 0) {
-
+                            
                             @Bindable var settings = settings
-
+                            
                             if settings.selectedService == .nightscout {
                                 HStack(alignment: .firstTextBaseline, spacing: 0) {
                                     Text("https://")
@@ -121,8 +121,8 @@ struct OnlineView: View {
                                         .autocorrectionDisabled(true)
                                 }
                                 SecureField("token", text: $settings.nightscoutToken)
-
-
+                                
+                                
                             } else if settings.selectedService == .libreLinkUp {
                                 TextField("email", text: $settings.libreLinkUpEmail)
                                     .keyboardType(.emailAddress)
@@ -146,9 +146,9 @@ struct OnlineView: View {
                                     }
                             }
                         }
-
+                        
                         Spacer()
-
+                        
                         Button {
                             withAnimation { settings.libreLinkUpFollowing.toggle() }
                             libreLinkUpResponse = "[...]"
@@ -158,9 +158,9 @@ struct OnlineView: View {
                         } label: {
                             Image(systemName: settings.libreLinkUpFollowing ? "f.circle.fill" : "f.circle").font(.title)
                         }
-
+                        
                         VStack(spacing: 0) {
-
+                            
                             Button {
                                 withAnimation { settings.libreLinkUpScrapingLogbook.toggle() }
                                 if settings.libreLinkUpScrapingLogbook {
@@ -172,7 +172,7 @@ struct OnlineView: View {
                             } label: {
                                 Image(systemName: settings.libreLinkUpScrapingLogbook ? "book.closed.circle.fill" : "book.closed.circle").font(.title)
                             }
-
+                            
                             Text(onlineCountdown > -1 ? "\(onlineCountdown) s" : "...")
                                 .fixedSize()
                                 .foregroundColor(.cyan)
@@ -181,17 +181,17 @@ struct OnlineView: View {
                                     onlineCountdown = settings.onlineInterval * 60 - Int(Date().timeIntervalSince(settings.lastOnlineDate))
                                 }
                         }
-
+                        
                         VStack(spacing: 0) {
-
+                            
                             // TODO: reload web page
-
+                            
                             Button {
                                 app.main.rescan()
                             } label: {
                                 Image(systemName: "arrow.clockwise.circle").font(.title)
                             }
-
+                            
                             Text(!app.deviceState.isEmpty && app.deviceState != "Disconnected" && (readingCountdown > 0 || app.deviceState == "Reconnecting...") ?
                                  "\(readingCountdown) s" : "...")
                             .fixedSize()
@@ -201,7 +201,7 @@ struct OnlineView: View {
                                 readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
                             }
                         }
-
+                        
                         Button {
                             if app.main.nfc.isAvailable {
                                 app.main.nfc.startSession()
@@ -218,18 +218,18 @@ struct OnlineView: View {
                             Text("This device doesn't allow scanning the Libre.")
                         }
                         .padding(.top, 2)
-
+                        
                     }
                     .foregroundColor(.accentColor)
                     .padding(.bottom, 4)
-                    #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
                     .padding(.horizontal, 15)
-                    #endif
-
+#endif
+                    
                     if settings.selectedService == .nightscout {
-
+                        
                         @Bindable var app = app
-
+                        
                         WebView(site: settings.nightscoutSite, query: "token=\(settings.nightscoutToken)", delegate: app.main?.nightscout )
                             .frame(height: UIScreen.main.bounds.size.height * 0.60)
                             .alert("JavaScript", isPresented: $app.showingJavaScriptConfirmAlert) {
@@ -238,7 +238,7 @@ struct OnlineView: View {
                             } message: {
                                 Text(app.JavaScriptConfirmAlertMessage)
                             }
-
+                        
                         List {
                             ForEach(history.nightscoutValues) { glucose in
                                 (Text("\(String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)])) \(glucose.date.shortDateTime)") + Text("  \(glucose.value, specifier: "%3d")").bold())
@@ -249,13 +249,13 @@ struct OnlineView: View {
                         .listStyle(.plain)
                         .font(.system(.caption, design: .monospaced))
                         .foregroundColor(.cyan)
-                        #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
                         .padding(.leading, 15)
-                        #endif
+#endif
                         .onAppear { if let nightscout = app.main?.nightscout { nightscout.read() } }
                     }
-
-
+                    
+                    
                     if settings.selectedService == .libreLinkUp {
                         VStack {
                             ScrollView(showsIndicators: true) {
@@ -264,10 +264,10 @@ struct OnlineView: View {
                                     .foregroundColor(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
                                     .textSelection(.enabled)
                             }
-                            #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
                             .padding()
-                            #endif
-
+#endif
+                            
                             if libreLinkUpHistory.count > 0 {
                                 Chart(libreLinkUpHistory) {
                                     PointMark(x: .value("Time", $0.glucose.date),
@@ -285,9 +285,9 @@ struct OnlineView: View {
                                 }
                                 .padding()
                             }
-
+                            
                             HStack {
-
+                                
                                 List {
                                     ForEach(libreLinkUpHistory) { libreLinkUpGlucose in
                                         let glucose = libreLinkUpGlucose.glucose
@@ -306,7 +306,7 @@ struct OnlineView: View {
                                         }
                                     }
                                 }
-
+                                
                                 if settings.libreLinkUpScrapingLogbook {
                                     // TODO: alarms
                                     List {
@@ -327,10 +327,10 @@ struct OnlineView: View {
                         .task {
                             await reloadLibreLinkUp()
                         }
-                        #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
                         .padding(.leading, 15)
-                        #endif
-
+#endif
+                        
                     }
                 }
             }

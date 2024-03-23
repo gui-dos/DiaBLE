@@ -7,20 +7,20 @@ struct Plan: View {
     @Environment(History.self) var history: History
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
-
+    
     @State private var onlineCountdown: Int = 0
     @State private var readingCountdown: Int = 0
-
+    
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
-
+    
+    
     var body: some View {
         NavigationView {
             VStack {
-
+                
                 Text("\((app.lastReadingDate != Date.distantPast ? app.lastReadingDate : Date()).dateTime)")
-
-
+                
+                
                 if app.status.hasPrefix("Scanning") {
                     Text("Scanning...")
                         .foregroundColor(.orange)
@@ -38,7 +38,7 @@ struct Plan: View {
                         }
                     }
                 }
-
+                
                 Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
                     .foregroundColor(.cyan)
                     .onReceive(timer) { _ in
@@ -46,9 +46,9 @@ struct Plan: View {
                     }
             }
             .monospacedDigit()
-            #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
             .padding(.horizontal, 15)
-            #endif
+#endif
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Plan")
         }
