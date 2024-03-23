@@ -485,7 +485,7 @@ struct CalibrationView: View {
             }
 
         }
-        .accentColor(.purple)
+        .tint(.purple)
     }
 }
 

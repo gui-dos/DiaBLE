@@ -145,7 +145,7 @@ struct SettingsView: View {
                             Slider(value: $settings.targetHigh, in: 120 ... 300, step: 1)
                         }
                     }
-                    .accentColor(.green)
+                    .tint(.green)
 
                     VStack(spacing: 0) {
                         Image(systemName: "bell.fill")
@@ -158,7 +158,7 @@ struct SettingsView: View {
                             Slider(value: $settings.alarmHigh, in: 120 ... 300, step: 1)
                         }
                     }
-                    .accentColor(.red)
+                    .tint(.red)
                 }
                 .padding(.horizontal, 40)
 
@@ -207,8 +207,10 @@ struct SettingsView: View {
                                     settings.calendarTitle = ""
                                     showingCalendarPicker = false
                                     app.main.eventKit?.sync()
-                                } label: { Text("None").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2)) }
-                                    .disabled(settings.calendarTitle == "")
+                                } label: {
+                                    Text("None").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                }
+                                .disabled(settings.calendarTitle == "")
                             }
                             Section {
                                 Picker(selection: $settings.calendarTitle, label: Text("Calendar")) {
@@ -232,7 +234,8 @@ struct SettingsView: View {
                                     showingCalendarPicker = false
                                     app.main.eventKit?.sync()
                                 } label: {
-                                    Text(settings.calendarTitle == "" ? "Don't remind" : "Remind").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2)).animation(.default, value: settings.calendarTitle)
+                                    Text(settings.calendarTitle == "" ? "Don't remind" : "Remind").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                        .animation(.default, value: settings.calendarTitle)
                                 }
 
                             }

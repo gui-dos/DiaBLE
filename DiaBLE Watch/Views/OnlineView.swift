@@ -340,7 +340,7 @@ struct OnlineView: View {
         .edgesIgnoringSafeArea([.bottom])
         .buttonStyle(.plain)
         .navigationTitle { Text("Online") }
-        .accentColor(.blue)
+        .tint(.blue)
     }
 }
 

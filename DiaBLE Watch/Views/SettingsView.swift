@@ -121,7 +121,7 @@ struct SettingsView: View {
                             .scaleEffect(0.6)
                     }
                 }
-                .accentColor(.green)
+                .tint(.green)
 
                 VStack(spacing: 0) {
                     HStack(spacing: 20) {
@@ -136,7 +136,7 @@ struct SettingsView: View {
                         Slider(value: $settings.alarmHigh, in: 120 ... 300, step: 1).frame(height: 20).scaleEffect(0.6)
                     }
                 }
-                .accentColor(.red)
+                .tint(.red)
             }
 
             HStack {
@@ -197,7 +197,7 @@ struct SettingsView: View {
         .font(Font.body.monospacedDigit())
         .buttonStyle(.plain)
         .navigationTitle { Text("Settings") }
-        .accentColor(.blue)
+        .tint(.blue)
     }
 }
 

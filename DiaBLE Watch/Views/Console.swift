@@ -254,7 +254,7 @@ struct Console: View {
         // .padding(.top, -4)
         .edgesIgnoringSafeArea(.bottom)
         .navigationTitle { Text("Console") }
-        .accentColor(.blue)
+        .tint(.blue)
     }
 }
 
