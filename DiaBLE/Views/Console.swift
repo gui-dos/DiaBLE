@@ -298,8 +298,8 @@ struct ConsoleSidebar: View {
     
     @Binding var showingNFCAlert: Bool
     
-    @State private var onlineCountdown: Int = 0
-    @State private var readingCountdown: Int = 0
+    @State private var onlineCountdown = 0
+    @State private var readingCountdown = 0
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     

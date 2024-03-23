@@ -40,8 +40,8 @@ enum DeviceType: CaseIterable, Hashable, Identifiable {
     class var dataReadCharacteristicUUID: String { "" }
     class var dataWriteCharacteristicUUID: String { "" }
     
-    var type: DeviceType = DeviceType.none
-    var name: String = "Unknown"
+    var type: DeviceType = .none
+    var name = "Unknown"
     
     
     var main: MainDelegate!
@@ -51,21 +51,21 @@ enum DeviceType: CaseIterable, Hashable, Identifiable {
     
     /// Updated when notified by the Bluetooth manager
     var state: CBPeripheralState = .disconnected
-    var lastConnectionDate: Date = Date.distantPast
+    var lastConnectionDate = Date.distantPast
     
     var readCharacteristic: CBCharacteristic?
     var writeCharacteristic: CBCharacteristic?
     
-    var battery: Int = -1
-    var rssi: Int = 0
-    var company: String = ""
-    var model: String = ""
-    var serial: String = ""
-    var firmware: String = ""
-    var hardware: String = ""
-    var software: String = ""
-    var manufacturer: String = ""
-    var macAddress: Data = Data()
+    var battery = -1
+    var rssi = 0
+    var company = ""
+    var model = ""
+    var serial = ""
+    var firmware = ""
+    var hardware = ""
+    var software = ""
+    var manufacturer = ""
+    var macAddress = Data()
     
     var buffer = Data()
     

@@ -45,7 +45,7 @@ struct DiaBLEWidgetEntryView : View {
 }
 
 struct DiaBLEWidget: Widget {
-    let kind: String = "DiaBLEWidget"
+    let kind = "DiaBLEWidget"
     
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in

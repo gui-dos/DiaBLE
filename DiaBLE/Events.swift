@@ -5,7 +5,7 @@ import EventKit
 class EventKit: Logging {
     
     var main: MainDelegate!
-    var store: EKEventStore = EKEventStore()
+    var store = EKEventStore()
     var calendarTitles = [String]()
     
     init(main: MainDelegate) {

@@ -6,8 +6,8 @@ import WebKit
 struct WebView: UIViewRepresentable {
     
     var site: String
-    var endpoint: String = ""
-    var query: String = ""
+    var endpoint = ""
+    var query = ""
     var delegate: (WKNavigationDelegate & WKUIDelegate)!
     
     func makeUIView(context: Context) -> WKWebView {

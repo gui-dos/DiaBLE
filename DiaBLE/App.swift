@@ -136,20 +136,20 @@ enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
     
     var main: MainDelegate!
     
-    var currentGlucose: Int = 0
-    var lastReadingDate: Date = Date.distantPast
+    var currentGlucose = 0
+    var lastReadingDate = Date.distantPast
     var glycemicAlarm: GlycemicAlarm = .unknown
     var trendArrow: TrendArrow = .unknown
-    var trendDelta: Int = 0
-    var trendDeltaMinutes: Int = 0
+    var trendDelta = 0
+    var trendDeltaMinutes = 0
     
-    var deviceState: String = ""
-    var lastConnectionDate: Date = Date.distantPast
-    var status: String = "Welcome to DiaBLE!"
+    var deviceState = ""
+    var lastConnectionDate = Date.distantPast
+    var status = "Welcome to DiaBLE!"
     
-    var showingJavaScriptConfirmAlert: Bool = false
-    var JavaScriptConfirmAlertMessage: String = ""
-    var JavaScriptAlertReturn: String = ""
+    var showingJavaScriptConfirmAlert = false
+    var JavaScriptConfirmAlertMessage = ""
+    var JavaScriptAlertReturn = ""
 }
 
 

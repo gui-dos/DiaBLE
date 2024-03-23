@@ -30,12 +30,12 @@ extension Double {
 
 
 struct CalibrationInfo: Codable, Equatable {
-    var i1: Int = 0
-    var i2: Int = 0
-    var i3: Int = 0
-    var i4: Int = 0
-    var i5: Int = 0
-    var i6: Int = 0
+    var i1 = 0
+    var i2 = 0
+    var i3 = 0
+    var i4 = 0
+    var i5 = 0
+    var i6 = 0
     
     static var empty = CalibrationInfo()
 }
@@ -120,11 +120,11 @@ struct Glucose: Identifiable, Codable {
     let hasError: Bool
     let dataQuality: DataQuality
     let dataQualityFlags: Int
-    var value: Int = 0
-    var temperature: Double = 0
-    var trendRate: Double = 0
-    var trendArrow: Int = 0  // TODO: enum
-    var source: String = "DiaBLE"
+    var value = 0
+    var temperature = 0.0
+    var trendRate = 0.0
+    var trendArrow = 0  // TODO: enum
+    var source = "DiaBLE"
     
     init(rawValue: Int, rawTemperature: Int = 0, temperatureAdjustment: Int = 0, trendRate: Double = 0, trendArrow: Int = 0, id: Int = 0, date: Date = Date(), hasError: Bool = false, dataQuality: DataQuality = .OK, dataQualityFlags: Int = 0) {
         self.id = id
@@ -164,8 +164,8 @@ func factoryGlucose(rawGlucose: Glucose, calibrationInfo: CalibrationInfo) -> Gl
     
     guard calibrationInfo.i2 != 0 else { return rawGlucose }
     
-    let x: Double = 1000 + 71500
-    let y: Double = 1000
+    let x = 1000.0 + 71500
+    let y = 1000.0
     
     let ca = 0.0009180023
     let cb = 0.0001964561

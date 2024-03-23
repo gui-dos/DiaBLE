@@ -13,7 +13,7 @@ import CoreBluetooth
 
 
 @Observable class Dexcom: Transmitter {
-    override class var type: DeviceType { DeviceType.transmitter(.dexcom) }
+    override class var type: DeviceType { .transmitter(.dexcom) }
     override class var name: String { "Dexcom" }
     
     enum UUID: String, CustomStringConvertible, CaseIterable {
@@ -132,10 +132,10 @@ import CoreBluetooth
     }
     
     
-    var activationDate: Date = Date.distantPast
+    var activationDate = Date.distantPast
     
-    var authenticated: Bool = false
-    var bonded: Bool = false
+    var authenticated = false
+    var bonded = false
     
     
     var opCode: Opcode = .unknown
@@ -369,7 +369,7 @@ import CoreBluetooth
                 let calBoundMax = UInt16(data[9...10])
                 let lastBGValue = UInt16(data[11...12])
                 let lastCalibrationTimeSeconds = UInt32(data[13...16])
-                let autoCalibration: Bool = data[17] == 1
+                let autoCalibration = data[17] == 1
                 let crc = UInt16(data[18...19])
                 log("\(name): bounds response (TODO): weight: \(weight), calBoundError1: \(calBoundError1), calBoundError0: \(calBoundError0), calBoundMin: \(calBoundMin), calBoundMax: \(calBoundMax), lastBGValue: \(lastBGValue), lastCalibrationTimeSeconds: \(lastCalibrationTimeSeconds.formattedInterval), autoCalibration: \(autoCalibration), CRC: \(crc.hex), valid CRC: \(data.dropLast(2).crc == crc)")
                 

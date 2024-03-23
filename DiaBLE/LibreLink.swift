@@ -67,7 +67,7 @@ struct LibreLinkUpAlarm: Identifiable, Codable, CustomStringConvertible {
     let alarmType: Int  // 0: low, 1: high, 2: fixedLow
     enum CodingKeys: String, CodingKey { case factoryTimestamp = "FactoryTimestamp", timestamp = "Timestamp", type, alarmType }
     var id: Int { Int(date.timeIntervalSince1970) }
-    var date: Date = Date()
+    var date = Date()
     var alarmDescription: String { alarmType == 1 ? "HIGH" : "LOW" }
     var description: String { "\(date): \(alarmDescription)" }
 }

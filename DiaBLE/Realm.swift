@@ -2,15 +2,15 @@ import Foundation
 import RealmSwift
 
 class AlarmConfigEntity: Object {
-    @objc dynamic var _alarmType: Int = 0
-    @objc dynamic var _id: Int = 0
-    @objc dynamic var _enabled: Bool = false
-    @objc dynamic var _threshold: Double = 0
-    @objc dynamic var _soundType: Int = 0
-    @objc dynamic var _soundSetting: String = ""
-    @objc dynamic var _tolerance: Double = 0
-    @objc dynamic var _f_high: Double = 0
-    @objc dynamic var _overrideDND: Bool = false
+    @objc dynamic var _alarmType = 0
+    @objc dynamic var _id = 0
+    @objc dynamic var _enabled = false
+    @objc dynamic var _threshold = 0.0
+    @objc dynamic var _soundType = 0
+    @objc dynamic var _soundSetting = ""
+    @objc dynamic var _tolerance = 0.0
+    @objc dynamic var _f_high = 0.0
+    @objc dynamic var _overrideDND = false
     
     override static func primaryKey() -> String? {
         return "_alarmType"
@@ -18,11 +18,11 @@ class AlarmConfigEntity: Object {
 }
 
 class AppConfigEntity: Object {
-    @objc dynamic var _configName: String = ""
-    @objc dynamic var _id: Int = 0
-    @objc dynamic var _configType: Int = 0
-    @objc dynamic var _configValue: String = ""
-    @objc dynamic var _source: Int = 0                // ConfigSource 1: build, 2: runtime
+    @objc dynamic var _configName = ""
+    @objc dynamic var _id = 0
+    @objc dynamic var _configType = 0
+    @objc dynamic var _configValue = ""
+    @objc dynamic var _source = 0                // ConfigSource 1: build, 2: runtime
     
     override static func primaryKey() -> String? {
         return "_configName"
@@ -154,15 +154,15 @@ class AppConfigEntity: Object {
 }
 
 class AppEventEntity: Object {
-    @objc dynamic var _id: Int = 0
-    @objc dynamic var _eventType: Int = 0
-    @objc dynamic var _eventErrorCode: Int = 0       // DPCRLInterface
-    @objc dynamic var _timestampUTC: Int = 0
-    @objc dynamic var _timestampLocal: Int = 0
-    @objc dynamic var _timeZone: String = ""
-    @objc dynamic var _eventParams: String = ""
-    @objc dynamic var _eventData: String = ""
-    @objc dynamic var _display: Bool = false
+    @objc dynamic var _id = 0
+    @objc dynamic var _eventType = 0
+    @objc dynamic var _eventErrorCode = 0       // DPCRLInterface
+    @objc dynamic var _timestampUTC = 0
+    @objc dynamic var _timestampLocal = 0
+    @objc dynamic var _timeZone = ""
+    @objc dynamic var _eventParams = ""
+    @objc dynamic var _eventData = ""
+    @objc dynamic var _display = false
     
     override static func primaryKey() -> String? {
         return "_id"
@@ -174,40 +174,40 @@ class AppEventEntity: Object {
 }
 
 class GlucoseReadingEntity: Object {
-    @objc dynamic var _compositeKey: Int = 0         // _sensor._id << 32 + _lifeCount
-    @objc dynamic var _id: Int = 0
+    @objc dynamic var _compositeKey = 0         // _sensor._id << 32 + _lifeCount
+    @objc dynamic var _id = 0
     @objc dynamic var _sensor: SensorEntity?
-    @objc dynamic var _lifeCount: Int = 0
-    @objc dynamic var _timestampUTC: Int = 0
-    @objc dynamic var _timestampLocal: Int = 0
-    @objc dynamic var _timeZone: String = ""
-    @objc dynamic var _currentGlucose: Double = 0
-    @objc dynamic var _uncappedGlucose: Double = 0
-    @objc dynamic var _historicGlucose: Double = 0
-    @objc dynamic var _trend: Int = 0
-    @objc dynamic var _rateOfChange: Double = 0
-    @objc dynamic var _dqFlag: Int = 0
-    @objc dynamic var _historicDqFlag: Int = 0
-    @objc dynamic var _actionable: Int = 0
-    @objc dynamic var _sensorCondition: Int = 0
-    @objc dynamic var _esaDuration: Int = 0
-    @objc dynamic var _alarmPresentFlag: Int = 0
-    @objc dynamic var _alarmRemoveFlag: Int = 0
-    @objc dynamic var _alarmEpisodeFlag: Int = 0
-    @objc dynamic var _glycemicAlarmStatus: Int = 0
-    @objc dynamic var _projectedGlucose: Double = 0
-    @objc dynamic var _resultRange: Int = 0
+    @objc dynamic var _lifeCount = 0
+    @objc dynamic var _timestampUTC = 0
+    @objc dynamic var _timestampLocal = 0
+    @objc dynamic var _timeZone = ""
+    @objc dynamic var _currentGlucose = 0.0
+    @objc dynamic var _uncappedGlucose = 0.0
+    @objc dynamic var _historicGlucose = 0.0
+    @objc dynamic var _trend = 0
+    @objc dynamic var _rateOfChange = 0.0
+    @objc dynamic var _dqFlag = 0
+    @objc dynamic var _historicDqFlag = 0
+    @objc dynamic var _actionable = 0
+    @objc dynamic var _sensorCondition = 0
+    @objc dynamic var _esaDuration = 0
+    @objc dynamic var _alarmPresentFlag = 0
+    @objc dynamic var _alarmRemoveFlag = 0
+    @objc dynamic var _alarmEpisodeFlag = 0
+    @objc dynamic var _glycemicAlarmStatus = 0
+    @objc dynamic var _projectedGlucose = 0.0
+    @objc dynamic var _resultRange = 0
     let _notes = List<NotesEntity>()
-    @objc dynamic var _temperature: Int = 0
-    @objc dynamic var _rawData: String = ""          // 8 bytes hex
-    @objc dynamic var _viewed: Bool = false
-    @objc dynamic var _extendedUDOflag: Int = 0
-    @objc dynamic var _rssi: Int = 0
-    @objc dynamic var _isWarmup: Bool = false
-    @objc dynamic var _uncappedHistoric: Double = 0
-    @objc dynamic var _userResultRange: Int = 0
+    @objc dynamic var _temperature = 0
+    @objc dynamic var _rawData = ""          // 8 bytes hex
+    @objc dynamic var _viewed = false
+    @objc dynamic var _extendedUDOflag = 0
+    @objc dynamic var _rssi = 0
+    @objc dynamic var _isWarmup = false
+    @objc dynamic var _uncappedHistoric = 0.0
+    @objc dynamic var _userResultRange = 0
     let _stateMap = List<Int>()
-    @objc dynamic var _isHistoric: Bool = false
+    @objc dynamic var _isHistoric = false
     
     override static func primaryKey() -> String? {
         return "_compositeKey"
@@ -219,11 +219,11 @@ class GlucoseReadingEntity: Object {
 }
 
 class NoteElementEntity: Object {
-    @objc dynamic var _id: Int = 0
-    @objc dynamic var _noteType: Int = 0
-    @objc dynamic var _subType: Int = 0
-    @objc dynamic var _value: Double = 0
-    @objc dynamic var _servingSize: Double = 0
+    @objc dynamic var _id = 0
+    @objc dynamic var _noteType = 0
+    @objc dynamic var _subType = 0
+    @objc dynamic var _value = 0.0
+    @objc dynamic var _servingSize = 0.0
     
     override static func primaryKey() -> String? {
         return "_id"
@@ -231,14 +231,14 @@ class NoteElementEntity: Object {
 }
 
 class NotesEntity: Object {
-    @objc dynamic var _id: Int = 0
-    @objc dynamic var _timestampUTC: Int = 0
-    @objc dynamic var _timestampLocal: Int = 0
-    @objc dynamic var _timeZone: String = ""
+    @objc dynamic var _id = 0
+    @objc dynamic var _timestampUTC = 0
+    @objc dynamic var _timestampLocal = 0
+    @objc dynamic var _timeZone = ""
     @objc dynamic var _comment: String? = nil
     @objc dynamic var _glucoseReading: GlucoseReadingEntity?
     let _noteElements = List<NoteElementEntity>()
-    @objc dynamic var _isDeleted: Bool = false
+    @objc dynamic var _isDeleted = false
     
     override static func primaryKey() -> String? {
         return "_id"
@@ -246,16 +246,16 @@ class NotesEntity: Object {
 }
 
 class ReminderEntity: Object {
-    @objc dynamic var _id: Int = 0
-    @objc dynamic var _reminderType: Int = 0
-    @objc dynamic var _enabled: Bool = false
-    @objc dynamic var _reminderCode: Int = 0
-    @objc dynamic var _repeatType: Int = 0
-    @objc dynamic var _description: String = ""
-    @objc dynamic var _interval: Int = 0
-    @objc dynamic var _intervalType: Int = 0
-    @objc dynamic var _createdTime: Int = 0
-    @objc dynamic var _timeZone: String = ""
+    @objc dynamic var _id = 0
+    @objc dynamic var _reminderType = 0
+    @objc dynamic var _enabled = false
+    @objc dynamic var _reminderCode = 0
+    @objc dynamic var _repeatType = 0
+    @objc dynamic var _description = ""
+    @objc dynamic var _interval = 0
+    @objc dynamic var _intervalType = 0
+    @objc dynamic var _createdTime = 0
+    @objc dynamic var _timeZone = ""
     
     override static func primaryKey() -> String? {
         return "_id"
@@ -263,26 +263,26 @@ class ReminderEntity: Object {
 }
 
 class SensorEntity: Object {
-    @objc dynamic var _id: Int = 0
-    @objc dynamic var _serialNumber: String = ""
-    @objc dynamic var _sensorUID: String = ""        // BLE address hex
-    @objc dynamic var _productType: Int = 0
-    @objc dynamic var _localization: Int = 0
-    @objc dynamic var _generation: Int = 0
-    @objc dynamic var _hwVersion: String = ""
-    @objc dynamic var _swVersion: String = ""
-    @objc dynamic var _fwVersion: String = ""
-    @objc dynamic var _activationDateUtc: Int = 0
-    @objc dynamic var _blePIN: String = ""
-    @objc dynamic var _warmupDuration: Int = 0
-    @objc dynamic var _wearDuration: Int = 0
-    @objc dynamic var _currentLifeCount: Int = 0
-    @objc dynamic var _lastHistoricReading: Int = 0  // a lifeCount
-    @objc dynamic var _status: Int = 0
-    @objc dynamic var _receiverID: Int = 0
-    @objc dynamic var _factoryData: String = ""      // 148 bytes hex (final CRC)
-    @objc dynamic var _securityVersion: Int = 0
-    @objc dynamic var _lastEvent: Int = 0
+    @objc dynamic var _id = 0
+    @objc dynamic var _serialNumber = ""
+    @objc dynamic var _sensorUID = ""        // BLE address hex
+    @objc dynamic var _productType = 0
+    @objc dynamic var _localization = 0
+    @objc dynamic var _generation = 0
+    @objc dynamic var _hwVersion = ""
+    @objc dynamic var _swVersion = ""
+    @objc dynamic var _fwVersion = ""
+    @objc dynamic var _activationDateUtc = 0
+    @objc dynamic var _blePIN = ""
+    @objc dynamic var _warmupDuration = 0
+    @objc dynamic var _wearDuration = 0
+    @objc dynamic var _currentLifeCount = 0
+    @objc dynamic var _lastHistoricReading = 0  // a lifeCount
+    @objc dynamic var _status = 0
+    @objc dynamic var _receiverID = 0
+    @objc dynamic var _factoryData = ""      // 148 bytes hex (final CRC)
+    @objc dynamic var _securityVersion = 0
+    @objc dynamic var _lastEvent = 0
     
     override static func primaryKey() -> String? {
         return "_id"
@@ -290,12 +290,12 @@ class SensorEntity: Object {
 }
 
 class SensorEventEntity: Object {
-    @objc dynamic var _id: Int = 0
+    @objc dynamic var _id = 0
     @objc dynamic var _sensor: SensorEntity?
-    @objc dynamic var _lifeCount: Int = 0
-    @objc dynamic var _timestampUTC: Int = 0
-    @objc dynamic var _eventCode: Int = 0           // SensorEventType
-    @objc dynamic var _eventValue: Double = 0       // same SensorEventType
+    @objc dynamic var _lifeCount = 0
+    @objc dynamic var _timestampUTC = 0
+    @objc dynamic var _eventCode = 0           // SensorEventType
+    @objc dynamic var _eventValue = 0.0       // same SensorEventType
     
     override static func primaryKey() -> String? {
         return "_id"
@@ -303,23 +303,23 @@ class SensorEventEntity: Object {
 }
 
 class SequenceEntity: Object {
-    @objc dynamic var _id: Int = 0
-    @objc dynamic var _nextSensorId: Int = 0
-    @objc dynamic var _nextGlucoseReadingId: Int = 0
-    @objc dynamic var _nextSensorEventId: Int = 0
-    @objc dynamic var _nextNoteId: Int = 0
-    @objc dynamic var _nextNoteElementId: Int = 0
-    @objc dynamic var _nextAppConfigId: Int = 0
-    @objc dynamic var _nextAppEventId: Int = 0
-    @objc dynamic var _nextAlarmConfigId: Int = 0
-    @objc dynamic var _nextReminderId: Int = 0
-    @objc dynamic var _nextUploadQueueId: Int = 0
+    @objc dynamic var _id = 0
+    @objc dynamic var _nextSensorId = 0
+    @objc dynamic var _nextGlucoseReadingId = 0
+    @objc dynamic var _nextSensorEventId = 0
+    @objc dynamic var _nextNoteId = 0
+    @objc dynamic var _nextNoteElementId = 0
+    @objc dynamic var _nextAppConfigId = 0
+    @objc dynamic var _nextAppEventId = 0
+    @objc dynamic var _nextAlarmConfigId = 0
+    @objc dynamic var _nextReminderId = 0
+    @objc dynamic var _nextUploadQueueId = 0
 }
 
 class UploadQueueRecordEntity: Object {
-    @objc dynamic var _id: Int = 0
-    @objc dynamic var _recordNumber: Int = 0
-    @objc dynamic var _recordType: String = ""
+    @objc dynamic var _id = 0
+    @objc dynamic var _recordNumber = 0
+    @objc dynamic var _recordType = ""
     
     override static func primaryKey() -> String? {
         return "_id"

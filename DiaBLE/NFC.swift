@@ -4,8 +4,8 @@ import AVFoundation    // AudioServicesPlaySystemSound()
 
 struct NFCCommand {
     let code: Int
-    var parameters: Data = Data()
-    var description: String = ""
+    var parameters = Data()
+    var description = ""
 }
 
 enum NFCError: LocalizedError {
@@ -183,9 +183,9 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
     var sensor: Sensor!
     
     // Gen2
-    var securityChallenge: Data = Data()
-    var authContext: Int = 0
-    var sessionInfo: Data = Data()
+    var securityChallenge = Data()
+    var authContext = 0
+    var sessionInfo = Data()
     
     var taskRequest: TaskRequest? {
         didSet {

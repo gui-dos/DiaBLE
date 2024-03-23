@@ -12,8 +12,8 @@ struct Monitor: View {
     
     @State private var showingHamburgerMenu = false
     
-    @State private var readingCountdown: Int = 0
-    @State private var minutesSinceLastReading: Int = 0
+    @State private var readingCountdown = 0
+    @State private var minutesSinceLastReading = 0
     
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()

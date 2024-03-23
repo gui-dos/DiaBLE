@@ -96,9 +96,9 @@ enum SensorState: UInt8, CustomStringConvertible {
     var type: SensorType = .unknown
     var family: SensorFamily = .unknown
     var region: SensorRegion = .unknown
-    var serial: String = ""
-    var readerSerial: Data = Data()
-    var firmware: String = ""
+    var serial = ""
+    var readerSerial = Data()
+    var firmware = ""
     
     var transmitter: Transmitter?
     var main: MainDelegate!
@@ -106,13 +106,13 @@ enum SensorState: UInt8, CustomStringConvertible {
     var state: SensorState = .unknown
     var lastReadingDate = Date.distantPast
     var activationTime: UInt32 = 0
-    var age: Int = 0
-    var maxLife: Int = 0
-    var initializations: Int = 0
+    var age = 0
+    var maxLife = 0
+    var initializations = 0
     
-    var crcReport: String = ""
+    var crcReport = ""
     
-    var securityGeneration: Int = 0
+    var securityGeneration = 0
     
     var patchInfo: PatchInfo = Data() {
         willSet(info) {
@@ -162,7 +162,7 @@ enum SensorState: UInt8, CustomStringConvertible {
     var factoryTrend: [Glucose] { trend.map { factoryGlucose(rawGlucose: $0, calibrationInfo: calibrationInfo) }}
     var factoryHistory: [Glucose] { history.map { factoryGlucose(rawGlucose: $0, calibrationInfo: calibrationInfo) }}
     
-    var encryptedFram: Data = Data()
+    var encryptedFram = Data()
     
     @ObservationIgnored
     var fram: Data = Data() {
@@ -186,11 +186,11 @@ enum SensorState: UInt8, CustomStringConvertible {
     var streamingUnlockCount: UInt16 = 0
     
     // Gen2
-    var streamingContext: Int = 0    // returned by getNfcAuthenticatedCommandBLE(command:...)
+    var streamingContext = 0    // returned by getNfcAuthenticatedCommandBLE(command:...)
     
     /// formed when passed as third inout argument to verifyEnableStreamingResponse()
     /// 10 bytes in older US2 models, 12 bytes in new  ones
-    var streamingAuthenticationData: Data = Data()
+    var streamingAuthenticationData = Data()
     
     
     init(transmitter: Transmitter? = nil, main: MainDelegate? = nil) {

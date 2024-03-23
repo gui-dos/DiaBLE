@@ -882,59 +882,59 @@ extension String {
     
     
     class DPCRLInterface {
-        static let ABT_NO_ERROR: Int = 0x0
-        static let ABT_ERR0_BLE_TURNED_OFF: Int = 0x1f7
-        static let ABT_ERR3_TIME_CHANGE: Int = 0x2e
-        static let ABT_ERR3_SENSOR_EXPIRED: Int = 0x33
-        static let ABT_ERR3_SENSOR_RSSI_ERROR: Int = 0x39
-        static let ABT_ERR3_BLE_TURNED_OFF: Int = 0x4b
-        static let ABT_ERR3_REPLACE_SENSOR_ERROR: Int = 0x16d
-        static let ABT_ERR3_SENSOR_FALL_OUT_ERROR: Int = 0x16e
-        static let ABT_ERR3_INCOMPATIBLE_SENSOR_TYPE_ERROR: Int = 0x16f
+        static let ABT_NO_ERROR = 0x0
+        static let ABT_ERR0_BLE_TURNED_OFF = 0x1f7
+        static let ABT_ERR3_TIME_CHANGE = 0x2e
+        static let ABT_ERR3_SENSOR_EXPIRED = 0x33
+        static let ABT_ERR3_SENSOR_RSSI_ERROR = 0x39
+        static let ABT_ERR3_BLE_TURNED_OFF = 0x4b
+        static let ABT_ERR3_REPLACE_SENSOR_ERROR = 0x16d
+        static let ABT_ERR3_SENSOR_FALL_OUT_ERROR = 0x16e
+        static let ABT_ERR3_INCOMPATIBLE_SENSOR_TYPE_ERROR = 0x16f
         static let ABT_ERR3_SENSOR_CAL_CODE_ERROR = 0x170
         static let ABT_ERR3_SENSOR_DYNAMIC_DATA_CRC_ERROR = 0x171
         static let ABT_ERR3_SENSOR_FACTORY_DATA_CRC_ERROR = 0x172
         static let ABT_ERR3_SENSOR_LOG_DATA_CRC_ERROR = 0x173
-        static let ABT_ERR3_SENSOR_NOT_YOURS_ERROR: Int = 0x174
-        static let ABT_ERR3_REALTIME_RESULT_DQ_ERROR: Int = 0x175
-        static let ABT_ERR3_SENSOR_ESA_DETECTED: Int = 0x17c
-        static let ABT_ERR3_SENSOR_NOT_IN_GLUCOSE_MEASUREMENT_STATE: Int = 0x181
-        static let ABT_ERR3_BLE_PACKET_ERROR: Int = 0x182
-        static let ABT_ERR3_INVALID_DATA_SIZE_ERROR: Int = 0x183
-        static let ABT_ERR9_LIB_NOT_INITIALIZED_ERROR: Int = 0x3d6
-        static let ABT_ERR9_MEMORY_SIZE_ERROR: Int = 0x3d7
-        static let ABT_ERR9_NV_MEMORY_CRC_ERROR: Int = 0x3da
-        static let ABT_ERR10_INVALID_USER: Int = 0x582
-        static let ABT_ERR10_DUPLICATE_USER: Int = 0x596
-        static let ABT_ERR10_INVALID_TOKEN: Int = 0x5a6
-        static let ABT_ERR10_INVALID_DEVICE: Int = 0x5aa
+        static let ABT_ERR3_SENSOR_NOT_YOURS_ERROR = 0x174
+        static let ABT_ERR3_REALTIME_RESULT_DQ_ERROR = 0x175
+        static let ABT_ERR3_SENSOR_ESA_DETECTED = 0x17c
+        static let ABT_ERR3_SENSOR_NOT_IN_GLUCOSE_MEASUREMENT_STATE = 0x181
+        static let ABT_ERR3_BLE_PACKET_ERROR = 0x182
+        static let ABT_ERR3_INVALID_DATA_SIZE_ERROR = 0x183
+        static let ABT_ERR9_LIB_NOT_INITIALIZED_ERROR = 0x3d6
+        static let ABT_ERR9_MEMORY_SIZE_ERROR = 0x3d7
+        static let ABT_ERR9_NV_MEMORY_CRC_ERROR = 0x3da
+        static let ABT_ERR10_INVALID_USER = 0x582
+        static let ABT_ERR10_DUPLICATE_USER = 0x596
+        static let ABT_ERR10_INVALID_TOKEN = 0x5a6
+        static let ABT_ERR10_INVALID_DEVICE = 0x5aa
         static let ABT_ERROR_DATA_BYTES = 0x8
         static let LIBRE3_DP_LIBRARY_PARSE_ERROR = ~0x0
-        static let NFC_ACTIVATION_COMMAND_PAYLOAD_SIZE: Int = 10
+        static let NFC_ACTIVATION_COMMAND_PAYLOAD_SIZE = 10
         static let PATCH_CONTROL_BACKFILL_GREATER_SIZE = 11
-        static let ABT_HISTORICAL_POINTS_PER_NOTIFICATION: Int = 6
-        static let LIB3_RECORD_ORDER_NEWEST_TO_OLDEST: Int = 0
-        static let LIB3_RECORD_ORDER_OLDEST_TO_NEWEST: Int = 1
-        static let PATCH_CONTROL_COMMAND_SIZE: Int = 7
-        static let PATCH_NFC_EVENT_LOG_NUM_EVENTS: Int = 3
-        static let ABT_EVENT_LOGS_PER_NOTIFICATION: Int = 2
-        static let SCRATCH_PAD_BUFFER_SIZE: Int = 0x400
-        static let CRL_NV_MEMORY_SIZE: Int = 0x400
+        static let ABT_HISTORICAL_POINTS_PER_NOTIFICATION = 6
+        static let LIB3_RECORD_ORDER_NEWEST_TO_OLDEST = 0
+        static let LIB3_RECORD_ORDER_OLDEST_TO_NEWEST = 1
+        static let PATCH_CONTROL_COMMAND_SIZE = 7
+        static let PATCH_NFC_EVENT_LOG_NUM_EVENTS = 3
+        static let ABT_EVENT_LOGS_PER_NOTIFICATION = 2
+        static let SCRATCH_PAD_BUFFER_SIZE = 0x400
+        static let CRL_NV_MEMORY_SIZE = 0x400
         static let LIBRE3_DEFAULT_WARMUP_TIME = 60
         static let MAX_SERIAL_NUMBER_SIZE = 15
-        var lastError: Int = 0
+        var lastError = 0
         var scratchPadBuffer: UnsafeMutablePointer<UInt32>? = nil
     }
     
     
     // Android libre3SecurityConstants
     struct Libre3SecurityConstants {
-        static let CERT_PATCH_DATE_STAMP_LENGTH: Int = 2
-        static let CERT_PATCH_LENGTH: Int = 140
-        static let CERT_PATCH_VERSION_LENGTH: Int = 1
-        static let CERT_PUBLIC_KEY_LENGTH: Int = 65
-        static let CERT_SERIAL_NUMBER_LENGTH: Int = 8
-        static let CERT_SIGNATURE_LENGTH: Int = 64
+        static let CERT_PATCH_DATE_STAMP_LENGTH = 2
+        static let CERT_PATCH_LENGTH = 140
+        static let CERT_PATCH_VERSION_LENGTH = 1
+        static let CERT_PUBLIC_KEY_LENGTH = 65
+        static let CERT_SERIAL_NUMBER_LENGTH = 8
+        static let CERT_SIGNATURE_LENGTH = 64
         
         static let CMD_AUTHORIZATION_CHALLENGE: UInt8 = 0x07
         static let CMD_AUTHORIZED: UInt8 = 0x05
@@ -956,14 +956,14 @@ extension String {
         static let CMD_SEND_CERT: UInt8 = 0x09
         static let CMD_VERIFICATION_FAILURE: UInt8 = 0x13
         
-        static let CRYPTO_KEY_LENGTH_BYTES: Int = 16
-        static let CRYPTO_MAC_LENGTH_BYTES: Int = 4
-        static let L3_SEC_ERROR_AUTHENTICATION_FAILED: Int = 902
-        static let L3_SEC_ERROR_AUTHORIZATION_FAILED: Int = 903
-        static let L3_SEC_ERROR_DECRYPTION_FAILED: Int = 904
-        static let L3_SEC_ERROR_ENCRYPTION_FAILED: Int = 905
-        static let L3_SEC_ERROR_INVALID_CERTIFICATE: Int = 901
-        static let L3_SEC_ERROR_LIB_ERROR: Int = 906
+        static let CRYPTO_KEY_LENGTH_BYTES = 16
+        static let CRYPTO_MAC_LENGTH_BYTES = 4
+        static let L3_SEC_ERROR_AUTHENTICATION_FAILED = 902
+        static let L3_SEC_ERROR_AUTHORIZATION_FAILED = 903
+        static let L3_SEC_ERROR_DECRYPTION_FAILED = 904
+        static let L3_SEC_ERROR_ENCRYPTION_FAILED = 905
+        static let L3_SEC_ERROR_INVALID_CERTIFICATE = 901
+        static let L3_SEC_ERROR_LIB_ERROR = 906
     }
     
     
@@ -987,32 +987,32 @@ extension String {
     
     /// whiteCryption Secure Key Box
     struct Libre3SKBCryptoLib {
-        static let CRYPTO_RETURN_INVALID_COMMAND: Int = 0
-        static let CRYPTO_RETURN_SUCCESS: Int = 1
-        static let CRYPTO_RETURN_INVALID_PARAM: Int = -1
-        static let CRYPTO_RETURN_LIB_ERROR: Int = -2
-        static let CRYPTO_RETURN_LOW_MEMORY: Int = -3
-        static let CRYPTO_RETURN_VERITY_FAILED: Int = -4
+        static let CRYPTO_RETURN_INVALID_COMMAND = 0
+        static let CRYPTO_RETURN_SUCCESS = 1
+        static let CRYPTO_RETURN_INVALID_PARAM = -1
+        static let CRYPTO_RETURN_LIB_ERROR = -2
+        static let CRYPTO_RETURN_LOW_MEMORY = -3
+        static let CRYPTO_RETURN_VERITY_FAILED = -4
         
-        static let CRYPTO_EXTENSION_INIT_LIB: Int = 1
-        static let CRYPTO_EXTENSION_INIT_ECDH: Int = 2
-        static let CRYPTO_EXTENSION_SET_PATCH_ATTRIB: Int = 3
-        static let CRYPTO_EXTENSION_SET_CERTIFICATE: Int = 4
-        static let CRYPTO_EXTENSION_GENERATE_EPHEMERAL: Int = 5
-        static let CRYPTO_EXTENSION_GENERATE_KAUTH: Int = 6
-        static let CRYPTO_EXTENSION_ENCRYPT: Int = 7
-        static let CRYPTO_EXTENSION_DECRYPT: Int = 8
-        static let CRYPTO_EXTENSION_EXPORT_KAUTH: Int = 9
-        static let CRYPTO_EXTENSION_GENERATE_DB_KEY: Int = 10
-        static let CRYPTO_EXTENSION_WRAP_DB_KEY: Int = 11
-        static let CRYPTO_EXTENSION_UNWRAP_DB_KEY: Int = 12
-        static let CRYPTO_EXTENSION_WRAP_DIAGNOSTIC_DATA: Int = 13
+        static let CRYPTO_EXTENSION_INIT_LIB = 1
+        static let CRYPTO_EXTENSION_INIT_ECDH = 2
+        static let CRYPTO_EXTENSION_SET_PATCH_ATTRIB = 3
+        static let CRYPTO_EXTENSION_SET_CERTIFICATE = 4
+        static let CRYPTO_EXTENSION_GENERATE_EPHEMERAL = 5
+        static let CRYPTO_EXTENSION_GENERATE_KAUTH = 6
+        static let CRYPTO_EXTENSION_ENCRYPT = 7
+        static let CRYPTO_EXTENSION_DECRYPT = 8
+        static let CRYPTO_EXTENSION_EXPORT_KAUTH = 9
+        static let CRYPTO_EXTENSION_GENERATE_DB_KEY = 10
+        static let CRYPTO_EXTENSION_WRAP_DB_KEY = 11
+        static let CRYPTO_EXTENSION_UNWRAP_DB_KEY = 12
+        static let CRYPTO_EXTENSION_WRAP_DIAGNOSTIC_DATA = 13
         
         let PUBLIC_KEY_TYPE_UNCOMPRESSED: UInt8 = 4
         let CRYPTO_PUBLIC_KEY_SIZE: Int
         let patchSigningKey: Data
         let securityVersion: Int
-        let max_key_index: Int = 2
+        let max_key_index = 2
         let app_private_key: Data
         let app_certificate: Data
     }

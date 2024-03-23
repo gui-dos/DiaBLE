@@ -49,7 +49,7 @@ class Abbott: Transmitter {
         }
     }
     
-    var securityGeneration: Int = 0    // unknown; then 1 or 2
+    var securityGeneration = 0    // unknown; then 1 or 2
     var authenticationState: AuthenticationState = .notAuthenticated
     var sessionInfo = Data()    // 7 + 18 bytes
     

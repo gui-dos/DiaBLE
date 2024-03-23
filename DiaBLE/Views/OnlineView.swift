@@ -22,10 +22,10 @@ struct OnlineView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @State private var showingNFCAlert = false
-    @State private var onlineCountdown: Int = 0
-    @State private var readingCountdown: Int = 0
+    @State private var onlineCountdown = 0
+    @State private var readingCountdown = 0
     
-    @State private var libreLinkUpResponse: String = "[...]"
+    @State private var libreLinkUpResponse = "[...]"
     @State private var libreLinkUpHistory: [LibreLinkUpGlucose] = []
     @State private var libreLinkUpLogbookHistory: [LibreLinkUpGlucose] = []
     

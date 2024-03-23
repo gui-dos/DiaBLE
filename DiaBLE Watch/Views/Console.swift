@@ -7,8 +7,8 @@ struct Console: View {
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
     
-    @State private var onlineCountdown: Int = 0
-    @State private var readingCountdown: Int = 0
+    @State private var onlineCountdown = 0
+    @State private var readingCountdown = 0
     
     @State private var showingFilterField = false
     @State private var filterText = ""
