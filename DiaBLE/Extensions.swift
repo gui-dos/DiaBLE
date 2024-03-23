@@ -3,10 +3,10 @@ import CryptoKit
 
 
 extension Data {
-    var hex: String { self.reduce("", { $0 + String(format: "%02x", $1)}) }
+    var hex: String { self.reduce("", { $0 + String(format: "%02x", $1) }) }
     var string: String { String(decoding: self, as: UTF8.self) }
-    var hexBytes: String { String(self.reduce("", { $0 + $1.hex + " "}).dropLast(1)) }
-    var hexAddress: String { String(self.reduce("", { $0 + $1.hex + ":"}).dropLast(1)) }
+    var hexBytes: String { String(self.reduce("", { $0 + $1.hex + " " }).dropLast(1)) }
+    var hexAddress: String { String(self.reduce("", { $0 + $1.hex + ":" }).dropLast(1)) }
     var sha1: String { Insecure.SHA1.hash(data: self).makeIterator().reduce("", { $0 + String(format: "%02x", $1) }) }
 
     func hexDump(header: String = "", address: Int = -1, startBlock: Int = -1, escaping: Bool = false) -> String {
@@ -15,10 +15,10 @@ extension Data {
         var str = (header.isEmpty || escaping) ? "" : "\(header)\n"
         while offset < endIndex {
             _ = formIndex(&offsetEnd, offsetBy: 8, limitedBy: endIndex)
-            if address != -1 { str += (address + offset).hex + " "}
+            if address != -1 { str += (address + offset).hex + " " }
             if startBlock != -1 { str += "#\((startBlock + offset / 8).hex) " }
             if address != -1 || startBlock != -1 { str += " " }
-            str += "\(self[offset ..< offsetEnd].reduce("", { $0 + $1.hex + " "}))"
+            str += "\(self[offset ..< offsetEnd].reduce("", { $0 + $1.hex + " " }))"
             str += String(repeating: "   ", count: 8 - distance(from: offset, to: offsetEnd))
             str += "\(self[offset ..< offsetEnd].reduce(" ", { $0 + ((isprint(Int32($1)) != 0) ? String(Unicode.Scalar($1)) : "." ) }))\n"
             _ = formIndex(&offset, offsetBy: 8, limitedBy: endIndex)
