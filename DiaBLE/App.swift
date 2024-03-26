@@ -47,7 +47,6 @@ enum Tab: String {
 
 
 enum OnlineService: String, CaseIterable {
-    case nightscout  = "Nightscout"
     case libreLinkUp = "LibreLinkUp"
 }
 
@@ -146,10 +145,6 @@ enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
     var deviceState: String = ""
     var lastConnectionDate: Date = Date.distantPast
     var status: String = "Welcome to DiaBLE!"
-
-    var showingJavaScriptConfirmAlert: Bool = false
-    var JavaScriptConfirmAlertMessage: String = ""
-    var JavaScriptAlertReturn: String = ""
 }
 
 
@@ -206,8 +201,7 @@ struct LogEntry: Identifiable {
    var rawTrend:      [Glucose] = []
    var factoryValues: [Glucose] = []
    var factoryTrend:  [Glucose] = []
-   var storedValues:     [Glucose] = []
-   var nightscoutValues: [Glucose] = []
+   var storedValues:  [Glucose] = []
 }
 
 
@@ -269,9 +263,6 @@ extension History {
 
         let storedValues = [231, 252, 253, 254, 245, 196, 177, 128, 149, 150, 101, 122, 133, 144, 155, 166, 177, 178, 149, 140, 141, 142, 143, 144, 155, 166, 177, 178, 169, 150, 141, 132].enumerated().map { Glucose($0.1, id: $0.0, date: Date() - Double($0.1) * 15 * 60, source: "SourceApp com.example.sourceapp") }
         history.storedValues = storedValues
-
-        let nightscoutValues = [231, 252, 253, 254, 245, 196, 177, 128, 149, 150, 101, 122, 133, 144, 155, 166, 177, 178, 149, 140, 141, 142, 143, 144, 155, 166, 177, 178, 169, 150, 141, 132].enumerated().map { Glucose($0.1, id: $0.0, date: Date() - Double($0.1) * 15 * 60, source: "Device") }
-        history.nightscoutValues = nightscoutValues
 
         return history
     }

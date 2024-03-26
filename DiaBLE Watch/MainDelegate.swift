@@ -31,7 +31,6 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
     var bluetoothDelegate: BluetoothDelegate
     var healthKit: HealthKit?
     var libreLinkUp: LibreLinkUp?
-    var nightscout: Nightscout?
 
 
     override init() {
@@ -75,8 +74,6 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
         }
 
         libreLinkUp = LibreLinkUp(main: self)
-        nightscout = Nightscout(main: self)
-        nightscout!.read()
 
         let numberFormatter = NumberFormatter()
         numberFormatter.minimumFractionDigits = 8
@@ -167,7 +164,6 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
             log("Bluetooth is powered off: cannot scan")
         }
         healthKit?.read()
-        nightscout?.read()
     }
 
 
@@ -319,16 +315,6 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
             if newEntries.count > 0 {
                 healthKit?.write(newEntries)
                 healthKit?.read()
-            }
-
-            nightscout?.read { [self] values in
-                let newEntries = values.count > 0 ? entries.filter { $0.date > values[0].date } : entries
-                if newEntries.count > 0 {
-                    nightscout?.post(entries: newEntries) { [self]
-                        data, response, error in
-                        nightscout?.read()
-                    }
-                }
             }
         }
 

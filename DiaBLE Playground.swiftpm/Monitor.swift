@@ -434,8 +434,8 @@ struct CalibrationView: View {
                                         settings.calibration = app.calibration
                                     } label: {
                                         Text("Save")
-                                            .bold(
-                                            ).padding(.horizontal, 4)
+                                            .bold()
+                                            .padding(.horizontal, 4)
                                             .padding(2)
                                             .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
                                     }

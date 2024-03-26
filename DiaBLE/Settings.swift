@@ -32,9 +32,6 @@ import Foundation
         "reversedLog": true,
         "userLevel": UserLevel.basic.rawValue,
 
-        "nightscoutSite": "www.gluroo.com",
-        "nightscoutToken": "",
-
         "libreLinkUpEmail": "",
         "libreLinkUpPassword": "",
         "libreLinkUpPatientId": "",
@@ -168,14 +165,6 @@ import Foundation
 
     var userLevel: UserLevel = UserLevel(rawValue: UserDefaults.standard.integer(forKey: "userLevel"))! {
         didSet { UserDefaults.standard.set(self.userLevel.rawValue, forKey: "userLevel") }
-    }
-
-    var nightscoutSite: String = UserDefaults.standard.string(forKey: "nightscoutSite")! {
-        didSet { UserDefaults.standard.set(self.nightscoutSite, forKey: "nightscoutSite") }
-    }
-
-    var nightscoutToken: String = UserDefaults.standard.string(forKey: "nightscoutToken")! {
-        didSet { UserDefaults.standard.set(self.nightscoutToken, forKey: "nightscoutToken") }
     }
 
     var libreLinkUpEmail: String = UserDefaults.standard.string(forKey: "libreLinkUpEmail")! {
