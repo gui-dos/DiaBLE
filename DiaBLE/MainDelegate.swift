@@ -135,35 +135,6 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
     }
 
 
-    // FIXME: causes double instantiation of MainDelegate
-
-    //    public func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-    //        let sceneConfiguration = UISceneConfiguration(name: "LaunchConfiguration", sessionRole: connectingSceneSession.role)
-    //        sceneConfiguration.delegateClass = MainDelegate.self
-    //        return sceneConfiguration
-    //    }
-
-
-    public func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        if let shortcutItem = connectionOptions.shortcutItem {
-            if shortcutItem.type == "NFC" {
-                if nfc.isAvailable {
-                    nfc.startSession()
-                }
-            }
-        }
-    }
-
-    public func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
-        if shortcutItem.type == "NFC" {
-            if nfc.isAvailable {
-                nfc.startSession()
-            }
-        }
-        completionHandler(true)
-    }
-
-
     public func rescan() {
         if let device = app.device {
             centralManager.cancelPeripheralConnection(device.peripheral!)
