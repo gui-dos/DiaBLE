@@ -95,7 +95,7 @@ struct OnlineView: View {
             HStack {
 
                 Button {
-                    settings.selectedService = settings.selectedService == .libreLinkUp ? .libreLinkUp : .libreLinkUp
+                    settings.selectedService = settings.selectedService == .nightscout ? .libreLinkUp : .nightscout
                 } label: {
                     Image(settings.selectedService.rawValue).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
                 }
@@ -173,7 +173,12 @@ struct OnlineView: View {
                 
                 HStack {
 
-                    if settings.selectedService == .libreLinkUp {
+                    if settings.selectedService == .nightscout {
+                        TextField("Nightscout URL", text: $settings.nightscoutSite)
+                            .textContentType(.URL)
+                        SecureField("token", text: $settings.nightscoutToken)
+
+                    } else if settings.selectedService == .libreLinkUp {
                         TextField("email", text: $settings.libreLinkUpEmail)
                             .textContentType(.emailAddress)
                             .textInputAutocapitalization(.never)
@@ -207,6 +212,53 @@ struct OnlineView: View {
                     }
                 }
             }
+
+            if settings.selectedService == .nightscout {
+
+                ScrollView(showsIndicators: true) {
+
+                    VStack(spacing: 0) {
+
+                        if history.nightscoutValues.count > 0 {
+                            let twelveHours = Double(12 * 60 * 60)  // TODO: the same as LLU
+                            let now = Date()
+                            let nightscoutHistory = history.nightscoutValues.filter { now.timeIntervalSince($0.date) <= twelveHours }
+                            Chart(nightscoutHistory) {
+                                PointMark(x: .value("Time", $0.date),
+                                          y: .value("Glucose", $0.value)
+                                )
+                                .foregroundStyle(.cyan)
+                                .symbolSize(6)
+                            }
+                            .chartXAxis {
+                                AxisMarks(values: .stride(by: .hour, count: 3)) { _ in
+                                    AxisGridLine()
+                                    AxisTick()
+                                    AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .omitted)).minute(), anchor: .top)
+                                }
+                            }
+                            .padding()
+                            .frame(maxHeight: 64)
+                        }
+
+                        List {
+                            ForEach(history.nightscoutValues) { glucose in
+                                (Text("\(String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)])) \(glucose.date.shortDateTime)") + Text("  \(glucose.value, specifier: "%3d")").bold())
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                        }
+                        .frame(minHeight: 64)
+                    }
+                }
+                // .font(.system(.footnote, design: .monospaced))
+                .foregroundColor(.cyan)
+                .onAppear { if let nightscout = app.main?.nightscout { nightscout.read()
+                    app.main.log("nightscoutValues count \(history.nightscoutValues.count)")
+
+                } }
+            }
+
 
             if settings.selectedService == .libreLinkUp {
 

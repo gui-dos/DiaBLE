@@ -101,7 +101,7 @@ struct OnlineView: View {
                     HStack(alignment: .top, spacing: 2) {
 
                         Button {
-                            settings.selectedService = settings.selectedService == .libreLinkUp ? .libreLinkUp : .libreLinkUp
+                            settings.selectedService = settings.selectedService == .nightscout ? .libreLinkUp : .nightscout
                         } label: {
                             Image(settings.selectedService.rawValue).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
                         }
@@ -111,7 +111,19 @@ struct OnlineView: View {
 
                             @Bindable var settings = settings
 
-                            if settings.selectedService == .libreLinkUp {
+                            if settings.selectedService == .nightscout {
+                                HStack(alignment: .firstTextBaseline, spacing: 0) {
+                                    Text("https://")
+                                        .foregroundColor(Color(.lightGray))
+                                    TextField("Nightscout URL", text: $settings.nightscoutSite)
+                                        .keyboardType(.URL)
+                                        .textContentType(.URL)
+                                        .autocorrectionDisabled(true)
+                                }
+                                SecureField("token", text: $settings.nightscoutToken)
+
+
+                            } else if settings.selectedService == .libreLinkUp {
                                 TextField("email", text: $settings.libreLinkUpEmail)
                                     .keyboardType(.emailAddress)
                                     .textContentType(.emailAddress)
@@ -194,6 +206,7 @@ struct OnlineView: View {
                             if app.main.nfc.isAvailable {
                                 app.main.nfc.startSession()
                                 if let healthKit = app.main.healthKit { healthKit.read() }
+                                if let nightscout = app.main.nightscout { nightscout.read() }
                             } else {
                                 showingNFCAlert = true
                             }
@@ -212,6 +225,36 @@ struct OnlineView: View {
                     #if targetEnvironment(macCatalyst)
                     .padding(.horizontal, 15)
                     #endif
+
+                    if settings.selectedService == .nightscout {
+
+                        @Bindable var app = app
+
+                        WebView(site: settings.nightscoutSite, query: "token=\(settings.nightscoutToken)", delegate: app.main?.nightscout )
+                            .frame(height: UIScreen.main.bounds.size.height * 0.60)
+                            .alert("JavaScript", isPresented: $app.showingJavaScriptConfirmAlert) {
+                                Button("OK") { app.main.log("JavaScript alert: selected OK") }
+                                Button("Cancel", role: .cancel) { app.main.log("JavaScript alert: selected Cancel") }
+                            } message: {
+                                Text(app.JavaScriptConfirmAlertMessage)
+                            }
+
+                        List {
+                            ForEach(history.nightscoutValues) { glucose in
+                                (Text("\(String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)])) \(glucose.date.shortDateTime)") + Text("  \(glucose.value, specifier: "%3d")").bold())
+                                    .fixedSize(horizontal: false, vertical: true).listRowInsets(EdgeInsets())
+                            }
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                        }
+                        .listStyle(.plain)
+                        .font(.system(.caption, design: .monospaced))
+                        .foregroundColor(.cyan)
+                        #if targetEnvironment(macCatalyst)
+                        .padding(.leading, 15)
+                        #endif
+                        .onAppear { if let nightscout = app.main?.nightscout { nightscout.read() } }
+                    }
+
 
                     if settings.selectedService == .libreLinkUp {
                         VStack {

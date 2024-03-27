@@ -61,6 +61,7 @@
 		C5E4005929825C930021C6B7 /* DataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4004E29825C930021C6B7 /* DataView.swift */; };
 		C5E4005A29825C930021C6B7 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4004F29825C930021C6B7 /* SettingsView.swift */; };
 		C5E4005B29825C930021C6B7 /* Details.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4005029825C930021C6B7 /* Details.swift */; };
+		C5E4005C29825C930021C6B7 /* ViewRepresentables.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4005129825C930021C6B7 /* ViewRepresentables.swift */; };
 		C5E4005D29825C930021C6B7 /* Console.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4005229825C930021C6B7 /* Console.swift */; };
 		C5E4005E29825C930021C6B7 /* Graph.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4005329825C930021C6B7 /* Graph.swift */; };
 		C5E4005F29825C930021C6B7 /* OnlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4005429825C930021C6B7 /* OnlineView.swift */; };
@@ -96,6 +97,8 @@
 		C5E4009129825EEE0021C6B7 /* NFC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4008F29825EED0021C6B7 /* NFC.swift */; };
 		C5E4009629825F120021C6B7 /* LibreLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4009529825F120021C6B7 /* LibreLink.swift */; };
 		C5E4009729825F120021C6B7 /* LibreLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4009529825F120021C6B7 /* LibreLink.swift */; };
+		C5E4009929825F1C0021C6B7 /* Nightscout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4009829825F1C0021C6B7 /* Nightscout.swift */; };
+		C5E4009A29825F1C0021C6B7 /* Nightscout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4009829825F1C0021C6B7 /* Nightscout.swift */; };
 		C5E4009F29825F580021C6B7 /* company_ids.json in Resources */ = {isa = PBXBuildFile; fileRef = C5E4009E29825F580021C6B7 /* company_ids.json */; };
 		C5E400A029825F580021C6B7 /* company_ids.json in Resources */ = {isa = PBXBuildFile; fileRef = C5E4009E29825F580021C6B7 /* company_ids.json */; };
 /* End PBXBuildFile section */
@@ -189,6 +192,7 @@
 		C5E4004E29825C930021C6B7 /* DataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataView.swift; sourceTree = "<group>"; };
 		C5E4004F29825C930021C6B7 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C5E4005029825C930021C6B7 /* Details.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Details.swift; sourceTree = "<group>"; };
+		C5E4005129825C930021C6B7 /* ViewRepresentables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewRepresentables.swift; sourceTree = "<group>"; };
 		C5E4005229825C930021C6B7 /* Console.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Console.swift; sourceTree = "<group>"; };
 		C5E4005329825C930021C6B7 /* Graph.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Graph.swift; sourceTree = "<group>"; };
 		C5E4005429825C930021C6B7 /* OnlineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnlineView.swift; sourceTree = "<group>"; };
@@ -211,6 +215,7 @@
 		C5E4008C29825ED00021C6B7 /* Health.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Health.swift; sourceTree = "<group>"; };
 		C5E4008F29825EED0021C6B7 /* NFC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NFC.swift; sourceTree = "<group>"; };
 		C5E4009529825F120021C6B7 /* LibreLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreLink.swift; sourceTree = "<group>"; };
+		C5E4009829825F1C0021C6B7 /* Nightscout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Nightscout.swift; sourceTree = "<group>"; };
 		C5E4009E29825F580021C6B7 /* company_ids.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = company_ids.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -340,6 +345,7 @@
 				C535AEB72AB343AE00AB61AD /* Realm.swift */,
 				C50B9AD22AA7396500FF1EA3 /* ConsoleTools.swift */,
 				C5E4009529825F120021C6B7 /* LibreLink.swift */,
+				C5E4009829825F1C0021C6B7 /* Nightscout.swift */,
 				C5E4009E29825F580021C6B7 /* company_ids.json */,
 				C5AAA61C2981CF7200CA3EC1 /* Assets.xcassets */,
 				C53F77C529894478004F275A /* Info.plist */,
@@ -380,6 +386,7 @@
 				C5E4004F29825C930021C6B7 /* SettingsView.swift */,
 				C5E4004E29825C930021C6B7 /* DataView.swift */,
 				C5E4005629825C930021C6B7 /* Plan.swift */,
+				C5E4005129825C930021C6B7 /* ViewRepresentables.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -580,6 +587,7 @@
 				C5E4008E29825ED00021C6B7 /* Health.swift in Sources */,
 				C5E4007229825DF50021C6B7 /* BluetoothDelegate.swift in Sources */,
 				C5916E5329827E860051AC06 /* OnlineView.swift in Sources */,
+				C5E4009A29825F1C0021C6B7 /* Nightscout.swift in Sources */,
 				C5916E4F29827E860051AC06 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -602,10 +610,12 @@
 				C5E4006229825C930021C6B7 /* ContentView.swift in Sources */,
 				C5E4008D29825ED00021C6B7 /* Health.swift in Sources */,
 				C5E4008229825E8B0021C6B7 /* Libre2.swift in Sources */,
+				C5E4005C29825C930021C6B7 /* ViewRepresentables.swift in Sources */,
 				C5E4006829825DCD0021C6B7 /* Settings.swift in Sources */,
 				C5E4005F29825C930021C6B7 /* OnlineView.swift in Sources */,
 				C5E4006E29825DEA0021C6B7 /* Device.swift in Sources */,
 				C5E4006129825C930021C6B7 /* Plan.swift in Sources */,
+				C5E4009929825F1C0021C6B7 /* Nightscout.swift in Sources */,
 				C5E4005B29825C930021C6B7 /* Details.swift in Sources */,
 				C5E4005D29825C930021C6B7 /* Console.swift in Sources */,
 				C5E4006529825D1F0021C6B7 /* Extensions.swift in Sources */,
