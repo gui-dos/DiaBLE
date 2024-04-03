@@ -28,8 +28,8 @@ struct SettingsView: View {
                     }
                 } label: {
                     Image("Bluetooth").renderingMode(.template).resizable().frame(width: 28, height: 28)
-                        .foregroundColor(.blue)
-                        .overlay(settings.stoppedBluetooth ? Image(systemName: "line.diagonal").resizable().frame(width: 18, height: 18).rotationEffect(.degrees(90)) : nil).foregroundColor(.red)
+                        .foregroundStyle(.blue)
+                        .overlay(settings.stoppedBluetooth ? Image(systemName: "line.diagonal").resizable().frame(width: 18, height: 18).rotationEffect(.degrees(90)) : nil).foregroundStyle(.red)
                 }
                 .padding(.horizontal, -8)
 
@@ -48,7 +48,7 @@ struct SettingsView: View {
 
             }
             .font(.footnote)
-            .foregroundColor(.blue)
+            .foregroundStyle(.blue)
             .padding(.top, 16)
 
             HStack  {
@@ -78,7 +78,7 @@ struct SettingsView: View {
                     .frame(width: 60, height: 20)
                 }
                 .font(.footnote)
-                .foregroundColor(.orange)
+                .foregroundStyle(.orange)
 
                 Spacer()
 
@@ -86,7 +86,7 @@ struct SettingsView: View {
                     settings.onlineInterval = settings.onlineInterval != 0 ? 0 : 5
                 } label: {
                     Image(systemName: settings.onlineInterval != 0 ? "network" : "wifi.slash").resizable().frame(width: 20, height: 20)
-                        .foregroundColor(.cyan)
+                        .foregroundStyle(.cyan)
                 }
 
                 Picker(selection: $settings.onlineInterval, label: Text("")) {
@@ -96,7 +96,7 @@ struct SettingsView: View {
                     }
                 }
                 .font(.footnote)
-                .foregroundColor(.cyan)
+                .foregroundStyle(.cyan)
                 .labelsHidden()
                 .frame(width: 62, height: 20)
 
@@ -106,10 +106,10 @@ struct SettingsView: View {
                 VStack(spacing: 0) {
                     HStack(spacing: 20) {
                         Image(systemName: "hand.thumbsup.fill")
-                            .foregroundColor(.green)
+                            .foregroundStyle(.green)
                             .offset(x: -10) // align to the bell
                         Text("\(settings.targetLow.units) - \(settings.targetHigh.units)")
-                            .foregroundColor(.green)
+                            .foregroundStyle(.green)
                         Spacer().frame(width: 20)
                     }
                     HStack {
@@ -126,9 +126,9 @@ struct SettingsView: View {
                 VStack(spacing: 0) {
                     HStack(spacing: 20) {
                         Image(systemName: "bell.fill")
-                            .foregroundColor(.red)
+                            .foregroundStyle(.red)
                         Text("< \(settings.alarmLow.units)   > \(settings.alarmHigh.units)")
-                            .foregroundColor(.red)
+                            .foregroundStyle(.red)
                         Spacer().frame(width: 20)
                     }
                     HStack {
@@ -156,7 +156,7 @@ struct SettingsView: View {
                     settings.mutedAudio.toggle()
                 } label: {
                     Image(systemName: settings.mutedAudio ? "speaker.slash.fill" : "speaker.2.fill").resizable().frame(width: 20, height: 20)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                 }
 
                 Spacer()
@@ -173,7 +173,7 @@ struct SettingsView: View {
                         }
                     }) {
                         Image(systemName: settings.disabledNotifications ? "zzz" : "app.badge.fill").resizable().frame(width: 20, height: 20)
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                     }
                     if settings.disabledNotifications {
                         Picker(selection: $settings.alarmSnoozeInterval, label: Text("")) {
@@ -183,7 +183,7 @@ struct SettingsView: View {
                         }
                         .labelsHidden().frame(width: 48, height: 20)
                         .font(.footnote)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                     }
                 }
 

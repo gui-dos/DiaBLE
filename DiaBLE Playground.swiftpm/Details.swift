@@ -49,7 +49,7 @@ struct Details: View {
                         HStack {
                             Spacer()
                             Text("No device connected")
-                                .foregroundColor(.red)
+                                .foregroundStyle(.red)
                             Spacer()
                         }
                     }
@@ -72,7 +72,7 @@ struct Details: View {
                                     Spacer()
                                     Text("\(secondsSinceLastConnection.minsAndSecsFormattedInterval)")
                                         .monospacedDigit()
-                                        .foregroundColor(app.device.state == .connected ? .yellow : .red)
+                                        .foregroundStyle(app.device.state == .connected ? .yellow : .red)
                                         .onReceive(timer) { _ in
                                             if let device = app.device {
                                                 secondsSinceLastConnection = Int(Date().timeIntervalSince(device.lastConnectionDate))
@@ -197,14 +197,14 @@ struct Details: View {
                                 Text("Patch Info")
                                 TextField("Patch Info", value: $settings.activeSensorInitialPatchInfo, formatter: HexDataFormatter())
                                     .multilineTextAlignment(.trailing)
-                                    .foregroundColor(.blue)
+                                    .foregroundStyle(.blue)
                             }
 
                             HStack {
                                 Text("Calibration Info")
                                 Spacer()
                                 Text("[\(settings.activeSensorCalibrationInfo.i1), \(settings.activeSensorCalibrationInfo.i2), \(settings.activeSensorCalibrationInfo.i3), \(settings.activeSensorCalibrationInfo.i4), \(settings.activeSensorCalibrationInfo.i5), \(settings.activeSensorCalibrationInfo.i6)]")
-                                    .foregroundColor(.blue)
+                                    .foregroundStyle(.blue)
                             }
                             .onTapGesture {
                                 showingCalibrationInfoForm.toggle()
@@ -215,32 +215,32 @@ struct Details: View {
                                         HStack {
                                             Text("i1")
                                             TextField("i1", value: $settings.activeSensorCalibrationInfo.i1,
-                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundStyle(.blue)
                                         }
                                         HStack {
                                             Text("i2")
                                             TextField("i2", value: $settings.activeSensorCalibrationInfo.i2,
-                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundStyle(.blue)
                                         }
                                         HStack {
                                             Text("i3")
                                             TextField("i3", value: $settings.activeSensorCalibrationInfo.i3,
-                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundStyle(.blue)
                                         }
                                         HStack {
                                             Text("i4")
                                             TextField("i4", value: $settings.activeSensorCalibrationInfo.i4,
-                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundStyle(.blue)
                                         }
                                         HStack {
                                             Text("i5")
                                             TextField("i5", value: $settings.activeSensorCalibrationInfo.i5,
-                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundStyle(.blue)
                                         }
                                         HStack {
                                             Text("i6")
                                             TextField("i6", value: $settings.activeSensorCalibrationInfo.i6,
-                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                                      formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundStyle(.blue)
                                         }
                                         HStack {
                                             Spacer()
@@ -257,11 +257,11 @@ struct Details: View {
 
                             HStack {
                                 Text("Unlock Code")
-                                TextField("Unlock Code", value: $settings.activeSensorStreamingUnlockCode, formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                TextField("Unlock Code", value: $settings.activeSensorStreamingUnlockCode, formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundStyle(.blue)
                             }
                             HStack {
                                 Text("Unlock Count")
-                                TextField("Unlock Count", value: $settings.activeSensorStreamingUnlockCount, formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundColor(.blue)
+                                TextField("Unlock Count", value: $settings.activeSensorStreamingUnlockCount, formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundStyle(.blue)
                             }
 
                         }
@@ -318,7 +318,7 @@ struct Details: View {
                             Text("Transmitter Serial")
                             TextField("Transmitter Serial", text: $settings.activeTransmitterSerial)
                                 .multilineTextAlignment(.trailing)
-                                .foregroundColor(.blue)
+                                .foregroundStyle(.blue)
                         }
 
                         HStack {
@@ -326,7 +326,7 @@ struct Details: View {
                             TextField("Sensor Code", text: $settings.activeSensorCode)
                                 .keyboardType(.numbersAndPunctuation)
                                 .multilineTextAlignment(.trailing)
-                                .foregroundColor(.blue)
+                                .foregroundStyle(.blue)
                         }
 
                         HStack {
@@ -364,7 +364,7 @@ struct Details: View {
                                 HStack {
                                     Text(device.name)
                                         .font(.callout)
-                                        .foregroundColor((app.device != nil) && uuid == app.device!.peripheral!.identifier.uuidString ? .yellow : .blue)
+                                        .foregroundStyle((app.device != nil) && uuid == app.device!.peripheral!.identifier.uuidString ? .yellow : .blue)
                                         .onTapGesture {
                                             // TODO: navigate to peripheral details
                                             if let peripheral = app.main.centralManager.retrievePeripherals(withIdentifiers: [UUID(uuidString: uuid)!]).first {
@@ -379,11 +379,11 @@ struct Details: View {
                                     if !device.isConnectable {
                                         Spacer()
                                         Image(systemName: "nosign")
-                                            .foregroundColor(.red)
+                                            .foregroundStyle(.red)
                                     } else if device.isIgnored {
                                         Spacer()
                                         Image(systemName: "hand.raised.slash.fill")
-                                            .foregroundColor(.red)
+                                            .foregroundStyle(.red)
                                             .onTapGesture {
                                                 app.main.bluetoothDelegate.knownDevices[uuid]!.isIgnored.toggle()
                                             }
@@ -395,7 +395,7 @@ struct Details: View {
                 }
 
             }
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
 
             Spacer()
 
@@ -417,7 +417,7 @@ struct Details: View {
                     Text(!app.deviceState.isEmpty && app.deviceState != "Disconnected" && (readingCountdown > 0 || app.deviceState == "Reconnecting...") ?
                          "\(readingCountdown) s" : "...")
                     .fixedSize()
-                    .foregroundColor(.orange)
+                    .foregroundStyle(.orange)
                     .font(.caption.monospacedDigit())
                     .onReceive(timer) { _ in
                         readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
@@ -431,7 +431,7 @@ struct Details: View {
                     }
                 } label: {
                     Image(systemName: "escape").resizable().frame(width: 28, height: 28)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                 }
 
                 Spacer()

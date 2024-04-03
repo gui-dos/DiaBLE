@@ -501,14 +501,14 @@ struct WatlaaDetailsView: View {
                     Text("Bridge status")
                     Spacer()
                     Text(device.bridgeStatus.description)
-                        .foregroundColor(device.bridgeStatus == .connectedActiveSensor ? .green : .red)
+                        .foregroundStyle(device.bridgeStatus == .connectedActiveSensor ? .green : .red)
                 }
                 if !(device.transmitter?.sensor?.serial.isEmpty ?? true) {
                     HStack {
                         Text("Sensor serial")
                         Spacer()
                         Text(device.transmitter!.sensor!.serial)
-                            .foregroundColor(.yellow)
+                            .foregroundStyle(.yellow)
                     }
                 }
             }
@@ -532,13 +532,13 @@ struct WatlaaDetailsView: View {
                         Text("Intercept")
                         Spacer().frame(maxWidth: .infinity)
                         TextField("Intercept", value: $device.intercept, formatter: settings.numberFormatter)
-                            .foregroundColor(.purple)
+                            .foregroundStyle(.purple)
                     }
                     HStack {
                         Text("Slope")
                         Spacer().frame(maxWidth: .infinity)
                         TextField("Slope", value: $device.slope, formatter: settings.numberFormatter)
-                            .foregroundColor(.purple)
+                            .foregroundStyle(.purple)
                     }
                 }
                 .keyboardType(.numbersAndPunctuation)
@@ -555,7 +555,7 @@ struct WatlaaDetailsView: View {
                     // FIXME: doesn't update when changing unit
                     Text(" \(device.unit.description)")
                 }
-                .foregroundColor(.red)
+                .foregroundStyle(.red)
                 HStack {
                     Image(systemName: "speaker.zzz.fill")
                     Spacer().frame(maxWidth: .infinity)
@@ -565,7 +565,7 @@ struct WatlaaDetailsView: View {
                     TextField("Low", value: $device.snoozeLow, formatter: NumberFormatter())
                     Text(" min")
                 }
-                .foregroundColor(.yellow)
+                .foregroundStyle(.yellow)
             }
             Section(header: Text("Vibrations")) {
                 HStack {

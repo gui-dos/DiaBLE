@@ -23,16 +23,16 @@ struct Plan: View {
 
                 if app.status.hasPrefix("Scanning") {
                     Text("Scanning...")
-                        .foregroundColor(.orange)
+                        .foregroundStyle(.orange)
                 } else {
                     HStack {
                         if !app.deviceState.isEmpty && app.deviceState != "Connected" {
                             Text(app.deviceState)
-                                .foregroundColor(.red)
+                                .foregroundStyle(.red)
                         }
                         Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                              "\(readingCountdown) s" : " ")
-                        .foregroundColor(.orange)
+                        .foregroundStyle(.orange)
                         .onReceive(timer) { _ in
                             readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
                         }
@@ -40,7 +40,7 @@ struct Plan: View {
                 }
 
                 Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
-                    .foregroundColor(.cyan)
+                    .foregroundStyle(.cyan)
                     .onReceive(timer) { _ in
                         onlineCountdown = settings.onlineInterval * 60 - Int(Date().timeIntervalSince(settings.lastOnlineDate))
                     }

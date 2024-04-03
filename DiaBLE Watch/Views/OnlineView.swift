@@ -111,7 +111,7 @@ struct OnlineView: View {
                             withAnimation { showingCredentials.toggle() }
                         } label: {
                             Image(systemName: showingCredentials ? "person.crop.circle.fill" : "person.crop.circle").resizable().frame(width: 20, height: 20)
-                                .foregroundColor(.blue)
+                                .foregroundStyle(.blue)
                         }
 
                         Button {
@@ -124,12 +124,12 @@ struct OnlineView: View {
                             }
                         } label: {
                             Image(systemName: settings.libreLinkUpScrapingLogbook ? "book.closed.circle.fill" : "book.closed.circle").resizable().frame(width: 20, height: 20)
-                                .foregroundColor(.blue)
+                                .foregroundStyle(.blue)
                         }
 
                         Text(onlineCountdown > -1 ? "\(onlineCountdown) s" : "...")
                             .fixedSize()
-                            .foregroundColor(.cyan)
+                            .foregroundStyle(.cyan)
                             .font(.footnote.monospacedDigit())
                             .onReceive(timer) { _ in
                                 // workaround: watchOS fails converting the interval to an Int32
@@ -148,12 +148,12 @@ struct OnlineView: View {
                         app.main.rescan()
                     } label: {
                         Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 16, height: 16)
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                     }
                     Text(app.deviceState != "Disconnected" && (readingCountdown > 0 || app.deviceState == "Reconnecting...") ?
                          "\(readingCountdown) s" : "...")
                     .fixedSize()
-                    .foregroundColor(.orange)
+                    .foregroundStyle(.orange)
                     .font(.footnote.monospacedDigit())
                     .onReceive(timer) { _ in
                         // workaround: watchOS fails converting the interval to an Int32
@@ -252,7 +252,7 @@ struct OnlineView: View {
                     }
                 }
                 // .font(.system(.footnote, design: .monospaced))
-                .foregroundColor(.cyan)
+                .foregroundStyle(.cyan)
                 .onAppear { if let nightscout = app.main?.nightscout { nightscout.read()
                     app.main.log("nightscoutValues count \(history.nightscoutValues.count)")
 
@@ -290,7 +290,7 @@ struct OnlineView: View {
                                 ForEach(libreLinkUpHistory) { libreLinkUpGlucose in
                                     let glucose = libreLinkUpGlucose.glucose
                                     (Text("\(!settings.libreLinkUpScrapingLogbook ? String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)]) + " " : "")\(glucose.date.shortDateTime)") + Text("  \(glucose.value, specifier: "%3d") ").bold() + Text(libreLinkUpGlucose.trendArrow?.symbol ?? "").font(.title3))
-                                        .foregroundColor(libreLinkUpGlucose.color.color)
+                                        .foregroundStyle(libreLinkUpGlucose.color.color)
                                         .padding(.vertical, 1)
                                         .fixedSize(horizontal: false, vertical: true)
                                 }
@@ -312,7 +312,7 @@ struct OnlineView: View {
                                     ForEach(libreLinkUpLogbookHistory) { libreLinkUpGlucose in
                                         let glucose = libreLinkUpGlucose.glucose
                                         (Text("\(glucose.date.shortDateTime)") + Text("  \(glucose.value, specifier: "%3d") ").bold() + Text(libreLinkUpGlucose.trendArrow!.symbol).font(.title3))
-                                            .foregroundColor(libreLinkUpGlucose.color.color)
+                                            .foregroundStyle(libreLinkUpGlucose.color.color)
                                             .padding(.vertical, 1)
                                             .fixedSize(horizontal: false, vertical: true)
                                     }
@@ -325,9 +325,9 @@ struct OnlineView: View {
 
                         Text(libreLinkUpResponse)
                         //  .font(.system(.footnote, design: .monospaced))
-                        //  .foregroundColor(Color(.lightGray))
+                        //  .foregroundStyle(Color(.lightGray))
                             .font(.footnote)
-                            .foregroundColor(Color(.lightGray))
+                            .foregroundStyle(Color(.lightGray))
                     }
 
                 }

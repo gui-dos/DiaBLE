@@ -52,7 +52,7 @@ struct Monitor: View {
                             }
                             .frame(maxWidth: .infinity, alignment: .trailing)
                             .padding(.trailing, 12)
-                            .foregroundColor(Color(.lightGray))
+                            .foregroundStyle(Color(.lightGray))
                             .onChange(of: app.lastReadingDate) {
                                 minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate) / 60)
                             }
@@ -60,7 +60,7 @@ struct Monitor: View {
                             Text(app.currentGlucose > 0 ? "\(app.currentGlucose.units) " : "--- ")
                                 .font(.system(size: 42, weight: .black))
                                 .monospacedDigit()
-                                .foregroundColor(.black)
+                                .foregroundStyle(.black)
                                 .padding(5)
                                 .background(app.currentGlucose > 0 && (app.currentGlucose > Int(settings.alarmHigh) || app.currentGlucose < Int(settings.alarmLow)) ?
                                             .red : .blue)
@@ -85,18 +85,18 @@ struct Monitor: View {
                                         .padding(.leading, 12)
                                 }
                             }
-                            .foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
+                            .foregroundStyle(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
                                 .red : .blue)
 
                         }
 
                         Text("\(app.glycemicAlarm.description.replacingOccurrences(of: "_", with: " "))\(app.glycemicAlarm.description != "" ? " - " : "")\(app.trendArrow.description.replacingOccurrences(of: "_", with: " "))")
-                            .foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
+                            .foregroundStyle(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
                                 .red : .blue)
 
                         HStack {
                             Text(app.deviceState)
-                                .foregroundColor(app.deviceState == "Connected" ? .green : .red)
+                                .foregroundStyle(app.deviceState == "Connected" ? .green : .red)
                                 .fixedSize()
 
                             if !app.deviceState.isEmpty && app.deviceState != "Disconnected" {
@@ -104,7 +104,7 @@ struct Monitor: View {
                                      "\(readingCountdown) s" : "")
                                 .fixedSize()
                                 .font(.callout.monospacedDigit())
-                                .foregroundColor(.orange)
+                                .foregroundStyle(.orange)
                                 .onReceive(timer) { _ in
                                     readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
                                 }
@@ -124,7 +124,7 @@ struct Monitor: View {
                                 if app.sensor != nil && (app.sensor.state != .unknown || app.sensor.serial != "") {
                                     VStack {
                                         Text(app.sensor.state.description)
-                                            .foregroundColor(app.sensor.state == .active ? .green : .red)
+                                            .foregroundStyle(app.sensor.state == .active ? .green : .red)
 
                                         if app.sensor.age > 0 {
                                             Text(app.sensor.age.shortFormattedInterval)
@@ -144,10 +144,10 @@ struct Monitor: View {
                                                 Image(systemName: "battery.\(ext)")
                                                 Text("\(app.device.battery)%")
                                             }
-                                            .foregroundColor(app.device.battery > 10 ? .green : .red)
+                                            .foregroundStyle(app.device.battery > 10 ? .green : .red)
                                         }
                                         if app.device.rssi != 0 {
-                                            Text("RSSI: ").foregroundColor(Color(.lightGray)) +
+                                            Text("RSSI: ").foregroundStyle(Color(.lightGray)) +
                                             Text("\(app.device.rssi) dB")
                                         }
                                     }
@@ -155,7 +155,7 @@ struct Monitor: View {
 
                             }
                             .font(.footnote)
-                            .foregroundColor(.yellow)
+                            .foregroundStyle(.yellow)
 
                             Text(app.status)
                                 .font(.footnote)
@@ -227,7 +227,7 @@ struct Monitor: View {
                                 Image(systemName: "stop.circle").resizable().frame(width: 32, height: 32)
                             }
                             .padding(.bottom, 8)
-                            .foregroundColor(.red)
+                            .foregroundStyle(.red)
                         }
 
                     }
@@ -344,7 +344,7 @@ struct CalibrationView: View {
                                             // TODO: update when loosing focus
                                         }
                                     }
-                                              .foregroundColor(.purple)
+                                              .foregroundStyle(.purple)
                                               .keyboardType(.numbersAndPunctuation)
                                               .onTapGesture { withAnimation { editingCalibration = true } }
                                 }
@@ -362,7 +362,7 @@ struct CalibrationView: View {
                                             // TODO: update when loosing focus
                                         }
                                     }
-                                              .foregroundColor(.purple)
+                                              .foregroundStyle(.purple)
                                               .keyboardType(.numbersAndPunctuation)
                                               .onTapGesture { withAnimation { editingCalibration = true } }
                                 }
@@ -382,7 +382,7 @@ struct CalibrationView: View {
                                             // TODO: update when loosing focus
                                         }
                                     }
-                                              .foregroundColor(.purple)
+                                              .foregroundStyle(.purple)
                                               .keyboardType(.numbersAndPunctuation)
                                               .onTapGesture { withAnimation { editingCalibration = true } }
                                 }
@@ -400,7 +400,7 @@ struct CalibrationView: View {
                                             // TODO: update when loosing focus
                                         }
                                     }
-                                              .foregroundColor(.purple)
+                                              .foregroundStyle(.purple)
                                               .keyboardType(.numbersAndPunctuation)
                                               .onTapGesture {  withAnimation { editingCalibration = true } }
                                 }
@@ -479,7 +479,7 @@ struct CalibrationView: View {
                     } label: {
                         Text("Parameters")
                     }
-                    .foregroundColor(.purple)
+                    .foregroundStyle(.purple)
                 }
 
             }

@@ -24,16 +24,16 @@ struct DataView: View {
 
                     if app.status.hasPrefix("Scanning") && !(readingCountdown > 0) {
                         Text("Scanning...")
-                            .foregroundColor(.orange)
+                            .foregroundStyle(.orange)
                     } else {
                         HStack {
                             if !app.deviceState.isEmpty && app.deviceState != "Connected" {
                                 Text(app.deviceState)
-                                    .foregroundColor(.red)
+                                    .foregroundStyle(.red)
                             }
                             Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                                  "\(readingCountdown) s" : " ")
-                            .foregroundColor(.orange)
+                            .foregroundStyle(.orange)
                             .onReceive(timer) { _ in
                                 readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
                             }
@@ -41,7 +41,7 @@ struct DataView: View {
                     }
 
                     Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
-                        .foregroundColor(.cyan)
+                        .foregroundStyle(.cyan)
                         .onReceive(timer) { _ in
                             onlineCountdown = settings.onlineInterval * 60 - Int(Date().timeIntervalSince(settings.lastOnlineDate))
                         }
@@ -63,7 +63,7 @@ struct DataView: View {
                                     }
                                     .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
-                                .foregroundColor(.blue)
+                                .foregroundStyle(.blue)
                             }
 
                             if history.factoryValues.count > 0 {
@@ -76,7 +76,7 @@ struct DataView: View {
                                     }
                                     .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
-                                .foregroundColor(.orange)
+                                .foregroundStyle(.orange)
                             }
 
                         }
@@ -91,7 +91,7 @@ struct DataView: View {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .topLeading)
                             }
-                            .foregroundColor(.yellow)
+                            .foregroundStyle(.yellow)
                         }
                     }
 
@@ -109,7 +109,7 @@ struct DataView: View {
                                     }
                                     .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
-                                .foregroundColor(.orange)
+                                .foregroundStyle(.orange)
                             }
 
                         }
@@ -126,7 +126,7 @@ struct DataView: View {
                                     }
                                     .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
-                                .foregroundColor(.yellow)
+                                .foregroundStyle(.yellow)
                             }
 
                         }
@@ -145,7 +145,7 @@ struct DataView: View {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .topLeading)
                             }
-                            .foregroundColor(.red)
+                            .foregroundStyle(.red)
                             .onAppear { if let healthKit = app.main?.healthKit { healthKit.read() } }
                         }
 
@@ -160,7 +160,7 @@ struct DataView: View {
                                     .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
                             }
-                            .foregroundColor(.cyan)
+                            .foregroundStyle(.cyan)
                             .onAppear { if let nightscout = app.main?.nightscout { nightscout.read() } }
                         }
                     }

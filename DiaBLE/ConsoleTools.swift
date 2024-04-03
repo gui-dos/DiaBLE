@@ -344,7 +344,7 @@ struct CrcCalculator: View {
                     Text("CRC: \(crc == "0000" ? "---" : crc)")
                     Text("Computed: \(crc == "0000" ? "---" : computedCrc)")
                 }
-                .foregroundColor(crc != "0000" && crc == computedCrc ? .green : .primary)
+                .foregroundStyle(crc != "0000" && crc == computedCrc ? .green : .primary)
 
                 Spacer()
 

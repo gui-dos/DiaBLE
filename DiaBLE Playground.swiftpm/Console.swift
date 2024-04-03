@@ -46,7 +46,7 @@ struct Console: View {
                         HStack {
                             Image(systemName: "magnifyingglass")
                                 .padding(.leading)
-                                .foregroundColor(Color(.lightGray))
+                                .foregroundStyle(Color(.lightGray))
                             TextField("Filter", text: $filterText)
                                 .textInputAutocapitalization(.never)
                                 .foregroundStyle(.tint)
@@ -69,7 +69,7 @@ struct Console: View {
                                 } label: {
                                     Text(label)
                                         .font(.footnote)
-                                        .foregroundColor(.blue)
+                                        .foregroundStyle(.blue)
                                 }
                             }
                         }
@@ -97,7 +97,7 @@ struct Console: View {
                         .padding(4)
                     }
                     .font(.system(.footnote, design: .monospaced))
-                    .foregroundColor(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
+                    .foregroundStyle(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
                     .onChange(of: log.entries.count) {
                         if !settings.reversedLog {
                             withAnimation {
@@ -341,7 +341,7 @@ struct ConsoleSidebar: View {
                     Image(systemName: "octagon").resizable().frame(width: 32, height: 32)
                         .overlay((Image(systemName: "hand.raised.fill").resizable().frame(width: 18, height: 18).offset(x: 1)))
                 }
-                .foregroundColor(.red)
+                .foregroundStyle(.red)
 
             } else if app.deviceState == "Connected" || app.deviceState == "Reconnecting..." || app.status.hasSuffix("retrying...") {
                 Button {
@@ -351,7 +351,7 @@ struct ConsoleSidebar: View {
                     }
                 } label: {
                     Image(systemName: "escape").resizable().padding(5).frame(width: 32, height: 32)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                 }
 
             } else {
@@ -366,7 +366,7 @@ struct ConsoleSidebar: View {
                          "\(readingCountdown) s" : "")
                     .fixedSize()
                     .font(.caption.monospacedDigit())
-                    .foregroundColor(.orange)
+                    .foregroundStyle(.orange)
                     .onReceive(timer) { _ in
                         readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
                     }
@@ -379,7 +379,7 @@ struct ConsoleSidebar: View {
 
                 Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
                     .fixedSize()
-                    .foregroundColor(.cyan)
+                    .foregroundStyle(.cyan)
                     .font(.caption.monospacedDigit())
                     .onReceive(timer) { _ in
                         onlineCountdown = settings.onlineInterval * 60 - Int(Date().timeIntervalSince(settings.lastOnlineDate))
@@ -399,7 +399,7 @@ struct ConsoleSidebar: View {
             }
             .background(settings.userLevel != .basic ? Color.accentColor : .clear)
             .clipShape(RoundedRectangle(cornerRadius: 5))
-            .foregroundColor(settings.userLevel != .basic ? Color(.systemBackground) : .accentColor)
+            .foregroundStyle(settings.userLevel != .basic ? Color(.systemBackground) : .accentColor)
             .padding(.bottom, 6)
 
             VStack(spacing: 0) {
@@ -438,7 +438,7 @@ struct ConsoleSidebar: View {
             .background(settings.reversedLog ? Color.accentColor : .clear)
             .border(Color.accentColor, width: 3)
             .cornerRadius(5)
-            .foregroundColor(settings.reversedLog ? Color(.systemBackground) : .accentColor)
+            .foregroundStyle(settings.reversedLog ? Color(.systemBackground) : .accentColor)
 
 
             Button {
@@ -449,7 +449,7 @@ struct ConsoleSidebar: View {
                     Image(systemName: settings.logging ? "stop.circle" : "play.circle").resizable().frame(width: 32, height: 32)
                 }
             }
-            .foregroundColor(settings.logging ? .red : .green)
+            .foregroundStyle(settings.logging ? .red : .green)
 
             Spacer()
 

@@ -25,9 +25,9 @@ struct Console: View {
 
                         HStack {
                             Image(systemName: "magnifyingglass")
-                                .foregroundColor(Color(.lightGray))
+                                .foregroundStyle(Color(.lightGray))
                             TextField("Filter", text: $filterText)
-                                .foregroundColor(.blue)
+                                .foregroundStyle(.blue)
                                 .textInputAutocapitalization(.never)
                             if filterText.count > 0 {
                                 Button {
@@ -38,7 +38,7 @@ struct Console: View {
                                 .frame(maxWidth: 24)
                                 .padding(0)
                                 .buttonStyle(.plain)
-                                .foregroundColor(.blue)
+                                .foregroundStyle(.blue)
                             }
                         }
 
@@ -49,7 +49,7 @@ struct Console: View {
                             } label: {
                                 Text(label)
                                     .font(.caption)
-                                    .foregroundColor(.blue)
+                                    .foregroundStyle(.blue)
                             }
                         }
                     }
@@ -71,9 +71,9 @@ struct Console: View {
                         }
                     }
                     // .font(.system(.footnote, design: .monospaced))
-                    // ..foregroundColor(Color(.lightGray))
+                    // ..foregroundStyle(Color(.lightGray))
                     .font(.footnote)
-                    .foregroundColor(Color(.lightGray))
+                    .foregroundStyle(Color(.lightGray))
                     .onChange(of: log.entries.count) {
                         if !settings.reversedLog {
                             withAnimation {
@@ -110,7 +110,7 @@ struct Console: View {
                 }
             }
             .buttonStyle(.plain)
-            .foregroundColor(.blue)
+            .foregroundStyle(.blue)
 
 
             HStack(alignment: .center, spacing: 0) {
@@ -125,7 +125,7 @@ struct Console: View {
                         }
                     }
                 }
-                .foregroundColor(.blue)
+                .foregroundStyle(.blue)
 
                 if (app.status.hasPrefix("Scanning") || app.status.hasSuffix("retrying...")) && app.main.centralManager.state != .poweredOff {
                     Button {
@@ -136,7 +136,7 @@ struct Console: View {
                         Image(systemName: "octagon").resizable().frame(width: 24, height: 24)
                             .overlay((Image(systemName: "hand.raised.fill").resizable().frame(width: 12, height: 12).offset(x: 1)))
                     }
-                    .foregroundColor(.red)
+                    .foregroundStyle(.red)
 
                 } else if app.deviceState == "Connected" || app.deviceState == "Reconnecting..." || app.status.hasSuffix("retrying...") {
                     Button {
@@ -146,7 +146,7 @@ struct Console: View {
                         }
                     } label: {
                         Image(systemName: "escape").resizable().padding(3).frame(width: 24, height: 24)
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                     }
 
                 } else {
@@ -162,7 +162,7 @@ struct Console: View {
                              "s" : " ")
                     }
                     .font(.footnote.monospacedDigit())
-                    .foregroundColor(.orange)
+                    .foregroundStyle(.orange)
                     .frame(width: 24, height: 24)
                     .allowsTightening(true)
                     .fixedSize()
@@ -180,7 +180,7 @@ struct Console: View {
 
                 Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
                     .fixedSize()
-                    .foregroundColor(.cyan)
+                    .foregroundStyle(.cyan)
                     .font(.footnote.monospacedDigit())
                     .onReceive(timer) { _ in
                         // workaround: watchOS fails converting the interval to an Int32
@@ -199,7 +199,7 @@ struct Console: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 5).fill(settings.userLevel != .basic ? .blue : .clear)
                         Image(systemName: ["doc.plaintext", "ladybug", "testtube.2"][settings.userLevel.rawValue]).resizable().frame(width: 22, height: 22)
-                            .foregroundColor(settings.userLevel != .basic ? .black : .blue)
+                            .foregroundStyle(settings.userLevel != .basic ? .black : .blue)
                     }
                     .frame(width: 24, height: 24)
                 }
@@ -220,7 +220,7 @@ struct Console: View {
                 } label: {
                     VStack {
                         Image(systemName: "clear").resizable().frame(width: 24, height: 24)
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                     }
                 }
 
@@ -232,7 +232,7 @@ struct Console: View {
                         RoundedRectangle(cornerRadius: 5).fill(settings.reversedLog ? .blue : .clear)
                         RoundedRectangle(cornerRadius: 5).stroke(settings.reversedLog ? .clear : .blue, lineWidth: 2)
                         Image(systemName: "backward.fill").resizable().frame(width: 12, height: 12)
-                            .foregroundColor(settings.reversedLog ? .black : .blue)
+                            .foregroundStyle(settings.reversedLog ? .black : .blue)
                     }
                     .frame(width: 24, height: 24)
                 }
@@ -243,7 +243,7 @@ struct Console: View {
                 } label: {
                     VStack {
                         Image(systemName: settings.logging ? "stop.circle" : "play.circle").resizable().frame(width: 24, height: 24)
-                            .foregroundColor(settings.logging ? .red : .green)
+                            .foregroundStyle(settings.logging ? .red : .green)
                     }
                 }
 

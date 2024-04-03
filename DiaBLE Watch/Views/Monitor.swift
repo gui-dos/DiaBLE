@@ -45,7 +45,7 @@ struct Monitor: View {
                         }
                         .font(.footnote)
                         .frame(maxWidth: .infinity, alignment: .trailing )
-                        .foregroundColor(Color(.lightGray))
+                        .foregroundStyle(Color(.lightGray))
                         .onChange(of: app.lastReadingDate) {
                             minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate) / 60)
                         }
@@ -56,7 +56,7 @@ struct Monitor: View {
                             // avoid truncation in 40 mm models
                             .scaledToFill()
                             .minimumScaleFactor(0.85)
-                            .foregroundColor(.black)
+                            .foregroundStyle(.black)
                             .padding(.vertical, 0)
                             .padding(.horizontal, 4)
                             .background(app.currentGlucose > 0 && (app.currentGlucose > Int(settings.alarmHigh) || app.currentGlucose < Int(settings.alarmLow)) ?
@@ -83,14 +83,14 @@ struct Monitor: View {
                                     .padding(.leading, 10)
                             }
                         }
-                        .foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
+                        .foregroundStyle(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
                             .red : .blue)
 
                     }
 
                     if app.glycemicAlarm.description.count + app.trendArrow.description.count != 0 {
                         Text("\(app.glycemicAlarm.description.replacingOccurrences(of: "_", with: " "))\(app.glycemicAlarm.description != "" ? " - " : "")\(app.trendArrow.description.replacingOccurrences(of: "_", with: " "))")
-                            .font(.footnote).foregroundColor(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
+                            .font(.footnote).foregroundStyle(app.currentGlucose > 0 && ((app.currentGlucose > Int(settings.alarmHigh) && (app.trendDelta > 0 || app.trendArrow == .rising || app.trendArrow == .risingQuickly)) || (app.currentGlucose < Int(settings.alarmLow) && (app.trendDelta < 0 || app.trendArrow == .falling || app.trendArrow == .fallingQuickly))) ?
                                 .red : .blue).lineLimit(1)
                             .padding(.vertical, -3)
                     }
@@ -98,7 +98,7 @@ struct Monitor: View {
                     HStack {
                         if !app.deviceState.isEmpty {
                             Text(app.deviceState)
-                                .foregroundColor(app.deviceState == "Connected" ? .green : .red)
+                                .foregroundStyle(app.deviceState == "Connected" ? .green : .red)
                                 .font(.footnote)
                                 .fixedSize()
                         }
@@ -107,7 +107,7 @@ struct Monitor: View {
                                  "\(readingCountdown) s" : "")
                             .fixedSize()
                             .font(.footnote.monospacedDigit())
-                            .foregroundColor(.orange)
+                            .foregroundStyle(.orange)
                             .onReceive(timer) { _ in
                                 // workaround: watchOS fails converting the interval to an Int32
                                 if app.lastConnectionDate == Date.distantPast {
@@ -129,7 +129,7 @@ struct Monitor: View {
                     if app.sensor != nil && (app.sensor.state != .unknown || app.sensor.serial != "") {
                         VStack(spacing: -4) {
                             Text(app.sensor.state.description)
-                                .foregroundColor(app.sensor.state == .active ? .green : .red)
+                                .foregroundStyle(app.sensor.state == .active ? .green : .red)
 
                             if app.sensor.age > 0 {
                                 Text(app.sensor.age.shortFormattedInterval)
@@ -149,10 +149,10 @@ struct Monitor: View {
                                     Image(systemName: "battery.\(ext)")
                                     Text("\(app.device.battery)%")
                                 }
-                                .foregroundColor(app.device.battery > 10 ? .green : .red)
+                                .foregroundStyle(app.device.battery > 10 ? .green : .red)
                             }
                             if app.device.rssi != 0 {
-                                Text("RSSI: ").foregroundColor(Color(.lightGray)) +
+                                Text("RSSI: ").foregroundStyle(Color(.lightGray)) +
                                 Text("\(app.device.rssi) dB")
                             }
                         }
@@ -160,7 +160,7 @@ struct Monitor: View {
 
                 }
                 .font(.footnote)
-                .foregroundColor(.yellow)
+                .foregroundStyle(.yellow)
 
                 HStack {
 
@@ -171,7 +171,7 @@ struct Monitor: View {
                         app.main.rescan()
                     } label: {
                         Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 16, height: 16)
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                     }
                     .frame(height: 16)
 
@@ -183,7 +183,7 @@ struct Monitor: View {
                             app.main.log("Bluetooth: stopped scanning")
                         } label: {
                             Image(systemName: "stop.circle").resizable().frame(width: 16, height: 16)
-                                .foregroundColor(.red)
+                                .foregroundStyle(.red)
                         }
                         .frame(height: 16)
                     }
@@ -192,7 +192,7 @@ struct Monitor: View {
 
                     NavigationLink(destination: Details()) {
                         Image(systemName: "info.circle").resizable().frame(width: 16, height: 16)
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                     }
                     .frame(height: 16)
 
@@ -233,7 +233,7 @@ struct Monitor: View {
             ToolbarItem(placement: .topBarLeading) {
                 NavigationLink(destination: HamburgerMenu()) {
                     Image(systemName: "line.horizontal.3")
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
@@ -242,7 +242,7 @@ struct Monitor: View {
                     // UIApplication.shared.isIdleTimerDisabled = settings.caffeinated
                 } label: {
                     Image(systemName: settings.caffeinated ? "cup.and.saucer.fill" : "cup.and.saucer")
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                 }
                     .hidden() // trick to center time
             }

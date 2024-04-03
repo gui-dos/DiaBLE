@@ -23,16 +23,16 @@ struct DataView: View {
 
                 if app.status.hasPrefix("Scanning") && !(readingCountdown > 0) {
                     Text("Scanning...")
-                        .foregroundColor(.orange)
+                        .foregroundStyle(.orange)
                 } else {
                     HStack {
                         if !app.deviceState.isEmpty && app.deviceState != "Connected" {
                             Text(app.deviceState)
-                                .foregroundColor(.red)
+                                .foregroundStyle(.red)
                         }
                         Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                              "\(readingCountdown) s" : " ")
-                        .foregroundColor(.orange)
+                        .foregroundStyle(.orange)
                         // .font(.caption.monospacedDigit())
                         .onReceive(timer) { _ in
                             // workaround: watchOS fails converting the interval to an Int32
@@ -45,7 +45,7 @@ struct DataView: View {
                     }
 
                     Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
-                        .foregroundColor(.cyan)
+                        .foregroundStyle(.cyan)
                         .onReceive(timer) { _ in
                             // workaround: watchOS fails converting the interval to an Int32
                             if settings.lastOnlineDate == Date.distantPast {
@@ -72,7 +72,7 @@ struct DataView: View {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .topLeading)
                             }
-                            .foregroundColor(.orange)
+                            .foregroundStyle(.orange)
                         }
 
                     }
@@ -89,7 +89,7 @@ struct DataView: View {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .topLeading)
                             }
-                            .foregroundColor(.yellow)
+                            .foregroundStyle(.yellow)
                         }
 
                     }
@@ -111,7 +111,7 @@ struct DataView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
-                    .foregroundColor(.red)
+                    .foregroundStyle(.red)
                     .onAppear { if let healthKit = app.main?.healthKit { healthKit.read() } }
                 }
 
@@ -126,7 +126,7 @@ struct DataView: View {
                             .frame(maxWidth: .infinity, alignment: .topLeading)
                         }
                     }
-                    .foregroundColor(.cyan)
+                    .foregroundStyle(.cyan)
                     .onAppear { if let nightscout = app.main?.nightscout { nightscout.read() } }
                 }
             }
@@ -146,7 +146,7 @@ struct DataView: View {
                             }
                             .frame(maxWidth: .infinity, alignment: .topLeading)
                         }
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                     }
 
                     if history.factoryValues.count > 0 {
@@ -158,7 +158,7 @@ struct DataView: View {
                                 }
                             }.frame(maxWidth: .infinity, alignment: .topLeading)
                         }
-                        .foregroundColor(.orange)
+                        .foregroundStyle(.orange)
                     }
 
                 }
@@ -173,7 +173,7 @@ struct DataView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .topLeading)
                     }
-                    .foregroundColor(.yellow)
+                    .foregroundStyle(.yellow)
                 }
             }
             .frame(idealHeight: 300)
@@ -182,7 +182,7 @@ struct DataView: View {
         .padding(.top, -4)
         .edgesIgnoringSafeArea([.bottom])
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        // .font(.system(.footnote, design: .monospaced)).foregroundColor(Color(.lightGray))
+        // .font(.system(.footnote, design: .monospaced)).foregroundStyle(Color(.lightGray))
         .font(.footnote)
         .navigationTitle { Text("Data") }
         .tint(.blue)

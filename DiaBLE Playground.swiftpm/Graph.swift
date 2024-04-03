@@ -56,7 +56,7 @@ struct Graph: View {
                     }
                 }
                 .font(.footnote)
-                .foregroundColor(.gray)
+                .foregroundStyle(.gray)
             }
 
             // Historic raw values

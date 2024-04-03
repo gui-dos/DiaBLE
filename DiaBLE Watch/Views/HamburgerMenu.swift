@@ -17,7 +17,7 @@ struct HamburgerMenu: View {
                                 Image(systemName: "gauge").resizable().frame(width: 40, height: 40).offset(y: 4)
                                 Text("Monitor")
                                     .bold()
-                                    .foregroundColor(.blue)
+                                    .foregroundStyle(.blue)
                             }
                             .frame(maxWidth: .infinity)
                         }
@@ -26,7 +26,7 @@ struct HamburgerMenu: View {
                                 Image("Bluetooth").renderingMode(.template).resizable().frame(width: 40, height: 40).offset(y: 4)
                                 Text("Details")
                                     .bold()
-                                    .foregroundColor(.blue)
+                                    .foregroundStyle(.blue)
                             }
                             .frame(maxWidth: .infinity)
                         }
@@ -39,7 +39,7 @@ struct HamburgerMenu: View {
                                 Image(systemName: "terminal").resizable().frame(width: 40, height: 40).offset(y: 4)
                                 Text("Console")
                                     .bold()
-                                    .foregroundColor(.blue)
+                                    .foregroundStyle(.blue)
                             }
                             .frame(maxWidth: .infinity)
                         }
@@ -48,7 +48,7 @@ struct HamburgerMenu: View {
                                 Image(systemName: "gear").resizable().frame(width: 40, height: 40).offset(y: 4)
                                 Text("Settings")
                                     .bold()
-                                    .foregroundColor(.blue)
+                                    .foregroundStyle(.blue)
                             }
                             .frame(maxWidth: .infinity)
                         }
@@ -60,7 +60,7 @@ struct HamburgerMenu: View {
                                 Image(systemName: "tray.full.fill").resizable().frame(width: 40, height: 40).offset(y: 4)
                                 Text("Data")
                                     .bold()
-                                    .foregroundColor(.blue)
+                                    .foregroundStyle(.blue)
                             }
                             .frame(maxWidth: .infinity)
                         }
@@ -69,7 +69,7 @@ struct HamburgerMenu: View {
                                 Image(systemName: "globe").resizable().frame(width: 40, height: 40).offset(y: 4)
                                 Text("Online")
                                     .bold()
-                                    .foregroundColor(.blue)
+                                    .foregroundStyle(.blue)
                             }
                             .frame(maxWidth: .infinity)
                         }
@@ -81,19 +81,19 @@ struct HamburgerMenu: View {
                     //         Image(systemName: "questionmark.circle").resizable().frame(width: 40, height: 40).offset(y: 4)
                     //         Text("Help")
                     //             .bold()
-                    //             .foregroundColor(.blue)
+                    //             .foregroundStyle(.blue)
                     //     }
                     //     .frame(maxWidth: .infinity)
                     //     VStack {
                     //         Image(systemName: "info.circle").resizable().frame(width: 40, height: 40).offset(y: 4)
                     //         Text("About")
                     //             .bold()
-                    //             .foregroundColor(.blue)
+                    //             .foregroundStyle(.blue)
                     //     }
                     //     .frame(maxWidth: .infinity)
                     // }
                 }
-                .foregroundColor(.red)
+                .foregroundStyle(.red)
 
                 Spacer(minLength: 30)
 
@@ -110,24 +110,24 @@ struct HamburgerMenu: View {
                         }
                         Link("https://github.com/gui-dos/DiaBLE",
                              destination: URL(string: "https://github.com/gui-dos/DiaBLE")!)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                     }
 
                     VStack {
                         Image(systemName: "envelope.fill")
                         Link(Data(base64Encoded: "Z3VpZG8uc29yYW56aW9AZ21haWwuY29t")!.string,
                              destination: URL(string: "mailto:\(Data(base64Encoded: "Z3VpZG8uc29yYW56aW9AZ21haWwuY29t")!.string)")!)
-                        .foregroundColor(.blue)
+                        .foregroundStyle(.blue)
                     }
 
                     VStack {
                         Image(systemName: "giftcard")
                         Link(Data(base64Encoded: "aHR0cHM6Ly9wYXlwYWwubWUvZ3Vpc29y")!.string, destination: URL(string: Data(base64Encoded: "aHR0cHM6Ly9wYXlwYWwubWUvZ3Vpc29y")!.string)!)
-                            .foregroundColor(.blue)
+                            .foregroundStyle(.blue)
                     }
 
                 }
-                .foregroundColor(.white)
+                .foregroundStyle(.white)
 
             }
             .buttonStyle(.borderless)

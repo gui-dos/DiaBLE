@@ -33,8 +33,8 @@ struct SettingsView: View {
                                 }
                             } label: {
                                 Image("Bluetooth").renderingMode(.template).resizable().frame(width: 32, height: 32)
-                                    .foregroundColor(.blue)
-                                    .overlay(settings.stoppedBluetooth ? Image(systemName: "line.diagonal").resizable().frame(width: 24, height: 24).rotationEffect(.degrees(90)) : nil).foregroundColor(.red)
+                                    .foregroundStyle(.blue)
+                                    .overlay(settings.stoppedBluetooth ? Image(systemName: "line.diagonal").resizable().frame(width: 24, height: 24).rotationEffect(.degrees(90)) : nil).foregroundStyle(.red)
                             }
 
                             Picker(selection: $settings.preferredTransmitter, label: Text("Preferred")) {
@@ -84,7 +84,7 @@ struct SettingsView: View {
                                 Text("\(settings.readingInterval) min")
                             }
                         })
-                        .foregroundColor(.orange)
+                        .foregroundStyle(.orange)
                         .frame(maxWidth: 200)
                         Spacer()
                     }
@@ -101,7 +101,7 @@ struct SettingsView: View {
                         } onDecrement: {
                             settings.onlineInterval -= settings.onlineInterval == 0 ? 0 : settings.onlineInterval <= 5 ? 1 : 5
                         }
-                        .foregroundColor(.cyan)
+                        .foregroundStyle(.cyan)
                         .frame(maxWidth: 200)
                         Spacer()
                     }
@@ -136,10 +136,10 @@ struct SettingsView: View {
 
                     VStack(spacing: 0) {
                         Image(systemName: "hand.thumbsup.fill")
-                            .foregroundColor(.green)
+                            .foregroundStyle(.green)
                             .padding(4)
                         Text("\(settings.targetLow.units) - \(settings.targetHigh.units)")
-                            .foregroundColor(.green)
+                            .foregroundStyle(.green)
                         HStack {
                             Slider(value: $settings.targetLow,  in: 40 ... 99, step: 1)
                             Slider(value: $settings.targetHigh, in: 120 ... 300, step: 1)
@@ -149,10 +149,10 @@ struct SettingsView: View {
 
                     VStack(spacing: 0) {
                         Image(systemName: "bell.fill")
-                            .foregroundColor(.red)
+                            .foregroundStyle(.red)
                             .padding(4)
                         Text("< \(settings.alarmLow.units)   > \(settings.alarmHigh.units)")
-                            .foregroundColor(.red)
+                            .foregroundStyle(.red)
                         HStack {
                             Slider(value: $settings.alarmLow,  in: 40 ... 99, step: 1)
                             Slider(value: $settings.alarmHigh, in: 120 ... 300, step: 1)
@@ -223,7 +223,7 @@ struct SettingsView: View {
                             Section {
                                 HStack {
                                     Image(systemName: "bell.fill")
-                                        .foregroundColor(.red)
+                                        .foregroundStyle(.red)
                                         .padding(8)
                                     Toggle("High / Low", isOn: $settings.calendarAlarmIsOn)
                                         .disabled(settings.calendarTitle == "")
