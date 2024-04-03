@@ -220,7 +220,7 @@ struct OnlineView: View {
                         .padding(.top, 2)
 
                     }
-                    .foregroundColor(.accentColor)
+                    .foregroundStyle(.tint)
                     .padding(.bottom, 4)
                     #if targetEnvironment(macCatalyst)
                     .padding(.horizontal, 15)

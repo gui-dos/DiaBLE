@@ -49,7 +49,7 @@ struct Console: View {
                                 .foregroundColor(Color(.lightGray))
                             TextField("Filter", text: $filterText)
                                 .textInputAutocapitalization(.never)
-                                .foregroundColor(.accentColor)
+                                .foregroundStyle(.tint)
                             if filterText.count > 0 {
                                 Button {
                                     filterText = ""
@@ -329,7 +329,7 @@ struct ConsoleSidebar: View {
                     }
                 }
             }
-            .foregroundColor(.accentColor)
+            .foregroundStyle(.tint)
 
 
             if (app.status.hasPrefix("Scanning") || app.status.hasSuffix("retrying...")) && app.main.centralManager.state != .poweredOff {

@@ -25,7 +25,7 @@ struct Details: View {
                 Text(label)
                 Spacer()
                 Text(value)
-                    .foregroundColor(foregroundColor)
+                    .foregroundStyle(foregroundColor!)
             }
         } else {
             EmptyView()
@@ -247,7 +247,7 @@ struct Details: View {
                                             Button {
                                                 showingCalibrationInfoForm = false
                                             } label: {
-                                                Text("Set").bold().foregroundColor(.accentColor).padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                                Text("Set").bold().foregroundStyle(.tint).padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
                                             }
                                             Spacer()
                                         }
@@ -288,7 +288,7 @@ struct Details: View {
                                 }
                                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentColor, lineWidth: 2.5))
                             }
-                            .foregroundColor(.accentColor)
+                            .foregroundStyle(.tint)
                             .alert("NFC not supported", isPresented: $showingNFCAlert) {
                             } message: {
                                 Text("This device doesn't allow scanning the Libre.")
@@ -341,7 +341,7 @@ struct Details: View {
                                 }
                                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentColor, lineWidth: 2.5))
                             }
-                            .foregroundColor(.accentColor)
+                            .foregroundStyle(.tint)
                             Spacer()
                         }
                         .padding(.vertical, 4)
@@ -411,7 +411,7 @@ struct Details: View {
                         self.minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
                     } label: {
                         Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 32, height: 32)
-                            .foregroundColor(.accentColor)
+                            .foregroundStyle(.tint)
                     }
 
                     Text(!app.deviceState.isEmpty && app.deviceState != "Disconnected" && (readingCountdown > 0 || app.deviceState == "Reconnecting...") ?

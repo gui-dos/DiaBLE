@@ -55,7 +55,7 @@ struct SettingsView: View {
                                 .frame(alignment: .center)
                         }
                     }
-                    .foregroundColor(.accentColor)
+                    .foregroundStyle(.tint)
                     #if targetEnvironment(macCatalyst)
                     .padding(.horizontal, 15)
                     #endif
@@ -167,7 +167,7 @@ struct SettingsView: View {
                         settings.mutedAudio.toggle()
                     } label: {
                         Image(systemName: settings.mutedAudio ? "speaker.slash.fill" : "speaker.2.fill").resizable().frame(width: 24, height: 24)
-                            .foregroundColor(.accentColor)
+                            .foregroundStyle(.tint)
                     }
 
                     HStack(spacing: 0) {
@@ -182,7 +182,7 @@ struct SettingsView: View {
                             }
                         } label: {
                             Image(systemName: settings.disabledNotifications ? "zzz" : "app.badge.fill").resizable().frame(width: 24, height: 24)
-                                .foregroundColor(.accentColor)
+                                .foregroundStyle(.tint)
                         }
                         if settings.disabledNotifications {
                             Picker(selection: $settings.alarmSnoozeInterval, label: Text("")) {
@@ -198,7 +198,7 @@ struct SettingsView: View {
                         showingCalendarPicker = true
                     } label: {
                         Image(systemName: settings.calendarTitle != "" ? "calendar.circle.fill" : "calendar.circle").resizable().frame(width: 32, height: 32)
-                            .foregroundColor(.accentColor)
+                            .foregroundStyle(.tint)
                     }
                     .popover(isPresented: $showingCalendarPicker, arrowEdge: .bottom) {
                         VStack {

@@ -47,7 +47,7 @@ struct Monitor: View {
                             }
                             .frame(maxWidth: .infinity, alignment: .trailing)
                             .padding(.trailing, 12)
-                            .foregroundColor(Color(.lightGray))
+                            .foregroundStyle(Color(.lightGray))
                             .onChange(of: app.lastReadingDate) {
                                 minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate) / 60)
                             }
@@ -177,7 +177,7 @@ struct Monitor: View {
                         } label: {
                             Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 32, height: 32)
                                 .padding(.bottom, 8)
-                                .foregroundColor(.accentColor)
+                                .foregroundStyle(.tint)
                         }
 
                         if (app.status.hasPrefix("Scanning") || app.status.hasSuffix("retrying...")) && app.main.centralManager.state != .poweredOff {

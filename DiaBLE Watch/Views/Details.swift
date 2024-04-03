@@ -23,7 +23,7 @@ struct Details: View {
                 Text(label)
                 Spacer()
                 Text(value)
-                    .foregroundColor(foregroundColor)
+                    .foregroundStyle(foregroundColor!)
             }
         } else {
             EmptyView()
@@ -253,7 +253,7 @@ struct Details: View {
                                             } label: {
                                                 Text("Set")
                                                     .bold()
-                                                    .foregroundColor(.accentColor)
+                                                    .foregroundStyle(.tint)
                                                     .padding(.horizontal, 4).padding(2)
                                                     .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
                                             }

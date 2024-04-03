@@ -103,7 +103,7 @@ struct OnlineView: View {
                 VStack(spacing: 0) {
 
                     Text("\(settings.selectedService.rawValue)")
-                        .foregroundColor(.accentColor)
+                        .foregroundStyle(.tint)
 
                     HStack {
 
