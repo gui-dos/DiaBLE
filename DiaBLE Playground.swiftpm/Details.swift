@@ -247,7 +247,7 @@ struct Details: View {
                                             Button {
                                                 showingCalibrationInfoForm = false
                                             } label: {
-                                                Text("Set").bold().foregroundStyle(.tint).padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                                Text("Set").bold().foregroundStyle(.tint).padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(.tint, lineWidth: 2))
                                             }
                                             Spacer()
                                         }
@@ -286,7 +286,7 @@ struct Details: View {
                                     Image(systemName: "sensor.tag.radiowaves.forward.fill").padding(.horizontal, 12).padding(.vertical, 6)
                                     Text("RePair").font(.footnote).bold().padding(.bottom, 4)
                                 }
-                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentColor, lineWidth: 2.5))
+                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(.tint, lineWidth: 2.5))
                             }
                             .foregroundStyle(.tint)
                             .alert("NFC not supported", isPresented: $showingNFCAlert) {
@@ -339,7 +339,7 @@ struct Details: View {
                                     Image("Bluetooth").renderingMode(.template).resizable().frame(width: 32, height: 32) .padding(.horizontal, 12)
                                     Text("RePair").font(.footnote).bold().padding(.bottom, 4)
                                 }
-                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.accentColor, lineWidth: 2.5))
+                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(.tint, lineWidth: 2.5))
                             }
                             .foregroundStyle(.tint)
                             Spacer()

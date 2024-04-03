@@ -169,7 +169,7 @@ struct Monitor: View {
                                     .fixedSize()
                                     .padding(.horizontal, 4)
                                     .padding(2)
-                                    .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                    .overlay(RoundedRectangle(cornerRadius: 5).stroke(.tint, lineWidth: 2))
                             }
                         }
 
@@ -425,7 +425,7 @@ struct CalibrationView: View {
                                         .bold()
                                         .padding(.horizontal, 4)
                                         .padding(2)
-                                        .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                        .overlay(RoundedRectangle(cornerRadius: 5).stroke(.tint, lineWidth: 2))
                                 }
 
                                 if app.calibration != settings.calibration && app.calibration != settings.oopCalibration {
@@ -437,7 +437,7 @@ struct CalibrationView: View {
                                             .bold(
                                             ).padding(.horizontal, 4)
                                             .padding(2)
-                                            .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                            .overlay(RoundedRectangle(cornerRadius: 5).stroke(.tint, lineWidth: 2))
                                     }
                                 }
                             }
@@ -451,7 +451,7 @@ struct CalibrationView: View {
                                         .bold()
                                         .padding(.horizontal, 4)
                                         .padding(2)
-                                        .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                        .overlay(RoundedRectangle(cornerRadius: 5).stroke(.tint, lineWidth: 2))
                                 }
                             }
 
@@ -465,7 +465,7 @@ struct CalibrationView: View {
                                         .bold()
                                         .padding(.horizontal, 4)
                                         .padding(2)
-                                        .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                        .overlay(RoundedRectangle(cornerRadius: 5).stroke(.tint, lineWidth: 2))
                                 }
                             }
 

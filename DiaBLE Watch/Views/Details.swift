@@ -255,7 +255,7 @@ struct Details: View {
                                                     .bold()
                                                     .foregroundStyle(.tint)
                                                     .padding(.horizontal, 4).padding(2)
-                                                    .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                                    .overlay(RoundedRectangle(cornerRadius: 5).stroke(.tint, lineWidth: 2))
                                             }
                                             .tint(.blue)
                                             Spacer()

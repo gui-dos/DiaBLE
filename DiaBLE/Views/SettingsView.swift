@@ -61,7 +61,7 @@ struct SettingsView: View {
                     #endif
 
                     NavigationLink(destination: Details()) {
-                        Text("Details").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                        Text("Details").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(.tint, lineWidth: 2))
                     }
                 }
 
@@ -114,7 +114,7 @@ struct SettingsView: View {
                     settings.selectedTab = (settings.preferredTransmitter != .none) ? .monitor : .console
                     app.main.rescan()
                 } label: {
-                    Text("Rescan").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                    Text("Rescan").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(.tint, lineWidth: 2))
                 }
 
                 Spacer()
@@ -208,7 +208,7 @@ struct SettingsView: View {
                                     showingCalendarPicker = false
                                     app.main.eventKit?.sync()
                                 } label: {
-                                    Text("None").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                    Text("None").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(.tint, lineWidth: 2))
                                 }
                                 .disabled(settings.calendarTitle == "")
                             }
@@ -234,7 +234,7 @@ struct SettingsView: View {
                                     showingCalendarPicker = false
                                     app.main.eventKit?.sync()
                                 } label: {
-                                    Text(settings.calendarTitle == "" ? "Don't remind" : "Remind").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: 2))
+                                    Text(settings.calendarTitle == "" ? "Don't remind" : "Remind").bold().padding(.horizontal, 4).padding(2).overlay(RoundedRectangle(cornerRadius: 5).stroke(.tint, lineWidth: 2))
                                         .animation(.default, value: settings.calendarTitle)
                                 }
 
