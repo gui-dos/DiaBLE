@@ -159,6 +159,7 @@ import CoreBluetooth
                 // https://github.com/NightscoutFoundation/xDrip/commit/7ee3473 ("Add keks library")
                 // https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/Calc.java
                 // https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/Plugin.java
+                // https://github.com/particle-iot/iOSBLEExample/blob/main/iOSBLEExample/ParticleBLECode/ECJPake.swift
 
                 let tokenHash = data.subdata(in: 1 ..< 9)
                 let challenge = data.subdata(in: 9 ..< 17)
