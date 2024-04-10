@@ -171,6 +171,7 @@ struct Console: View {
                         }
                     } label: {
                         Label("RePair Streaming", systemImage: "sensor.tag.radiowaves.forward.fill")
+                            .symbolEffect(.variableColor.reversing, isActive: app.deviceState == "Connected")
                     }
 
                     Button {
@@ -317,7 +318,9 @@ struct ConsoleSidebar: View {
                         showingNFCAlert = true
                     }
                 } label: {
-                    Image(systemName: "sensor.tag.radiowaves.forward.fill").resizable().frame(width: 26, height: 18).padding(.init(top: 10, leading: 6, bottom: 14, trailing: 0))
+                    Image(systemName: "sensor.tag.radiowaves.forward.fill").resizable().frame(width: 26, height: 18)
+                        .padding(.init(top: 10, leading: 6, bottom: 14, trailing: 0))
+                        .symbolEffect(.variableColor.reversing, isActive: app.deviceState == "Connected")
                 }
 
                 Button {

@@ -237,6 +237,7 @@ struct Monitor: View {
                             }
                         } label: {
                             Image(systemName: "sensor.tag.radiowaves.forward.fill")
+                                .symbolEffect(.variableColor.reversing, isActive: app.deviceState == "Connected")
                         }
                     }
                 }

@@ -211,7 +211,9 @@ struct OnlineView: View {
                                 showingNFCAlert = true
                             }
                         } label: {
-                            Image(systemName: "sensor.tag.radiowaves.forward.fill").font(.title)
+                            Image(systemName: "sensor.tag.radiowaves.forward.fill")
+                                .font(.title)
+                                .symbolEffect(.variableColor.reversing, isActive: app.deviceState == "Connected")
                         }
                         .alert("NFC not supported", isPresented: $showingNFCAlert) {
                         } message: {

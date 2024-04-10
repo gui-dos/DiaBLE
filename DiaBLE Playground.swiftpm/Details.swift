@@ -283,8 +283,13 @@ struct Details: View {
                                 }
                             } label: {
                                 VStack(spacing: 0) {
-                                    Image(systemName: "sensor.tag.radiowaves.forward.fill").padding(.horizontal, 12).padding(.vertical, 6)
-                                    Text("RePair").font(.footnote).bold().padding(.bottom, 4)
+                                    Image(systemName: "sensor.tag.radiowaves.forward.fill")
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .symbolEffect(.variableColor.reversing, isActive: app.deviceState == "Connected")
+                                    Text("RePair")
+                                        .font(.footnote).bold()
+                                        .padding(.bottom, 4)
                                 }
                                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(.tint, lineWidth: 2.5))
                             }
