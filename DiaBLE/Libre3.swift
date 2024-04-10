@@ -668,7 +668,7 @@ extension String {
 
         case .securityCommands:
             lastSecurityEvent = SecurityEvent(rawValue: data[0]) ?? .unknown
-            log("\(type) \(transmitter!.peripheral!.name!): security event: \(lastSecurityEvent)\(lastSecurityEvent == .unknown ? " (" + data[0].hex + ")" : "")")
+            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): security event: \(lastSecurityEvent)\(lastSecurityEvent == .unknown ? " (" + data[0].hex + ")" : "")")
             if data.count == 2 {
                 expectedStreamSize = Int(data[1] + data[1] / 20 + 1)
                 log("\(type) \(transmitter!.peripheral!.name!): expected response size: \(expectedStreamSize) bytes (payload: \(data[1]) bytes)")
