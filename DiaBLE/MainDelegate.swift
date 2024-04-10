@@ -107,7 +107,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                 }
                 print(msg)
                 if settings.userLevel > .basic {
-                    logger.log("\(msg)")
+                    logger.log("\(msg, privacy: .public)")
                 }
                 if !entry.label.isEmpty {
                     log.labels.insert(entry.label)

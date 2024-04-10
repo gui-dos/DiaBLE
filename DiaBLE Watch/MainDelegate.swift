@@ -101,7 +101,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
                 }
                 print(msg)
                 if settings.userLevel > .basic {
-                    logger.log("\(msg)")
+                    logger.log("\(msg, privacy: .public)")
                 }
                 if !entry.label.isEmpty {
                     log.labels.insert(entry.label)
