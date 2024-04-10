@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		C50B9AD32AA7396500FF1EA3 /* ConsoleTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50B9AD22AA7396500FF1EA3 /* ConsoleTools.swift */; };
+		C52AF6672BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C52AF6662BC672C2001FA438 /* PrivacyInfo.xcprivacy */; };
+		C52AF6682BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C52AF6662BC672C2001FA438 /* PrivacyInfo.xcprivacy */; };
+		C52AF6692BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C52AF6662BC672C2001FA438 /* PrivacyInfo.xcprivacy */; };
 		C535AEB42AB3431F00AB61AD /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C535AEB32AB3431F00AB61AD /* Realm */; };
 		C535AEB62AB3431F00AB61AD /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C535AEB52AB3431F00AB61AD /* RealmSwift */; };
 		C535AEB82AB343AE00AB61AD /* Realm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C535AEB72AB343AE00AB61AD /* Realm.swift */; };
@@ -149,6 +152,7 @@
 		49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DiaBLE.xcconfig; sourceTree = "<group>"; };
 		49DE8D3429AFFB3000BB7CF4 /* DiaBLEOverride.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DiaBLEOverride.xcconfig; sourceTree = "<group>"; };
 		C50B9AD22AA7396500FF1EA3 /* ConsoleTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleTools.swift; sourceTree = "<group>"; };
+		C52AF6662BC672C2001FA438 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		C535AEB72AB343AE00AB61AD /* Realm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Realm.swift; sourceTree = "<group>"; };
 		C53F77C529894478004F275A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C55D12B329ACB5E00050F567 /* Crypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
@@ -350,6 +354,7 @@
 				C5AAA61C2981CF7200CA3EC1 /* Assets.xcassets */,
 				C53F77C529894478004F275A /* Info.plist */,
 				C5AAA61E2981CF7200CA3EC1 /* DiaBLE.entitlements */,
+				C52AF6662BC672C2001FA438 /* PrivacyInfo.xcprivacy */,
 			);
 			path = DiaBLE;
 			sourceTree = "<group>";
@@ -507,6 +512,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C52AF6692BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */,
 				C581D5932B0E699D002A4633 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -518,6 +524,7 @@
 				C5E015E12989B0EA00F6EDF9 /* README.md in Resources */,
 				C5E400A029825F580021C6B7 /* company_ids.json in Resources */,
 				C5E015E42989B0F600F6EDF9 /* TODO.md in Resources */,
+				C52AF6682BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */,
 				C5E4004A29825C710021C6B7 /* alarm_low.mp3 in Resources */,
 				C5E015E72989B10500F6EDF9 /* LICENSE.md in Resources */,
 				C5E4004C29825C710021C6B7 /* alarm_signal_loss.mp3 in Resources */,
@@ -533,6 +540,7 @@
 				C5E015E02989B0EA00F6EDF9 /* README.md in Resources */,
 				C5E4009F29825F580021C6B7 /* company_ids.json in Resources */,
 				C5E015E32989B0F600F6EDF9 /* TODO.md in Resources */,
+				C52AF6672BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */,
 				C5E4004929825C710021C6B7 /* alarm_low.mp3 in Resources */,
 				C5E015E62989B10500F6EDF9 /* LICENSE.md in Resources */,
 				C5E4004B29825C710021C6B7 /* alarm_signal_loss.mp3 in Resources */,
@@ -659,7 +667,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = DiaBLE/Widgets/DiaBLEWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 93;
+				CURRENT_PROJECT_VERSION = 95;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -696,7 +704,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = DiaBLE/Widgets/DiaBLEWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 93;
+				CURRENT_PROJECT_VERSION = 95;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -733,7 +741,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "DiaBLE Watch/DiaBLE Watch.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 93;
+				CURRENT_PROJECT_VERSION = 95;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -773,7 +781,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "DiaBLE Watch/DiaBLE Watch.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 93;
+				CURRENT_PROJECT_VERSION = 95;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -936,7 +944,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DiaBLE/DiaBLE.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 93;
+				CURRENT_PROJECT_VERSION = 95;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -987,7 +995,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DiaBLE/DiaBLE.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 93;
+				CURRENT_PROJECT_VERSION = 95;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_HARDENED_RUNTIME = YES;
