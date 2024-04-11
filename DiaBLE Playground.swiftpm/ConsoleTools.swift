@@ -309,20 +309,20 @@ struct CrcCalculator: View {
 
     func updateCRC() {
         hexString = hexString.filter { $0.isHexDigit || $0 == " " }
-        var validated = hexString == "" ? "00" : hexString
-        validated = validated.replacingOccurrences(of: " ", with: "")
-        if validated.count % 2 == 1 {
-            validated = "0" + validated
+        var validatedString = hexString == "" ? "00" : hexString
+        validatedString = validatedString.replacingOccurrences(of: " ", with: "")
+        if validatedString.count % 2 == 1 {
+            validatedString = "0" + validatedString
         }
-        if validated.count < 8 {
-            validated = String((String(repeating: "0", count: 8 - validated.count) + validated).suffix(8))
+        if validatedString.count < 8 {
+            validatedString = String((String(repeating: "0", count: 8 - validatedString.count) + validatedString).suffix(8))
         }
-        let validatedBytes = validated.bytes
+        let validatedBytes = validatedString.bytes
         if trailingCrc {
-            crc = Data(String(validated.suffix(4)).bytes.reversed()).hex
+            crc = Data(String(validatedString.suffix(4)).bytes.reversed()).hex
             computedCrc = validatedBytes.dropLast(2).crc16.hex
         } else {
-            crc = Data(String(validated.prefix(4)).bytes.reversed()).hex
+            crc = Data(String(validatedString.prefix(4)).bytes.reversed()).hex
             computedCrc = validatedBytes.dropFirst(2).crc16.hex
         }
     }

@@ -234,11 +234,11 @@ struct OnlineView: View {
 
                         WebView(site: settings.nightscoutSite, query: "token=\(settings.nightscoutToken)", delegate: app.main?.nightscout )
                             .frame(height: UIScreen.main.bounds.size.height * 0.60)
-                            .alert("JavaScript", isPresented: $app.showingJavaScriptConfirmAlert) {
+                            .alert("JavaScript", isPresented: $app.showingJSConfirmAlert) {
                                 Button("OK") { app.main.log("JavaScript alert: selected OK") }
                                 Button("Cancel", role: .cancel) { app.main.log("JavaScript alert: selected Cancel") }
                             } message: {
-                                Text(app.JavaScriptConfirmAlertMessage)
+                                Text(app.jsConfirmAlertMessage)
                             }
 
                         List {

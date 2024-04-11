@@ -147,9 +147,9 @@ enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
     var lastConnectionDate: Date = Date.distantPast
     var status: String = "Welcome to DiaBLE!"
 
-    var showingJavaScriptConfirmAlert: Bool = false
-    var JavaScriptConfirmAlertMessage: String = ""
-    var JavaScriptAlertReturn: String = ""
+    var showingJSConfirmAlert: Bool = false
+    var jsConfirmAlertMessage: String = ""
+    var jsAlertReturn: String = ""
 }
 
 

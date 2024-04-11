@@ -153,9 +153,9 @@ enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
     }
     var editingCalibration = false
 
-    var showingJavaScriptConfirmAlert = false
-    var JavaScriptConfirmAlertMessage: String = ""
-    var JavaScriptAlertReturn: String = ""
+    var showingJSConfirmAlert = false
+    var jsConfirmAlertMessage: String = ""
+    var jsAlertReturn: String = ""
 }
 
 
