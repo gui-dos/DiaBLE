@@ -410,7 +410,7 @@ struct Details: View {
 
         }
         .buttonStyle(.plain)
-        .navigationTitle { Text ("Details") }
+        .navigationTitle { Text("Details").foregroundStyle(.tint) }
         .tint(.blue)
         .onAppear {
             if app.sensor != nil {

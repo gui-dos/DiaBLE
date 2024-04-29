@@ -253,7 +253,7 @@ struct Console: View {
         // FIXME: Filter toolbar item disappearing
         // .padding(.top, -4)
         .edgesIgnoringSafeArea(.bottom)
-        .navigationTitle { Text("Console") }
+        .navigationTitle { Text("Console").foregroundStyle(.tint) }
         .tint(.blue)
     }
 }

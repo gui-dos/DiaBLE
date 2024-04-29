@@ -184,7 +184,7 @@ struct DataView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         // .font(.system(.footnote, design: .monospaced)).foregroundStyle(Color(.lightGray))
         .font(.footnote)
-        .navigationTitle { Text("Data") }
+        .navigationTitle { Text("Data").foregroundStyle(.tint) }
         .tint(.blue)
     }
 }

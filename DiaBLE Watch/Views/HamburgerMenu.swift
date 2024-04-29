@@ -131,7 +131,7 @@ struct HamburgerMenu: View {
 
             }
             .buttonStyle(.borderless)
-            .navigationTitle { Text("DiaBLE") }
+            .navigationTitle { Text("DiaBLE").foregroundStyle(.tint) }
             .tint(.blue)
             .navigationBarTitleDisplayMode(.inline)
 

@@ -213,7 +213,7 @@ struct Monitor: View {
         .padding(.top, -26)
         .buttonStyle(.plain)
         .multilineTextAlignment(.center)
-        // .navigationTitle { Text("Monitor") }
+        // .navigationTitle { Text("Monitor").foregroundStyle(.tint) }
         .tint(.blue)
         .onAppear {
             timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()

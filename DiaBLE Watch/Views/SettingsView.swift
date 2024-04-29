@@ -196,7 +196,7 @@ struct SettingsView: View {
         .edgesIgnoringSafeArea([.bottom])
         .font(Font.body.monospacedDigit())
         .buttonStyle(.plain)
-        .navigationTitle { Text("Settings") }
+        .navigationTitle { Text("Settings").foregroundStyle(.tint) }
         .tint(.blue)
     }
 }
