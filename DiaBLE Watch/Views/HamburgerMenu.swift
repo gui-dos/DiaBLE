@@ -3,6 +3,30 @@ import SwiftUI
 
 struct HamburgerMenu: View {
 
+    let credits = [
+        "@bubbledevteam": "https://github.com/bubbledevteam",
+        "@captainbeeheart": "https://github.com/captainbeeheart",
+        "@creepymonster": "https://github.com/creepymonster",
+        "@cryptax": "https://github.com/cryptax",
+        "CryptoSwift": "https://github.com/krzyzanowskim/CryptoSwift",
+        "@dabear": "https://github.com/dabear",
+        "@DecentWoodpecker67": "https://github.com/DecentWoodpecker67",
+        "@ivalkou": "https://github.com/ivalkou",
+        "Jaap Korthals Altes": "https://github.com/j-kaltes",
+        "@keencave": "https://github.com/keencave",
+        "LibreMonitor": "https://github.com/UPetersen/LibreMonitor/tree/Swift4",
+        "Loop": "https://github.com/LoopKit/Loop",
+        "Marek Macner": "https://github.com/MarekM60",
+        "@monder": "https://github.com/monder",
+        "Nightguard": "https://github.com/nightscout/nightguard",
+        "Nightscout LibreLink Up Uploader": "https://github.com/timoschlueter/nightscout-librelink-up",
+        "@travisgoodspeed": "https://github.com/travisgoodspeed",
+        "WoofWoof": "https://github.com/gshaviv/ninety-two",
+        "xDrip": "https://github.com/Faifly/xDrip",
+        "xDrip+": "https://github.com/NightscoutFoundation/xDrip",
+        "xDrip4iO5": "https://github.com/JohanDegraeve/xdripswift"
+    ]
+
     var body: some View {
 
         NavigationStack {
@@ -124,6 +148,21 @@ struct HamburgerMenu: View {
                         Image(systemName: "giftcard")
                         Link(Data(base64Encoded: "aHR0cHM6Ly9wYXlwYWwubWUvZ3Vpc29y")!.string, destination: URL(string: Data(base64Encoded: "aHR0cHM6Ly9wYXlwYWwubWUvZ3Vpc29y")!.string)!)
                             .foregroundStyle(.blue)
+                    }
+
+                    VStack {
+                        Text("Credits:")
+                        ScrollView {
+                            ForEach(credits.sorted(by: <), id: \.key) { name, url in
+                                VStack {
+                                    Text(name)
+                                    Link((url), destination: URL(string: url)!)
+                                        .foregroundStyle(.blue)
+                                }
+                                .font(.footnote)
+                                .padding(.vertical, 6)
+                            }
+                        }
                     }
 
                 }
