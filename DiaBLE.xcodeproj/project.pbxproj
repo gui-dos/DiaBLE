@@ -11,8 +11,6 @@
 		C52AF6672BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C52AF6662BC672C2001FA438 /* PrivacyInfo.xcprivacy */; };
 		C52AF6682BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C52AF6662BC672C2001FA438 /* PrivacyInfo.xcprivacy */; };
 		C52AF6692BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C52AF6662BC672C2001FA438 /* PrivacyInfo.xcprivacy */; };
-		C535AEB42AB3431F00AB61AD /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C535AEB32AB3431F00AB61AD /* Realm */; };
-		C535AEB62AB3431F00AB61AD /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C535AEB52AB3431F00AB61AD /* RealmSwift */; };
 		C535AEB82AB343AE00AB61AD /* Realm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C535AEB72AB343AE00AB61AD /* Realm.swift */; };
 		C55D12B229ACAE8F0050F567 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C55D12B129ACAE8F0050F567 /* CryptoSwift */; };
 		C55D12B429ACB5E00050F567 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55D12B329ACB5E00050F567 /* Crypto.swift */; };
@@ -46,6 +44,7 @@
 		C5B7CE322AEE498F00227392 /* Dexcom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7CE312AEE498F00227392 /* Dexcom.swift */; };
 		C5B7CE332AEE498F00227392 /* Dexcom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7CE312AEE498F00227392 /* Dexcom.swift */; };
 		C5BE8E5B29916D3600604237 /* DiaBLE Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C59960DF2981E381005999C2 /* DiaBLE Watch.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C5BF97852BE6780F00ED6622 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5BF97842BE6780F00ED6622 /* RealmSwift */; };
 		C5DB4E4E2B168E08005AD792 /* Libre.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DB4E4D2B168E08005AD792 /* Libre.swift */; };
 		C5DB4E4F2B168E08005AD792 /* Libre.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DB4E4D2B168E08005AD792 /* Libre.swift */; };
 		C5E015E02989B0EA00F6EDF9 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015DF2989B0EA00F6EDF9 /* README.md */; };
@@ -104,6 +103,7 @@
 		C5E4009A29825F1C0021C6B7 /* Nightscout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4009829825F1C0021C6B7 /* Nightscout.swift */; };
 		C5E4009F29825F580021C6B7 /* company_ids.json in Resources */ = {isa = PBXBuildFile; fileRef = C5E4009E29825F580021C6B7 /* company_ids.json */; };
 		C5E400A029825F580021C6B7 /* company_ids.json in Resources */ = {isa = PBXBuildFile; fileRef = C5E4009E29825F580021C6B7 /* company_ids.json */; };
+		C5EF10742BE67C5C0021A413 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C5BF97842BE6780F00ED6622 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -144,6 +144,17 @@
 				C5BE8E5B29916D3600604237 /* DiaBLE Watch.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C5EF10752BE67C5C0021A413 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C5EF10742BE67C5C0021A413 /* RealmSwift in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -245,8 +256,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C535AEB62AB3431F00AB61AD /* RealmSwift in Frameworks */,
-				C535AEB42AB3431F00AB61AD /* Realm in Frameworks */,
+				C5BF97852BE6780F00ED6622 /* RealmSwift in Frameworks */,
 				C55D12B229ACAE8F0050F567 /* CryptoSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -445,6 +455,7 @@
 				C5AAA6132981CF7000CA3EC1 /* Resources */,
 				C5BE8E5E29916D3600604237 /* Embed Watch Content */,
 				C581D5992B0E699D002A4633 /* Embed Foundation Extensions */,
+				C5EF10752BE67C5C0021A413 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -455,8 +466,7 @@
 			name = DiaBLE;
 			packageProductDependencies = (
 				C55D12B129ACAE8F0050F567 /* CryptoSwift */,
-				C535AEB32AB3431F00AB61AD /* Realm */,
-				C535AEB52AB3431F00AB61AD /* RealmSwift */,
+				C5BF97842BE6780F00ED6622 /* RealmSwift */,
 			);
 			productName = DiaBLE;
 			productReference = C5AAA6152981CF7000CA3EC1 /* DiaBLE.app */;
@@ -494,7 +504,7 @@
 			mainGroup = C5AAA60C2981CF7000CA3EC1;
 			packageReferences = (
 				C55D12B029ACAE8F0050F567 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
-				C535AEB22AB3431F00AB61AD /* XCRemoteSwiftPackageReference "realm-swift" */,
+				C5BF97832BE6780F00ED6622 /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			productRefGroup = C5AAA6162981CF7000CA3EC1 /* Products */;
 			projectDirPath = "";
@@ -667,7 +677,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = DiaBLE/Widgets/DiaBLEWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 95;
+				CURRENT_PROJECT_VERSION = 98;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -704,7 +714,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = DiaBLE/Widgets/DiaBLEWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 95;
+				CURRENT_PROJECT_VERSION = 98;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -741,7 +751,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "DiaBLE Watch/DiaBLE Watch.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 95;
+				CURRENT_PROJECT_VERSION = 98;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -781,7 +791,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "DiaBLE Watch/DiaBLE Watch.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 95;
+				CURRENT_PROJECT_VERSION = 98;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -944,7 +954,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DiaBLE/DiaBLE.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 95;
+				CURRENT_PROJECT_VERSION = 98;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -995,7 +1005,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = DiaBLE/DiaBLE.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 95;
+				CURRENT_PROJECT_VERSION = 98;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1079,14 +1089,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C535AEB22AB3431F00AB61AD /* XCRemoteSwiftPackageReference "realm-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/realm-swift.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		C55D12B029ACAE8F0050F567 /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift";
@@ -1095,19 +1097,17 @@
 				minimumVersion = 1.8.0;
 			};
 		};
+		C5BF97832BE6780F00ED6622 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C535AEB32AB3431F00AB61AD /* Realm */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C535AEB22AB3431F00AB61AD /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = Realm;
-		};
-		C535AEB52AB3431F00AB61AD /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C535AEB22AB3431F00AB61AD /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
-		};
 		C55D12B129ACAE8F0050F567 /* CryptoSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C55D12B029ACAE8F0050F567 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
@@ -1117,6 +1117,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C55D12B029ACAE8F0050F567 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
 			productName = CryptoSwift;
+		};
+		C5BF97842BE6780F00ED6622 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5BF97832BE6780F00ED6622 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
