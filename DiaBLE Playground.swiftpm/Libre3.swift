@@ -671,7 +671,7 @@ extension String {
             log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): security event: \(lastSecurityEvent)\(lastSecurityEvent == .unknown ? " (" + data[0].hex + ")" : "")")
             if data.count == 2 {
                 expectedStreamSize = Int(data[1] + data[1] / 20 + 1)
-                log("\(type) \(transmitter!.peripheral!.name!): expected response size: \(expectedStreamSize) bytes (payload: \(data[1]) bytes)")
+                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): expected response size: \(expectedStreamSize) bytes (payload: \(data[1]) bytes)")
                 // TEST: when sniffing Trident:
                 if data[1] == 23 {
                     currentSecurityCommand = .readChallenge
