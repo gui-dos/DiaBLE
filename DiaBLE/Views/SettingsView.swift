@@ -6,6 +6,8 @@ struct SettingsView: View {
     @Environment(AppState.self) var app: AppState
     @Environment(Settings.self) var settings: Settings
 
+    @Environment(\.colorScheme) var colorScheme
+
     @State private var showingCalendarPicker = false
 
 
@@ -141,7 +143,15 @@ struct SettingsView: View {
                         Text("\(settings.targetLow.units) - \(settings.targetHigh.units)")
                             .foregroundStyle(.green)
                         HStack {
-                            Slider(value: $settings.targetLow,  in: 40 ... 99, step: 1)
+                            //Slider(value: $settings.targetLow,  in: 40 ... 99, step: 1)
+                            SwiftUISlider(
+                                value: $settings.targetLow,
+                                minValue: 40,
+                                maxValue: 99,
+                                stepValue: 1,
+                                minTrackColor: .init(uiColor: colorScheme == .dark ? .systemFill : .secondarySystemFill), // FIXME
+                                maxTrackColor: .green
+                            )
                             Slider(value: $settings.targetHigh, in: 120 ... 300, step: 1)
                         }
                     }
@@ -155,7 +165,15 @@ struct SettingsView: View {
                             .foregroundStyle(.red)
                         HStack {
                             Slider(value: $settings.alarmLow,  in: 40 ... 99, step: 1)
-                            Slider(value: $settings.alarmHigh, in: 120 ... 300, step: 1)
+                            // Slider(value: $settings.alarmHigh, in: 120 ... 300, step: 1)
+                            SwiftUISlider(
+                                value: $settings.alarmHigh,
+                                minValue: 120,
+                                maxValue: 300,
+                                stepValue: 1,
+                                minTrackColor: .init(uiColor: colorScheme == .dark ? .systemFill : .secondarySystemFill), // FIXME
+                                maxTrackColor: .red
+                            )
                         }
                     }
                     .tint(.red)
