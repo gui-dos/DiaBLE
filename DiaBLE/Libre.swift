@@ -21,7 +21,8 @@ extension SensorType {
             patchInfo[3] == 8 ? .libre2RU :
             patchInfo[2] >> 4 == 7 ? .libreSense :
                 .unknown
-        case 0xC6, 0x2C: .libre2Plus  // EU, US
+        case 0xC6:       .libre2  // not-Gen2 European Libre 2+
+        case 0x2C:       .libre2Plus
         default:
             if patchInfo.count == 24 {
                 .libre3
