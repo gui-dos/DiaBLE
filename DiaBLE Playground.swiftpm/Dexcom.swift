@@ -140,6 +140,29 @@ import CoreBluetooth
 
     var opCode: Opcode = .unknown
 
+
+    // TODO:
+    // enum G7TxController.TransmitterResponseCode {
+    //     case success         = 0
+    //     case notPermitted    = 1
+    //     case notFound        = 2
+    //     case ioError         = 3
+    //     case badHandle       = 4
+    //     case tryLater        = 5
+    //     case outOfMemory     = 6
+    //     case noAccess        = 7
+    //     case segfault        = 8
+    //     case busy            = 9
+    //     case badArgument     = 10
+    //     case noSpace         = 11
+    //     case badRange        = 12
+    //     case notImplemented  = 13
+    //     case timeout         = 14
+    //     case protocolError   = 15
+    //     case unexpectedError = 16
+    // }
+
+
     override func read(_ data: Data, for uuid: String) {
 
         if uuid == UUID.authentication.rawValue || uuid == UUID.control.rawValue {
