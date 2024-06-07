@@ -272,18 +272,18 @@ import CoreBluetooth
                 //        C = calibration
 
                 // TODO:
-                //  class TxControllerG7.EGVResponse {
-                //      let txTime: Swift.UInt32
-                //      let sequenceNumber: Swift.UInt32
-                //      let sessionNumber: Swift.UInt8
-                //      let egvAge: Swift.UInt16
-                //      let value: Swift.UInt16
-                //      let algorithmState: Swift.UInt8
-                //      let secondaryalgorithmState: Swift.UInt8
-                //      let rate: Swift.Int8
-                //      let predictiveValue: Swift.UInt16
-                //      var timeStamp: Swift.UInt32
-                //  }
+                // class G7TxController.EGVResponse {
+                //     let txTime: Swift.UInt32
+                //     let sequenceNumber: Swift.UInt32
+                //     let sessionNumber: Swift.UInt8
+                //     let egvAge: Swift.UInt16
+                //     let value: Swift.UInt16
+                //     let algorithmState: Swift.UInt8
+                //     let secondaryalgorithmState: Swift.UInt8
+                //     let rate: Swift.Int8
+                //     let predictiveValue: Swift.UInt16
+                //     var timeStamp: Swift.UInt32
+                // }
 
                 let status = data[1]
                 let messageTimestamp = UInt32(data[2..<6])  // seconds since pairing of the *message*. Subtract age to get timestamp of glucose
@@ -349,15 +349,15 @@ import CoreBluetooth
                 // TODO: i.e. 3200014e000000000000000000010100e4000000
                 break
 
-                // struct TxControllerG7.G7CalibrationBounds {
-                //     let sessionNumber: Swift.UInt
-                //     let sessionSignature: Swift.UInt
-                //     let lastBGvalue: Swift.UInt
-                //     let lastCalibrationTime: Swift.UInt
-                //     let calibrationProcessingStatus: TxControllerG7.G7CalibrationProcessingStatus
+                // class G7TxController.CalibrationBoundsResponse {
+                //     let sessionNumber: Swift.UInt8
+                //     let sessionSignature: Swift.UInt32
+                //     let lastBGvalue: Swift.UInt16
+                //     let lastCalibrationTime: Swift.UInt32
+                //     let calibrationProcessingStatus: G7TxController.G7CalibrationProcessingStatus
                 //     let calibrationsPermitted: Swift.Bool
-                //     let lastBGDisplay: TxControllerG7.G7DisplayType
-                //     let lastProcessingUpdateTime: Swift.UInt
+                //     let lastBGDisplay: G7TxController.G7DisplayType
+                //     let lastProcessingUpdateTime: Swift.UInt32
                 // }
 
 
@@ -620,13 +620,13 @@ import CoreBluetooth
 
     // TODO: secondary states, enum TxControllerG7.G7CalibrationStatus
     //
-    // enum TxControllerG7.G7AlgorithmState {
-    //     case warmupTxControllerG7G7AlgorithmState.WarmupSecondary
-    //     case inSessionTxControllerG7G7AlgorithmState.InSessionSecondary
-    //     case inSessionInvalidTxControllerG7G7AlgorithmState.InSessionInvalidSecondary
-    //     case sessionExpiredTxControllerG7G7AlgorithmState.SessionExpiredSecondary
-    //     case sessionFailedTxControllerG7G7AlgorithmState.SessionFailedSecondary
-    //     case manuallyStoppedTxControllerG7G7AlgorithmState.ManuallyStoppedSecondary
+    // enum G7TxController.G7AlgorithmState {
+    //     case warmupG7TxControllerG7AlgorithmState.WarmupSecondary
+    //     case inSessionG7TxControllerG7AlgorithmState.InSessionSecondary
+    //     case inSessionInvalidG7TxControllerG7AlgorithmState.InSessionInvalidSecondary
+    //     case sessionExpiredG7TxControllerG7AlgorithmState.SessionExpiredSecondary
+    //     case sessionFailedG7TxControllerG7AlgorithmState.SessionFailedSecondary
+    //     case manuallyStoppedG7TxControllerG7AlgorithmState.ManuallyStoppedSecondary
     //     case none
     //     case deployed
     //     case transmitterFailed
@@ -634,14 +634,14 @@ import CoreBluetooth
     //     case sessionFailedOutOfRange
     // }
     //
-    // enum TxControllerG7.G7AlgorithmState.WarmupSecondary {
+    // enum G7TxController.G7AlgorithmState.WarmupSecondary {
     //     case sivPassed
     //     case parametersUpdated
     //     case signalProcessing
     //     case error
     // }
     //
-    // enum TxControllerG7.G7AlgorithmState.InSessionSecondary {
+    // enum G7TxController.G7AlgorithmState.InSessionSecondary {
     //     case low
     //     case lowNoPrediction
     //     case lowNoTrend
@@ -669,7 +669,7 @@ import CoreBluetooth
     //     case error
     // }
     //
-    // enum TxControllerG7.G7AlgorithmState.InSessionInvalidSecondary {
+    // enum G7TxController.G7AlgorithmState.InSessionInvalidSecondary {
     //     case invalid
     //     case validPrediction
     //     case validTrend
@@ -681,7 +681,7 @@ import CoreBluetooth
     //     case error
     // }
     //
-    // enum TxControllerG7.G7AlgorithmState.SessionExpiredSecondary {
+    // enum G7TxController.G7AlgorithmState.SessionExpiredSecondary {
     //     case validEgv
     //     case validEgvNoPrediction
     //     case validEgvNoTrend
@@ -693,7 +693,7 @@ import CoreBluetooth
     //     case error
     // }
     //
-    // enum TxControllerG7.G7AlgorithmState.SessionFailedSecondary {
+    // enum G7TxController.G7AlgorithmState.SessionFailedSecondary {
     //     case unspecified
     //     case sensorFailure
     //     case algorithmFailure
@@ -702,7 +702,7 @@ import CoreBluetooth
     //     case error
     // }
     //
-    // enum TxControllerG7.G7AlgorithmState.ManuallyStoppedSecondary {
+    // enum G7TxController.G7AlgorithmState.ManuallyStoppedSecondary {
     //     case none
     //     case skip
     //     case other
@@ -865,6 +865,13 @@ import CoreBluetooth
 
 }
 
+
+// TODO:
+// enum G7.SensorType {
+//     case g710Day
+//     case g710DayAlgo2
+//     case g715DayNonDrug
+// }
 
 @Observable class DexcomG7: Sensor {
 
