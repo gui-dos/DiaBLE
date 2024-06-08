@@ -105,6 +105,8 @@ import CoreBluetooth
         case calibrateGlucoseTx = 0x34  // G7 Tx/Rx
         case calibrateGlucoseRx = 0x35
 
+        case encryptionInfo = 0x38  // G7 Tx/Rx
+
         case glucoseHistoryTx = 0x3e
 
         case resetTx = 0x42
@@ -117,13 +119,14 @@ import CoreBluetooth
         case glucoseG6Rx = 0x4f
 
         case glucoseBackfillTx = 0x50  // DataStream
-        case glucoseBackfillRx = 0x51  // Tx/Rx start/end of stream
+        case glucoseBackfillRx = 0x51  // G7 Tx/Rx start/end of diagnostic data stream
 
         case transmitterVersionExtended = 0x52  // G7 Tx/Rx
         case transmitterVersionExtendedRx = 0x53
 
         case backfillFinished = 0x59  // G7 Tx/Rx
-        case unknown1_G7 = 0xEA       // TODO: Tx/Rx EA00
+
+        case bleControl = 0xea       // TODO: G7 Tx/Rx EA00
 
         case keepAliveRx = 0xFF
 
@@ -141,7 +144,22 @@ import CoreBluetooth
     var opCode: Opcode = .unknown
 
 
-    // TODO:
+    // TODO: com.dexcom.coresdk.transmitterG7.command CmdRequest$Opcode class
+    // enum G7Opcode {
+    //     stopSession                = 0x28
+    //     egv                        = 0x4e
+    //     calibrationBounds          = 0x32
+    //     calibrate                  = 0x34
+    //     transmitterVersion         = 0x4a
+    //     transmitterVersionExtended = 0x52
+    //     encryptionInfo             = 0x38
+    //     backfill                   = 0x59
+    //     diagnosticData             = 0x51
+    //     bleControl                 = 0xea
+    //     disconnect                 = 0x09
+    // }
+
+
     // enum G7TxController.TransmitterResponseCode {
     //     case success         = 0
     //     case notPermitted    = 1
@@ -589,7 +607,7 @@ import CoreBluetooth
                 log("\(name): extended version response: status: \(status), session length: \(sessionLength) days, CRC: \(crc.hex), valid CRC: \(crc == data.dropLast(2).crc)")
 
 
-            case .unknown1_G7:
+            case .bleControl:
                 // TODO: i.e. ea00030100000000000200000045ffffff
                 break
 
