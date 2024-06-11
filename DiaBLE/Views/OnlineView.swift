@@ -34,7 +34,7 @@ struct OnlineView: View {
 
 
     func reloadLibreLinkUp() async {
-        if let libreLinkUp = await app.main?.libreLinkUp {
+        if let libreLinkUp = app.main?.libreLinkUp {
             var dataString = ""
             var retries = 0
         loop: repeat {

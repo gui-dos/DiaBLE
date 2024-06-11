@@ -83,7 +83,7 @@ struct BLE {
 }
 
 
-extension CBPeripheralState: CustomStringConvertible {
+extension CBPeripheralState: @retroactive CustomStringConvertible {
     public var description: String {
         switch self {
         case .connected:     "connected"
@@ -96,7 +96,7 @@ extension CBPeripheralState: CustomStringConvertible {
 }
 
 
-extension CBCharacteristicProperties: CustomStringConvertible {
+extension CBCharacteristicProperties: @retroactive CustomStringConvertible {
     public var description: String {
         var d = [String: Bool]()
         d["Broadcast"]                  = self.contains(.broadcast)
