@@ -340,6 +340,7 @@ struct OnlineView: View {
         .edgesIgnoringSafeArea([.bottom])
         .buttonStyle(.plain)
         .navigationTitle { Text("Online").foregroundStyle(.tint) }
+        .toolbarForegroundStyle(.blue, for: .automatic)
         .tint(.blue)
     }
 }

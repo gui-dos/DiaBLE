@@ -411,6 +411,7 @@ struct Details: View {
         }
         .buttonStyle(.plain)
         .navigationTitle { Text("Details").foregroundStyle(.tint) }
+        .toolbarForegroundStyle(.blue, for: .automatic)
         .tint(.blue)
         .onAppear {
             if app.sensor != nil {

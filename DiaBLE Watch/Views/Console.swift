@@ -254,6 +254,7 @@ struct Console: View {
         // .padding(.top, -4)
         .edgesIgnoringSafeArea(.bottom)
         .navigationTitle { Text("Console").foregroundStyle(.tint) }
+        .toolbarForegroundStyle(.blue, for: .automatic)
         .tint(.blue)
     }
 }

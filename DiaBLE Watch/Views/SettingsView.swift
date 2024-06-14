@@ -197,6 +197,7 @@ struct SettingsView: View {
         .font(Font.body.monospacedDigit())
         .buttonStyle(.plain)
         .navigationTitle { Text("Settings").foregroundStyle(.tint) }
+        .toolbarForegroundStyle(.blue, for: .automatic)
         .tint(.blue)
     }
 }

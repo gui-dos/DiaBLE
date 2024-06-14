@@ -185,6 +185,7 @@ struct DataView: View {
         // .font(.system(.footnote, design: .monospaced)).foregroundStyle(Color(.lightGray))
         .font(.footnote)
         .navigationTitle { Text("Data").foregroundStyle(.tint) }
+        .toolbarForegroundStyle(.blue, for: .automatic)
         .tint(.blue)
     }
 }
