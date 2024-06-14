@@ -700,13 +700,13 @@ extension String {
             if buffer.count == expectedStreamSize {
 
                 let (payload, hexDump) = parsePackets(buffer)
-                log("\(type) \(transmitter!.peripheral!.name!): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes):\n\(hexDump)")
+                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes):\n\(hexDump)")
 
                 switch currentSecurityCommand {
 
                 case .security_09:
                     if settings.userLevel < .test { // not sniffing Trident
-                        log("\(type) \(transmitter!.peripheral!.name!): patch certificate: \(payload.hex)")
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate: \(payload.hex)")
                         send(securityCommand: .security_0D)
                         // TODO:
                         // write 65-byte ephemeral key
@@ -717,7 +717,7 @@ extension String {
 
                 case .ephemeralLoadDone:
                     if settings.userLevel < .test { // not sniffing Trident
-                        log("\(type) \(transmitter!.peripheral!.name!): patch ephemeral: \(payload.hex)")
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch ephemeral: \(payload.hex)")
                         send(securityCommand: .readChallenge)
                         // TODO
                     }

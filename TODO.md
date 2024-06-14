@@ -10,6 +10,7 @@ FIXME
 TODO
 ----
 
+* Migrate to Swift 6 concurrency
 * Apple Watch app:
   - workout and extended runtime background sessions, complications
   - ["Get timely alerts from Bluetooth devices in watchOS" - WWDC 2022](https://developer.apple.com/wwdc22/10135/)
