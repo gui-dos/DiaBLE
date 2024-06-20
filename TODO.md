@@ -10,11 +10,10 @@ FIXME
 TODO
 ----
 
-* Migrate to Swift 6 concurrency
 * Apple Watch app:
   - workout and extended runtime background sessions, complications
   - ["Get timely alerts from Bluetooth devices in watchOS" - WWDC 2022](https://developer.apple.com/wwdc22/10135/)
-* switch from `DispatchQueue.main.async` to `Task { @MainActor }`
+* Migrate to Swift 6 concurrency
 * use public timers instead of SwiftUI private ones, TimelineViews
 * scrollable graph, offline trend arrow, landscape mode
 * smooth the historic values and project the trend ones (see [LibreTransmitter](https://github.com/dabear/LibreTransmitter/commit/49b50d7995955b76861440e5e34a0accd064d18f))
