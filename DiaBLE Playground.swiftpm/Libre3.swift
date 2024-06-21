@@ -787,7 +787,7 @@ extension String {
     }
 
 
-    // TODO: separate CMD_ACTIVATE_SENSOR and CMD_SWITCH_RECEIVER
+    // TODO: separate CMD_ACTIVATE_SENSOR (0xA0) and CMD_SWITCH_RECEIVER (0xA8)
     var activationNFCCommand: NFCCommand {
         // TODO:
         if receiverId == 0 && settings.libreLinkUpPatientId == "" {

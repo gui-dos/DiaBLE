@@ -44,6 +44,13 @@
 // }
 
 
+// class DCMGK.GKSPL {
+//     var lastError: Swift.Int
+//     let MIN_LIFECOUNT_FOR_HISTORICAL_DATA: Swift.Int
+//     let MIN_HISTORICAL_DATA_LIFECOUNT_OFFSET: Swift.Int
+// }
+
+
 // class DCMGK.GKBLESensor {
 //     let splInterface: DCMGK.GKSPL
 //     let stateMachine: DCMGK.GKStateMachine
@@ -133,9 +140,9 @@
 //     let ACTIVATION_ERROR_NFC_COMMUNICATION_FAILURE: Swift.Int
 //     let ACTIVATION_ERROR_CRL_ERROR: Swift.Int
 //     let MANUFACTURER_CODE: Swift.Int
-//     var CMD_SWITCH_RECEIVER: Swift.Int
+//     var CMD_SWITCH_RECEIVER: Swift.Int     // 0xA8
 //     var dcmConfig: DCMGK.GKSDCMConfig?
-//     var NFC_ACTIVATION_COMMAND: Swift.Int
+//     var NFC_ACTIVATION_COMMAND: Swift.Int  // 0xA0
 //     var nfcActivationByteArray: Foundation.Data
 //     var sensorUID: Swift.String
 //     let hexArray: [Swift.Character]
