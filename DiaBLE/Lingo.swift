@@ -140,7 +140,7 @@
 //     var lastError: Swift.Int
 //     let RESPONSE_FAILED: Swift.Int = 1
 //     let RESPONSE_DUMMY: Swift.Int  = 2
-//     let RESPONSE_OK: Swift.Int     =  3
+//     let RESPONSE_OK: Swift.Int     = 3
 //     let MAX_NFC_RETRIES: Swift.Int = 5
 //     let EM_BOOT_TIME_MS: Swift.UInt32 = 80
 //     let ACTIVATION_DELAY_MS: Swift.UInt32 = 600
@@ -390,3 +390,401 @@
 //     let device: DCSCore.DCSDevice?
 //     var errorCode: DCSCore.DCSActivationError
 // }
+
+
+// class DCMGK.GKStateMachine {
+//     var sensor: DCSCore.IAnalyteSensor?
+//     var msDevice: DCSCore.DCSDevice
+//     var context: DCMGK.GKSensor?
+// }
+
+
+// class DCSCore.StateMachineDefinition {
+//     let log: DCSCore.LogProtocol
+//     var stateMap: [Swift.String : Swift.AnyObject]
+//     var eventMap: [Swift.String : Swift.AnyObject]
+//     let version: Swift.Double
+//     var activityDefinitions: [Swift.String : DCSCore.ActivityFlowDefinition]?
+//     var activityObjects: [Swift.String : DCSCore.StateActivity]?
+//     var initialActivity: Swift.String?
+//     var errorHandler: Swift.String?
+//     var unhandledEventsHandler: Swift.String?
+// }
+
+
+// class DCSCore.DCSDeviceManager {
+//     let log: DCSCore.LogProtocol
+//     var activeDevices: [Swift.String : DCSCore.DCSDevice]
+//     var definitions: [Swift.String : DCSCore.StateMachineDefinition]
+//     var modules: [Swift.Int : DCSCore.DeviceControlModuleProtocol]
+//     var controllers: [Swift.Int64 : DCSCore.ActivityFlowController]
+//     var tagManufacturerMap: [Swift.String : DCSCore.DCMType]
+//     var internalDeviceNumber: Swift.Int
+//     var dcsStore: DCSCore.IDCSDataStore
+// }
+
+
+// class DCSCore.BlePeripheral {
+//     let log: DCSCore.LogProtocol
+//     var peripheral: DCSCore.CBPeripheralProtocol?
+//     var delegate: DCSCore.BLEPeripheralCallBack?
+// }
+
+
+// class DCSCore.DCSAdaptor {
+//     let log: DCSCore.LogProtocol
+//     var isInitialized: Swift.Bool
+//     var deviceManager: DCSCore.DCSDeviceManager?
+//     let debugEnabled: Swift.Bool
+//     var adaptorCallback: DCSCore.IDCSCallback?
+//     var dcsStore: DCSCore.IDCSDataStore
+//     let returnValue: Swift.Int32
+//     var dcmTypes: [Swift.Int : DCSCore.DCMType]
+//     var eventCancellable: Combine.AnyCancellable?
+//     var logCancellable: Combine.AnyCancellable?
+// }
+
+
+// class DCSCore.BleManager {
+//     var log: DCSCore.LogProtocol
+//     var centralManager: DCSCore.CBCentralManagerProtocol?
+//     var hasState: Swift.Bool
+//     let kCBCentralRestoreName: Swift.String
+//     var wantedRestoredPeripherals: [DCSCore.CBPeripheralProtocol]
+//     var bleOffDialogCanBePresented: Swift.Bool
+//     var analyteSensors: [Swift.String : (callback: DCSCore.BLECentralCallback, cbPeripheral: DCSCore.CBPeripheralProtocol?)]
+//     var scanRequests: Swift.Int
+//     var mockPeripheral: DCSCore.MockCBPeripheral?
+//     var restoredPeripherals: [__C.CBPeripheral]?
+// }
+
+
+let flowController =  """
+{
+    "flowControllerVersion": "1.0",
+    "controllerType": "DualSensor",
+    "initialActivity": "GKSActivityScanSensor",
+    "errorHandler": "GKSActivityError",
+    "activities": [
+        {
+            "activity": "GKSActivityScanSensor",
+            "eventFlows": [
+                {
+                    "DCSGKSDeviceFoundEvent": "GKSActivityConnect"
+                },
+                {
+                    "DCSGKSScanError": "_FlowContinue"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityConnect",
+            "eventFlows": [
+                {
+                    "DCSGKSSecuredConnectedEvent": "GKSActivityEnableSecurityNotifications"
+                },
+                {
+                    "DCSGKSConnectedEvent": "GKSActivityEnableNotification"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityEnableSecurityNotifications",
+            "eventFlows": [
+                {
+                    "DCSGKSSecurityNotificationsEnabledEvent": "GKSActivityCheckAuthentication"
+                },
+                {
+                    "DCSGKSRealtimeReadingEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSRetryConnectEvent": "GKSActivityConnect"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityEnableNotification",
+            "eventFlows": [
+                {
+                    "DCSGKSNotificationEnabledEvent": "GKSActivityGetRealtimeReadings"
+                },
+                {
+                    "DCSGKSRealtimeReadingEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSRetryConnectEvent": "GKSActivityConnect"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityCheckAuthentication",
+            "eventFlows": [
+                {
+                    "DCSGKSAuthenticationRequiredEvent": "GKSActivityStartAuthentication"
+                },
+                {
+                    "DCSGKSAuthorizationRequiredEvent": "GKSActivityStartAuthorization"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityStartAuthentication",
+            "eventFlows": [
+                {
+                    "DCSGKSCommandSentEvent": "GKSActivityLoadCertificate"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityLoadCertificate",
+            "eventFlows": [
+                {
+                    "DCSGKSCommandSentEvent": "GKSActivitySendCertificate"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivitySendCertificate",
+            "eventFlows": [
+                {
+                    "DCSGKSCertificateSentEvent": "GKSActivitySendCertificateLoadDone"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivitySendCertificateLoadDone",
+            "eventFlows": [
+                {
+                    "DCSGKSCommandSentEvent": "GKSActivityWaitCertificateAcceptance"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityWaitCertificateAcceptance",
+            "eventFlows": [
+                {
+                    "DCSGKSCertificateAcceptedEvent": "GKSActivityGetCertificate"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityGetCertificate",
+            "eventFlows": [
+                {
+                    "DCSGKSCommandSentEvent": "GKSActivityWaitCertificateReady"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityWaitCertificateReady",
+            "eventFlows": [
+                {
+                    "DCSGKSCertificateReadyEvent": "GKSActivityReadCertificate"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityReadCertificate",
+            "eventFlows": [
+                {
+                    "DCSGKSCertificateReadEvent": "GKSActivityValidateCertificate"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityValidateCertificate",
+            "eventFlows": [
+                {
+                    "DCSGKSCommandSentEvent": "GKSActivitySendEphemeral"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivitySendEphemeral",
+            "eventFlows": [
+                {
+                    "DCSGKSCertificateSentEvent": "GKSActivitySendEphemeralDone"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivitySendEphemeralDone",
+            "eventFlows": [
+                {
+                    "DCSGKSCommandSentEvent": "GKSActivityPatchEphemeralWait"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityPatchEphemeralWait",
+            "eventFlows": [
+                {
+                    "DCSGKSEphemeralReadyEvent": "GKSActivityReadPatchEphemeral"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityReadPatchEphemeral",
+            "eventFlows": [
+                {
+                    "DCSGKSCertificateReadEvent": "GKSActivityFinalizeAuthentication"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityFinalizeAuthentication",
+            "eventFlows": [
+                {
+                    "DCSGKSECDHCompleteEvent": "GKSActivityStartAuthorization"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityStartAuthorization",
+            "eventFlows": [
+                {
+                    "DCSGKSCommandSentEvent": "GKSActivityWaitChallengeLoad"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityWaitChallengeLoad",
+            "eventFlows": [
+                {
+                    "DCSGKSChallengeLoadDoneEvent": "GKSActivityReadR1"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityReadR1",
+            "eventFlows": [
+                {
+                    "DCSGKSChallengeDataReadEvent": "GKSActivitySendChallengeResponse"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivitySendChallengeResponse",
+            "eventFlows": [
+                {
+                    "DCSGKSChallengeDataSentEvent": "GKSActivitySendChallengeLoadDone"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivitySendChallengeLoadDone",
+            "eventFlows": [
+                {
+                    "DCSGKSCommandSentEvent": "GKSActivityWaitPatchChallengeLoadDone"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityWaitPatchChallengeLoadDone",
+            "eventFlows": [
+                {
+                    "DCSGKSChallengeLoadDoneEvent": "GKSActivityReadPatchChallengeResponse"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityReadPatchChallengeResponse",
+            "eventFlows": [
+                {
+                    "DCSGKSChallengeDataReadEvent": "GKSActivityFinalizeAuthorization"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityFinalizeAuthorization",
+            "eventFlows": [
+                {
+                    "DCSGKSRealtimeReadingEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSNotificationEnabledEvent": "GKSActivityGetRealtimeReadings"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityGetRealtimeReadings",
+            "eventFlows": [
+                {
+                    "DCSGKSRealtimeReadingEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSHistoricalReadingEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSHistoricalReadingEndEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSFastDataEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSRetryConnectEvent": "GKSActivityConnect"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityError",
+            "eventFlows": [
+                {
+                    "DCSGKSDisconnectEvent": "GKSActivityConnect"
+                },
+                {
+                    "DCSGKSSecurityErrorEvent": "GKSActivityDisconnect"
+                },
+                {
+                    "DCSGKSConnectTimedOutEvent": "GKSActivityScanSensor"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityDisconnect",
+            "eventFlows": [
+                {
+                    "DCSGKSRetryConnectEvent": "GKSActivityConnect"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityCloseDevice",
+            "eventFlows": [
+                {
+                    "DCSGKSRetryConnectEvent": "GKSActivityConnect"
+                }
+            ]
+        },
+        {
+            "activity": "GKSActivityGetEventLog",
+            "eventFlows": [
+                {
+                    "DCSGKSHistoricalReadingEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSRealtimeReadingEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSFactoryDataEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSHistoricalReadingEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSHistoricalReadingEndEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSEventLogEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSFastDataEvent": "_FlowContinue"
+                },
+                {
+                    "DCSGKSEventLogEndEvent": "GKSActivityGetRealtimeReadings"
+                }
+            ]
+        }
+    ]
+}
+"""
