@@ -1009,7 +1009,7 @@ extension String {
         static let CRYPTO_EXTENSION_WRAP_DIAGNOSTIC_DATA: Int = 13
 
         let PUBLIC_KEY_TYPE_UNCOMPRESSED: UInt8 = 4
-        let CRYPTO_PUBLIC_KEY_SIZE: Int
+        let CRYPTO_PUBLIC_KEY_SIZE: Int = 64
         let patchSigningKey: Data
         let securityVersion: Int
         let max_key_index: Int = 2
