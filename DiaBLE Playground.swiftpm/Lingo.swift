@@ -303,18 +303,6 @@
 // }
 
 
-// struct DCMGK.DCSGKSFastData {
-//     var rawData: Foundation.Data
-//     var unCappedReading: Swift.Double
-//     var dqFlag: Swift.Int
-//     var historicLifeCount: Swift.Int
-//     var unCappedHistoric: Swift.Double
-//     var historicDQFlag: Swift.Int
-//     var analyte: DCMGK.GKAnalyteType
-//     var lifeCount: Swift.Int
-// }
-
-
 // struct DCMGK.GKSPLActivationResponse {
 //     var isActivated: Swift.Bool
 //     var status: Swift.Int
@@ -340,6 +328,28 @@
 //     let unCappedReading: Swift.Double
 //     let unCappedHistoric: Swift.Double
 //     let sensorCondition: Swift.Int
+// }
+
+
+// struct DCMGK.DCSGKSRealtimeReading {
+//     var lifeCount: Swift.Int
+//     var historicLifeCount: Swift.Int
+//     var temperature: Swift.Double
+//     var measurements: [DCMGK.DCSGKSAnalyteMeasurement]
+//     var clinicalData: Foundation.Data
+//     var rssi: Swift.Int
+// }
+
+
+// struct DCMGK.DCSGKSFastData {
+//     var rawData: Foundation.Data
+//     var unCappedReading: Swift.Double
+//     var dqFlag: Swift.Int
+//     var historicLifeCount: Swift.Int
+//     var unCappedHistoric: Swift.Double
+//     var historicDQFlag: Swift.Int
+//     var analyte: DCMGK.GKAnalyteType
+//     var lifeCount: Swift.Int
 // }
 
 
@@ -392,10 +402,29 @@
 // }
 
 
+// class DCMGK.GKActivateParam {
+//     let nfcTag: DCSCore.NFCTagProtocol
+//     var usedSerialNumbers: [Swift.String]?
+//     let marketLevel: Swift.Int
+//     let activeDeviceAddress: Swift.String?
+//     let activeDeviceStatus: Swift.Int
+//     let activeDeviceSerial: Swift.String?
+//     let transitionableSensorSerialNumber: Swift.String?
+//     let stateMachineControlJson: Swift.String?
+//     let receiverId: Swift.UInt32
+// }
+
+
 // class DCMGK.GKStateMachine {
 //     var sensor: DCSCore.IAnalyteSensor?
 //     var msDevice: DCSCore.DCSDevice
 //     var context: DCMGK.GKSensor?
+// }
+
+
+// struct DCMGK.GKCommand {
+//     var type: Swift.Int
+//     var data: Foundation.Data
 // }
 
 
