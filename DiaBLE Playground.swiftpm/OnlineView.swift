@@ -34,7 +34,9 @@ struct OnlineView: View {
 
 
     func reloadLibreLinkUp() async {
-        if let libreLinkUp = app.main?.libreLinkUp {
+        // TODO: iOS 18 fix:
+        // if let libreLinkUp = app.main?.libreLinkUp {
+        if let libreLinkUp = await app.main?.libreLinkUp {
             var dataString = ""
             var retries = 0
         loop: repeat {
