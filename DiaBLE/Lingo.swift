@@ -25,6 +25,13 @@
 // }
 
 
+// enum DCMGK.GKSensorCondition {
+//     case OK
+//     case Invalid
+//     case ESA
+// }
+
+
 // class DCMGK.GKSensor {
 //     var sensor: DCSCore.IAnalyteSensor
 //     var deviceType: Swift.Int
@@ -112,6 +119,17 @@
 // }
 
 
+// class DCSCore.ADCProductTypeConfig {
+//     var productType: Swift.Int
+//     var generations: [Swift.Int]
+// }
+
+
+// class DCMGK.GKSDCMConfig {
+//     var supportedTypes: [DCSCore.ADCProductTypeConfig]
+// }
+
+
 // class DCMGK.GKDeviceControlModule {
 //     let deviceManager: DCSCore.DCSDeviceManager?
 //     var stateMachineDefinition: DCSCore.StateMachineDefinition?
@@ -120,29 +138,29 @@
 //     var activities: [Swift.AnyObject.Type]?
 //     var events: [Swift.AnyObject.Type]?
 //     var lastError: Swift.Int
-//     let RESPONSE_FAILED: Swift.Int
-//     let RESPONSE_DUMMY: Swift.Int
-//     let RESPONSE_OK: Swift.Int
-//     let MAX_NFC_RETRIES: Swift.Int
-//     let EM_BOOT_TIME_MS: Swift.UInt32
-//     let ACTIVATION_DELAY_MS: Swift.UInt32
-//     let NFC_RETRY_DELAY_MS: Swift.UInt32
+//     let RESPONSE_FAILED: Swift.Int = 1
+//     let RESPONSE_DUMMY: Swift.Int  = 2
+//     let RESPONSE_OK: Swift.Int     =  3
+//     let MAX_NFC_RETRIES: Swift.Int = 5
+//     let EM_BOOT_TIME_MS: Swift.UInt32 = 80
+//     let ACTIVATION_DELAY_MS: Swift.UInt32 = 600
+//     let NFC_RETRY_DELAY_MS: Swift.UInt32 = 150
 //     let RESPONSE_ERROR: Swift.Int
-//     let LIB_NV_MEMORY_SIZE: Swift.Int
-//     let ACTIVATION_ERROR_LOW_BATTERY: Swift.Int
-//     let NFC_GET_PATCH_CUSTOM_COMMAND: Swift.Int
-//     let ACTIVATION_ERROR_MANUFACTURING_STATE: Swift.Int
-//     let ACTIVATION_ERROR_INSERTION_DETECTION_STATE: Swift.Int
-//     let ACTIVATION_ERROR_PAIRED_STATE: Swift.Int
-//     let ACTIVATION_ERROR_EXPIRED_STATE: Swift.Int
-//     let ACTIVATION_ERROR_TERMINATION_NORMAL: Swift.Int
-//     let ACTIVATION_ERROR_TERMINATION_ERROR: Swift.Int
-//     let ACTIVATION_ERROR_NFC_COMMUNICATION_FAILURE: Swift.Int
-//     let ACTIVATION_ERROR_CRL_ERROR: Swift.Int
-//     let MANUFACTURER_CODE: Swift.Int
-//     var CMD_SWITCH_RECEIVER: Swift.Int     // 0xA8
+//     let LIB_NV_MEMORY_SIZE: Swift.Int = 1024
+//     let ACTIVATION_ERROR_LOW_BATTERY: Swift.Int = 0xa0
+//     let NFC_GET_PATCH_CUSTOM_COMMAND: Swift.Int = 0xa1
+//     let ACTIVATION_ERROR_MANUFACTURING_STATE: Swift.Int       = 0xa2
+//     let ACTIVATION_ERROR_INSERTION_DETECTION_STATE: Swift.Int = 0xa4
+//     let ACTIVATION_ERROR_PAIRED_STATE: Swift.Int = 0xa4       = 0xa5
+//     let ACTIVATION_ERROR_EXPIRED_STATE: Swift.Int             = 0xa6
+//     let ACTIVATION_ERROR_TERMINATION_NORMAL: Swift.Int        = 0xa7
+//     let ACTIVATION_ERROR_TERMINATION_ERROR: Swift.Int         = 0xa8
+//     let ACTIVATION_ERROR_NFC_COMMUNICATION_FAILURE: Swift.Int = 1
+//     let ACTIVATION_ERROR_CRL_ERROR: Swift.Int                 = 2
+//     let MANUFACTURER_CODE: Swift.Int = 0x7a
+//     var CMD_SWITCH_RECEIVER: Swift.Int    = 0xA8
 //     var dcmConfig: DCMGK.GKSDCMConfig?
-//     var NFC_ACTIVATION_COMMAND: Swift.Int  // 0xA0
+//     var NFC_ACTIVATION_COMMAND: Swift.Int = 0xA0
 //     var nfcActivationByteArray: Foundation.Data
 //     var sensorUID: Swift.String
 //     let hexArray: [Swift.Character]
@@ -341,12 +359,6 @@
 //     var end: Swift.Int
 //     var timeout: Swift.Int
 //     var mEnd: Swift.Int
-// }
-
-
-// class DCSCore.ADCProductTypeConfig {
-//     var productType: Swift.Int
-//     var generations: [Swift.Int]
 // }
 
 
