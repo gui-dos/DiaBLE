@@ -364,6 +364,15 @@ class Lingo {
     // }
 
 
+    // class DCMGK.DCSGKSLastLifeCounts {
+    //     var analyteType: DCMGK.GKAnalyteType
+    //     var lifeCount: Swift.Int
+    //     var historicLifeCount: Swift.Int
+    //     var backFillStartLifeCount: Swift.Int
+    //     var backFillStartHistoricLifeCount: Swift.Int
+    // }
+
+
     // class DCSCore.LibreTimer {
     //     var client: DCSCore.ITimedClient
     //     var paramObject: Swift.AnyObject
