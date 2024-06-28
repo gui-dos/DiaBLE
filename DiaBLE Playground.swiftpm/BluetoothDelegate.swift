@@ -595,7 +595,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         var msg = "Bluetooth: failed to connect to \(name)"
         var errorCode: CBError.Code?
 
-        if let error = error {
+        if let error {
             errorCode = CBError.Code(rawValue: (error as NSError).code)
             msg += ", error type \(errorCode!.rawValue): \(error.localizedDescription)"
         }
@@ -652,7 +652,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         var msg = "Bluetooth: \(name) did update notification state for \(characteristicString) characteristic"
         msg += ": \(characteristic.isNotifying ? "" : "not ")notifying"
         if let descriptors = characteristic.descriptors { msg += ", descriptors: \(descriptors)" }
-        if let error = error {
+        if let error {
             let errorCode = CBError.Code(rawValue: (error as NSError).code)!
             if errorCode == .encryptionTimedOut {
                 log("Bluetooth: DEBUG: TODO: manage pairing timeout")
@@ -666,7 +666,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
     public func peripheral(_ peripheral: CBPeripheral, didReadRSSI rssi: NSNumber, error: Error?) {
         let name = peripheral.name ?? "an unnamed peripheral"
-        if let error = error {
+        if let error {
             debugLog("Bluetooth: error reading \(name)'s RSSI: \(error.localizedDescription)")
         } else {
             debugLog("Bluetooth: did read \(name)'s RSSI: \(rssi) dB")

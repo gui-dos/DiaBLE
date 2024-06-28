@@ -7,7 +7,8 @@ extension Data {
     var string: String { String(decoding: self, as: UTF8.self) }
     var hexBytes: String { String(self.reduce("", { $0 + $1.hex + " " }).dropLast(1)) }
     var hexAddress: String { String(self.reduce("", { $0 + $1.hex + ":" }).dropLast(1)) }
-    var sha1: String { Insecure.SHA1.hash(data: self).makeIterator().reduce("", { $0 + String(format: "%02x", $1) }) }
+    var SHA1: String { Insecure.SHA1.hash(data: self).makeIterator().reduce("", { $0 + String(format: "%02x", $1) }) }
+    var SHA256: String { CryptoKit.SHA256.hash(data: self).makeIterator().reduce("", { $0 + String(format: "%02x", $1) }) }
 
     func hexDump(header: String = "", address: Int = -1, startBlock: Int = -1, escaping: Bool = false) -> String {
         var offset = startIndex
@@ -90,7 +91,8 @@ extension UInt64 {
 extension String {
     var base64: String? { self.data(using: .utf8)?.base64EncodedString() }
     var base64Data: Data? { Data(base64Encoded: self) }
-    var sha1: String { self.data(using: .ascii)!.sha1 }
+    var SHA1: String { self.data(using: .ascii)!.SHA1 }
+    var SHA256: String { self.data(using: .ascii)!.SHA256 }
 
     /// Converts also spaced strings and hexDump() output
     var bytes: Data {

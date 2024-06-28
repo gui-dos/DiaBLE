@@ -57,7 +57,7 @@ class Nightscout: NSObject, Logging {
                         }
                     }
                 }
-            } else if let error = error {
+            } else if let error {
                 log("Nightscout: server error: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     handler(data, response, error, [])
@@ -143,9 +143,9 @@ class Nightscout: NSObject, Logging {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(settings.nightscoutToken.sha1, forHTTPHeaderField: "api-secret")
+        request.setValue(settings.nightscoutToken.SHA1, forHTTPHeaderField: "api-secret")
         URLSession.shared.uploadTask(with: request, from: json) { [self] data, response, error in
-            if let error = error {
+            if let error {
                 log("Nightscout: error: \(error.localizedDescription)")
             }
             if let response = response as? HTTPURLResponse {
@@ -166,7 +166,7 @@ class Nightscout: NSObject, Logging {
 
     func post(_ endpoint: String, _ jsonObject: Any) async throws -> (Any, URLResponse) {
         let url = "https://" + settings.nightscoutSite
-        let token = settings.nightscoutToken.sha1
+        let token = settings.nightscoutToken.SHA1
         let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject)
         var request = URLRequest(url: URL(string: "\(url)/\(endpoint)")!)
         request.httpMethod = "POST"
@@ -247,9 +247,9 @@ class Nightscout: NSObject, Logging {
         request.httpMethod = "DELETE"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(settings.nightscoutToken.sha1, forHTTPHeaderField: "api-secret")
+        request.setValue(settings.nightscoutToken.SHA1, forHTTPHeaderField: "api-secret")
         URLSession.shared.dataTask(with: request) { [self] data, response, error in
-            if let error = error {
+            if let error {
                 log("Nightscout: error: \(error.localizedDescription)")
             }
             if let response = response as? HTTPURLResponse {
@@ -273,9 +273,9 @@ class Nightscout: NSObject, Logging {
         var request = URLRequest(url: URL(string: "https://\(settings.nightscoutSite)/api/v1/entries.json?token=\(settings.nightscoutToken)")!)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(settings.nightscoutToken.sha1, forHTTPHeaderField: "api-secret")
+        request.setValue(settings.nightscoutToken.SHA1, forHTTPHeaderField: "api-secret")
         URLSession.shared.dataTask(with: request) { [self] data, response, error in
-            if let error = error {
+            if let error {
                 log("Nightscout: authorization error: \(error.localizedDescription)")
             }
             if let response = response as? HTTPURLResponse {
