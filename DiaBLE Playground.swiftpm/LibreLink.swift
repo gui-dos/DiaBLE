@@ -93,12 +93,14 @@ class LibreLinkUp: Logging {
         "User-Agent": "Mozilla/5.0",
         "Content-Type": "application/json",
         "product": "llu.ios",
-        // FIXME: 4.11.0 causes 400: {"message":"RequiredHeaderMissing"}
-        "version": "4.10.0",
+        // FIXME: 4.11.0 causes 400: {"message":"RequiredHeaderMissing"} ("Account-Id")
+        "version": "4.11.0",
         "Accept-Encoding": "gzip, deflate, br",
         "Connection": "keep-alive",
         "Pragma": "no-cache",
         "Cache-Control": "no-cache",
+        // FIXME: {"message":"AccountIdMismatch"}, status: 400
+        // "Account-Id": <64-char hex>
     ]
 
 
