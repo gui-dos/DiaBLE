@@ -192,11 +192,10 @@ class LibreLinkUp: Logging {
                                 settings.libreLinkUpTokenExpirationDate = Date(timeIntervalSince1970: Double(authTicket.expires))
                             }
 
-                            if !settings.libreLinkUpCountry.isEmpty {
+                            if !country.isEmpty {
                                 // default "de" and "fr" regional servers
                                 let defaultRegion = regions.contains(country.lowercased()) ? country.lowercased() : settings.libreLinkUpRegion
-
-                                var request = URLRequest(url: URL(string: "\(siteURL)/\(configEndpoint)/country?country=\(settings.libreLinkUpCountry)")!)
+                                var request = URLRequest(url: URL(string: "\(siteURL)/\(configEndpoint)/country?country=\(country)")!)
                                 for (header, value) in headers {
                                     request.setValue(value, forHTTPHeaderField: header)
                                 }
@@ -212,6 +211,16 @@ class LibreLinkUp: Logging {
                                         log("LibreLinkUp: regional server: \(server), saved default region: \(region)")
                                         DispatchQueue.main.async { [self] in
                                             settings.libreLinkUpRegion = region
+                                        }
+                                        if settings.userLevel >= .test {
+                                            var countryCodes = [String]()
+                                            if let countryList = data["CountryList"] as? [String: Any],
+                                               let countries = countryList["countries"] as? [[String: Any]] {
+                                                for country in countries {
+                                                    countryCodes.append(country["ValueMember"] as! String)
+                                                }
+                                                debugLog("LibreLinkUp: country codes: \(countryCodes)")
+                                            }
                                         }
                                     }
                                 } catch {
