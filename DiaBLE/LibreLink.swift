@@ -121,135 +121,137 @@ class LibreLinkUp: Logging {
         request.httpBody = jsonData
         do {
             var redirected: Bool
-        loop: repeat {
-            redirected = false
-            debugLog("LibreLinkUp: posting to \(request.url!.absoluteString) \(jsonData!.string), headers: \(headers)")
-            let (data, response) = try await URLSession.shared.data(for: request)
-            if let response = response as? HTTPURLResponse {
-                let status = response.statusCode
-                debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \(status)")
-                if status == 401 {
-                    log("LibreLinkUp: POST not authorized")
-                } else {
-                    log("LibreLinkUp: POST \((200..<300).contains(status) ? "success" : "error")")
+            loop: repeat {
+                redirected = false
+                debugLog("LibreLinkUp: posting to \(request.url!.absoluteString) \(jsonData!.string), headers: \(headers)")
+                let (data, response) = try await URLSession.shared.data(for: request)
+                if let response = response as? HTTPURLResponse {
+                    let status = response.statusCode
+                    debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \(status)")
+                    if status == 401 {
+                        log("LibreLinkUp: POST not authorized")
+                    } else {
+                        log("LibreLinkUp: POST \((200..<300).contains(status) ? "success" : "error")")
+                    }
                 }
-            }
-            do {
-                if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                   let status = json["status"] as? Int {
+                do {
+                    if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let status = json["status"] as? Int {
 
-                    let data = json["data"] as? [String: Any]
+                        let data = json["data"] as? [String: Any]
 
-                    if status == 2 || status == 429 || status == 911 {
-                        // {"status":2,"error":{"message":"notAuthenticated"}}
-                        // {"status":429,"data":{"code":60,"data":{"failures":3,"interval":60,"lockout":300},"message":"locked"}}
-                        // {"status":911} when logging in at a stranger regional server
-                        if let data, let message = data["message"] as? String {
-                            if message == "locked" {
-                                if let data = data["data"] as? [String: Any],
-                                   let failures = data["failures"] as? Int,
-                                   let interval = data["interval"] as? Int,
-                                   let lockout = data["lockout"] as? Int {
-                                    log("LibreLinkUp: login failures: \(failures), interval: \(interval) s, lockout: \(lockout) s")
-                                    // TODO: warn the user to wait 5 minutes before reattempting
+                        if status == 2 || status == 429 || status == 911 {
+                            // {"status":2,"error":{"message":"notAuthenticated"}}
+                            // {"status":429,"data":{"code":60,"data":{"failures":3,"interval":60,"lockout":300},"message":"locked"}}
+                            // {"status":911} when logging in at a stranger regional server
+                            if let data, let message = data["message"] as? String {
+                                if message == "locked" {
+                                    if let data = data["data"] as? [String: Any],
+                                       let failures = data["failures"] as? Int,
+                                       let interval = data["interval"] as? Int,
+                                       let lockout = data["lockout"] as? Int {
+                                        log("LibreLinkUp: login failures: \(failures), interval: \(interval) s, lockout: \(lockout) s")
+                                        // TODO: warn the user to wait 5 minutes before reattempting
+                                    }
+                                }
+
+                            }
+                            throw LibreLinkUpError.notAuthenticated
+                        }
+
+                        // TODO: status 4 requires accepting new Terms of Use: api.libreview.io/auth/continue/tou
+                        if status == 4 {
+                            log("LibreLinkUp: Terms of Use have been updated and must be accepted by running LibreLink (tip: log out and re-login)")
+                            throw LibreLinkUpError.notAuthenticated
+                        }
+
+                        // {"status":0,"data":{"redirect":true,"region":"fr"}}
+                        if let redirect = data?["redirect"] as? Bool,
+                           let region = data?["region"] as? String {
+                            redirected = redirect
+                            DispatchQueue.main.async { [self] in
+                                settings.libreLinkUpRegion = region
+                            }
+                            log("LibreLinkUp: redirecting to \(regionalSiteURL)/\(loginEndpoint) ")
+                            request.url = URL(string: "\(regionalSiteURL)/\(loginEndpoint)")!
+                            continue loop
+                        }
+
+                        if let data,
+                           let user = data["user"] as? [String: Any],
+                           let id = user["id"] as? String,
+                           let country = user["country"] as? String,
+                           let authTicketDict = data["authTicket"] as? [String: Any],
+                           let authTicketData = try? JSONSerialization.data(withJSONObject: authTicketDict),
+                           let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
+                            log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
+                            DispatchQueue.main.async { [self] in
+                                settings.libreLinkUpPatientId = id
+                                settings.libreLinkUpCountry = country
+                                settings.libreLinkUpToken = authTicket.token
+                                settings.libreLinkUpTokenExpirationDate = Date(timeIntervalSince1970: Double(authTicket.expires))
+                            }
+
+                            if !settings.libreLinkUpCountry.isEmpty {
+                                // default "de" and "fr" regional servers
+                                let defaultRegion = regions.contains(country.lowercased()) ? country.lowercased() : settings.libreLinkUpRegion
+
+                                var request = URLRequest(url: URL(string: "\(siteURL)/\(configEndpoint)/country?country=\(settings.libreLinkUpCountry)")!)
+                                for (header, value) in headers {
+                                    request.setValue(value, forHTTPHeaderField: header)
+                                }
+                                debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), headers: \(request.allHTTPHeaderFields!)")
+                                let (data, response) = try await URLSession.shared.data(for: request)
+                                debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
+                                do {
+                                    if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                                       let data = json["data"] as? [String: Any],
+                                       let server = data["lslApi"] as? String {
+                                        let regionIndex = server.firstIndex(of: "-")
+                                        let region = regionIndex == nil ? defaultRegion : String(server[server.index(regionIndex!, offsetBy: 1) ... server.index(regionIndex!, offsetBy: 2)])
+                                        log("LibreLinkUp: regional server: \(server), saved default region: \(region)")
+                                        DispatchQueue.main.async { [self] in
+                                            settings.libreLinkUpRegion = region
+                                        }
+                                    }
+                                } catch {
+                                    log("LibreLinkUp: error while decoding response: \(error.localizedDescription)")
+                                    throw LibreLinkUpError.jsonDecoding
                                 }
                             }
 
-                        }
-                        throw LibreLinkUpError.notAuthenticated
-                    }
-
-                    // TODO: status 4 requires accepting new Terms of Use: api.libreview.io/auth/continue/tou
-                    if status == 4 {
-                        log("LibreLinkUp: Terms of Use have been updated and must be accepted by running LibreLink (tip: log out and re-login)")
-                        throw LibreLinkUpError.notAuthenticated
-                    }
-
-                    // {"status":0,"data":{"redirect":true,"region":"fr"}}
-                    if let redirect = data?["redirect"] as? Bool,
-                       let region = data?["region"] as? String {
-                        redirected = redirect
-                        DispatchQueue.main.async { [self] in
-                            settings.libreLinkUpRegion = region
-                        }
-                        log("LibreLinkUp: redirecting to \(regionalSiteURL)/\(loginEndpoint) ")
-                        request.url = URL(string: "\(regionalSiteURL)/\(loginEndpoint)")!
-                        continue loop
-                    }
-
-                    if let data,
-                       let user = data["user"] as? [String: Any],
-                       let id = user["id"] as? String,
-                       let country = user["country"] as? String,
-                       let authTicketDict = data["authTicket"] as? [String: Any],
-                       let authTicketData = try? JSONSerialization.data(withJSONObject: authTicketDict),
-                       let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
-                        log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
-                        DispatchQueue.main.async { [self] in
-                            settings.libreLinkUpPatientId = id
-                            settings.libreLinkUpCountry = country
-                            settings.libreLinkUpToken = authTicket.token
-                            settings.libreLinkUpTokenExpirationDate = Date(timeIntervalSince1970: Double(authTicket.expires))
-                        }
-
-                        if !settings.libreLinkUpCountry.isEmpty {
-                            // default "de" and "fr" regional servers
-                            let defaultRegion = regions.contains(country.lowercased()) ? country.lowercased() : settings.libreLinkUpRegion
-
-                            var request = URLRequest(url: URL(string: "\(siteURL)/\(configEndpoint)/country?country=\(settings.libreLinkUpCountry)")!)
-                            for (header, value) in headers {
-                                request.setValue(value, forHTTPHeaderField: header)
-                            }
-                            debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), headers: \(request.allHTTPHeaderFields!)")
-                            let (data, response) = try await URLSession.shared.data(for: request)
-                            debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
-                            do {
+                            if settings.libreLinkUpFollowing {
+                                log("LibreLinkUp: getting connections for follower user id: \(id)")
+                                var request = URLRequest(url: URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)")!)
+                                var authenticatedHeaders = headers
+                                authenticatedHeaders["Authorization"] = "Bearer \(settings.libreLinkUpToken)"
+                                for (header, value) in authenticatedHeaders {
+                                    request.setValue(value, forHTTPHeaderField: header)
+                                }
+                                debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
+                                let (data, response) = try await URLSession.shared.data(for: request)
+                                debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
                                 if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                                   let data = json["data"] as? [String: Any],
-                                   let server = data["lslApi"] as? String {
-                                    let regionIndex = server.firstIndex(of: "-")
-                                    let region = regionIndex == nil ? defaultRegion : String(server[server.index(regionIndex!, offsetBy: 1) ... server.index(regionIndex!, offsetBy: 2)])
-                                    log("LibreLinkUp: regional server: \(server), saved default region: \(region)")
-                                    DispatchQueue.main.async { [self] in
-                                        settings.libreLinkUpRegion = region
-                                    }
-                                }
-                            } catch {
-                                log("LibreLinkUp: error while decoding response: \(error.localizedDescription)")
-                                throw LibreLinkUpError.jsonDecoding
-                            }
-                        }
-
-                        if settings.libreLinkUpFollowing {
-                            log("LibreLinkUp: getting connections for follower user id: \(id)")
-                            var request = URLRequest(url: URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)")!)
-                            var authenticatedHeaders = headers
-                            authenticatedHeaders["Authorization"] = "Bearer \(settings.libreLinkUpToken)"
-                            for (header, value) in authenticatedHeaders {
-                                request.setValue(value, forHTTPHeaderField: header)
-                            }
-                            debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
-                            let (data, response) = try await URLSession.shared.data(for: request)
-                            debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
-                            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                               let data = json["data"] as? [[String: Any]] {
-                                if data.count > 0 {
-                                    let connection = data[0]
-                                    let patientId = connection["patientId"] as! String
-                                    log("LibreLinkUp: first patient Id: \(patientId)")
-                                    DispatchQueue.main.async { [self] in
-                                        settings.libreLinkUpPatientId = patientId
+                                   let data = json["data"] as? [[String: Any]] {
+                                    if data.count > 0 {
+                                        let connection = data[0]
+                                        let patientId = connection["patientId"] as! String
+                                        log("LibreLinkUp: first patient Id: \(patientId)")
+                                        DispatchQueue.main.async { [self] in
+                                            settings.libreLinkUpPatientId = patientId
+                                        }
                                     }
                                 }
                             }
-                        }
 
+                        }
                     }
+                    return (data, response)
                 }
-                return (data, response)
-            }
-        } while redirected
+            } while redirected
+
             return (Data(), URLResponse())
+
         } catch LibreLinkUpError.jsonDecoding {
             log("LibreLinkUp: error while decoding response: \(LibreLinkUpError.jsonDecoding.localizedDescription)")
             throw LibreLinkUpError.jsonDecoding
