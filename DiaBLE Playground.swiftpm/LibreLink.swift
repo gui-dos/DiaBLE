@@ -93,14 +93,11 @@ class LibreLinkUp: Logging {
         "User-Agent": "Mozilla/5.0",
         "Content-Type": "application/json",
         "product": "llu.ios",
-        // FIXME: 4.11.0 causes 400: {"message":"RequiredHeaderMissing"} ("Account-Id")
-        "version": "4.10.0",
+        "version": "4.11.0",
         "Accept-Encoding": "gzip, deflate, br",
         "Connection": "keep-alive",
         "Pragma": "no-cache",
         "Cache-Control": "no-cache",
-        // FIXME: {"message":"AccountIdMismatch"}, status: 400
-        "Account-Id": "<64-char hex>"
     ]
 
 
@@ -237,6 +234,7 @@ class LibreLinkUp: Logging {
                                 var request = URLRequest(url: URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)")!)
                                 var authenticatedHeaders = headers
                                 authenticatedHeaders["Authorization"] = "Bearer \(settings.libreLinkUpToken)"
+                                authenticatedHeaders["Account-Id"] = settings.libreLinkUpPatientId.SHA256
                                 for (header, value) in authenticatedHeaders {
                                     request.setValue(value, forHTTPHeaderField: header)
                                 }
@@ -282,6 +280,7 @@ class LibreLinkUp: Logging {
         var request = URLRequest(url: URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)/\(settings.libreLinkUpPatientId)/graph")!)
         var authenticatedHeaders = headers
         authenticatedHeaders["Authorization"] = "Bearer \(settings.libreLinkUpToken)"
+        authenticatedHeaders["Account-Id"] = settings.libreLinkUpPatientId.SHA256
         for (header, value) in authenticatedHeaders {
             request.setValue(value, forHTTPHeaderField: header)
         }
@@ -425,6 +424,7 @@ class LibreLinkUp: Logging {
                                    let token = ticketDict["token"] as? String {
                                     log("LibreView: new token for glucoseHistory: \(token)")
                                     request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+                                    request.setValue(settings.libreLinkUpPatientId.SHA256, forHTTPHeaderField: "Account-Id")
                                     request.url = URL(string: "https://api.libreview.io/glucoseHistory?numPeriods=\(numPeriods)&period=\(period)")!
                                     debugLog("LibreView: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
                                     let (data, response) = try await URLSession.shared.data(for: request)
@@ -468,6 +468,7 @@ class LibreLinkUp: Logging {
                                let token = ticketDict["token"] as? String {
                                 log("LibreLinkUp: new token for logbook: \(token)")
                                 request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+                                request.setValue(settings.libreLinkUpPatientId.SHA256, forHTTPHeaderField: "Account-Id")
                                 request.url = URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)/\(settings.libreLinkUpPatientId)/logbook")!
                                 debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
                                 let (data, response) = try await URLSession.shared.data(for: request)
