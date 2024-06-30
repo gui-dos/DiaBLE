@@ -37,6 +37,7 @@ import Foundation
 
         "libreLinkUpEmail": "",
         "libreLinkUpPassword": "",
+        "libreLinkUpUserId": "",
         "libreLinkUpPatientId": "",
         "libreLinkUpCountry": "",
         "libreLinkUpRegion": "eu",
@@ -189,6 +190,10 @@ import Foundation
 
     var libreLinkUpPassword: String = UserDefaults.standard.string(forKey: "libreLinkUpPassword")! {
         didSet { UserDefaults.standard.set(self.libreLinkUpPassword, forKey: "libreLinkUpPassword") }
+    }
+
+    var libreLinkUpUserId: String = UserDefaults.standard.string(forKey: "libreLinkUpUserId")! {
+        didSet { UserDefaults.standard.set(self.libreLinkUpUserId, forKey: "libreLinkUpUserId") }
     }
 
     var libreLinkUpPatientId: String = UserDefaults.standard.string(forKey: "libreLinkUpPatientId")! {

@@ -186,7 +186,8 @@ class LibreLinkUp: Logging {
                            let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
                             log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
                             DispatchQueue.main.async { [self] in
-                                settings.libreLinkUpPatientId = id
+                                settings.libreLinkUpUserId = id
+                                settings.libreLinkUpPatientId = id  // avoid scraping patientId when following ourselves
                                 settings.libreLinkUpCountry = country
                                 settings.libreLinkUpToken = authTicket.token
                                 settings.libreLinkUpTokenExpirationDate = Date(timeIntervalSince1970: Double(authTicket.expires))
@@ -234,7 +235,7 @@ class LibreLinkUp: Logging {
                                 var request = URLRequest(url: URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)")!)
                                 var authenticatedHeaders = headers
                                 authenticatedHeaders["Authorization"] = "Bearer \(settings.libreLinkUpToken)"
-                                authenticatedHeaders["Account-Id"] = settings.libreLinkUpPatientId.SHA256
+                                authenticatedHeaders["Account-Id"] = settings.libreLinkUpUserId.SHA256
                                 for (header, value) in authenticatedHeaders {
                                     request.setValue(value, forHTTPHeaderField: header)
                                 }
@@ -280,7 +281,7 @@ class LibreLinkUp: Logging {
         var request = URLRequest(url: URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)/\(settings.libreLinkUpPatientId)/graph")!)
         var authenticatedHeaders = headers
         authenticatedHeaders["Authorization"] = "Bearer \(settings.libreLinkUpToken)"
-        authenticatedHeaders["Account-Id"] = settings.libreLinkUpPatientId.SHA256
+        authenticatedHeaders["Account-Id"] = settings.libreLinkUpUserId.SHA256
         for (header, value) in authenticatedHeaders {
             request.setValue(value, forHTTPHeaderField: header)
         }
@@ -424,7 +425,7 @@ class LibreLinkUp: Logging {
                                    let token = ticketDict["token"] as? String {
                                     log("LibreView: new token for glucoseHistory: \(token)")
                                     request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-                                    request.setValue(settings.libreLinkUpPatientId.SHA256, forHTTPHeaderField: "Account-Id")
+                                    request.setValue(settings.libreLinkUpUserId.SHA256, forHTTPHeaderField: "Account-Id")
                                     request.url = URL(string: "https://api.libreview.io/glucoseHistory?numPeriods=\(numPeriods)&period=\(period)")!
                                     debugLog("LibreView: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
                                     let (data, response) = try await URLSession.shared.data(for: request)
@@ -468,7 +469,7 @@ class LibreLinkUp: Logging {
                                let token = ticketDict["token"] as? String {
                                 log("LibreLinkUp: new token for logbook: \(token)")
                                 request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-                                request.setValue(settings.libreLinkUpPatientId.SHA256, forHTTPHeaderField: "Account-Id")
+                                request.setValue(settings.libreLinkUpUserId.SHA256, forHTTPHeaderField: "Account-Id")
                                 request.url = URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)/\(settings.libreLinkUpPatientId)/logbook")!
                                 debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
                                 let (data, response) = try await URLSession.shared.data(for: request)

@@ -39,7 +39,7 @@ struct OnlineView: View {
             var retries = 0
         loop: repeat {
             do {
-                if settings.libreLinkUpPatientId.isEmpty ||
+                if settings.libreLinkUpUserId.isEmpty ||
                     settings.libreLinkUpToken.isEmpty ||
                     settings.libreLinkUpTokenExpirationDate < Date() ||
                     retries == 1 {
@@ -49,7 +49,7 @@ struct OnlineView: View {
                         libreLinkUpResponse = error.localizedDescription.capitalized
                     }
                 }
-                if !(settings.libreLinkUpPatientId.isEmpty ||
+                if !(settings.libreLinkUpUserId.isEmpty ||
                      settings.libreLinkUpToken.isEmpty) {
                     let (data, _, graphHistory, logbookData, logbookHistory, _) = try await libreLinkUp.getPatientGraph()
                     dataString = (data as! Data).string
@@ -130,7 +130,7 @@ struct OnlineView: View {
                                     .textInputAutocapitalization(.never)
                                     .autocorrectionDisabled(true)
                                     .onSubmit {
-                                        settings.libreLinkUpPatientId = ""
+                                        settings.libreLinkUpUserId = ""
                                         libreLinkUpResponse = "[Logging in...]"
                                         Task {
                                             await reloadLibreLinkUp()
@@ -138,7 +138,7 @@ struct OnlineView: View {
                                     }
                                 SecureField("password", text: $settings.libreLinkUpPassword)
                                     .onSubmit {
-                                        settings.libreLinkUpPatientId = ""
+                                        settings.libreLinkUpUserId = ""
                                         libreLinkUpResponse = "[Logging in...]"
                                         Task {
                                             await reloadLibreLinkUp()
@@ -151,7 +151,8 @@ struct OnlineView: View {
 
                         Button {
                             withAnimation { settings.libreLinkUpFollowing.toggle() }
-                            libreLinkUpResponse = "[...]"
+                            libreLinkUpResponse = "[Logging in...]"
+                            settings.libreLinkUpUserId = ""
                             Task {
                                 await reloadLibreLinkUp()
                             }

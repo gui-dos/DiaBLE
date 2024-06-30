@@ -37,7 +37,7 @@ struct OnlineView: View {
             var retries = 0
         loop: repeat {
             do {
-                if settings.libreLinkUpPatientId.isEmpty ||
+                if settings.libreLinkUpUserId.isEmpty ||
                     settings.libreLinkUpToken.isEmpty ||
                     settings.libreLinkUpTokenExpirationDate < Date() ||
                     retries == 1 {
@@ -47,7 +47,7 @@ struct OnlineView: View {
                         libreLinkUpResponse = error.localizedDescription.capitalized
                     }
                 }
-                if !(settings.libreLinkUpPatientId.isEmpty ||
+                if !(settings.libreLinkUpUserId.isEmpty ||
                      settings.libreLinkUpToken.isEmpty) {
                     let (data, _, graphHistory, logbookData, logbookHistory, _) = try await libreLinkUp.getPatientGraph()
                     dataString = (data as! Data).string
@@ -183,7 +183,7 @@ struct OnlineView: View {
                             .textContentType(.emailAddress)
                             .textInputAutocapitalization(.never)
                             .onSubmit {
-                                settings.libreLinkUpPatientId = ""
+                                settings.libreLinkUpUserId = ""
                                 libreLinkUpResponse = "[Logging in...]"
                                 Task {
                                     await reloadLibreLinkUp()
@@ -191,7 +191,7 @@ struct OnlineView: View {
                             }
                         SecureField("password", text: $settings.libreLinkUpPassword)
                             .onSubmit {
-                                settings.libreLinkUpPatientId = ""
+                                settings.libreLinkUpUserId = ""
                                 libreLinkUpResponse = "[Logging in...]"
                                 Task {
                                     await reloadLibreLinkUp()
@@ -205,7 +205,7 @@ struct OnlineView: View {
                     Text("Follower")
                 }
                 .onChange(of: settings.libreLinkUpFollowing) {
-                    settings.libreLinkUpPatientId = ""
+                    settings.libreLinkUpUserId = ""
                     libreLinkUpResponse = "[Logging in...]"
                     Task {
                         await reloadLibreLinkUp()

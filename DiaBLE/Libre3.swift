@@ -790,8 +790,8 @@ extension String {
     // TODO: separate CMD_ACTIVATE_SENSOR (0xA0) and CMD_SWITCH_RECEIVER (0xA8)
     var activationNFCCommand: NFCCommand {
         // TODO:
-        if receiverId == 0 && settings.libreLinkUpPatientId == "" {
-            log("WARNING: the current receiverId and patientId are null: a successful login to LibreLinkUp is very probably required first.")
+        if receiverId == 0 && settings.libreLinkUpUserId == "" {
+            log("WARNING: the current receiverId and libreLinkUpUserId are null: a successful login to LibreLinkUp is very probably required first.")
         }
         var parameters: Data = Data()
         parameters += ((activationTime != 0 ? activationTime : UInt32(Date().timeIntervalSince1970)) - 1).data
