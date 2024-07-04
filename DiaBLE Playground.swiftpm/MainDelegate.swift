@@ -70,24 +70,6 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         bluetoothDelegate.main = self
         nfc.main = self
 
-        if let healthKit {
-            healthKit.main = self
-            healthKit.authorize { [self] in
-                log("HealthKit: \( $0 ? "" : "not ")authorized")
-                if healthKit.isAuthorized {
-                    healthKit.read { [self] in debugLog("HealthKit last 12 stored values: \($0[..<(min(12, $0.count))])") }
-                }
-            }
-        } else {
-            log("HealthKit: not available")
-        }
-
-        libreLinkUp = LibreLinkUp(main: self)
-        nightscout = Nightscout(main: self)
-        nightscout!.read()
-        eventKit = EventKit(main: self)
-        eventKit?.sync()
-
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
 
@@ -95,10 +77,31 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         numberFormatter.minimumFractionDigits = 8
         settings.numberFormatter = numberFormatter
 
-        // features currently in beta testing
-        if settings.userLevel >= .test {
-            Libre3.testAESCCM()
-            // app.sensor = LibrePro.test(main: self)
+        Task {
+
+            if let healthKit {
+                healthKit.main = self
+                healthKit.authorize { [self] in
+                    log("HealthKit: \( $0 ? "" : "not ")authorized")
+                    if healthKit.isAuthorized {
+                        healthKit.read { [self] in debugLog("HealthKit last 12 stored values: \($0[..<(min(12, $0.count))])") }
+                    }
+                }
+            } else {
+                log("HealthKit: not available")
+            }
+
+            libreLinkUp = LibreLinkUp(main: self)
+            nightscout = Nightscout(main: self)
+            nightscout!.read()
+            eventKit = EventKit(main: self)
+            eventKit?.sync()
+
+            // features currently in beta testing
+            if settings.userLevel >= .test {
+                Libre3.testAESCCM()
+                // app.sensor = LibrePro.test(main: self)
+            }
         }
 
     }
@@ -194,7 +197,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                     bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
                 } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]).first {
                     log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
-                      bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
+                    bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
                 } else {
                     log("Bluetooth: scanning for Libre/Dexcom...")
                     status("Scanning for a Libre/Dexcom...")

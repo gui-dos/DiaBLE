@@ -62,29 +62,33 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
         extendedSession.delegate = self
         bluetoothDelegate.main = self
 
-        if let healthKit {
-            healthKit.main = self
-            healthKit.authorize { [self] in
-                log("HealthKit: \($0 ? "" : "not ")authorized")
-                if healthKit.isAuthorized {
-                    healthKit.read { [self] in debugLog("HealthKit last 12 stored values: \($0[..<(min(12, $0.count))])") }
-                }
-            }
-        } else {
-            log("HealthKit: not available")
-        }
-
-        libreLinkUp = LibreLinkUp(main: self)
-        nightscout = Nightscout(main: self)
-        nightscout!.read()
-
         let numberFormatter = NumberFormatter()
         numberFormatter.minimumFractionDigits = 8
         settings.numberFormatter = numberFormatter
 
-        // features currently in beta testing
-        if settings.userLevel >= .test {
-            Libre3.testAESCCM()
+        Task {
+
+            if let healthKit {
+                healthKit.main = self
+                healthKit.authorize { [self] in
+                    log("HealthKit: \($0 ? "" : "not ")authorized")
+                    if healthKit.isAuthorized {
+                        healthKit.read { [self] in debugLog("HealthKit last 12 stored values: \($0[..<(min(12, $0.count))])") }
+                    }
+                }
+            } else {
+                log("HealthKit: not available")
+            }
+
+            libreLinkUp = LibreLinkUp(main: self)
+            nightscout = Nightscout(main: self)
+            nightscout!.read()
+
+            // features currently in beta testing
+            if settings.userLevel >= .test {
+                Libre3.testAESCCM()
+            }
+
         }
 
     }

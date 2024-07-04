@@ -63,24 +63,6 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         bluetoothDelegate.main = self
         nfc.main = self
 
-        if let healthKit {
-            healthKit.main = self
-            healthKit.authorize { [self] in
-                log("HealthKit: \($0 ? "" : "not ")authorized")
-                if healthKit.isAuthorized {
-                    healthKit.read { [self] in debugLog("HealthKit last 12 stored values: \($0[..<(min(12, $0.count))])") }
-                }
-            }
-        } else {
-            log("HealthKit: not available")
-        }
-
-        libreLinkUp = LibreLinkUp(main: self)
-        nightscout = Nightscout(main: self)
-        nightscout!.read()
-        eventKit = EventKit(main: self)
-        eventKit?.sync()
-
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
 
@@ -88,9 +70,31 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         numberFormatter.minimumFractionDigits = 8
         settings.numberFormatter = numberFormatter
 
-        // features currently in beta testing
-        if settings.userLevel >= .test {
-            Libre3.testAESCCM()
+        Task {
+
+            if let healthKit {
+                healthKit.main = self
+                healthKit.authorize { [self] in
+                    log("HealthKit: \($0 ? "" : "not ")authorized")
+                    if healthKit.isAuthorized {
+                        healthKit.read { [self] in debugLog("HealthKit last 12 stored values: \($0[..<(min(12, $0.count))])") }
+                    }
+                }
+            } else {
+                log("HealthKit: not available")
+            }
+
+            libreLinkUp = LibreLinkUp(main: self)
+            nightscout = Nightscout(main: self)
+            nightscout!.read()
+            eventKit = EventKit(main: self)
+            eventKit?.sync()
+
+            // features currently in beta testing
+            if settings.userLevel >= .test {
+                Libre3.testAESCCM()
+            }
+
         }
 
     }
