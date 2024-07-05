@@ -48,7 +48,7 @@ class Nightscout: NSObject, Logging {
         debugLog("Nightscout: URL request: \(request.url!.absoluteString)")
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
         URLSession.shared.dataTask(with: request) { [self] data, response, error in
-            if let data = data {
+            if let data {
                 debugLog("Nightscout: response data: \(data.string)")
                 if let json = try? JSONSerialization.jsonObject(with: data) {
                     if let array = json as? [Any] {
@@ -97,25 +97,6 @@ class Nightscout: NSObject, Logging {
     }
 
 
-    func read(handler: (([Glucose]) -> Void)? = nil) {
-        guard settings.onlineInterval > 0 else { return }
-        request("api/v1/entries.json", "count=100") { data, response, error, array in
-            var values = [Glucose]()
-            for item in array {
-                if let dict = item as? [String: Any] {
-                    // watchOS doesn't recognize dict["date"] as Int
-                    if let value = dict["sgv"] as? Int, let id = dict["date"] as? NSNumber, let device = dict["device"] as? String {
-                        values.append(Glucose(value, id: Int(truncating: id), date: Date(timeIntervalSince1970: Double(truncating: id)/1000), source: device))
-                    }
-                }
-            }
-            DispatchQueue.main.async { [self] in
-                main.history.nightscoutValues = values
-                handler?(values)
-            }
-        }
-    }
-
     func read() async throws -> ([Glucose], URLResponse) {
         guard settings.onlineInterval > 0 else { return ([Glucose](), URLResponse()) }
         let (data, response) = try await request("api/v1/entries.json", "count=100")
@@ -128,39 +109,7 @@ class Nightscout: NSObject, Logging {
                 }
             }
         }
-        let glucoseArray = values
-        // TODO: update from MainDelegate
-        DispatchQueue.main.async { [self] in
-            main.history.nightscoutValues = glucoseArray
-        }
         return (values, response)
-    }
-
-
-    func post(_ endpoint: String = "", _ jsonObject: Any, handler: (((Data?, URLResponse?, Error?) -> Void))? = nil) {
-        let json = try! JSONSerialization.data(withJSONObject: jsonObject, options: [])
-        var request = URLRequest(url: URL(string: "https://\(settings.nightscoutSite)/\(endpoint)")!)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue(settings.nightscoutToken.SHA1, forHTTPHeaderField: "api-secret")
-        URLSession.shared.uploadTask(with: request, from: json) { [self] data, response, error in
-            if let error {
-                log("Nightscout: error: \(error.localizedDescription)")
-            }
-            if let response = response as? HTTPURLResponse {
-                let status = response.statusCode
-                if status == 401 {
-                    log("Nightscout: POST not authorized")
-                }
-                if let data = data {
-                    debugLog("Nightscout: post \((200..<300).contains(status) ? "success" : "error") (\(status)): \(data.string)")
-                }
-            }
-            DispatchQueue.main.async {
-                handler?(data, response, error)
-            }
-        }.resume()
     }
 
 
@@ -203,24 +152,6 @@ class Nightscout: NSObject, Logging {
     }
 
 
-    func post(entries: [Glucose], handler: (((Data?, URLResponse?, Error?) -> Void))? = nil) {
-        guard settings.onlineInterval > 0 else { return }
-        let dictionaryArray = entries.map { [
-            "type": "sgv",
-            "dateString": ISO8601DateFormatter().string(from: $0.date),
-            "date": Int64(($0.date.timeIntervalSince1970 * 1000.0).rounded()),
-            "sgv": $0.value,
-            "device": $0.source // TODO
-            // "direction": "NOT COMPUTABLE", // TODO
-        ] }
-        post("api/v1/entries", dictionaryArray) { data, response, error in
-            DispatchQueue.main.async {
-                handler?(data, response, error)
-            }
-        }
-    }
-
-
     func post(entries: [Glucose]) async throws {
         guard settings.onlineInterval > 0 else { return }
         let dictionaryArray = entries.map { [
@@ -257,7 +188,7 @@ class Nightscout: NSObject, Logging {
                 if status == 401 {
                     log("Nightscout: DELETE not authorized")
                 }
-                if let data = data {
+                if let data {
                     debugLog("Nightscout: delete \((200..<300).contains(status) ? "success" : "error") (\(status)): \(data.string)")
                 }
             }
@@ -283,7 +214,7 @@ class Nightscout: NSObject, Logging {
                 if status == 401 {
                     log("Nightscout: not authorized")
                 }
-                if let data = data {
+                if let data {
                     debugLog("Nightscout: authorization \((200..<300).contains(status) ? "success" : "error") (\(status)): \(data.string)")
                 }
             }
@@ -300,18 +231,14 @@ class Nightscout: NSObject, Logging {
 
 extension Nightscout: WKNavigationDelegate, WKUIDelegate {
 
-    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        debugLog("Nightscout: decide policy for action: \(navigationAction)")
-        decisionHandler(.allow)
-        debugLog("Nightscout: allowed action: \(navigationAction)")
-
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
+        debugLog("Nightscout: decide policy for action \(navigationAction): allow")
+        return(.allow)
     }
 
-    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
-        debugLog("Nightscout: decide policy for response: \(navigationResponse)")
-        decisionHandler(.allow)
-        debugLog("Nightscout: allowed response: \(navigationResponse)")
-
+    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse) async -> WKNavigationResponsePolicy {
+        debugLog("Nightscout: decide policy for response \(navigationResponse): allow")
+        return(.allow)
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

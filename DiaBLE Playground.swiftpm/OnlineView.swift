@@ -208,8 +208,12 @@ struct OnlineView: View {
                         Button {
                             if app.main.nfc.isAvailable {
                                 app.main.nfc.startSession()
-                                if let healthKit = app.main.healthKit { healthKit.read() }
-                                if let nightscout = app.main.nightscout { nightscout.read() }
+                                Task {
+                                    app.main.healthKit?.read()
+                                    if let (values, _) = try? await app.main.nightscout?.read() {
+                                        history.nightscoutValues = values
+                                    }
+                                }
                             } else {
                                 showingNFCAlert = true
                             }
@@ -235,7 +239,7 @@ struct OnlineView: View {
 
                         @Bindable var app = app
 
-                        WebView(site: settings.nightscoutSite, query: "token=\(settings.nightscoutToken)", delegate: app.main?.nightscout )
+                        WebView(site: settings.nightscoutSite, query: "token=\(settings.nightscoutToken)", delegate: app.main.nightscout )
                             .frame(height: UIScreen.main.bounds.size.height * 0.60)
                             .alert("JavaScript", isPresented: $app.showingJSConfirmAlert) {
                                 Button("OK") { app.main.log("JavaScript alert: selected OK") }
@@ -257,7 +261,12 @@ struct OnlineView: View {
                         #if targetEnvironment(macCatalyst)
                         .padding(.leading, 15)
                         #endif
-                        .onAppear { if let nightscout = app.main?.nightscout { nightscout.read() } }
+                        .task {
+                            if let (values, _) = try? await app.main.nightscout?.read() {
+                                history.nightscoutValues = values
+                                app.main.log("Nightscout: values read count \(history.nightscoutValues.count)")
+                            }
+                        }
                     }
 
 

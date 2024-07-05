@@ -187,7 +187,12 @@ struct DataView: View {
                                 }
                             }
                             .foregroundStyle(.cyan)
-                            .onAppear { if let nightscout = app.main?.nightscout { nightscout.read() } }
+                            .task {
+                                if let (values, _) = try? await app.main.nightscout?.read() {
+                                    history.nightscoutValues = values
+                                    app.main.log("Nightscout: values read count \(history.nightscoutValues.count)")
+                                }
+                            }
                         }
                     }
                     .listStyle(.plain)

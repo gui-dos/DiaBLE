@@ -82,7 +82,9 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
 
             libreLinkUp = LibreLinkUp(main: self)
             nightscout = Nightscout(main: self)
-            nightscout!.read()
+            if let (values, _) = try? await nightscout?.read() {
+                history.nightscoutValues = values
+            }
 
             // features currently in beta testing
             if settings.userLevel >= .test {
@@ -170,8 +172,12 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
         } else {
             log("Bluetooth is powered off: cannot scan")
         }
-        healthKit?.read()
-        nightscout?.read()
+        Task {
+            healthKit?.read()
+            if let (values, _) = try? await nightscout?.read() {
+                history.nightscoutValues = values
+            }
+        }
     }
 
 
@@ -318,19 +324,21 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
             entries += history.factoryTrend.dropFirst() + [Glucose(currentGlucose, date: sensor.lastReadingDate)]
             entries = entries.filter { $0.value > 0 && $0.id > -1 }
 
-            // TODO
-            let newEntries = (entries.filter { $0.date > healthKit?.lastDate ?? Calendar.current.date(byAdding: .hour, value: -8, to: Date())! })
-            if newEntries.count > 0 {
-                healthKit?.write(newEntries)
-                healthKit?.read()
-            }
+            Task {
 
-            nightscout?.read { [self] values in
-                let newEntries = values.count > 0 ? entries.filter { $0.date > values[0].date } : entries
+                let newEntries = (entries.filter { $0.date > healthKit?.lastDate ?? Calendar.current.date(byAdding: .hour, value: -8, to: Date())! })
                 if newEntries.count > 0 {
-                    nightscout?.post(entries: newEntries) { [self]
-                        data, response, error in
-                        nightscout?.read()
+                    healthKit?.write(newEntries)
+                    healthKit?.read()
+                }
+
+                if let (values, _) = try? await nightscout?.read() {
+                    let newEntries = values.count > 0 ? entries.filter { $0.date > values[0].date } : entries
+                    if newEntries.count > 0 {
+                        try await nightscout?.post(entries: newEntries)
+                        if let (values, _) = try? await nightscout?.read() {
+                            history.nightscoutValues = values
+                        }
                     }
                 }
             }

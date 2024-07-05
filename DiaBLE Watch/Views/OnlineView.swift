@@ -253,10 +253,12 @@ struct OnlineView: View {
                 }
                 // .font(.system(.footnote, design: .monospaced))
                 .foregroundStyle(.cyan)
-                .onAppear { if let nightscout = app.main?.nightscout { nightscout.read()
-                    app.main.log("nightscoutValues count \(history.nightscoutValues.count)")
-
-                } }
+                .task {
+                    if let (values, _) = try? await app.main.nightscout?.read() {
+                        history.nightscoutValues = values
+                        app.main.log("Nightscout: values read count \(history.nightscoutValues.count)")
+                    }
+                }
             }
 
 
