@@ -73,7 +73,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
                 healthKit.authorize { [self] in
                     log("HealthKit: \($0 ? "" : "not ")authorized")
                     if healthKit.isAuthorized {
-                        healthKit.read { [self] in debugLog("HealthKit last 12 stored values: \($0[..<(min(12, $0.count))])") }
+                        healthKit.read { [self] in debugLog("HealthKit: last 12 stored values: \($0[..<(min(12, $0.count))])") }
                     }
                 }
             } else {

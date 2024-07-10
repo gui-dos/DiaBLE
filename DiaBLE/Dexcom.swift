@@ -197,7 +197,7 @@ import CoreBluetooth
             case .authRequestRx:
 
                 // TODO: Dexcom ONE/G7 J-PAKE
-                // https://github.com/Mbed-TLS/mbedtls/blob/development/include/mbedtls/ecjpake.h
+                // https://github.com/Mbed-TLS/mbedtls/blob/development/tf-psa-crypto/drivers/builtin/include/mbedtls/ecjpake.h
                 // https://github.com/NightscoutFoundation/xDrip/commit/7ee3473 ("Add keks library")
                 // https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/Calc.java
                 // https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/Plugin.java
