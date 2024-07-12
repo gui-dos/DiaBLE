@@ -531,6 +531,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 if sensor.type == .dexcomONE || sensor.type == .dexcomG7 || sensor.type == .dexcomONEPlus {
                     log("DEBUG: sending \(app.device.name) 'exchangePakePayload phase zero' command")
                     app.device.write(Dexcom.Opcode.exchangePakePayload.data + Dexcom.PakePhase.zero.rawValue.data, for: Dexcom.UUID.authentication.rawValue, .withResponse)
+                    return  // TODO
                 }
 
                 // FIXME: The Dexcom ONE and G7 use authRequest2Tx (0x02)
