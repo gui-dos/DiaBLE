@@ -156,6 +156,8 @@ import CoreBluetooth
     //     backfill                   = 0x59
     //     diagnosticData             = 0x51
     //     bleControl                 = 0xea
+    //     encryptionStatus           = 0x0f
+    //     authStatus                 = 0x0d
     //     disconnect                 = 0x09
     // }
 
@@ -991,3 +993,91 @@ extension Data {
 // 9357: [3000, 3500], 5917
 // 9517: [3100, 3500], 5951
 // 9759: [3100, 3600], 5915
+
+
+class DexcomSecurity {
+
+
+    // struct P256Curve {
+    //     let size: Swift.Int
+    //     let order: DexcomSecurity.BigInt
+    //     let prime: DexcomSecurity.BigInt
+    // }
+
+
+    // class ECPoint {
+    //     let x: BigInt
+    //     let y: BigInt
+    //     let curve: 14DexcomSecurity6ICurveXY_p
+    // }
+
+
+    // class ECKeyPair {
+    //     let publicPoint: DexcomSecurity.ECPoint
+    //     let privatePoint: DexcomSecurity.BigInt
+    // }
+
+
+    // class ECJPakePayload {
+    //     let publicKey: DexcomSecurity.ECPoint
+    //     let epherealKey: DexcomSecurity.ECPoint
+    //     let schnorrSignature: DexcomSecurity.BigInt
+    // }
+
+
+    //  class ECJPakePhase {
+    //      let createPayload: 14DexcomSecurity15IECJPakePayloadXY_pyKc
+    //      let verifyPayload: Sb14DexcomSecurity15IECJPakePayloadXY_pKc
+    //      let verifyPayloadData: (Foundation.Data) throws -> Swift.Bool
+    //  }
+
+
+    // enum ECJPakeRole {
+    //     case transmitter
+    //     case display
+    // }
+
+
+    // class ECJPakePayloadFactory {
+    //     let curve: 14DexcomSecurity6ICurveXY_p
+    // }
+
+
+    // class ECJPake {
+    //     let curve: 14DexcomSecurity6ICurveXY_p
+    //     let payloadFactory: 14DexcomSecurity22IECJPakePayloadFactoryXY_p
+    // }
+
+
+    // class ECKeyPairFactory {
+    //     var curve: 14DexcomSecurity6ICurveXY_p
+    // }
+
+
+    // class ECJPakeParticipant {
+    //     let participantName: Foundation.Data
+    //     let otherParticipantName: Foundation.Data
+    //     let password: Foundation.Data
+    //     var round2PayloadCreated: Swift.Bool
+    //     var round2PayloadVerified: Swift.Bool
+    //     let curve: 14DexcomSecurity6ICurveXY_p
+    //     let payloadFactory: 14DexcomSecurity22IECJPakePayloadFactoryXY_p
+    //     let ecjpake: DexcomSecurity.ECJPake
+    //     let keyPairFactory: DexcomSecurity.ECKeyPairFactory
+    //     let localX1KeyPair: DexcomSecurity.ECKeyPair
+    //     let localX2KeyPair: DexcomSecurity.ECKeyPair
+    //     var remoteX3PublicKey: DexcomSecurity.ECPoint?
+    //     var remoteX4PublicKey: DexcomSecurity.ECPoint?
+    //     var remoteXmPublicKey: DexcomSecurity.ECPoint?
+    //     var $__lazy_storage_$_ecJPakePhases: [DexcomSecurity.ECJPakePhase]?
+    // }
+
+
+    // enum DexcomSecurity.ECJPakeError {
+    //     case invalidArgumentExceptionSwift.String
+    //     case illegalStateExceptionSwift.String
+    //     case arithmeticErrorSwift.String
+    // }
+
+
+}
