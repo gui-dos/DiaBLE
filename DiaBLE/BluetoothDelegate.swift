@@ -491,22 +491,21 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             app.transmitter.sensor = sensor
             if settings.userLevel < .test { // not sniffing
 
-                // TEST: first JPake phase: send exchangePakePayload + 00 phase
-                if sensor.type == .dexcomONE || sensor.type == .dexcomG7 || sensor.type == .dexcomONEPlus {
-                    log("DEBUG: sending \(app.device.name) 'exchangePakePayload phase zero' command")
-                    app.device.write(Dexcom.Opcode.exchangePakePayload.data + Dexcom.PakePhase.zero.rawValue.data, for: Dexcom.UUID.authentication.rawValue, .withResponse)
-                    return  // TODO
-                }
-
-                // FIXME: The Dexcom ONE and G7 use authRequest2Tx (0x02)
-                // see: https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/message/AuthRequestTxMessage2.java
-
-                var message = (sensor.type == .dexcomONE || sensor.type == .dexcomG7 || sensor.type == .dexcomONEPlus) ? Dexcom.Opcode.authRequest2Tx.data : Dexcom.Opcode.authRequestTx.data
+                // G7 use authRequest2Tx (0x02), see: https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/message/AuthRequestTxMessage2.java
+                // TODO: send 01 00 first anyway
+                var message = (sensor.type == .dexcomG7 || sensor.type == .dexcomONEPlus || sensor.type == .dexcomONE) ? Dexcom.Opcode.authRequest2Tx.data : Dexcom.Opcode.authRequestTx.data
                 let singleUseToken = UUID().uuidString.data(using: .utf8)!.prefix(8)
                 message += singleUseToken
                 message.append(0x02)
                 log("Bluetooth: sending \(app.device.name) authentication request: \(message.hex)")
                 app.device.write(message, for: Dexcom.UUID.authentication.rawValue, .withResponse)
+
+                // TEST: first JPake phase: send exchangePakePayload + 00 phase
+                if sensor.type == .dexcomG7 || sensor.type == .dexcomONEPlus || sensor.type == .dexcomONE {
+                    log("TEST: sending \(app.device.name) 'exchangePakePayload phase zero' command")
+                    app.device.write(Dexcom.Opcode.exchangePakePayload.data + Dexcom.PakePhase.zero.rawValue.data, for: Dexcom.UUID.authentication.rawValue, .withResponse)
+                }
+
             }
         }
     }
