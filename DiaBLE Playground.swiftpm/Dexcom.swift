@@ -143,46 +143,6 @@ import CoreBluetooth
 
     var opCode: Opcode = .unknown
 
-
-    // TODO: com.dexcom.coresdk.transmitterG7.command CmdRequest$Opcode class
-    // enum G7Opcode {
-    //     stopSession                = 0x28
-    //     egv                        = 0x4e
-    //     calibrationBounds          = 0x32
-    //     calibrate                  = 0x34
-    //     transmitterVersion         = 0x4a
-    //     transmitterVersionExtended = 0x52
-    //     encryptionInfo             = 0x38
-    //     backfill                   = 0x59
-    //     diagnosticData             = 0x51
-    //     bleControl                 = 0xea
-    //     encryptionStatus           = 0x0f
-    //     authStatus                 = 0x0d
-    //     disconnect                 = 0x09
-    // }
-
-
-    // enum G7TxController.TransmitterResponseCode {
-    //     case success         = 0
-    //     case notPermitted    = 1
-    //     case notFound        = 2
-    //     case ioError         = 3
-    //     case badHandle       = 4
-    //     case tryLater        = 5
-    //     case outOfMemory     = 6
-    //     case noAccess        = 7
-    //     case segfault        = 8
-    //     case busy            = 9
-    //     case badArgument     = 10
-    //     case noSpace         = 11
-    //     case badRange        = 12
-    //     case notImplemented  = 13
-    //     case timeout         = 14
-    //     case protocolError   = 15
-    //     case unexpectedError = 16
-    // }
-
-
     override func read(_ data: Data, for uuid: String) {
 
         if uuid == UUID.authentication.rawValue || uuid == UUID.control.rawValue {
@@ -918,6 +878,44 @@ import CoreBluetooth
 // }
 
 @Observable class DexcomG7: Sensor {
+
+    // com.dexcom.coresdk.transmitterG7.command CmdRequest$Opcode class
+    enum Opcode: UInt8 {
+        case stopSession                = 0x28
+        case egv                        = 0x4e
+        case calibrationBounds          = 0x32
+        case calibrate                  = 0x34
+        case transmitterVersion         = 0x4a
+        case transmitterVersionExtended = 0x52
+        case encryptionInfo             = 0x38
+        case backfill                   = 0x59
+        case diagnosticData             = 0x51
+        case bleControl                 = 0xea
+        case encryptionStatus           = 0x0f
+        case authStatus                 = 0x0d
+        case disconnect                 = 0x09
+    }
+
+    // enum G7TxController.TransmitterResponseCode {
+    //     case success         = 0
+    //     case notPermitted    = 1
+    //     case notFound        = 2
+    //     case ioError         = 3
+    //     case badHandle       = 4
+    //     case tryLater        = 5
+    //     case outOfMemory     = 6
+    //     case noAccess        = 7
+    //     case segfault        = 8
+    //     case busy            = 9
+    //     case badArgument     = 10
+    //     case noSpace         = 11
+    //     case badRange        = 12
+    //     case notImplemented  = 13
+    //     case timeout         = 14
+    //     case protocolError   = 15
+    //     case unexpectedError = 16
+    // }
+
 
     /// called by Dexcom Transmitter class
     func read(_ data: Data, for uuid: String) {

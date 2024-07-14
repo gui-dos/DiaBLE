@@ -536,10 +536,11 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 log("Bluetooth: sending \(app.device.name) authentication request: \(message.hex)")
                 app.device.write(message, for: Dexcom.UUID.authentication.rawValue, .withResponse)
 
-                // TEST: first JPake phase: send exchangePakePayload + 00 phase
+                // TEST: first JPake phase: send exchangePakePayload 0a + 00 phase
                 if sensor.type == .dexcomG7 || sensor.type == .dexcomONEPlus || sensor.type == .dexcomONE {
-                    log("TEST: sending \(app.device.name) 'exchangePakePayload phase zero' command")
-                    app.device.write(Dexcom.Opcode.exchangePakePayload.data + Dexcom.PakePhase.zero.rawValue.data, for: Dexcom.UUID.authentication.rawValue, .withResponse)
+                    let message = Dexcom.Opcode.exchangePakePayload.data + Dexcom.PakePhase.zero.rawValue.data
+                    log("TEST: sending \(app.device.name) 'exchangePakePayload phase zero' command \(message)")
+                    app.device.write(message, for: Dexcom.UUID.authentication.rawValue, .withResponse)
                 }
 
             }
