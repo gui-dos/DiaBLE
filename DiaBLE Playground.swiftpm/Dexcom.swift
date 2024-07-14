@@ -66,13 +66,13 @@ import CoreBluetooth
         case unknown = 0x00
 
         // Auth
-        case authRequestTx = 0x01   // TxIdChallenge
-        case authRequest2Tx = 0x02  // Dexcom ONE/G7 AppKeyChallenge
-        case authRequestRx = 0x03   // ChallengeReply
+        case authRequestTx = 0x01
+        case authRequest2Tx = 0x02
+        case authRequestRx = 0x03
         case authChallengeTx = 0x04
-        case authChallengeRx = 0x05 // StatusReply
-        case keepAlive = 0x06       // KeepConnectionAlive; setAdvertisementParametersTx for control
-        case bondRequest = 0x07     // RequestBond; pairRequestTx
+        case authChallengeRx = 0x05
+        case keepAlive = 0x06       // setAdvertisementParametersTx for control
+        case bondRequest = 0x07     // pairRequestTx
         case pairRequestRx = 0x08
 
         // Control
@@ -894,7 +894,20 @@ import CoreBluetooth
         case encryptionStatus           = 0x0f
         case authStatus                 = 0x0d
         case disconnect                 = 0x09
+        // AuthOpCodes
+        case txIdChallenge              = 0x01
+        case appKeyChallenge            = 0x02
+        case challengeReply             = 0x03
+        case hashFromDisplay            = 0x04
+        case statusReply                = 0x05
+        case keepConnectionAlive        = 0x06
+        case requestBond                = 0x07
+        case requestBondResponse        = 0x08
+        case exchangePakePayload        = 0x0a
+
+        var data: Data { Data([rawValue]) }
     }
+
 
     // enum G7TxController.TransmitterResponseCode {
     //     case success         = 0
