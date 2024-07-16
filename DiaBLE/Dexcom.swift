@@ -26,7 +26,7 @@ import CoreBluetooth
         case authentication = "F8083535-849E-531C-C594-30F1F86A4EA5"
         case backfill       = "F8083536-849E-531C-C594-30F1F86A4EA5"
         case unknown1       = "F8083537-849E-531C-C594-30F1F86A4EA5"  // older G6
-        case unknown2       = "F8083538-849E-531C-C594-30F1F86A4EA5"  // ONE/G7 J-PAKE exchange data
+        case jPake          = "F8083538-849E-531C-C594-30F1F86A4EA5"  // ONE/G7 J-PAKE exchange data
 
         var description: String {
             switch self {
@@ -37,7 +37,7 @@ import CoreBluetooth
             case .authentication: "authentication"
             case .backfill:       "backfill"
             case .unknown1:       "unknown 1"
-            case .unknown2:       "unknown 2"
+            case .jPake:          "J-PAKE"
             }
         }
     }
@@ -228,8 +228,7 @@ import CoreBluetooth
                 for i in 0 ..< (buffer.count + 19) / 20 {
                     packets.append(Data(buffer[i * 20 ..< min((i + 1) * 20, buffer.count)]))
                 }
-                log("\(name): J-PAKE payload (TODO): status: \(status), phase: \(phase), buffer length: \(buffer.count), 20-byte packets: \(packets.count)")
-                buffer = Data()
+                log("\(name): J-PAKE payload (TODO): status: \(status), phase: \(phase), current buffer length: \(buffer.count), current 20-byte packets received: \(packets.count)")
 
 
             default:
@@ -593,14 +592,20 @@ import CoreBluetooth
             log("\(name): backfill stream: received packet # \(index), partial buffer size: \(buffer.count)")
 
 
-        case .unknown2:
+        case .jPake:
             if buffer.count == 0 {
                 buffer = Data(data)
             } else {
                 buffer += data
             }
             let index = Int(ceil(Double(buffer.count) / 20))
-            log("\(name): authentication exchange: received packet # \(index), partial buffer size: \(buffer.count)")
+            if buffer.count == 160 {
+                log("\(name): 160-byte J-PAKE payload: \(buffer.hex)")
+                buffer = Data()
+            } else {
+                log("\(name): J-PAKE exchange: received packet # \(index), partial buffer size: \(buffer.count)")
+            }
+
 
 
         default:
@@ -1084,7 +1089,7 @@ class DexcomSecurity {
     // }
 
 
-    // enum DexcomSecurity.ECJPakeError {
+    // enum ECJPakeError {
     //     case invalidArgumentExceptionSwift.String
     //     case illegalStateExceptionSwift.String
     //     case arithmeticErrorSwift.String
