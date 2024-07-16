@@ -143,6 +143,18 @@ import CoreBluetooth
 
     var opCode: Opcode = .unknown
 
+
+    func write(_ data: Data, for uuid: UUID = .jPake) {
+        let packets = (data.count - 1) / 20 + 1
+        for i in 0 ... packets - 1 {
+            let offset = i * 20
+            let packet = data[offset ... min(offset + 19, data.count - 1)]
+            debugLog("Bluetooth: writing packet \(packet.hexBytes) to \(peripheral!.name!)'s \(uuid.description) characteristic")
+            write(packet, for: uuid.rawValue, .withResponse)
+        }
+    }
+
+
     override func read(_ data: Data, for uuid: String) {
 
         if uuid == UUID.authentication.rawValue || uuid == UUID.control.rawValue {

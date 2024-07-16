@@ -539,7 +539,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 // TEST: first JPake phase: send exchangePakePayload 0a + 00 phase
                 if sensor.type == .dexcomG7 || sensor.type == .dexcomONEPlus || sensor.type == .dexcomONE {
                     let message = Dexcom.Opcode.exchangePakePayload.data + Dexcom.PakePhase.zero.rawValue.data
-                    log("TEST: sending \(app.device.name) 'exchangePakePayload phase zero' command \(message)")
+                    log("TEST: sending \(app.device.name) 'exchangePakePayload phase zero' command \(message.hex)")
                     app.device.write(message, for: Dexcom.UUID.authentication.rawValue, .withResponse)
                 }
 
