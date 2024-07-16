@@ -599,13 +599,11 @@ import CoreBluetooth
                 buffer += data
             }
             let index = Int(ceil(Double(buffer.count) / 20))
+            log("\(name): J-PAKE exchange: received packet # \(index), partial buffer size: \(buffer.count)")
             if buffer.count == 160 {
                 log("\(name): 160-byte J-PAKE payload: \(buffer.hex)")
                 buffer = Data()
-            } else {
-                log("\(name): J-PAKE exchange: received packet # \(index), partial buffer size: \(buffer.count)")
             }
-
 
 
         default:
