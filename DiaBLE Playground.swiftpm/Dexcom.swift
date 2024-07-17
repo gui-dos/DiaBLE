@@ -159,7 +159,12 @@ import CoreBluetooth
 
         if uuid == UUID.authentication.rawValue || uuid == UUID.control.rawValue {
             opCode = Opcode(rawValue: data[0]) ?? .unknown
-            log("\(name): opCode: \(String(describing: opCode)) (0x\(data[0].hex))")
+            let g7OpCode = DexcomG7.Opcode(rawValue: data[0]) ?? .unknown
+            var msg = "\(name): opCode: \(String(describing: opCode)) (0x\(data[0].hex))"
+            if String(describing: g7OpCode) !=  String(describing: opCode) {
+                msg += " (G7: \(String(describing: g7OpCode)))"
+            }
+            log(msg)
         }
 
         switch UUID(rawValue: uuid) {
@@ -168,7 +173,7 @@ import CoreBluetooth
 
             switch opCode {
 
-            case .authRequestRx:
+            case .authRequestRx:  // DexcomG7.Opcode.txIdChallenge
 
                 // TODO: Dexcom ONE/G7 J-PAKE
                 // https://github.com/Mbed-TLS/mbedtls/blob/development/tf-psa-crypto/drivers/builtin/include/mbedtls/ecjpake.h
@@ -190,7 +195,7 @@ import CoreBluetooth
                 }
 
 
-            case .authChallengeRx:
+            case .authChallengeRx:  // DexcomG7.Opcode.statusReply
                 authenticated = data[1] == 1
                 bonded = data[2] == 1    // data[2] != 2  // TODO: if data[2] == 3 needsRefresh()
                 log("\(name): authenticated: \(authenticated), bonded: \(bonded)")
@@ -269,8 +274,7 @@ import CoreBluetooth
                 log("\(name): transmitter status: 0x\(status.hex), age: \(age.formattedInterval), activation date: \(activationDate.local), session start time: \(sessionStartTime.formattedInterval), sensor activation date: \(sensorActivationDate.local), sensor age: \(sensorAge.formattedInterval), valid CRC: \(data.dropLast(2).crc == UInt16(data.suffix(2)))")
 
 
-                // TODO: rename to G7 .egv
-            case .glucoseG6Tx:
+            case .glucoseG6Tx:  // DexcomG7.Opcode.egv
 
                 // https://github.com/LoopKit/G7SensorKit/blob/main/G7SensorKit/Messages/G7GlucoseMessage.swift
 
@@ -360,7 +364,7 @@ import CoreBluetooth
                 main.healthKit?.write([item]); main.healthKit?.read()
 
 
-            case .calibrationDataTx:  // G7
+            case .calibrationDataTx:  // DexcomG7.Opcode.calibrationBounds
                 // TODO: i.e. 3200014e000000000000000000010100e4000000
                 break
 
@@ -390,12 +394,12 @@ import CoreBluetooth
                 log("\(name): bounds response (TODO): weight: \(weight), calBoundError1: \(calBoundError1), calBoundError0: \(calBoundError0), calBoundMin: \(calBoundMin), calBoundMax: \(calBoundMax), lastBGValue: \(lastBGValue), lastCalibrationTimeSeconds: \(lastCalibrationTimeSeconds.formattedInterval), autoCalibration: \(autoCalibration), CRC: \(crc.hex), valid CRC: \(data.dropLast(2).crc == crc)")
 
 
-            case .calibrateGlucoseTx:  // G7
+            case .calibrateGlucoseTx:  // DexcomG7.Opcode.calibrate
                 // TODO: i.e. 346E00871F0D00 (110) -> 34000100
                 break
 
 
-            case .glucoseBackfillRx:
+            case .glucoseBackfillRx:  // DexcomG7.Opcode.diagnosticData
 
                 // TODO: DataStreamType and DataStreamFilterType first bytes
 
@@ -458,7 +462,7 @@ import CoreBluetooth
                 // TODO
 
 
-            case .backfillFinished:  // G7 Tx/Rx
+            case .backfillFinished:  // DexcomG7.Opcode.backfill
                 // TODO: i. e. 59E2960200EA9D0200, 5900003F000000AB933802E2960200EA9D0200 (19 bytes)
                 let status = data[1]
                 // TODO: enum TxControllerG7.EGVBackfillResult { case success, noRecord, oversized }
@@ -523,7 +527,7 @@ import CoreBluetooth
                 log("\(name): battery info response: status: 0x\(status.hex), static voltage A: \(voltageA), dynamic voltage B: \(voltageB), run time: \(runtimeDays) days, temperature: \(temperature), valid CRC: \(data.dropLast(2).crc == UInt16(data.suffix(2)))")
 
 
-            case .transmitterVersionTx:  // G7
+            case .transmitterVersionTx:  // DexcomG7.Opcode.transmitterVersion
                 // TODO: i.e. 4a 00 20c06852 2a340000 30454141 443499bb8c00 (20 bytes)
                 let status = data[1]
                 let versionMajor = data[2]
@@ -558,7 +562,7 @@ import CoreBluetooth
                 log("\(name): version response: status: \(status), firmware: \(firmwareVersion), software number: \(swNumber), CRC: \(crc.hex), valid CRC: \(crc == data.dropLast(2).crc)")
 
 
-            case  .transmitterVersionExtended:  // G7
+            case  .transmitterVersionExtended:  // // DexcomG7.Opcode.transmitterVersionExtended
                 // TODO: i.e. 52 00 c0d70d00 5406 02010404 ff 0c00 (15 bytes)
                 let status = data[1]
                 let sessionLength = TimeInterval(UInt32(data[2...5]))
@@ -896,6 +900,8 @@ import CoreBluetooth
 
     // com.dexcom.coresdk.transmitterG7.command CmdRequest$Opcode class
     enum Opcode: UInt8 {
+        case unknown                    = 0x00
+
         case stopSession                = 0x28
         case egv                        = 0x4e
         case calibrationBounds          = 0x32
