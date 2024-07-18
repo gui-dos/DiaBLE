@@ -161,7 +161,7 @@ import CoreBluetooth
             opCode = Opcode(rawValue: data[0]) ?? .unknown
             let g7OpCode = DexcomG7.Opcode(rawValue: data[0]) ?? .unknown
             var msg = "\(name): opCode: \(String(describing: opCode)) (0x\(data[0].hex))"
-            if String(describing: g7OpCode) !=  String(describing: opCode) {
+            if String(describing: g7OpCode) != String(describing: opCode) {
                 msg += " (G7: \(String(describing: g7OpCode)))"
             }
             log(msg)
@@ -509,7 +509,7 @@ import CoreBluetooth
 
 
 
-            case .batteryStatusTx:  // G7 Tx/Rx
+            case .batteryStatusTx:  // DexcomG7.Opcode.batteryStatus
                 let status = data[1]
                 let voltageA = Int(UInt16(data[2...3]))
                 let voltageB = Int(UInt16(data[4...5]))
@@ -902,6 +902,7 @@ import CoreBluetooth
     enum Opcode: UInt8 {
         case unknown                    = 0x00
 
+        case batteryStatus              = 0x22
         case stopSession                = 0x28
         case egv                        = 0x4e
         case calibrationBounds          = 0x32
@@ -925,6 +926,8 @@ import CoreBluetooth
         case requestBond                = 0x07
         case requestBondResponse        = 0x08
         case exchangePakePayload        = 0x0a
+        case certInfo                   = 0x0b  // keks
+        case signChallenge              = 0x0c  // keks
 
         var data: Data { Data([rawValue]) }
     }
