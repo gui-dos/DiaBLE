@@ -987,8 +987,8 @@ import CoreBluetooth
     // write  3535  0B01 + 4 bytes
     // notify 3538  20 * 6 bytes
     // notify 3535  0B0001 + 4 bytes
-    // notify 3538  20 * 16 + 17/18 bytes
-    // write  3538  20 * 23/22 + 6 bytes
+    // notify 3538  20 * 16 + 17/18 bytes // *15+7 when repairing
+    // write  3538  20 * 23/22 + 6 bytes  // *21+14 when repairing
     // write  3538  0B02 0000 0000
     // notify 3535  0B00 0200 0000 00
     // write  3538  0C + 16 bytes
@@ -1010,6 +1010,10 @@ import CoreBluetooth
     // write  3534  EA03 7017 0000
     // notify 3534  EA00 7017 0000
     // [4E 32 EA00 59 51 like for a connection]
+    // when repairing:
+    // write  3534  38
+    // notify 20 * 6 + 12 bytes        // encryptionInfo
+    // notify 3534  3800 8400 0000
 
 
     // enum G7TxController.TransmitterResponseCode {
