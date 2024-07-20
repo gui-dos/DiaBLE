@@ -987,15 +987,15 @@ import CoreBluetooth
     // write  3535  0B01 + 4 bytes
     // notify 3538  20 * 6 bytes
     // notify 3535  0B0001 + 4 bytes
-    // notify 3538  20 * 16 + 17 bytes
-    // write  3538  20 * 23 + 6 bytes
+    // notify 3538  20 * 16 + 17/18 bytes // *15+7 when repairing
+    // write  3538  20 * 23/22 + 6 bytes  // *21+14 when repairing
     // write  3538  0B02 0000 0000
     // notify 3535  0B00 0200 0000 00
     // write  3538  0C + 16 bytes
     // notify 3538  20 * 3 + 4 bytes
     // notify 3535  0C00 + 16 bytes
     // write  3538  20 * 3 + 4 bytes
-    // write  3535  06 19
+    // write  3535  06 + byte
     // notify 3535  06 00
     // write  3535  07
     // notify 3535  07 00
