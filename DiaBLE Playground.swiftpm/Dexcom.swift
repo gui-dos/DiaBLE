@@ -933,6 +933,32 @@ import CoreBluetooth
     }
 
 
+    // Connection:
+    // write  3535  01 00
+    // write  3535  02 + 8 bytes + 02
+    // notify 3535  03 + 16 bytes
+    // write  3535  04 + 8 bytes
+    // notify 3535  05 01 01
+    // enable notifications for 3534
+    // write  ....  01 00
+    // write  3534  4E
+    // notify 3534  4E + 18 bytes
+    // write  3534  32
+    // notify 3534  32 + 19 bytes
+    // write  3534  EA 00
+    // notify 3534  EA + 16 bytes
+    // write  ....  01 00
+    // enable notifications for 3536
+    // write  3534  59 + 8 bytes
+    // notify 3536  9-byte packets     // backfill
+    // notify 3534  59 + 18 bytes
+    // write  3534  51 + 9 bytes
+    // notify 3536  20-byte packets    // diagnostic datastream
+    // notify 3534  51 + 16 bytes
+    // [...]
+    // write  3534  09
+
+
     // enum G7TxController.TransmitterResponseCode {
     //     case success         = 0
     //     case notPermitted    = 1
