@@ -957,6 +957,59 @@ import CoreBluetooth
     // notify 3534  51 + 16 bytes
     // [...]
     // write  3534  09
+    //
+    // Pairing:
+    // enable notifications for 3535 and 3538
+    // write  3535  0A 00
+    // notify 3538  20 * 6 bytes
+    // notify 3535  0A 00
+    // notify 3538  20 * 2 bytes
+    // write  3538  20 * 8 bytes
+    // write  3535  0A 01
+    // notify 3538  20 * 6 bytes
+    // notify 3535  0A 01
+    // notify 3538  20 * 2 bytes
+    // write  3538  20 * 8 bytes
+    // write  3535  0A 02
+    // notify 3538  20 * 6 bytes
+    // notify 3535  0A 02
+    // notify 3538  20 * 2 bytes
+    // write  3538  20 * 8 bytes
+    // write  3535  02 + 8 bytes + 02
+    // notify 3535  03 + 16 bytes
+    // write  3535  04 + 8 bytes
+    // notify 3535  05 01 02
+    // write  3535  0B00 + 4 bytes
+    // notify 3538  20 * 6 bytes
+    // notify 3535  0B0000 + 4 bytes
+    // notify 3538  20 * 18 + 12 bytes
+    // write  3538  20 * 24 + 14 bytes
+    // write  3535  0B01 + 4 bytes
+    // notify 3538  20 * 6 bytes
+    // notify 3535  0B0001 + 4 bytes
+    // notify 3538  20 * 16 + 17 bytes
+    // write  3538  20 * 23 + 6 bytes
+    // write  3538  0B02 0000 0000
+    // notify 3535  0B00 0200 0000 00
+    // write  3538  0C + 16 bytes
+    // notify 3538  20 * 3 + 4 bytes
+    // notify 3535  0C00 + 16 bytes
+    // write  3538  20 * 3 + 4 bytes
+    // write  3535  06 19
+    // notify 3535  06 00
+    // write  3535  07
+    // notify 3535  07 00
+    // notify 3535  08 01
+    // enable notifications for 3534
+    // write  3534  4A
+    // notify 3534  4A00 + 18 bytes    // transmitterVersion
+    // write  3534  52
+    // notify 3534  5200 + 13 bytes    // transmitterVersionExtended
+    // write  3534  EA02 01
+    // notify 3534  EA00 01
+    // write  3534  EA03 7017 0000
+    // notify 3534  EA00 7017 0000
+    // [4E 32 EA00 59 51 like for a connection]
 
 
     // enum G7TxController.TransmitterResponseCode {
