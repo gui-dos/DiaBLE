@@ -843,6 +843,18 @@ import CoreBluetooth
         case rateOutOfRange = 9
     }
 
+    // TODO:
+    // enum CgmFoundation.TrendArrow {
+    //     case doubleUp
+    //     case singleUp
+    //     case fortyFiveUp
+    //     case flat
+    //     case fortyFiveDown
+    //     case singleDown
+    //     case doubleDown
+    //     case none
+    // }
+
 
     enum DataStreamType: Int,/* CustomStringConvertible, */ CaseIterable, Codable {
         // TODO
@@ -1174,7 +1186,7 @@ class DexcomSecurity {
 
 
     // class ECJPake {
-    //     let curve: 14DexcomSecurity6ICurveXY_p
+    //     let curve: CurveXY_p
     //     let payloadFactory: ECJPakePayloadFactoryXY_p
     // }
 
