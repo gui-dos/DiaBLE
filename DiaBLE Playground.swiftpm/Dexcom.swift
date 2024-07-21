@@ -209,7 +209,6 @@ import CoreBluetooth
                     peripheral?.setNotifyValue(true, for: characteristics[Dexcom.UUID.control.rawValue]!)
 
                     if !(sensor?.type == .dexcomG7 || sensor?.type == .dexcomONEPlus) {
-                        // G7 returns 2402
                         log("DEBUG: sending \(name) the 'transmitterTimeTx' command (opcode 0x\(Opcode.transmitterTimeTx.rawValue.hex))")
                         write(Opcode.transmitterTimeTx.data, .withResponse)
                     }
@@ -642,6 +641,18 @@ import CoreBluetooth
     }
 
 
+    // enum CgmFoundation.TxProduct
+    enum ProductType: Int {
+        case g6, g7, frontier, d1Plus
+    }
+
+
+    // enum CgmFoundation.DisplayType
+    enum DisplayType: Int {
+        case unknown, medical, phone, watch, receiver, pump, reader, tool, other, transmitter
+    }
+
+
     // TODO: secondary states, enum TxControllerG7.G7CalibrationStatus
     //
     // enum G7TxController.G7AlgorithmState {
@@ -953,8 +964,8 @@ import CoreBluetooth
     // write  3534  59 + 8 bytes       // backfill startTime-endTime
     // notify 3536  9-byte packets
     // notify 3534  59 + 18 bytes
-    // write  3534  51 + 9 bytes
-    // notify 3536  20-byte packets    // diagnostic datastream
+    // write  3534  51 + 9 bytes       // diagnostic 00 startTime-endTime
+    // notify 3536  20-byte packets
     // notify 3534  51 + 16 bytes
     // [...]
     // write  3534  09
@@ -1011,6 +1022,10 @@ import CoreBluetooth
     // write  3534  EA03 7017 0000
     // notify 3534  EA00 7017 0000
     // [4E 32 EA00 59 51 like for a connection]
+    // when repairing:
+    // write  3534  38
+    // notify 20 * 6 + 12 bytes        // encryptionInfo
+    // notify 3534  3800 8400 0000
 
 
     // enum G7TxController.TransmitterResponseCode {
@@ -1115,34 +1130,34 @@ class DexcomSecurity {
 
     // struct P256Curve {
     //     let size: Swift.Int
-    //     let order: DexcomSecurity.BigInt
-    //     let prime: DexcomSecurity.BigInt
+    //     let order: BigInt
+    //     let prime: BigInt
     // }
 
 
     // class ECPoint {
     //     let x: BigInt
     //     let y: BigInt
-    //     let curve: 14DexcomSecurity6ICurveXY_p
+    //     let curve: CurveXY_p
     // }
 
 
     // class ECKeyPair {
-    //     let publicPoint: DexcomSecurity.ECPoint
-    //     let privatePoint: DexcomSecurity.BigInt
+    //     let publicPoint: ECPoint
+    //     let privatePoint: BigInt
     // }
 
 
     // class ECJPakePayload {
-    //     let publicKey: DexcomSecurity.ECPoint
-    //     let epherealKey: DexcomSecurity.ECPoint
-    //     let schnorrSignature: DexcomSecurity.BigInt
+    //     let publicKey: ECPoint
+    //     let epherealKey: ECPoint
+    //     let schnorrSignature: BigInt
     // }
 
 
     //  class ECJPakePhase {
-    //      let createPayload: 14DexcomSecurity15IECJPakePayloadXY_pyKc
-    //      let verifyPayload: Sb14DexcomSecurity15IECJPakePayloadXY_pKc
+    //      let createPayload: ECJPakePayloadXY_pyKc
+    //      let verifyPayload: ECJPakePayloadXY_pKc
     //      let verifyPayloadData: (Foundation.Data) throws -> Swift.Bool
     //  }
 
@@ -1154,18 +1169,18 @@ class DexcomSecurity {
 
 
     // class ECJPakePayloadFactory {
-    //     let curve: 14DexcomSecurity6ICurveXY_p
+    //     let curve: CurveXY_p
     // }
 
 
     // class ECJPake {
     //     let curve: 14DexcomSecurity6ICurveXY_p
-    //     let payloadFactory: 14DexcomSecurity22IECJPakePayloadFactoryXY_p
+    //     let payloadFactory: ECJPakePayloadFactoryXY_p
     // }
 
 
     // class ECKeyPairFactory {
-    //     var curve: 14DexcomSecurity6ICurveXY_p
+    //     var curve: CurveXY_p
     // }
 
 
@@ -1175,16 +1190,16 @@ class DexcomSecurity {
     //     let password: Foundation.Data
     //     var round2PayloadCreated: Swift.Bool
     //     var round2PayloadVerified: Swift.Bool
-    //     let curve: 14DexcomSecurity6ICurveXY_p
-    //     let payloadFactory: 14DexcomSecurity22IECJPakePayloadFactoryXY_p
-    //     let ecjpake: DexcomSecurity.ECJPake
-    //     let keyPairFactory: DexcomSecurity.ECKeyPairFactory
-    //     let localX1KeyPair: DexcomSecurity.ECKeyPair
-    //     let localX2KeyPair: DexcomSecurity.ECKeyPair
-    //     var remoteX3PublicKey: DexcomSecurity.ECPoint?
-    //     var remoteX4PublicKey: DexcomSecurity.ECPoint?
-    //     var remoteXmPublicKey: DexcomSecurity.ECPoint?
-    //     var $__lazy_storage_$_ecJPakePhases: [DexcomSecurity.ECJPakePhase]?
+    //     let curve: CurveXY_p
+    //     let payloadFactory: ECJPakePayloadFactoryXY_p
+    //     let ecjpake: ECJPake
+    //     let keyPairFactory: ECKeyPairFactory
+    //     let localX1KeyPair: ECKeyPair
+    //     let localX2KeyPair: ECKeyPair
+    //     var remoteX3PublicKey: ECPoint?
+    //     var remoteX4PublicKey: ECPoint?
+    //     var remoteXmPublicKey: ECPoint?
+    //     var $__lazy_storage_$_ecJPakePhases: [ECJPakePhase]?
     // }
 
 
