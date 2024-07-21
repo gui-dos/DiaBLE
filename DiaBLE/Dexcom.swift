@@ -208,9 +208,10 @@ import CoreBluetooth
                     }
                     peripheral?.setNotifyValue(true, for: characteristics[Dexcom.UUID.control.rawValue]!)
 
-                    if sensor?.type == .dexcomG7 || sensor?.type == .dexcomONEPlus {
+                    if !(sensor?.type == .dexcomG7 || sensor?.type == .dexcomONEPlus) {
+                        // G7 returns 2402
                         log("DEBUG: sending \(name) the 'transmitterTimeTx' command (opcode 0x\(Opcode.transmitterTimeTx.rawValue.hex))")
-                        write(Opcode.transmitterTimeTx.data, .withResponse) // FIXME: returns just 2402
+                        write(Opcode.transmitterTimeTx.data, .withResponse)
                     }
 
                     log("DEBUG: sending \(name) the 'transmitterVersion' command (opcode 0x\(Opcode.transmitterVersionTx.rawValue.hex))")
@@ -949,8 +950,8 @@ import CoreBluetooth
     // notify 3534  EA + 16 bytes
     // write  ....  01 00
     // enable notifications for 3536
-    // write  3534  59 + 8 bytes
-    // notify 3536  9-byte packets     // backfill
+    // write  3534  59 + 8 bytes       // backfill startTime-endTime
+    // notify 3536  9-byte packets
     // notify 3534  59 + 18 bytes
     // write  3534  51 + 9 bytes
     // notify 3536  20-byte packets    // diagnostic datastream
@@ -1010,6 +1011,10 @@ import CoreBluetooth
     // write  3534  EA03 7017 0000
     // notify 3534  EA00 7017 0000
     // [4E 32 EA00 59 51 like for a connection]
+    // when repairing:
+    // write  3534  38
+    // notify 20 * 6 + 12 bytes        // encryptionInfo
+    // notify 3534  3800 8400 0000
 
 
     // enum G7TxController.TransmitterResponseCode {
