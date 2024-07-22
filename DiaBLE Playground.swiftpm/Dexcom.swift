@@ -386,8 +386,10 @@ import CoreBluetooth
                 let lastBGValue = UInt16(data[7...8])
                 let lastCalibrationTime = TimeInterval(UInt32(data[9...12]))
                 let calibrationProcessingStatus = CalibrationProcessingStatus(rawValue: Int(data[13]))!
-                // TODO
-                log("\(name): calibration bounds: status: \(status), session number: \(sessionNumber), session signature: \(sessionSignature.hex), last BG value: \(lastBGValue), last calibration time: \(lastCalibrationTime.formattedInterval), calibration processing status: \(String(describing: calibrationProcessingStatus))")
+                let calibrationsPermitted = data[14] != 0
+                let lastBGDisplay = DisplayType(rawValue: Int(data[15]))!
+                let lastProcessingUpdateTime = TimeInterval(UInt32(data[16...19]))
+                log("\(name): calibration bounds: status: \(status), session number: \(sessionNumber), session signature: \(sessionSignature.hex), last BG value: \(lastBGValue), last calibration time: \(lastCalibrationTime.formattedInterval), calibration processing status: \(String(describing: calibrationProcessingStatus)), calibrations permitted: \(calibrationsPermitted), last BG display: \(String(describing: lastBGDisplay)), last processing update time: \(lastProcessingUpdateTime.formattedInterval)")
 
 
             case .calibrationDataRx:  // G6Bounds
