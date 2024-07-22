@@ -326,6 +326,9 @@ import CoreBluetooth
                 let calibration = data[18]
                 log("\(name): glucose response (EGV): status: 0x\(status.hex), message timestamp: \(messageTimestamp.formattedInterval), sensor activation date: \(activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(age) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), state: \(AlgorithmState(rawValue: state)?.description ?? "unknown") (0x\(state.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
                 // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
+                // let backfillCmd = DexcomG7.Opcode.backfill.data + (timestamp - 180 * 60).data + (timestamp - 5 * 60).data
+                // log("TEST: sending backfill 3 hours command: \(backfillCmd.hex)")
+                // write(backfillCmd, .withResponse)
                 let item = Glucose(value != nil ? Int(value!) : -1, trendRate: Double(trend ?? 0), id: Int(Double(timestamp) / 60 / 5), date: date)
                 sensor?.trend.insert(item, at: 0)
                 app.currentGlucose = item.value
@@ -367,7 +370,6 @@ import CoreBluetooth
             case .calibrationDataTx:  // DexcomG7.Opcode.calibrationBounds
                 // TODO: i.e. 32 00 01 4E000000 0000 00000000 01 01 00 E4000000 (20 bytes) (no calibration)
                 //            32 00 01 4D000000 AA00 344D0200 03 01 02 754E0200 (AA00: 170)
-
 
                 // class G7TxController.CalibrationBoundsResponse {
                 //     let sessionNumber: Swift.UInt8
