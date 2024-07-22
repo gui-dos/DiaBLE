@@ -274,10 +274,10 @@ import CoreBluetooth
 }
 
 
-@Observable class DexcomONEPlus: Sensor {
+@Observable class DexcomONEPlus: DexcomG7 {
 
     /// called by Dexcom Transmitter class
-    func read(_ data: Data, for uuid: String) {
+    override func read(_ data: Data, for uuid: String) {
 
         switch Dexcom.UUID(rawValue: uuid) {
 
@@ -285,6 +285,8 @@ import CoreBluetooth
             break
 
         }
+
+        super.read(data, for: uuid)
 
     }
 
