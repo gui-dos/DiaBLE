@@ -33,15 +33,18 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                     centralManager.scanForPeripherals(withServices: nil, options: nil)
                 } else {
                     // TODO: use centralManager.connect() after retrieval
-                    if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
+                    if !settings.preferredDevicePattern.matches("dexcom"),
+                        let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
                         log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                         centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Libre3.UUID.data.rawValue)]], rssi: 0)
-                    } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
+                    } else if !settings.preferredDevicePattern.matches("dexcom"),
+                              let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
                         log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                         centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
-                    } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]).first {
+                    } else if !settings.preferredDevicePattern.matches("abbott"),
+                              let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]).first {
                         log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
-                          centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
+                        centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
                     } else {
                         log("Bluetooth: scanning for a Libre/Dexcom...")
                         main.status("Scanning for a Libre/Dexcom...")

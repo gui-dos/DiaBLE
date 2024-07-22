@@ -1237,10 +1237,10 @@ class DexcomSecurity {
     // }
 
 
-    // enum ECJPakeError {
-    //     case invalidArgumentExceptionSwift.String
-    //     case illegalStateExceptionSwift.String
-    //     case arithmeticErrorSwift.String
+    // enum ECJPakeError: String {
+    //     case invalidArgumentException
+    //     case illegalStateException
+    //     case arithmeticError
     // }
 
 

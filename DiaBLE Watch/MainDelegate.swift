@@ -154,13 +154,16 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
                 status("Scanning...")
                 centralManager.scanForPeripherals(withServices: nil, options: nil)
             } else {
-                if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
+                if !settings.preferredDevicePattern.matches("dexcom"),
+                   let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
                     log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                     bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Libre3.UUID.data.rawValue)]], rssi: 0)
-                } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
+                } else if !settings.preferredDevicePattern.matches("dexcom"),
+                          let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
                     log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                     bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
-                } else if let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]).first {
+                } else if !settings.preferredDevicePattern.matches("abbott"),
+                          let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]).first {
                     log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                     bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
                 } else {
