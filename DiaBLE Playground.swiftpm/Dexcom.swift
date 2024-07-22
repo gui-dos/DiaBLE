@@ -324,7 +324,7 @@ import CoreBluetooth
                 let predictionData = UInt16(data[16..<18])
                 let predictedValue: UInt16? = predictionData != 0xffff ? predictionData & 0xfff : nil
                 let calibration = data[18]
-                log("\(name): glucose response (EGV): status: 0x\(status.hex), message timestamp: \(messageTimestamp.formattedInterval), sensor activation date: \(activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(age) seconds, timestamp: \(timestamp.formattedInterval), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), state: \(AlgorithmState(rawValue: state)?.description ?? "unknown") (0x\(state.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
+                log("\(name): glucose response (EGV): status: 0x\(status.hex), message timestamp: \(messageTimestamp.formattedInterval), sensor activation date: \(activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(age) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), state: \(AlgorithmState(rawValue: state)?.description ?? "unknown") (0x\(state.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
                 // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                 let item = Glucose(value != nil ? Int(value!) : -1, trendRate: Double(trend ?? 0), id: Int(Double(timestamp) / 60 / 5), date: date)
                 sensor?.trend.insert(item, at: 0)
@@ -350,7 +350,7 @@ import CoreBluetooth
                 // TODO: verify predicted value mask
                 let predictionData = UInt16(data[14...15])
                 let predictedValue: UInt16? = predictionData != 0xffff ? predictionData & 0xfff : nil
-                log("\(name): glucose response (EGV): status: 0x\(status.hex), sequence number: \(sequenceNumber), timestamp: \(timestamp.formattedInterval), date: \(date.local), glucose value: \(value), is display only: \(glucoseIsDisplayOnly), state: \(AlgorithmState(rawValue: state)?.description ?? "unknown") (0x\(state.hex)), trend: \(trend), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"),  valid CRC: \(data.dropLast(2).crc == UInt16(data.suffix(2)))")
+                log("\(name): glucose response (EGV): status: 0x\(status.hex), sequence number: \(sequenceNumber), timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value), is display only: \(glucoseIsDisplayOnly), state: \(AlgorithmState(rawValue: state)?.description ?? "unknown") (0x\(state.hex)), trend: \(trend), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"),  valid CRC: \(data.dropLast(2).crc == UInt16(data.suffix(2)))")
                 // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                 let item = Glucose(value, trendRate: Double(trend), id: Int(Double(timestamp) / 60 / 5), date: date)
                 sensor?.trend.insert(item, at: 0)
@@ -365,8 +365,7 @@ import CoreBluetooth
 
 
             case .calibrationDataTx:  // DexcomG7.Opcode.calibrationBounds
-                // TODO: i.e. 3200014e000000000000000000010100e4000000
-                break
+                // TODO: i.e. 32 00 014e000000000000000000010100e4000000 (20 bytes)
 
                 // class G7TxController.CalibrationBoundsResponse {
                 //     let sessionNumber: Swift.UInt8
@@ -378,6 +377,9 @@ import CoreBluetooth
                 //     let lastBGDisplay: G7TxController.G7DisplayType
                 //     let lastProcessingUpdateTime: Swift.UInt32
                 // }
+
+                let status = data[1]
+                log("\(name): calibration bounds: status: 0x\(status.hex)")
 
 
             case .calibrationDataRx:  // G6Bounds
@@ -968,7 +970,7 @@ import CoreBluetooth
     // write  3534  4E
     // notify 3534  4E + 18 bytes
     // write  3534  32
-    // notify 3534  32 + 19 bytes
+    // notify 3534  32 + 19 bytes       // calibrationBounds
     // write  3534  EA 00
     // notify 3534  EA + 16 bytes
     // write  ....  01 00
