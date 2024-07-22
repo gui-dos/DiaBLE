@@ -365,7 +365,9 @@ import CoreBluetooth
 
 
             case .calibrationDataTx:  // DexcomG7.Opcode.calibrationBounds
-                // TODO: i.e. 32 00 014e000000000000000000010100e4000000 (20 bytes)
+                // TODO: i.e. 32 00 01 4E000000 0000 00000000 01 01 00 E4000000 (20 bytes) (no calibration)
+                //            32 00 01 4D000000 AA00 344D0200 03 01 02 754E0200 (AA00: 170)
+
 
                 // class G7TxController.CalibrationBoundsResponse {
                 //     let sessionNumber: Swift.UInt8
@@ -379,7 +381,11 @@ import CoreBluetooth
                 // }
 
                 let status = data[1]
-                log("\(name): calibration bounds: status: 0x\(status.hex)")
+                let sessionNumber = data[2]
+                let sessionSignature = UInt32(data[3...6])
+                let lastBGValue = UInt16(data[7...8])
+                // TODO
+                log("\(name): calibration bounds: status: \(status), session number: \(sessionNumber), session signature: \(sessionSignature.hex), last BG value: \(lastBGValue)")
 
 
             case .calibrationDataRx:  // G6Bounds
