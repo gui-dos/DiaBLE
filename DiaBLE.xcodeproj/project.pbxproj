@@ -105,6 +105,8 @@
 		C5E4009A29825F1C0021C6B7 /* Nightscout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4009829825F1C0021C6B7 /* Nightscout.swift */; };
 		C5E4009F29825F580021C6B7 /* company_ids.json in Resources */ = {isa = PBXBuildFile; fileRef = C5E4009E29825F580021C6B7 /* company_ids.json */; };
 		C5E400A029825F580021C6B7 /* company_ids.json in Resources */ = {isa = PBXBuildFile; fileRef = C5E4009E29825F580021C6B7 /* company_ids.json */; };
+		C5E429FB2C4F0F280067AD57 /* DexcomG7.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E429FA2C4F0F280067AD57 /* DexcomG7.swift */; };
+		C5E429FC2C4F0F280067AD57 /* DexcomG7.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E429FA2C4F0F280067AD57 /* DexcomG7.swift */; };
 		C5EF10742BE67C5C0021A413 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C5BF97842BE6780F00ED6622 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -235,6 +237,7 @@
 		C5E4009529825F120021C6B7 /* LibreLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreLink.swift; sourceTree = "<group>"; };
 		C5E4009829825F1C0021C6B7 /* Nightscout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Nightscout.swift; sourceTree = "<group>"; };
 		C5E4009E29825F580021C6B7 /* company_ids.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = company_ids.json; sourceTree = "<group>"; };
+		C5E429FA2C4F0F280067AD57 /* DexcomG7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DexcomG7.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -350,6 +353,7 @@
 				C5E4007829825E450021C6B7 /* Sensor.swift */,
 				C55D12B329ACB5E00050F567 /* Crypto.swift */,
 				C5B7CE312AEE498F00227392 /* Dexcom.swift */,
+				C5E429FA2C4F0F280067AD57 /* DexcomG7.swift */,
 				C5E4007B29825E4E0021C6B7 /* Abbott.swift */,
 				C5DB4E4D2B168E08005AD792 /* Libre.swift */,
 				C5E4008129825E8B0021C6B7 /* Libre2.swift */,
@@ -588,6 +592,7 @@
 				C5916E4E29827E860051AC06 /* DataView.swift in Sources */,
 				C5916E5429827E860051AC06 /* Monitor.swift in Sources */,
 				C5E4008629825E990021C6B7 /* Libre3.swift in Sources */,
+				C5E429FC2C4F0F280067AD57 /* DexcomG7.swift in Sources */,
 				C5E4007729825E370021C6B7 /* Glucose.swift in Sources */,
 				C5916E5729827EB10051AC06 /* MainDelegate.swift in Sources */,
 				C5ADF5832B00E65E00E29632 /* Gen2.swift in Sources */,
@@ -648,6 +653,7 @@
 				C5DB4E4E2B168E08005AD792 /* Libre.swift in Sources */,
 				C535AEB82AB343AE00AB61AD /* Realm.swift in Sources */,
 				C5E4006329825C930021C6B7 /* HamburgerMenu.swift in Sources */,
+				C5E429FB2C4F0F280067AD57 /* DexcomG7.swift in Sources */,
 				C5E4007429825E050021C6B7 /* MainDelegate.swift in Sources */,
 				C5E4005A29825C930021C6B7 /* SettingsView.swift in Sources */,
 				C5E4007629825E370021C6B7 /* Glucose.swift in Sources */,
