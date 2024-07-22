@@ -384,8 +384,10 @@ import CoreBluetooth
                 let sessionNumber = data[2]
                 let sessionSignature = UInt32(data[3...6])
                 let lastBGValue = UInt16(data[7...8])
+                let lastCalibrationTime = TimeInterval(UInt32(data[9...12]))
+                let calibrationProcessingStatus = CalibrationProcessingStatus(rawValue: Int(data[13]))!
                 // TODO
-                log("\(name): calibration bounds: status: \(status), session number: \(sessionNumber), session signature: \(sessionSignature.hex), last BG value: \(lastBGValue)")
+                log("\(name): calibration bounds: status: \(status), session number: \(sessionNumber), session signature: \(sessionSignature.hex), last BG value: \(lastBGValue), last calibration time: \(lastCalibrationTime.formattedInterval), calibration processing status: \(String(describing: calibrationProcessingStatus))")
 
 
             case .calibrationDataRx:  // G6Bounds
@@ -658,6 +660,16 @@ import CoreBluetooth
     // enum CgmFoundation.DisplayType
     enum DisplayType: Int {
         case unknown, medical, phone, watch, receiver, pump, reader, tool, other, transmitter
+    }
+
+
+    // G7TxController.G7CalibrationProcessingStatus
+    enum CalibrationProcessingStatus: Int {
+        case none
+        case factoryCalibrated
+        case inProgress
+        case completeHigh
+        case completeLow
     }
 
 
