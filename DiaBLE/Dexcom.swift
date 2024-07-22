@@ -386,7 +386,7 @@ import CoreBluetooth
                 let sessionSignature = UInt32(data[3...6])
                 let lastBGValue = UInt16(data[7...8])
                 let lastCalibrationTime = TimeInterval(UInt32(data[9...12]))
-                let calibrationProcessingStatus = CalibrationProcessingStatus(rawValue: Int(data[13]))!
+                let calibrationProcessingStatus = DexcomG7.CalibrationProcessingStatus(rawValue: Int(data[13]))!
                 let calibrationsPermitted = data[14] != 0
                 let lastBGDisplay = DisplayType(rawValue: Int(data[15]))!
                 let lastProcessingUpdateTime = TimeInterval(UInt32(data[16...19]))
@@ -664,113 +664,6 @@ import CoreBluetooth
     enum DisplayType: Int {
         case unknown, medical, phone, watch, receiver, pump, reader, tool, other, transmitter
     }
-
-
-    // G7TxController.G7CalibrationProcessingStatus
-    enum CalibrationProcessingStatus: Int {
-        case none
-        case factoryCalibrated
-        case inProgress
-        case completeHigh
-        case completeLow
-    }
-
-
-    // TODO: secondary states, enum TxControllerG7.G7CalibrationStatus
-    //
-    // enum G7TxController.G7AlgorithmState {
-    //     case warmupG7TxControllerG7AlgorithmState.WarmupSecondary
-    //     case inSessionG7TxControllerG7AlgorithmState.InSessionSecondary
-    //     case inSessionInvalidG7TxControllerG7AlgorithmState.InSessionInvalidSecondary
-    //     case sessionExpiredG7TxControllerG7AlgorithmState.SessionExpiredSecondary
-    //     case sessionFailedG7TxControllerG7AlgorithmState.SessionFailedSecondary
-    //     case manuallyStoppedG7TxControllerG7AlgorithmState.ManuallyStoppedSecondary
-    //     case none
-    //     case deployed
-    //     case transmitterFailed
-    //     case sivFailed
-    //     case sessionFailedOutOfRange
-    // }
-    //
-    // enum G7TxController.G7AlgorithmState.WarmupSecondary {
-    //     case sivPassed
-    //     case parametersUpdated
-    //     case signalProcessing
-    //     case error
-    // }
-    //
-    // enum G7TxController.G7AlgorithmState.InSessionSecondary {
-    //     case low
-    //     case lowNoPrediction
-    //     case lowNoTrend
-    //     case lowNoTrendOrPrediction
-    //     case inRange
-    //     case inRangeNoPrediction
-    //     case inRangeNoTrend
-    //     case inRangeNoTrendOrPrediction
-    //     case high
-    //     case highNoPrediction
-    //     case highNoTrend
-    //     case highNoTrendOrPrediction
-    //     case bgTriggered
-    //     case bgTriggeredNoPrediction
-    //     case bgTriggeredNoTrend
-    //     case bgTriggeredNoTrendOrPrediction
-    //     case bgTriggeredLow
-    //     case bgTriggeredLowNoPrediction
-    //     case bgTriggeredLowNoTrend
-    //     case bgTriggeredLowNoTrendOrPrediction
-    //     case bgTriggeredHigh
-    //     case bgTriggeredHighNoPrediction
-    //     case bgTriggeredHighNoTrend
-    //     case bgTriggeredHighNoTrendOrPrediction
-    //     case error
-    // }
-    //
-    // enum G7TxController.G7AlgorithmState.InSessionInvalidSecondary {
-    //     case invalid
-    //     case validPrediction
-    //     case validTrend
-    //     case validTrendAndPrediction
-    //     case bgInvalid
-    //     case bgInvalidValidPrediction
-    //     case bgInvalidValidTrend
-    //     case bgInvalidValidTrendAndPrediction
-    //     case error
-    // }
-    //
-    // enum G7TxController.G7AlgorithmState.SessionExpiredSecondary {
-    //     case validEgv
-    //     case validEgvNoPrediction
-    //     case validEgvNoTrend
-    //     case validEgvNoTrendOrPrediction
-    //     case invalidEgv
-    //     case invalidEgvNoPrediction
-    //     case invalidEgvNoTrend
-    //     case invalidEgvNoTrendOrPrediction
-    //     case error
-    // }
-    //
-    // enum G7TxController.G7AlgorithmState.SessionFailedSecondary {
-    //     case unspecified
-    //     case sensorFailure
-    //     case algorithmFailure
-    //     case unexpectedAlgorithmFailure
-    //     case noData
-    //     case error
-    // }
-    //
-    // enum G7TxController.G7AlgorithmState.ManuallyStoppedSecondary {
-    //     case none
-    //     case skip
-    //     case other
-    //     case bestTimingForMe
-    //     case inaccurate
-    //     case noReadings
-    //     case sensorFellOff
-    //     case discomfort
-    //     case error
-    // }
 
 
     // TODO: https://github.com/JohanDegraeve/xdripswift/blob/master/xdrip/BluetoothTransmitter/CGM/Dexcom/Generic/DexcomAlgorithmState.swift
