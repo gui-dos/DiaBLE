@@ -327,7 +327,7 @@ import CoreBluetooth
                 log("\(name): glucose response (EGV): status: 0x\(status.hex), message timestamp: \(messageTimestamp.formattedInterval), sensor activation date: \(activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(age) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), state: \(AlgorithmState(rawValue: state)?.description ?? "unknown") (0x\(state.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
                 // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                 // let backfillCmd = DexcomG7.Opcode.backfill.data + (timestamp - 180 * 60).data + (timestamp - 5 * 60).data
-                // log("TEST: sending backfill 3 hours command: \(backfillCmd.hex)")
+                // log("TEST: sending \(name) backfill 3 hours command: \(backfillCmd.hex)")
                 // write(backfillCmd, .withResponse)
                 let item = Glucose(value != nil ? Int(value!) : -1, trendRate: Double(trend ?? 0), id: Int(Double(timestamp) / 60 / 5), date: date)
                 sensor?.trend.insert(item, at: 0)
@@ -961,8 +961,6 @@ import CoreBluetooth
         case backfill                   = 0x59
         case diagnosticData             = 0x51
         case bleControl                 = 0xea
-        case encryptionStatus           = 0x0f
-        case authStatus                 = 0x0d
         case disconnect                 = 0x09
         // AuthOpCodes
         case txIdChallenge              = 0x01
@@ -1060,7 +1058,7 @@ import CoreBluetooth
     // [4E 32 EA00 59 51 like for a connection]
     // when repairing:
     // write  3534  38
-    // notify 20 * 6 + 12 bytes        // encryptionInfo
+    // notify 3538  20 * 6 + 12 bytes  // encryptionInfo
     // notify 3534  3800 8400 0000
 
 

@@ -11,7 +11,7 @@ To build the project you have to duplicate the file _DiaBLE.xcconfig_, rename th
 
 The NFC capabilities require a paid Apple Developer Program annual membership but a public beta is availaBLE at **[TestFlight](https://testflight.apple.com/join/H48doU3l)** anyway. If you own an iPad you can also download the [zipped archive](https://github.com/gui-dos/DiaBLE/archive/refs/heads/main.zip) of this repository and just tap _DiaBLE Playground.swiftpm_.
 
-Currently I am targeting only the latest betas of Xcode and iOS and focusing on the new Libre 3. Please refer to the [**TODOs**](https://github.com/gui-dos/DiaBLE/blob/main/TODO.md) list for the up-to-date status of all the current limitations and known bugs of this **prototype**.
+Currently I am targeting only the latest betas of Xcode and iOS and focusing on the new Libre 3 and Dexcom G7. Please refer to the [**TODOs**](https://github.com/gui-dos/DiaBLE/blob/main/TODO.md) list for the up-to-date status of all the current limitations and known bugs of this **prototype**.
 
 **Warnings:**
   * the temperature-based calibration algorithm has been derived from the old LibreLink 2.3: it is known that the Vendor improves its algorithms at every new release, smoothing the historical values and projecting the trend ones into the future to compensate the interstitial delay but these further stages aren't understood yet; I never was convinced by the simple linear regression models that others apply on finger pricks;
