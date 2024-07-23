@@ -30,6 +30,8 @@ import CoreBluetooth
         case backfill                   = 0x59
         case diagnosticData             = 0x51
         case bleControl                 = 0xea
+        case encryptionStatus           = 0x0f
+        case authStatus                 = 0x0d
         case disconnect                 = 0x09
         // AuthOpCodes
         case txIdChallenge              = 0x01
