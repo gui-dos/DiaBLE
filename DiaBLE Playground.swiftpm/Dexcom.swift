@@ -303,33 +303,6 @@ import CoreBluetooth
                 main.healthKit?.write([item]); main.healthKit?.read()
 
 
-            case .calibrationDataTx:  // DexcomG7.Opcode.calibrationBounds
-                // TODO: i.e. 32 00 01 4E000000 0000 00000000 01 01 00 E4000000 (20 bytes) (no calibration)
-                //            32 00 01 4D000000 AA00 344D0200 03 01 02 754E0200 (AA00: 170)
-
-                // class G7TxController.CalibrationBoundsResponse {
-                //     let sessionNumber: Swift.UInt8
-                //     let sessionSignature: Swift.UInt32
-                //     let lastBGvalue: Swift.UInt16
-                //     let lastCalibrationTime: Swift.UInt32
-                //     let calibrationProcessingStatus: G7TxController.G7CalibrationProcessingStatus
-                //     let calibrationsPermitted: Swift.Bool
-                //     let lastBGDisplay: G7TxController.G7DisplayType
-                //     let lastProcessingUpdateTime: Swift.UInt32
-                // }
-
-                let status = data[1]
-                let sessionNumber = data[2]
-                let sessionSignature = UInt32(data[3...6])
-                let lastBGValue = UInt16(data[7...8])
-                let lastCalibrationTime = TimeInterval(UInt32(data[9...12]))
-                let calibrationProcessingStatus = DexcomG7.CalibrationProcessingStatus(rawValue: Int(data[13]))!
-                let calibrationsPermitted = data[14] != 0
-                let lastBGDisplay = DisplayType(rawValue: Int(data[15]))!
-                let lastProcessingUpdateTime = TimeInterval(UInt32(data[16...19]))
-                log("\(name): calibration bounds: status: \(status), session number: \(sessionNumber), session signature: \(sessionSignature.hex), last BG value: \(lastBGValue), last calibration time: \(lastCalibrationTime.formattedInterval), calibration processing status: \(String(describing: calibrationProcessingStatus)), calibrations permitted: \(calibrationsPermitted), last BG display: \(String(describing: lastBGDisplay)), last processing update time: \(lastProcessingUpdateTime.formattedInterval)")
-
-
             case .calibrationDataRx:  // G6Bounds
                 // TODO: i.e. 3300325000440114005802000000000000018ba4
                 let weight = data[2]
