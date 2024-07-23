@@ -55,14 +55,14 @@ import CoreBluetooth
     // write  3535  02 + 8 bytes + 02
     // notify 3535  03 + 16 bytes
     // write  3535  04 + 8 bytes
-    // notify 3535  05 01 01
+    // notify 3535  05 01 01           // statusReply
     // enable notifications for 3534
     // write  ....  01 00
-    // write  3534  4E
+    // write  3534  4E                 // EGV
     // notify 3534  4E + 18 bytes
     // write  3534  32
-    // notify 3534  32 + 19 bytes       // calibrationBounds
-    // write  3534  EA 00
+    // notify 3534  32 + 19 bytes      // calibrationBounds
+    // write  3534  EA 00              // BLE Whitelist
     // notify 3534  EA + 16 bytes
     // write  ....  01 00
     // enable notifications for 3536
@@ -272,6 +272,34 @@ import CoreBluetooth
                 let runtimeDays = Int(data[6])
                 let temperature = Int(data[7])
                 log("\(tx.name): battery info response: status: 0x\(status.hex), static voltage A: \(voltageA), dynamic voltage B: \(voltageB), run time: \(runtimeDays) days, temperature: \(temperature)")
+
+
+            case .transmitterVersion:
+                // TODO: i.e. 4a 00 20c06852 2a340000 30454141 443499bb8c00 (20 bytes)
+                let status = data[1]
+                let versionMajor = data[2]
+                let versionMinor = data[3]
+                let versionRevision = data[4]
+                let versionBuild = data[5]
+                let firmwareVersion = "\(versionMajor).\(versionMinor).\(versionRevision).\(versionBuild)"
+                firmware = firmwareVersion
+                let swNumber = UInt32(data[6...9])
+                let siliconVersion = UInt32(data[10...13])
+                let serialNumber: UInt64 = UInt64(data[14]) + UInt64(data[15]) << 8 + UInt64(data[16]) << 16 + UInt64(data[17]) << 24 + UInt64(data[18]) << 32 + UInt64(data[19]) << 40
+                serial = String(serialNumber)
+                log("\(tx.name): version response: status: \(status), firmware: \(firmwareVersion), software number: \(swNumber), silicon version: \(siliconVersion) (0x\(siliconVersion.hex)), serial number: \(serialNumber)")
+
+
+            case  .transmitterVersionExtended:
+                // TODO: i.e. 52 00 c0d70d00 5406 02010404 ff 0c00 (15 bytes)
+                let status = data[1]
+                let sessionLength = TimeInterval(UInt32(data[2...5]))
+                maxLife = Int(UInt32(data[2...5]) / 60)  // inlcuding 12h grace period
+                let warmupLength = TimeInterval(UInt16(data[6...7]))
+                let algorithmVersion = UInt32(data[8...11])
+                let hardwareVersion = Int(data[12])
+                let maxLifetimeDays = UInt16(data[13...14])
+                log("\(tx.name): extended version response: status: \(status), session length: \(sessionLength.formattedInterval), warmup length: \(warmupLength.formattedInterval), algorithm version: 0x\(algorithmVersion.hex), hardware version: \(hardwareVersion), max lifetime days: \(maxLifetimeDays)")
 
 
             default:

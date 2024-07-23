@@ -440,22 +440,6 @@ import CoreBluetooth
                 log("\(name): battery info response: status: 0x\(status.hex), static voltage A: \(voltageA), dynamic voltage B: \(voltageB), run time: \(runtimeDays) days, temperature: \(temperature), valid CRC: \(data.dropLast(2).crc == UInt16(data.suffix(2)))")
 
 
-            case .transmitterVersionTx:  // DexcomG7.Opcode.transmitterVersion
-                // TODO: i.e. 4a 00 20c06852 2a340000 30454141 443499bb8c00 (20 bytes)
-                let status = data[1]
-                let versionMajor = data[2]
-                let versionMinor = data[3]
-                let versionRevision = data[4]
-                let versionBuild = data[5]
-                let firmwareVersion = "\(versionMajor).\(versionMinor).\(versionRevision).\(versionBuild)"
-                sensor?.firmware = firmwareVersion
-                let swNumber = UInt32(data[6...9])
-                let siliconVersion = UInt32(data[10...13])
-                let serialNumber: UInt64 = UInt64(data[14]) + UInt64(data[15]) << 8 + UInt64(data[16]) << 16 + UInt64(data[17]) << 24 + UInt64(data[18]) << 32 + UInt64(data[19]) << 40
-                sensor?.serial = String(serialNumber)
-                log("\(name): version response: status: \(status), firmware: \(firmwareVersion), software number: \(swNumber), silicon version: \(siliconVersion) (0x\(siliconVersion.hex)), serial number: \(serialNumber)")
-
-
             case .transmitterVersionRx:  // Dexcom ONE
                 // TODO: i.e. 4b 00 1ec06722 ba310000 8c00036e006d01 3cef (19 bytes)
                 let status = data[1]
@@ -473,18 +457,6 @@ import CoreBluetooth
                 // let maxStorageTimeDays: UInt16
                 let crc = UInt16(data[17...18])
                 log("\(name): version response: status: \(status), firmware: \(firmwareVersion), software number: \(swNumber), CRC: \(crc.hex), valid CRC: \(crc == data.dropLast(2).crc)")
-
-
-            case  .transmitterVersionExtended:  // // DexcomG7.Opcode.transmitterVersionExtended
-                // TODO: i.e. 52 00 c0d70d00 5406 02010404 ff 0c00 (15 bytes)
-                let status = data[1]
-                let sessionLength = TimeInterval(UInt32(data[2...5]))
-                sensor?.maxLife = Int(UInt32(data[2...5]) / 60)  // inlcuding 12h grace period
-                let warmupLength = TimeInterval(UInt16(data[6...7]))
-                let algorithmVersion = UInt32(data[8...11])
-                let hardwareVersion = Int(data[12])
-                let maxLifetimeDays = UInt16(data[13...14])
-                log("\(name): extended version response: status: \(status), session length: \(sessionLength.formattedInterval), warmup length: \(warmupLength.formattedInterval), algorithm version: 0x\(algorithmVersion.hex), hardware version: \(hardwareVersion), max lifetime days: \(maxLifetimeDays)")
 
 
             case  .transmitterVersionExtendedRx:  // Dexcom ONE
