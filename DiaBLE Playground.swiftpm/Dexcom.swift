@@ -322,29 +322,10 @@ import CoreBluetooth
                 break
 
 
-            case .glucoseBackfillRx:  // DexcomG7.Opcode.diagnosticData
-
-                // TODO: DataStreamType and DataStreamFilterType first bytes
-
-                if sensor?.type == .dexcomG7 || sensor?.type == .dexcomONEPlus {
-                    // TODO: i. e. 510000a01600009a44ea430200ec5f0200 (17 bytes)
-                    let status = data[1]
-                    let backfillStatus = data[2]
-                    let bufferLength = UInt32(data[3...6])
-                    let bufferCRC = UInt16(data[7...8])
-                    let startTime = TimeInterval(UInt32(data[9...12]))
-                    let endTime = TimeInterval(UInt32(data[13...16]))
-                    // TODO
-                    log("\(name): backfill: status: \(status), backfill status: \(backfillStatus), buffer length: \(bufferLength), buffer CRC: \(bufferCRC.hex), start time: \(startTime.formattedInterval), end time: \(endTime.formattedInterval)")
-                    var packets = [Data]()
-                    for i in 0 ..< (buffer.count + 19) / 20 {
-                        packets.append(Data(buffer[i * 20 ..< min((i + 1) * 20, buffer.count)]))
-                    }
-                    log("\(name): backfilled stream (TODO): buffer length: \(buffer.count), valid CRC: \(bufferCRC == buffer.crc), 20-byte packets: \(packets.count)")
-
-
-                } else {  // Dexcom ONE
+            case .glucoseBackfillRx:
+                if !(sensor is DexcomG7) {
                     // TODO: i. e. 51 00 01 01 7e863600 5a8c3600 3a000000 4528 2247 (20 bytes)
+                    // TODO: DataStreamType and DataStreamFilterType first bytes
                     let status = data[1]
                     let backfillStatus = data[2]
                     let identifier = data[3]
@@ -379,56 +360,9 @@ import CoreBluetooth
                     log("\(name): backfilled history (\(history.count) values): \(history)")
                     // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                     main.history.factoryValues = history.reversed()
-                }
-
-                buffer = Data()
-                // TODO
-
-
-            case .backfillFinished:  // DexcomG7.Opcode.backfill
-                // TODO: i. e. 59E2960200EA9D0200, 5900003F000000AB933802E2960200EA9D0200 (19 bytes)
-                let status = data[1]
-                // TODO: enum TxControllerG7.EGVBackfillResult { case success, noRecord, oversized }
-                let backfillStatus = Int(data[2])
-                let length = UInt32(data[3...6])
-                let crc = UInt16(data[7...8])
-                let firstSequenceNumber = UInt16(data[9...10])
-                let firstTimestamp = TimeInterval(UInt32(data[11...14]))
-                let lastTimestamp = TimeInterval(UInt32(data[15...18]))
-                log("\(name): backfill response: status: \(status), backfill status: \(["success", "no record", "oversized"][backfillStatus]), buffer length: \(length), buffer CRC: \(crc.hex), valid CRC: \(crc == buffer.crc), first sequence number: \(firstSequenceNumber), first timestamp: \(firstTimestamp.formattedInterval), last timestamp: \(lastTimestamp.formattedInterval)")
-                var packets = [Data]()
-                for i in 0 ..< (buffer.count / 9) {
-                    packets.append(Data(buffer[i * 9 ..< min((i + 1) * 9, buffer.count)]))
-                }
-                var history = [Glucose]()
-                for data in packets {
-
+                    buffer = Data()
                     // TODO
-
-                    // https://github.com/LoopKit/G7SensorKit/blob/main/G7SensorKit/G7CGMManager/G7BackfillMessage.swift
-                    //
-                    //    0 1 2  3  4 5  6  7  8
-                    //   TTTTTT    BGBG SS    TR
-                    //   45a100 00 9600 06 0f fc
-
-                    let timestamp = UInt32(data[0..<4]) // seconds since pairing
-                    let date = activationDate + TimeInterval(timestamp)
-                    let glucoseBytes = UInt16(data[4..<6])
-                    let glucose = glucoseBytes != 0xffff ? Int(glucoseBytes & 0xfff) : nil
-                    let glucoseIsDisplayOnly: Bool? = glucoseBytes != 0xffff ? (glucoseBytes & 0xf000) > 0 : nil
-                    let state = data[6]
-                    let trend: Double? = data[8] != 0x7f ? Double(Int8(bitPattern: data[8])) / 10 : nil
-                    log("\(name): backfilled glucose: timestamp: \(timestamp.formattedInterval), date: \(date.local), glucose: \(glucose != nil ? String(glucose!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), state: \(AlgorithmState(rawValue: state)?.description ?? "unknown") (0x\(state.hex)), trend: \(trend != nil ? String(trend!) : "nil")")
-                    if let glucose {
-                        let item = Glucose(glucose, trendRate: trend ?? 0, id: Int(Double(timestamp) / 60 / 5), date: date)
-                        // TODO: manage trend and state
-                        history.append(item)
-                    }
                 }
-                log("\(name): backfilled history (\(history.count) values): \(history)")
-                // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
-                main.history.factoryValues = history.reversed()
-                buffer = Data()
 
 
             case .batteryStatusRx:
