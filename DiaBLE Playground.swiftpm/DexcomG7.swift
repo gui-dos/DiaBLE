@@ -174,9 +174,9 @@ import CoreBluetooth
 
                 // https://github.com/LoopKit/G7SensorKit/blob/main/G7SensorKit/Messages/G7GlucoseMessage.swift
 
-                //    0  1  2 3 4 5  6 7  8  9 1011 1213 14 15 1617 18
-                //         TTTTTTTT SQSQ       AGAG BGBG SS TR PRPR C
-                // 0x4e 00 d5070000 0900 00 01 0500 6100 06 01 ffff 0e
+                //  0  1  2 3 4 5  6 7  8  9 1011 1213 14 15 1617 18
+                //       TTTTTTTT SQSQ       AGAG BGBG SS TR PRPR C
+                // 4e 00 d5070000 0900 00 01 0500 6100 06 01 ffff 0e
                 // TTTTTTTT = timestamp
                 //     SQSQ = sequence
                 //     AGAG = age
@@ -209,18 +209,18 @@ import CoreBluetooth
                 state = .active
                 if maxLife == 0 { maxLife = 14400 }
                 let sequenceNumber = UInt16(data[6..<8])
-                let egvAge = UInt16(data[10..<12]) // amount of time elapsed (seconds) from sensor reading to BLE comms
+                let egvAge = UInt16(data[10..<12])
                 let timestamp = txTime - UInt32(egvAge)
                 let date = tx.activationDate + TimeInterval(timestamp)
                 let glucoseData = UInt16(data[12..<14])
                 let value: UInt16? = glucoseData != 0xffff ? glucoseData & 0xfff : nil
-                let state = data[14]
+                let algorithmState = data[14]  // TODO
                 let trend: Double? = data[15] != 0x7f ? Double(Int8(bitPattern: data[15])) / 10 : nil
                 let glucoseIsDisplayOnly: Bool? = glucoseData != 0xffff ? (data[18] & 0x10) > 0 : nil
                 let predictionData = UInt16(data[16..<18])
                 let predictedValue: UInt16? = predictionData != 0xffff ? predictionData & 0xfff : nil
                 let calibration = data[18]
-                log("\(tx.name): glucose value (EGV): status: 0x\(status.hex), message timestamp: \(txTime.formattedInterval), sensor activation date: \(tx.activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(egvAge) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), state: \(Dexcom.AlgorithmState(rawValue: state)?.description ?? "unknown") (0x\(state.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
+                log("\(tx.name): glucose value (EGV): status: 0x\(status.hex), message timestamp: \(txTime.formattedInterval), sensor activation date: \(tx.activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(egvAge) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), algorithm state: \(Dexcom.AlgorithmState(rawValue: algorithmState)?.description ?? "unknown") (0x\(algorithmState.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
                 // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                 // let backfillCmd = DexcomG7.Opcode.backfill.data + (timestamp - 180 * 60).data + (timestamp - 5 * 60).data
                 // log("TEST: sending \(name) backfill 3 hours command: \(backfillCmd.hex)")
