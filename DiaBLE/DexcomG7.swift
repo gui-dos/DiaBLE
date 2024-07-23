@@ -122,9 +122,9 @@ import CoreBluetooth
     // notify 3534  4A00 + 18 bytes    // transmitterVersion
     // write  3534  52
     // notify 3534  5200 + 13 bytes    // transmitterVersionExtended
-    // write  3534  EA02 01
+    // write  3534  EA02 01            // BLE StreamSpeed
     // notify 3534  EA00 01
-    // write  3534  EA03 7017 0000
+    // write  3534  EA03 7017 0000     // BLE StreamSize
     // notify 3534  EA00 7017 0000
     // [4E 32 EA00 59 51 like for a connection]
     // when repairing:
@@ -263,6 +263,15 @@ import CoreBluetooth
                 let lastBGDisplay = Dexcom.DisplayType(rawValue: Int(data[15]))!
                 let lastProcessingUpdateTime = TimeInterval(UInt32(data[16...19]))
                 log("\(tx.name): calibration bounds: status: \(status), session number: \(sessionNumber), session signature: \(sessionSignature.hex), last BG value: \(lastBGValue), last calibration time: \(lastCalibrationTime.formattedInterval), calibration processing status: \(String(describing: calibrationProcessingStatus)), calibrations permitted: \(calibrationsPermitted), last BG display: \(String(describing: lastBGDisplay)), last processing update time: \(lastProcessingUpdateTime.formattedInterval)")
+
+
+            case .batteryStatus:
+                let status = data[1]
+                let voltageA = Int(UInt16(data[2...3]))
+                let voltageB = Int(UInt16(data[4...5]))
+                let runtimeDays = Int(data[6])
+                let temperature = Int(data[7])
+                log("\(tx.name): battery info response: status: 0x\(status.hex), static voltage A: \(voltageA), dynamic voltage B: \(voltageB), run time: \(runtimeDays) days, temperature: \(temperature)")
 
 
             default:
