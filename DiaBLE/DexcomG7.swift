@@ -157,7 +157,91 @@ import CoreBluetooth
     /// called by Dexcom Transmitter class
     func read(_ data: Data, for uuid: String) {
 
+        let opCode = Opcode(rawValue: data[0]) ?? .unknown
+        let tx = transmitter as! Dexcom
+
         switch Dexcom.UUID(rawValue: uuid) {
+
+        case .authentication:
+            break
+
+
+        case .control:
+
+            switch opCode {
+
+            case .egv:
+
+                // https://github.com/LoopKit/G7SensorKit/blob/main/G7SensorKit/Messages/G7GlucoseMessage.swift
+
+                //    0  1  2 3 4 5  6 7  8  9 1011 1213 14 15 1617 18
+                //         TTTTTTTT SQSQ       AGAG BGBG SS TR PRPR C
+                // 0x4e 00 d5070000 0900 00 01 0500 6100 06 01 ffff 0e
+                // TTTTTTTT = timestamp
+                //     SQSQ = sequence
+                //     AGAG = age
+                //     BGBG = glucose
+                //       SS = algorithm state
+                //       TR = trend
+                //     PRPR = predicted
+                //        C = calibration
+
+                // TODO:
+                // class G7TxController.EGVResponse {
+                //     let txTime: Swift.UInt32
+                //     let sequenceNumber: Swift.UInt32
+                //     let sessionNumber: Swift.UInt8
+                //     let egvAge: Swift.UInt16
+                //     let value: Swift.UInt16
+                //     let algorithmState: Swift.UInt8
+                //     let secondaryalgorithmState: Swift.UInt8
+                //     let rate: Swift.Int8
+                //     let predictiveValue: Swift.UInt16
+                //     var timeStamp: Swift.UInt32
+                // }
+
+                let status = data[1]
+                let messageTimestamp = UInt32(data[2..<6])  // seconds since pairing of the *message*. Subtract age to get timestamp of glucose
+                tx.activationDate = Date.now - TimeInterval(messageTimestamp)
+                activationTime = UInt32(tx.activationDate.timeIntervalSince1970)
+                let sensorAge = Int(Date().timeIntervalSince(tx.activationDate)) / 60
+                age = sensorAge
+                state = .active
+                if maxLife == 0 { maxLife = 14400 }
+                let sequenceNumber = UInt16(data[6..<8])
+                let egvAge = UInt16(data[10..<12]) // amount of time elapsed (seconds) from sensor reading to BLE comms
+                let timestamp = messageTimestamp - UInt32(egvAge)
+                let date = tx.activationDate + TimeInterval(timestamp)
+                let glucoseData = UInt16(data[12..<14])
+                let value: UInt16? = glucoseData != 0xffff ? glucoseData & 0xfff : nil
+                let state = data[14]
+                let trend: Double? = data[15] != 0x7f ? Double(Int8(bitPattern: data[15])) / 10 : nil
+                let glucoseIsDisplayOnly: Bool? = glucoseData != 0xffff ? (data[18] & 0x10) > 0 : nil
+                let predictionData = UInt16(data[16..<18])
+                let predictedValue: UInt16? = predictionData != 0xffff ? predictionData & 0xfff : nil
+                let calibration = data[18]
+                log("\(tx.name): glucose value (EGV): status: 0x\(status.hex), message timestamp: \(messageTimestamp.formattedInterval), sensor activation date: \(tx.activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(egvAge) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), state: \(Dexcom.AlgorithmState(rawValue: state)?.description ?? "unknown") (0x\(state.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
+                // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
+                // let backfillCmd = DexcomG7.Opcode.backfill.data + (timestamp - 180 * 60).data + (timestamp - 5 * 60).data
+                // log("TEST: sending \(name) backfill 3 hours command: \(backfillCmd.hex)")
+                // write(backfillCmd, .withResponse)
+                let item = Glucose(value != nil ? Int(value!) : -1, trendRate: Double(trend ?? 0), id: Int(Double(timestamp) / 60 / 5), date: date)
+                self.trend.insert(item, at: 0)
+                app.currentGlucose = item.value
+                app.lastReadingDate = item.date
+                lastReadingDate = app.lastReadingDate
+                main.history.factoryTrend.insert(item, at: 0)
+                if main.history.factoryValues.count == 0 || main.history.factoryValues[0].id < item.id {
+                    main.history.factoryValues = [item] + main.history.factoryValues
+                }
+                main.healthKit?.write([item]); main.healthKit?.read()
+
+
+            default:
+                break
+
+            }
+
 
         default:
             break
