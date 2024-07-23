@@ -158,11 +158,14 @@ import CoreBluetooth
 
         if uuid == UUID.authentication.rawValue || uuid == UUID.control.rawValue {
             opCode = Opcode(rawValue: data[0]) ?? .unknown
-            let g7OpCode = DexcomG7.Opcode(rawValue: data[0]) ?? .unknown
-            var msg = "\(name): opCode: \(String(describing: opCode)) (0x\(data[0].hex))"
-            if String(describing: g7OpCode) != String(describing: opCode) {
-                msg += " (G7: \(String(describing: g7OpCode)))"
+            let g7opCode = DexcomG7.Opcode(rawValue: data[0]) ?? .unknown
+            var msg = "\(name): message opCode: "
+            if String(describing: g7opCode) != String(describing: opCode) && g7opCode != .unknown {
+                msg += String(describing: g7opCode)
+            } else {
+                msg += String(describing: opCode)
             }
+            msg += " (0x\(data[0].hex))"
             log(msg)
         }
 

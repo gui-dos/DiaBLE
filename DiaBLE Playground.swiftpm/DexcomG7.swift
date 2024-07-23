@@ -229,7 +229,7 @@ import CoreBluetooth
                 self.trend.insert(item, at: 0)
                 app.currentGlucose = item.value
                 app.lastReadingDate = item.date
-                lastReadingDate = app.lastReadingDate
+                lastReadingDate = item.date
                 main.history.factoryTrend.insert(item, at: 0)
                 if main.history.factoryValues.count == 0 || main.history.factoryValues[0].id < item.id {
                     main.history.factoryValues = [item] + main.history.factoryValues
