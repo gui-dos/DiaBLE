@@ -266,16 +266,17 @@ import CoreBluetooth
 
 
             case .diagnosticData:
-                // TODO: i. e. 510000a01600009a44ea430200ec5f0200 (17 bytes)
+                // TODO: i. e. 51 00 00 a0160000 9a44 ea430200 ec5f0200 (17 bytes)
                 // TODO: DataStreamType and DataStreamFilterType first bytes
                 let status = data[1]
-                let backfillStatus = data[2]
+                enum DiagnosticDataResult: UInt8 { case success, empty, truncated }
+                let backfillStatus = DiagnosticDataResult(rawValue: data[2])!
                 let bufferLength = UInt32(data[3...6])
                 let bufferCRC = UInt16(data[7...8])
                 let startTime = TimeInterval(UInt32(data[9...12]))
                 let endTime = TimeInterval(UInt32(data[13...16]))
                 // TODO
-                log("\(tx.name): backfill: status: \(status), backfill status: \(backfillStatus), buffer length: \(bufferLength), buffer CRC: \(bufferCRC.hex), start time: \(startTime.formattedInterval), end time: \(endTime.formattedInterval)")
+                log("\(tx.name): backfill: status: \(status), backfill status: \(String(describing: backfillStatus)), buffer length: \(bufferLength), buffer CRC: \(bufferCRC.hex), start time: \(startTime.formattedInterval), end time: \(endTime.formattedInterval)")
                 var packets = [Data]()
                 for i in 0 ..< (tx.buffer.count + 19) / 20 {
                     packets.append(Data(tx.buffer[i * 20 ..< min((i + 1) * 20, tx.buffer.count)]))
@@ -286,16 +287,16 @@ import CoreBluetooth
 
 
             case .backfill:
-                // TODO: i. e. 5900003F000000AB933802E2960200EA9D0200 (19 bytes)
+                // TODO: i. e. 59 00 00 3F000000 AB93 3802 E2960200 EA9D0200 (19 bytes)
                 let status = data[1]
-                // TODO: enum TxControllerG7.EGVBackfillResult { case success, noRecord, oversized }
-                let backfillStatus = Int(data[2])
+                enum EGVBackfillResult: UInt8 { case success, noRecord, oversized }
+                let backfillStatus = EGVBackfillResult(rawValue: data[2])!
                 let length = UInt32(data[3...6])
                 let crc = UInt16(data[7...8])
                 let firstSequenceNumber = UInt16(data[9...10])
                 let firstTimestamp = TimeInterval(UInt32(data[11...14]))
                 let lastTimestamp = TimeInterval(UInt32(data[15...18]))
-                log("\(tx.name): backfill response: status: \(status), backfill status: \(["success", "no record", "oversized"][backfillStatus]), buffer length: \(length), buffer CRC: \(crc.hex), valid CRC: \(crc == tx.buffer.crc), first sequence number: \(firstSequenceNumber), first timestamp: \(firstTimestamp.formattedInterval), last timestamp: \(lastTimestamp.formattedInterval)")
+                log("\(tx.name): backfill response: status: \(status), backfill status: \(String(describing: backfillStatus)), buffer length: \(length), buffer CRC: \(crc.hex), valid CRC: \(crc == tx.buffer.crc), first sequence number: \(firstSequenceNumber), first timestamp: \(firstTimestamp.formattedInterval), last timestamp: \(lastTimestamp.formattedInterval)")
                 var packets = [Data]()
                 for i in 0 ..< (tx.buffer.count / 9) {
                     packets.append(Data(tx.buffer[i * 9 ..< min((i + 1) * 9, tx.buffer.count)]))
