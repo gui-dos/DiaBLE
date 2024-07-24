@@ -123,6 +123,7 @@ struct OnlineView: View {
                                         .autocorrectionDisabled(true)
                                 }
                                 SecureField("token", text: $settings.nightscoutToken)
+                                    .textContentType(.password)
 
 
                             } else if settings.selectedService == .libreLinkUp {
@@ -139,6 +140,7 @@ struct OnlineView: View {
                                         }
                                     }
                                 SecureField("password", text: $settings.libreLinkUpPassword)
+                                    .textContentType(.password)
                                     .onSubmit {
                                         settings.libreLinkUpUserId = ""
                                         libreLinkUpResponse = "[Logging in...]"
