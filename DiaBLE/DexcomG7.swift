@@ -162,8 +162,30 @@ import CoreBluetooth
 
         switch Dexcom.UUID(rawValue: uuid) {
 
+
         case .authentication:
-            break
+
+            switch opCode {
+
+            case .statusReply:
+
+                if tx.authenticated {
+                    // FIXME: just 02 replies
+                    let authStatusCmd = Opcode.authStatus.data + Data([2, 2])
+                    log("TEST: sending \(tx.name) the 'authStatus' command \(authStatusCmd.hex)")
+                    tx.write(authStatusCmd, .withResponse)
+                    let encryptionInfoCmd = Opcode.encryptionInfo.data
+                    log("TEST: sending \(tx.name) the 'encryptionInfo' command \(encryptionInfoCmd.hex)")
+                    tx.write(encryptionInfoCmd, .withResponse)
+                    let encryptionStatusCmd = Opcode.encryptionStatus.data
+                    log("TEST: sending \(tx.name) the 'encryptionStatus' command \(encryptionStatusCmd.hex)")
+                    tx.write(encryptionStatusCmd, .withResponse)
+                }
+
+            default:
+                break
+
+            }
 
 
         case .control:
