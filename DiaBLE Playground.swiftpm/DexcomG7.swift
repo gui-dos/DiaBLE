@@ -130,7 +130,7 @@ import CoreBluetooth
     // when repairing:
     // write  3534  38
     // notify 3538  20 * 6 + 12 bytes  // encryptionInfo
-    // notify 3534  3800 8400 0000
+    // notify 3534  3800 8400 0000     // 132-byte stream end
 
 
     // enum G7TxController.TransmitterResponseCode {
@@ -379,7 +379,7 @@ import CoreBluetooth
                 log("\(tx.name): version response: status: \(status), firmware: \(firmwareVersion), software number: \(swNumber), silicon version: \(siliconVersion) (0x\(siliconVersion.hex)), serial number: \(serialNumber)")
 
 
-            case  .transmitterVersionExtended:
+            case .transmitterVersionExtended:
                 // TODO: i.e. 52 00 c0d70d00 5406 02010404 ff 0c00 (15 bytes)
                 let status = data[1]
                 let sessionLength = TimeInterval(UInt32(data[2...5]))
@@ -389,6 +389,16 @@ import CoreBluetooth
                 let hardwareVersion = Int(data[12])
                 let maxLifetimeDays = UInt16(data[13...14])
                 log("\(tx.name): extended version response: status: \(status), session length: \(sessionLength.formattedInterval), warmup length: \(warmupLength.formattedInterval), algorithm version: 0x\(algorithmVersion.hex), hardware version: \(hardwareVersion), max lifetime days: \(maxLifetimeDays)")
+
+
+            case .encryptionInfo:
+                // i.e. 38 00 84000000
+                let status = data[1]
+                let bufferLength = UInt32(data[2...5])
+                // TODO: buffer starting with 02000000
+                let dataStreamType = Dexcom.DataStreamType(rawValue: Int(tx.buffer[0]))!
+                log("\(tx.name): encryption info: status: \(status), buffer length: \(bufferLength), stream type: \(String(describing: dataStreamType)), encryption info: \(tx.buffer.hex)")
+                tx.buffer = Data()
 
 
             default:
