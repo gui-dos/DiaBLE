@@ -401,6 +401,21 @@ import CoreBluetooth
                 tx.buffer = Data()
 
 
+            case .bleControl:
+                // TODO: commands 00: WhitelistResponse, 0201: StreamSpeedResponse, 03: StreamSizeResponse
+                //
+                // WhitelistResponse i.e. ea 00 030100000000000200000045ffffff
+                // 03 = maxDevices?
+                //
+                // class G7TxController.DeviceListResponse {
+                //     let maxDevices: Swift.UInt8
+                //     let displayIds: [Swift.UInt8]
+                //     let displayTypes: [G7TxController.G7DisplayType]
+                //     let restrictions: Swift.UInt32
+                // }
+                break
+
+
             default:
                 break
 

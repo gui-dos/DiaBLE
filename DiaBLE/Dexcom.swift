@@ -407,7 +407,6 @@ import CoreBluetooth
             case .bleControl:
                 // TODO: i.e. ea00030100000000000200000045ffffff
                 let status = data[1]
-                // TODO: 00: WhitelistResponse, 0201: StreamSpeedResponse, 03: StreamSizeResponse
                 log("\(name): BLE control: status: \(status)")
 
 
