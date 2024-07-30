@@ -180,6 +180,12 @@ import CoreBluetooth
                     let encryptionStatusCmd = Opcode.encryptionStatus.data
                     log("TEST: sending \(tx.name) the 'encryptionStatus' command \(encryptionStatusCmd.hex)")
                     tx.write(encryptionStatusCmd, .withResponse)
+                    let whitelistCmd = Opcode.bleControl.data + Data([0])
+                    log("TEST: sending \(tx.name) the 'BLE whitelist' command \(whitelistCmd.hex)")
+                    tx.write(whitelistCmd, .withResponse)
+                    let streamSizeCmd = Opcode.bleControl.data + Data([3])
+                    log("TEST: sending \(tx.name) the 'BLE stream size' command \(streamSizeCmd.hex)")
+                    tx.write(streamSizeCmd, .withResponse)
                 }
 
             default:
@@ -404,14 +410,20 @@ import CoreBluetooth
             case .bleControl:
                 // TODO: commands 00: WhitelistResponse, 0201: StreamSpeedResponse, 03: StreamSizeResponse
                 //
-                // WhitelistResponse i.e. ea 00 030100000000000200000045ffffff
-                // 03 = maxDevices?
+                // WhitelistResponse i.e. ea 00 03 0100000000000200000045ffffff
+                //                        ea 00 03 010200000000620000004dffffff
+                //                              03 = maxDevices?
+                // StreamSizeResponse     ea 00 70170000
                 //
                 // class G7TxController.DeviceListResponse {
                 //     let maxDevices: Swift.UInt8
                 //     let displayIds: [Swift.UInt8]
                 //     let displayTypes: [G7TxController.G7DisplayType]
                 //     let restrictions: Swift.UInt32
+                // }
+                //
+                // class G7TxController.StreamSizeResponse {
+                //     let size: Swift.UInt32
                 // }
                 break
 

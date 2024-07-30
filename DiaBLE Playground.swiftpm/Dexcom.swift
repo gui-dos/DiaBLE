@@ -466,7 +466,7 @@ import CoreBluetooth
 
     // enum CgmFoundation.DisplayType
     enum DisplayType: Int {
-        case unknown, medical, phone, watch, receiver, pump, reader, tool, other, transmitter
+        case unknown, medical, phone, watch, receiver, pump, reader, tool, other, transmitter, router
     }
 
 
