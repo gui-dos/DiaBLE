@@ -412,6 +412,7 @@ import CoreBluetooth
                 //
                 // WhitelistResponse i.e. ea 00 03 0100000000000200000045ffffff
                 //                        ea 00 03 010200000000620000004dffffff
+                //                        ea 00 03 020100000000430000004dffffff
                 //                              03 = maxDevices?
                 // StreamSizeResponse     ea 00 70170000
                 //

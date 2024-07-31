@@ -469,6 +469,11 @@ import CoreBluetooth
         case unknown, medical, phone, watch, receiver, pump, reader, tool, other, transmitter, router
     }
 
+    // enum G7TxController.AdvertisementDisplayType {
+    enum AdvertisementDisplayType: Int {
+        case medical, phone, watch, receiver, pump, reader, tool, other
+    }
+
 
     // TODO: https://github.com/JohanDegraeve/xdripswift/blob/master/xdrip/BluetoothTransmitter/CGM/Dexcom/Generic/DexcomAlgorithmState.swift
 
