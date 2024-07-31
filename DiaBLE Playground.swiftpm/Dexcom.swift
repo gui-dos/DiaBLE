@@ -469,9 +469,16 @@ import CoreBluetooth
         case unknown, medical, phone, watch, receiver, pump, reader, tool, other, transmitter, router
     }
 
-    // enum G7TxController.AdvertisementDisplayType {
-    enum AdvertisementDisplayType: Int {
-        case medical, phone, watch, receiver, pump, reader, tool, other
+    // enum G7TxController.AdvertisementDisplayType
+    enum AdvertisementDisplayType: UInt8 {
+        case medical  =   1
+        case phone    =   2
+        case watch    =   4
+        case receiver =   8
+        case pump     =  16
+        case reader   =  32
+        case tool     =  64
+        case other    = 255
     }
 
 
