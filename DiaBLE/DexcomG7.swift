@@ -133,6 +133,11 @@ import CoreBluetooth
     // notify 3534  3800 8400 0000     // 132-byte stream end
 
 
+    // class G7TxController.TxResponse {
+    //     let txFailure: Swift.Bool
+    //     let txResponse: G7TxController.TransmitterResponseCode
+    // }
+
     // enum G7TxController.TransmitterResponseCode {
     //     case success         = 0
     //     case notPermitted    = 1
