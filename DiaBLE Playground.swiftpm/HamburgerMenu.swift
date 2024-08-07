@@ -165,5 +165,6 @@ struct HamburgerMenu: View {
 #Preview {
     HamburgerMenu(showingHamburgerMenu: Monitor(showingHamburgerMenu: true).$showingHamburgerMenu)
         .preferredColorScheme(.dark)
+        //TODO: iOS 18 fix:  #Preview(traits: .fixedLayout(width: 180, height: 400)) {
         .previewLayout(.fixed(width: 180, height: 400))
 }

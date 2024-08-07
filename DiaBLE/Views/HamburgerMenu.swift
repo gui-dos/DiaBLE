@@ -161,8 +161,7 @@ struct HamburgerMenu: View {
 }
 
 
-#Preview {
+#Preview(traits: .fixedLayout(width: 180, height: 400)) {
     HamburgerMenu(showingHamburgerMenu: Monitor(showingHamburgerMenu: true).$showingHamburgerMenu)
         .preferredColorScheme(.dark)
-        .previewLayout(.fixed(width: 180, height: 400))
 }
