@@ -175,21 +175,34 @@ import CoreBluetooth
             case .statusReply:
 
                 if tx.authenticated {
+
+                    let transmitterVersionCmd = Opcode.transmitterVersion.data
+                    log("DEBUG: sending \(tx.name) the 'transmitterVersion' command 0x\(transmitterVersionCmd.hex)")
+                    tx.write(transmitterVersionCmd, .withResponse)
+
+                    let transmitterVersionExtendedCmd = Opcode.transmitterVersionExtended.data
+                    log("DEBUG: sending \(tx.name) the 'transmitterVersionExtended' command 0x\(transmitterVersionExtendedCmd.hex)")
+                    tx.write(transmitterVersionExtendedCmd, .withResponse)
+
+                    let batteryStatusCmd = Opcode.batteryStatus.data
+                    log("DEBUG: sending \(tx.name) the 'batteryStatus' command 0x\(batteryStatusCmd.hex)")
+                    tx.write(batteryStatusCmd, .withResponse)
+
                     // FIXME: just 02 replies
                     let authStatusCmd = Opcode.authStatus.data + Data([2, 2])
-                    log("TEST: sending \(tx.name) the 'authStatus' command \(authStatusCmd.hex)")
+                    log("TEST: sending \(tx.name) the 'authStatus' command 0x\(authStatusCmd.hex)")
                     tx.write(authStatusCmd, .withResponse)
                     let encryptionInfoCmd = Opcode.encryptionInfo.data
-                    log("TEST: sending \(tx.name) the 'encryptionInfo' command \(encryptionInfoCmd.hex)")
+                    log("TEST: sending \(tx.name) the 'encryptionInfo' command 0x\(encryptionInfoCmd.hex)")
                     tx.write(encryptionInfoCmd, .withResponse)
                     let encryptionStatusCmd = Opcode.encryptionStatus.data
-                    log("TEST: sending \(tx.name) the 'encryptionStatus' command \(encryptionStatusCmd.hex)")
+                    log("TEST: sending \(tx.name) the 'encryptionStatus' command 0x\(encryptionStatusCmd.hex)")
                     tx.write(encryptionStatusCmd, .withResponse)
                     let whitelistCmd = Opcode.bleControl.data + Data([0])
-                    log("TEST: sending \(tx.name) the 'BLE whitelist' command \(whitelistCmd.hex)")
+                    log("TEST: sending \(tx.name) the 'BLE whitelist' command 0x\(whitelistCmd.hex)")
                     tx.write(whitelistCmd, .withResponse)
                     let streamSizeCmd = Opcode.bleControl.data + Data([3])
-                    log("TEST: sending \(tx.name) the 'BLE stream size' command \(streamSizeCmd.hex)")
+                    log("TEST: sending \(tx.name) the 'BLE stream size' command 0x\(streamSizeCmd.hex)")
                     tx.write(streamSizeCmd, .withResponse)
                 }
 
