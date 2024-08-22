@@ -268,9 +268,11 @@ import CoreBluetooth
                 let calibration = data[18]
                 log("\(tx.name): glucose value (EGV): status: 0x\(status.hex), message timestamp: \(txTime.formattedInterval), sensor activation date: \(tx.activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(egvAge) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), algorithm state: \(Dexcom.AlgorithmState(rawValue: algorithmState)?.description ?? "unknown") (0x\(algorithmState.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
                 // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
-                // let backfillCmd = DexcomG7.Opcode.backfill.data + (timestamp - 180 * 60).data + (timestamp - 5 * 60).data
-                // log("TEST: sending \(name) backfill 3 hours command: \(backfillCmd.hex)")
-                // write(backfillCmd, .withResponse)
+                if main.settings.userLevel >= .test {
+                    let backfillCmd = Opcode.backfill.data + (timestamp - 180 * 60).data + (timestamp - 5 * 60).data
+                    log("TEST: sending \(tx.name) backfill 3 hours command 0x\(backfillCmd.hex)")
+                    tx.write(backfillCmd, .withResponse)
+                }
                 let item = Glucose(value != nil ? Int(value!) : -1, trendRate: Double(trend ?? 0), id: Int(Double(timestamp) / 60 / 5), date: date)
                 self.trend.insert(item, at: 0)
                 app.currentGlucose = item.value
