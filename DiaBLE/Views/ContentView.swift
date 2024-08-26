@@ -12,41 +12,30 @@ struct ContentView: View {
         @Bindable var settings = settings
 
         TabView(selection: $settings.selectedTab) {
-            Monitor()
-                .tabItem {
-                    Label("Monitor", systemImage: "gauge")
-                }
-                .tag(TabTitle.monitor)
 
-            OnlineView()
-                .tabItem {
-                    Label("Online", systemImage: "globe")
-                }
-                .tag(TabTitle.online)
+            Tab("Monitor", systemImage: "gauge", value: .monitor) {
+                Monitor()
+            }
 
-            ConsoleTab()
-                .tabItem {
-                    Label("Console", systemImage: "terminal")
-                }
-                .tag(TabTitle.console)
+            Tab("Online", systemImage: "globe", value: .online) {
+                OnlineView()
+            }
 
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gear")
-                }
-                .tag(TabTitle.settings)
+            Tab("Console", systemImage: "terminal", value: .console) {
+                ConsoleTab()
+            }
 
-            DataView()
-                .tabItem {
-                    Label("Data", systemImage: "tray.full.fill")
-                }
-                .tag(TabTitle.data)
+            Tab("Settings", systemImage: "gear", value: .settings) {
+                SettingsView()
+            }
 
-            Plan()
-                .tabItem {
-                    Label("Plan", systemImage: "map")
-                }
-                .tag(TabTitle.plan)
+            Tab("Data", systemImage: "tray.full.fill", value: .data) {
+                DataView()
+            }
+
+            Tab("Plan", systemImage: "map", value: .plan) {
+                Plan()
+            }
 
         }
         .toolbarRole(.navigationStack)

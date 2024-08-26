@@ -16,42 +16,29 @@ struct ContentView: View {
 
             TabView(selection: $settings.selectedTab) {
 
-                SettingsView()
-                    .tabItem {
-                        Label("Settings", systemImage: "gear")
-                    }
-                    .tag(TabTitle.settings)
+                Tab("Settings", systemImage: "gear", value: .settings) {
+                    SettingsView()
+                }
 
-                Monitor()
-                    .tabItem {
-                        Label("Monitor", systemImage: "gauge")
-                    }
-                    .tag(TabTitle.monitor)
+                Tab("Monitor", systemImage: "gauge", value: .monitor) {
+                    Monitor()
+                }
 
-                OnlineView()
-                    .tabItem {
-                        Label("Online", systemImage: "globe")
-                    }
-                    .tag(TabTitle.online)
+                Tab("Online", systemImage: "globe", value: .online) {
+                    OnlineView()
+                }
 
-                Console()
-                    .tabItem {
-                        Label("Console", systemImage: "terminal")
-                    }
-                    .tag(TabTitle.console)
+                Tab("Console", systemImage: "terminal", value: .console) {
+                    Console()
+                }
 
-                DataView()
-                    .tabItem {
-                        Label("Data", systemImage: "tray.full.fill")
-                    }
-                    .tag(TabTitle.data)
+                Tab("Data", systemImage: "tray.full.fill", value: .data) {
+                    DataView()
+                }
 
-                //  Plan()
-                //      .tabItem {
-                //          Image(systemName: "map")
-                //          Text("Plan")
-                //  }
-                //  .tag(Tab.plan)
+                // Tab("Plan", systemImage: "map", value: .plan) {
+                //     Plan()
+                // }
 
             }
             .toolbarBackground(.hidden, for: .navigationBar)

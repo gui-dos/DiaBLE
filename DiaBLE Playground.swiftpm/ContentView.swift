@@ -12,6 +12,9 @@ struct ContentView: View {
         @Bindable var settings = settings
 
         TabView(selection: $settings.selectedTab) {
+
+            // TODO: iOS 18 new Tabs
+
             Monitor()
                 .tabItem {
                     Label("Monitor", systemImage: "gauge")
