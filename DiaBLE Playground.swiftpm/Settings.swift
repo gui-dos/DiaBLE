@@ -10,7 +10,7 @@ import Foundation
 
         "caffeinated": false,
 
-        "selectedTab": Tab.monitor.rawValue,
+        "selectedTab": TabTitle.monitor.rawValue,
 
         "readingInterval": 5,
 
@@ -110,7 +110,7 @@ import Foundation
         didSet { UserDefaults.standard.set(self.caffeinated, forKey: "caffeinated") }
     }
 
-    var selectedTab: Tab = Tab(rawValue: UserDefaults.standard.string(forKey: "selectedTab")!)! {
+    var selectedTab: TabTitle = TabTitle(rawValue: UserDefaults.standard.string(forKey: "selectedTab")!)! {
         didSet { UserDefaults.standard.set(self.selectedTab.rawValue, forKey: "selectedTab") }
     }
 

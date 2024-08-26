@@ -34,7 +34,7 @@ struct DiaBLEApp: App {
 }
 
 
-enum Tab: String {
+enum TabTitle: String {
     case monitor
     case online
     case console
@@ -222,7 +222,7 @@ struct LogEntry: Identifiable {
 // For UI testing
 
 extension AppState {
-    static func test(tab: Tab) -> AppState {
+    static func test(tab: TabTitle) -> AppState {
 
         let main = MainDelegate()
         let app = main.app

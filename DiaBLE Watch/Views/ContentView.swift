@@ -20,31 +20,31 @@ struct ContentView: View {
                     .tabItem {
                         Label("Settings", systemImage: "gear")
                     }
-                    .tag(Tab.settings)
+                    .tag(TabTitle.settings)
 
                 Monitor()
                     .tabItem {
                         Label("Monitor", systemImage: "gauge")
                     }
-                    .tag(Tab.monitor)
+                    .tag(TabTitle.monitor)
 
                 OnlineView()
                     .tabItem {
                         Label("Online", systemImage: "globe")
                     }
-                    .tag(Tab.online)
+                    .tag(TabTitle.online)
 
                 Console()
                     .tabItem {
                         Label("Console", systemImage: "terminal")
                     }
-                    .tag(Tab.console)
+                    .tag(TabTitle.console)
 
                 DataView()
                     .tabItem {
                         Label("Data", systemImage: "tray.full.fill")
                     }
-                    .tag(Tab.data)
+                    .tag(TabTitle.data)
 
                 //  Plan()
                 //      .tabItem {
