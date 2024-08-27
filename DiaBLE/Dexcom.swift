@@ -455,7 +455,10 @@ import CoreBluetooth
 
     // enum CgmFoundation.TxProduct
     enum ProductType: Int {
-        case g6, g7, frontier, d1Plus
+        case g6
+        case g7
+        case stelo  // frontier
+        case d1Plus
     }
 
 

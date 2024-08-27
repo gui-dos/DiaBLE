@@ -589,3 +589,22 @@ import CoreBluetooth
     }
 
 }
+
+
+@Observable class Stelo: DexcomG7 {
+
+    /// called by Dexcom Transmitter class
+    override func read(_ data: Data, for uuid: String) {
+
+        switch Dexcom.UUID(rawValue: uuid) {
+
+        default:
+            break
+
+        }
+
+        super.read(data, for: uuid)
+
+    }
+
+}
