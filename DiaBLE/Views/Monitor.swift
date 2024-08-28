@@ -8,8 +8,6 @@ struct Monitor: View {
     @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
 
-    @State var showingHamburgerMenu = false
-
     @State private var showingNFCAlert = false
 
     @State private var readingCountdown: Int = 0
@@ -211,15 +209,7 @@ struct Monitor: View {
                 }
                 .toolbar {
 
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {
-                            withAnimation(.easeOut(duration: 0.15)) { showingHamburgerMenu.toggle() }
-                        } label: {
-                            Image(systemName: "line.horizontal.3")
-                        }
-                    }
-
-                    ToolbarItem(placement: .navigationBarLeading) {
+                    ToolbarItem(placement: .navigation) {
                         Button {
                             settings.caffeinated.toggle()
                             UIApplication.shared.isIdleTimerDisabled = settings.caffeinated
@@ -228,7 +218,7 @@ struct Monitor: View {
                         }
                     }
 
-                    ToolbarItem(placement: .navigationBarTrailing) {
+                    ToolbarItem(placement: .topBarTrailing) {
                         Button {
                             if app.main.nfc.isAvailable {
                                 app.main.nfc.startSession()
@@ -246,9 +236,8 @@ struct Monitor: View {
                     Text("This device doesn't allow scanning the Libre.")
                 }
 
-                HamburgerMenu(showingHamburgerMenu: $showingHamburgerMenu)
-                    .frame(width: 180)
-                    .offset(x: showingHamburgerMenu ? 0 : -180)
+                HamburgerMenu()
+
             }
         }
         .navigationViewStyle(.stack)

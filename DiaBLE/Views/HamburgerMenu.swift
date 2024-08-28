@@ -5,7 +5,7 @@ struct HamburgerMenu: View {
 
     @Environment(\.colorScheme) var colorScheme
 
-    @Binding var showingHamburgerMenu: Bool
+    @State private var showingSidebar = false
 
     @State private var showingHelp = false
     @State private var showingAbout = false
@@ -72,7 +72,7 @@ struct HamburgerMenu: View {
                         }
                     }
                     .onAppear {
-                        withAnimation { showingHamburgerMenu = false }
+                        withAnimation { showingSidebar = false }
                     }
                     // TODO: click on any area
                     .onTapGesture {
@@ -139,7 +139,7 @@ struct HamburgerMenu: View {
                     }
                 }
                 .onAppear {
-                    withAnimation { showingHamburgerMenu = false }
+                    withAnimation { showingSidebar = false }
                 }
                 // TODO: click on any area
                 .onTapGesture {
@@ -150,18 +150,22 @@ struct HamburgerMenu: View {
             Spacer()
 
         }
+        .frame(width: 180)
         .background(Color(.secondarySystemBackground))
-
+        .offset(x: showingSidebar ? 0 : -180)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    withAnimation(.easeOut(duration: 0.15)) { showingSidebar.toggle() }
+                } label: {
+                    Image(systemName: "line.horizontal.3")
+                }
+            }
+        }
         // TODO: swipe gesture
         .onLongPressGesture(minimumDuration: 0) {
-            withAnimation(.easeOut(duration: 0.15)) { showingHamburgerMenu = false }
+            withAnimation(.easeOut(duration: 0.15)) { showingSidebar = false }
         }
 
     }
-}
-
-
-#Preview(traits: .fixedLayout(width: 180, height: 400)) {
-    HamburgerMenu(showingHamburgerMenu: Monitor(showingHamburgerMenu: true).$showingHamburgerMenu)
-        .preferredColorScheme(.dark)
 }
