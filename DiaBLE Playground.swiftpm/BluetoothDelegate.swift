@@ -85,6 +85,10 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             if name!.hasPrefix("DX02") {
                 name = "DEXCOMONE+\(name!.suffix(2))"
             }
+            // Stelo device name is in the form DX01xx
+            if name!.hasPrefix("DX01") {
+                name = "DEXCOMSTELO\(name!.suffix(2))"
+            }
         }
 
         var didFindATransmitter = false
@@ -193,6 +197,9 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             } else if name!.hasPrefix("DEXCOMONE+") {  // restore to the original ONE+ device name
                 app.device.name = "Dexcom ONE+"
                 name = "DX02" + name!.suffix(2)
+            } else if name!.hasPrefix("DEXCOMSTELO") {  // restore to the original Stelo device name
+                app.device.name = "Stelo"
+                name = "DX01" + name!.suffix(2)
             }
             let serialSuffix = name!.suffix(2)
             if !(settings.activeTransmitterSerial.count == 6 && settings.activeTransmitterSerial.suffix(2) == serialSuffix) {
@@ -520,6 +527,9 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 } else if app.device.name.suffix(4) == "ONE+" {
                     sensor = DexcomONEPlus(transmitter: app.transmitter)
                     sensor.type = .dexcomONEPlus
+                } else if app.device.name.prefix(5) == "Stelo" {
+                    sensor = Stelo(transmitter: app.transmitter)
+                    sensor.type = .stelo
                 } else {
                     // TODO: default type should be DexcomG6
                     sensor = DexcomONE(transmitter: app.transmitter)
