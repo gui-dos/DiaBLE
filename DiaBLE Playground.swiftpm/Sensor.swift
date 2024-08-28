@@ -22,6 +22,7 @@ enum SensorType: String, CustomStringConvertible {
     case dexcomONE     = "Dexcom ONE"
     case dexcomG7      = "Dexcom G7"
     case dexcomONEPlus = "Dexcom ONE+"
+    case stelo         = "Stelo"
     case unknown       = "unknown"
 
     var description: String { rawValue }

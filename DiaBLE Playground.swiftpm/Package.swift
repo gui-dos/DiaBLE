@@ -37,11 +37,12 @@ let package = Package(
                 .calendars(purposeString: "DiaBLE creates events to be displayed in Apple Watch complications."),
                 .outgoingNetworkConnections(),
                 .fileAccess(.userSelectedFiles, mode: .readWrite)
-            ]
+            ],
+            appCategory: .healthcareFitness
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift", "1.8.0"..<"2.0.0")
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift", "1.8.3"..<"2.0.0")
     ],
     targets: [
         .executableTarget(
