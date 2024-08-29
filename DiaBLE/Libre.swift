@@ -18,11 +18,10 @@ extension SensorType {
         case 0x76, 0x2B:
             patchInfo[3] == 2 ? .libre2US :
             patchInfo[3] == 4 ? .libre2CA :
-            patchInfo[3] == 8 ? patchInfo[2] & 0x0F < 0x0A ? .libre2RU : .libre2Plus :
             patchInfo[2] >> 4 == 7 ? .libreSense :
                 .unknown
-        case 0xC6:       .libre2  // non-Gen2 European Libre 2+
-        case 0x2C:       .libre2Plus
+        case 0xC6:       .libre2   // non-Gen2 European Libre 2+
+        case 0x2C:       .libre2US // Gen2 US Libre 2+
         default:
             if patchInfo.count == 24 {
                 .libre3
@@ -31,7 +30,7 @@ extension SensorType {
             }
         }
         // TODO:
-        // Libre 2 RU:  2B 0A 39 08
+        // Libre 2 RU:  2B 0A 39 08 (Gen2)
         // Libre 2+ LA: 2B OA 3A 08
         // Libre 2+ US: 2C 0A 3A 02
         // Libre 2+ EU: C6 09 31 01
