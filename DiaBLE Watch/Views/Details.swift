@@ -138,7 +138,7 @@ struct Details: View {
                                 foregroundColor: .red)
                         }
 
-                        Row("Type", "\(app.sensor.type.description)\(app.sensor.patchInfo.hex.hasPrefix("a2") ? " (new 'A2' kind)" : app.sensor.patchInfo.hex.hasPrefix("c6") ? " Plus" : "")")
+                        Row("Type", "\(app.sensor.type.description)\(app.sensor.patchInfo.hex.hasPrefix("a2") ? " (new 'A2' kind)" : app.sensor.patchInfo.hex.hasPrefix("c6") || app.sensor.generation == 1 ? " Plus" : "")")
 
                         Row("Serial", app.sensor.serial)
 

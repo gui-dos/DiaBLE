@@ -532,9 +532,9 @@ extension String {
         let securityVersion = UInt16(patchInfo[0...1])
         let localization    = UInt16(patchInfo[2...3])
         let generation      = UInt16(patchInfo[4...5])
-        // TODO: generation 0: Libre 3, 1: Libre 3+
         log("Libre 3: security version: \(securityVersion) (0x\(securityVersion.hex)), localization: \(localization) (0x\(localization.hex)), generation: \(generation) (0x\(generation.hex))")
 
+        self.generation = Int(generation)  // 1: Libre 3+
         region = SensorRegion(rawValue: Int(localization)) ?? .unknown
 
         let wearDuration = patchInfo[6...7]

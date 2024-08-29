@@ -136,7 +136,7 @@ struct Console: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("Console")
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .navigation) {
                 Button {
                     settings.caffeinated.toggle()
                     UIApplication.shared.isIdleTimerDisabled = settings.caffeinated

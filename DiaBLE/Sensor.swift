@@ -115,6 +115,7 @@ enum SensorState: UInt8, CustomStringConvertible {
 
     var crcReport: String = ""
 
+    var generation: Int = 0
     var securityGeneration: Int = 0
 
     var patchInfo: PatchInfo = Data() {
