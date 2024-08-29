@@ -432,7 +432,6 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                         sensor.serial = app.device.serial
                         let family = Int(app.device.serial.prefix(1)) ?? 0
                         switch family {
-                        case 7:  sensor.type = .libreSense
                         case 3:  sensor.type = .libre2
                         case 0:  sensor.type = .libre3
                         default: sensor.type = .libre2
