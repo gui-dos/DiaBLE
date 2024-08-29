@@ -15,12 +15,9 @@ extension SensorType {
         case 0xE5, 0xE6: .libreUS14day
         case 0x70:       .libreProH
         case 0x9D, 0xC5: .libre2
-        case 0x76, 0x2B:
-            patchInfo[3] == 2 ? .libre2US :
-            patchInfo[3] == 4 ? .libre2CA :
-                .unknown
-        case 0xC6:       .libre2   // non-Gen2 European Libre 2+
-        case 0x2C:       .libre2US // Gen2 US Libre 2+
+        case 0x76, 0x2B: .libre2Gen2
+        case 0xC6:       .libre2     // non-Gen2 European Libre 2+
+        case 0x2C:       .libre2Gen2 // Gen2 US Libre 2+
         default:
             if patchInfo.count == 24 {
                 .libre3

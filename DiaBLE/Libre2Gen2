@@ -5,7 +5,7 @@ import CoreNFC
 #endif
 
 
-class Gen2 {
+class Libre2Gen2: Libre2 {
 
     static let GEN_SECURITY_CMD_GET_SESSION_INFO      =  0x1f
 

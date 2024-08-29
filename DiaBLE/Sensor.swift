@@ -10,8 +10,7 @@ enum SensorType: String, CustomStringConvertible {
     case libreUS14day  = "Libre US 14d"
     case libreProH     = "Libre Pro/H"
     case libre2        = "Libre 2"
-    case libre2US      = "Libre 2 US"
-    case libre2CA      = "Libre 2 CA"
+    case libre2Gen2    = "Libre 2 Gen2"
     case libre3        = "Libre 3"
     case lingo         = "Lingo"
     case dexcomG6      = "Dexcom G6"
@@ -22,7 +21,7 @@ enum SensorType: String, CustomStringConvertible {
     case unknown       = "unknown"
 
     var description: String { rawValue }
-    var isALibre: Bool { self == .libre3 || self == .libre2 || self == .libre1 || self == .libreUS14day || self == .libreProH || self == .libre2US || self == .libre2CA || self == .lingo }
+    var isALibre: Bool { self == .libre3 || self == .libre2 || self == .libre1 || self == .libreUS14day || self == .libreProH || self == .libre2Gen2 || self == .lingo }
 }
 
 
