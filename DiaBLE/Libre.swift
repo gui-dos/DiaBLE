@@ -25,12 +25,26 @@ extension SensorType {
                 .unknown
             }
         }
-        // TODO:
-        // Libre 2 RU:  2B 0A 39 08 (Gen2)
-        // Libre 2+ LA: 2B OA 3A 08
-        // Libre 2+ US: 2C 0A 3A 02
-        // Libre 2+ EU: C6 09 31 01
     }
+}
+
+
+@Observable class Libre: Sensor {
+
+    // Libre 2+ EU: C6 09 31 01
+    // Libre 2+ US: 2C 0A 3A 02
+    // Libre 2+ LA: 2B OA 3A 08
+    // Libre 2  RU: 2B 0A 39 08 (Gen2)
+
+    var isAPlus: Bool {
+        patchInfo.count == 24 && generation == 1 ||
+        patchInfo.count > 0 && (
+            patchInfo[0] == 0xC6 ||
+            patchInfo[0] == 0x2C ||
+            patchInfo[0] == 0x2B && patchInfo[2] & 0x0F == 0xA
+        )
+    }
+
 }
 
 
@@ -99,11 +113,6 @@ func writeBits(_ buffer: Data, _ byteOffset: Int, _ bitOffset: Int, _ bitCount: 
         res[byte] = (res[byte] & ~(1 << bit) | (UInt8(bitValue) << bit))
     }
     return res
-}
-
-
-@Observable class Libre: Sensor {
-
 }
 
 

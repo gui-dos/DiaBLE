@@ -365,7 +365,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
             if sensor.patchInfo.count > 0 {
                 log("NFC: patch info: \(sensor.patchInfo.hex)")
-                log("NFC: sensor type: \(sensor.type.rawValue)\(sensor.patchInfo.hex.hasPrefix("a2") ? " (new 'A2' kind)" : sensor.patchInfo.hex.hasPrefix("c6") || sensor.generation == 1 ? " Plus" : "")")
+                log("NFC: sensor type: \(sensor.type.rawValue)\(sensor.patchInfo[0] == 0xA2 ? " (new 'A2' kind)" : (sensor as? Libre)?.isAPlus ?? false ? " Plus" : "")")
                 log("NFC: sensor region: \(sensor.region.description) (\(sensor.region.rawValue))")
                 log("NFC: sensor security generation [0-3]: \(sensor.securityGeneration)")
 
