@@ -102,7 +102,7 @@ class Libre2Gen2: Libre2 {
         let commandArg = Data([1, UInt8(command)])
         let result = p2(command: GEN2_CMD_GET_BLE_AUTHENTICATED_CMD, p1: authContext, commandArg, challenge)
         if result.data == nil {
-            _ = Gen2.endSession(context: authContext)
+            _ = endSession(context: authContext)
             return result.error != nil ? result.error!.rawValue : Gen2Error.GEN2_ERROR_PROCESS_ERROR.rawValue
         }
         output = result.data!
@@ -117,7 +117,7 @@ class Libre2Gen2: Libre2 {
         let commandArg = Data([0, UInt8(command)])
         let result = p2(command: GEN2_CMD_GET_NFC_AUTHENTICATED_CMD, p1: authContext, commandArg, challenge)
         if result.data == nil {
-            _ = Gen2.endSession(context: authContext)
+            _ = endSession(context: authContext)
             return result.error != nil ? result.error!.rawValue : Gen2Error.GEN2_ERROR_PROCESS_ERROR.rawValue
         }
         output = result.data!
@@ -213,7 +213,7 @@ class Libre2Gen2: Libre2 {
         let commandArg = Data([UInt8(i2), UInt8(output.count)])
         let result = p2(command: GEN2_CMD_VERIFY_RESPONSE, p1: context, commandArg, challenge)
         if result.data == nil {
-            _ = Gen2.endSession(context: context)
+            _ = endSession(context: context)
             return result.error != nil ? result.error!.rawValue : Gen2Error.GEN2_ERROR_PROCESS_ERROR.rawValue
         }
         output = result.data!
@@ -231,7 +231,7 @@ class Libre2Gen2: Libre2 {
         let commandArg = Data([7])
         let result = p2(command: GEN2_CMD_GET_PVALUES, p1: context, commandArg, nil)
         if result.data == nil {
-            _ = Gen2.endSession(context: context)
+            _ = endSession(context: context)
             return result.error != nil ? result.error!.rawValue : Gen2Error.GEN2_ERROR_PROCESS_ERROR.rawValue
         }
         // join the 7 bytes of GET_PVALUES result.data and the last 3 bytes of 9 of verifyOutput

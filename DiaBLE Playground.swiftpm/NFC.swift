@@ -437,7 +437,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
                 if sensor.securityGeneration == 2 {
 
-                    // TODO: use Gen2.communicateWithPatch(nfc: self)
+                    // TODO: use Libre2Gen2.communicateWithPatch(nfc: self)
 
                     // FIXME: OOP nfcAuth endpoint still offline
 

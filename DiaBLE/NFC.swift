@@ -434,6 +434,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
             do {
 
                 if sensor.securityGeneration == 2 {
+                    // TODO: use Libre2Gen2.communicateWithPatch(nfc: self)
                     securityChallenge = try await send(sensor.nfcCommand(.readChallenge))
                     log("NFC: Gen2 security challenge: \(securityChallenge.hex)")
                 }
