@@ -33,7 +33,7 @@ extension SensorType {
 
     var currentLifeCount: Int = 0
     var lastHistoricLifeCount: Int = 0
-    var lastHistoricDate: Date = .distantPast
+    var lastHistoricReadingDate: Date = .distantPast
 
 
     // Libre 2+ EU: C6 09 31 01

@@ -69,9 +69,8 @@ import Foundation
         "usingOOP": false,
         "oopCalibration": try! JSONEncoder().encode(Calibration()),
 
-        // TODO: rename to currentSensorUid/PatchInfo
-        "patchUid": Data(),
-        "patchInfo": Data()
+        "currentSensorUid": Data(),
+        "currentPatchInfo": Data()
     ]
 
 
@@ -298,12 +297,12 @@ import Foundation
         didSet { UserDefaults.standard.set(self.activeSensorCode, forKey: "activeSensorCode") }
     }
 
-    var patchUid: SensorUid = UserDefaults.standard.data(forKey: "patchUid")! {
-        didSet { UserDefaults.standard.set(self.patchUid, forKey: "patchUid") }
+    var currentSensorUid: SensorUid = UserDefaults.standard.data(forKey: "currentSensorUid")! {
+        didSet { UserDefaults.standard.set(self.currentSensorUid, forKey: "currentSensorUid") }
     }
 
-    var patchInfo: PatchInfo = UserDefaults.standard.data(forKey: "patchInfo")! {
-        didSet { UserDefaults.standard.set(self.patchInfo, forKey: "patchInfo") }
+    var currentPatchInfo: PatchInfo = UserDefaults.standard.data(forKey: "currentPatchInfo")! {
+        didSet { UserDefaults.standard.set(self.currentPatchInfo, forKey: "currentPatchInfo") }
     }
 
 }

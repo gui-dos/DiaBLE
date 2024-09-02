@@ -422,11 +422,11 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 sensor.state = .active
                 sensor.uid = (app.device as! Abbott).sensorUid
                 // TODO
-                settings.patchUid = sensor.uid
+                settings.currentSensorUid = sensor.uid
 
                 if settings.activeSensorSerial == app.device.serial {
-                    if !app.device.serial.isEmpty && !settings.patchInfo.isEmpty {
-                        sensor.patchInfo = settings.patchInfo
+                    if !app.device.serial.isEmpty && !settings.currentPatchInfo.isEmpty {
+                        sensor.patchInfo = settings.currentPatchInfo
 
                     } else {
                         sensor.serial = app.device.serial

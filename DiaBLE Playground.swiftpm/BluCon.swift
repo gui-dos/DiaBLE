@@ -142,7 +142,7 @@ import Foundation
             if dataHex.hasPrefix(ResponseType.sensorInfo.rawValue) {
                 sensorUid = Data(data[3...10])
                 sensor!.uid = sensorUid
-                settings.patchUid = sensorUid
+                settings.currentSensorUid = sensorUid
                 // FIXME: doesn't work with Libre 2
                 if let sensorState = SensorState(rawValue: data[17]) {
                     sensor!.state = sensorState
@@ -180,12 +180,12 @@ import Foundation
                 if currentRequest == .patchInfo {
                     let patchInfo = Data(data[3...])
                     sensor!.patchInfo = patchInfo
-                    settings.patchInfo = sensor!.patchInfo
+                    settings.currentPatchInfo = sensor!.patchInfo
                     log("\(name): patch info: \(sensor!.patchInfo.hex) (sensor type: \(sensor!.type.rawValue))")
                 } else if currentRequest == .patchUid {
                     sensorUid = Data(data[4...])
                     sensor!.uid = sensorUid
-                    settings.patchUid = sensorUid
+                    settings.currentSensorUid = sensorUid
                     settings.activeSensorSerial = sensor!.serial
                     log("\(name): patch uid: \(sensor!.uid.hex), serial number: \(sensor!.serial)")
                 }

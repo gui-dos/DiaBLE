@@ -86,7 +86,7 @@ import CoreBluetooth
             firmware = "\(data[2]).\(data[3])"
             hardware = "\(data[data.count - 2]).\(data[data.count - 1])"
             log("\(name): battery: \(battery), firmware: \(firmware), hardware: \(hardware)")
-            let libreType = settings.patchInfo.count > 0 ? SensorType(patchInfo: settings.patchInfo) : .unknown
+            let libreType = settings.currentPatchInfo.count > 0 ? SensorType(patchInfo: settings.currentPatchInfo) : .unknown
             if Double(firmware)! >= 2.6 && (libreType == .libre2 || libreType == .libreUS14day) {
                 write(Data([0x08, 0x01, 0x00, 0x00, 0x00, 0x2B]))
             } else {
@@ -102,12 +102,12 @@ import CoreBluetooth
             if response == .serialNumber {
                 sensorUid = Data(data[2...9])
                 sensor!.uid = sensorUid
-                settings.patchUid = sensorUid
+                settings.currentSensorUid = sensorUid
                 log("\(name): patch uid: \(sensor!.uid.hex)")
 
             } else if response == .patchInfo {
                 sensor!.patchInfo = Data(Double(firmware)! < 1.35 ? data[3...8] : data[5...10])
-                settings.patchInfo = sensor!.patchInfo
+                settings.currentPatchInfo = sensor!.patchInfo
                 settings.activeSensorSerial = sensor!.serial
                 log("\(name): patch info: \(sensor!.patchInfo.hex), sensor type: \(sensor!.type.rawValue), serial number: \(sensor!.serial)")
 

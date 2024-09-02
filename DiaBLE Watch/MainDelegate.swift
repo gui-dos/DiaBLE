@@ -252,20 +252,20 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
             debugLog("History quality flags: [\(sensor.history.map { "0" + String($0.dataQualityFlags,radix: 2).suffix(2) }.joined(separator: ", "))]")
         }
 
-        debugLog("Sensor uid: \(sensor.uid.hex), saved uid: \(settings.patchUid.hex), patch info: \(sensor.patchInfo.hex.count > 0 ? sensor.patchInfo.hex : "<nil>"), saved patch info: \(settings.patchInfo.hex)")
+        debugLog("Sensor uid: \(sensor.uid.hex), saved uid: \(settings.currentSensorUid.hex), patch info: \(sensor.patchInfo.hex.count > 0 ? sensor.patchInfo.hex : "<nil>"), saved patch info: \(settings.currentPatchInfo.hex)")
 
         if sensor.uid.count > 0 && sensor.patchInfo.count > 0 {
-            settings.patchUid = sensor.uid
-            settings.patchInfo = sensor.patchInfo
+            settings.currentSensorUid = sensor.uid
+            settings.currentPatchInfo = sensor.patchInfo
         }
 
-        if sensor.uid.count == 0 || settings.patchUid.count > 0 {
+        if sensor.uid.count == 0 || settings.currentSensorUid.count > 0 {
             if sensor.uid.count == 0 {
-                sensor.uid = settings.patchUid
+                sensor.uid = settings.currentSensorUid
             }
 
-            if sensor.uid == settings.patchUid {
-                sensor.patchInfo = settings.patchInfo
+            if sensor.uid == settings.currentSensorUid {
+                sensor.patchInfo = settings.currentPatchInfo
             }
         }
 

@@ -370,8 +370,8 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 log("NFC: sensor security generation [0-3]: \(sensor.securityGeneration)")
 
                 DispatchQueue.main.async { [self] in
-                    settings.patchUid = sensor.uid
-                    settings.patchInfo = sensor.patchInfo
+                    settings.currentSensorUid = sensor.uid
+                    settings.currentPatchInfo = sensor.patchInfo
                 }
             }
 
