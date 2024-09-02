@@ -31,6 +31,11 @@ extension SensorType {
 
 @Observable class Libre: Sensor {
 
+    var currentLifeCount: Int = 0
+    var lastHistoricLifeCount: Int = 0
+    var lastHistoricDate: Date = .distantPast
+
+
     // Libre 2+ EU: C6 09 31 01
     // Libre 2+ US: 2C 0A 3A 02
     // Libre 2+ LA: 2B OA 3A 08

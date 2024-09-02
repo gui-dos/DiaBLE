@@ -330,7 +330,7 @@ struct Details: View {
                         List {
                             ForEach(app.main.bluetoothDelegate.knownDevices.sorted(by: { $0.key < $1.key }), id: \.key) { uuid, device in
                                 HStack {
-                                    Text(device.name)
+                                    Text(device.name.replacing("an unnamed", with: "Unnamed"))
                                         .font(.callout)
                                         .foregroundStyle((app.device != nil) && uuid == app.device!.peripheral!.identifier.uuidString ? .yellow : .blue)
                                         .onTapGesture {
