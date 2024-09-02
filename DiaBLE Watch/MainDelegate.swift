@@ -327,6 +327,8 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
             entries += history.factoryTrend.dropFirst() + [Glucose(currentGlucose, date: sensor.lastReadingDate)]
             entries = entries.filter { $0.value > 0 && $0.id > -1 }
 
+            // TODO: Libre 3: delete older non-historical values (lifeCount not divisible by 5)
+
             Task {
 
                 let newEntries = (entries.filter { $0.date > healthKit?.lastDate ?? Calendar.current.date(byAdding: .hour, value: -8, to: Date())! })

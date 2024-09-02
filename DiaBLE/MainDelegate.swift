@@ -391,7 +391,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
             entries += history.factoryTrend.dropFirst() + [Glucose(currentGlucose, date: sensor.lastReadingDate)]
             entries = entries.filter { $0.value > 0 && $0.id > -1 }
 
-            // TODO
+            // TODO: Libre 3: delete older non-historical values (lifeCount not divisible by 5)
 
             Task {
 
