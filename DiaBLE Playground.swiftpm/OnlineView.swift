@@ -73,6 +73,11 @@ struct OnlineView: View {
                             if trend.isEmpty || lastMeasurement.id > trend[0].id {
                                 trend.insert(lastMeasurement.glucose, at: 0)
                             }
+                            if let sensor = app.sensor as? Libre3, history.factoryValues.count > 0 {
+                                sensor.currentLifeCount = lastMeasurement.id
+                                sensor.lastHistoricLifeCount = history.factoryValues[0].id
+                                sensor.lastHistoricReadingDate = history.factoryValues[0].date
+                            }
                             // keep only the latest 22 minutes considering the 17-minute latency of the historic values update
                             trend = trend.filter { lastMeasurement.id - $0.id < 22 }
                             history.factoryTrend = trend
