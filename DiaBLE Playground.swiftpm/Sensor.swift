@@ -31,6 +31,7 @@ enum SensorFamily: Int, CustomStringConvertible {
     case librePro   = 1
     case libre2     = 3
     case libre3     = 4
+    case libreSense = 7
 
     var description: String {
         switch self {
@@ -39,6 +40,7 @@ enum SensorFamily: Int, CustomStringConvertible {
         case .librePro:   "Libre Pro"
         case .libre2:     "Libre 2"
         case .libre3:     "Libre 3"
+        case .libreSense: "Libre Sense"
         }
     }
 }
@@ -130,6 +132,9 @@ enum SensorState: UInt8, CustomStringConvertible {
                     let generation = info[2] & 0x0F
                     if family == .libre2 {
                         securityGeneration = generation < 9 ? 1 : 2
+                    }
+                    if family == .libreSense {
+                        securityGeneration = generation < 4 ? 1 : 2
                     }
                 }
             } else {

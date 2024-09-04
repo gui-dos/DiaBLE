@@ -526,6 +526,10 @@ extension String {
 
     var outCryptoSequence: UInt16 = 0
 
+    var currentLifeCount: Int = 0
+    var lastHistoricLifeCount: Int = 0
+    var lastHistoricDate: Date = .distantPast
+
 
     func parsePatchInfo() {
 
