@@ -193,6 +193,9 @@ struct OnlineView: View {
 
                             Button {
                                 app.main.rescan()
+                                Task {
+                                    await reloadLibreLinkUp()
+                                }
                             } label: {
                                 Image(systemName: "arrow.clockwise.circle").font(.title)
                             }

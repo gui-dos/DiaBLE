@@ -146,6 +146,9 @@ struct OnlineView: View {
                 VStack(spacing: 0) {
                     Button {
                         app.main.rescan()
+                        Task {
+                            await reloadLibreLinkUp()
+                        }
                     } label: {
                         Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 16, height: 16)
                             .foregroundStyle(.blue)
