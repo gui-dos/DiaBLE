@@ -184,7 +184,7 @@ extension String {
         //     int16_t lifeCount;
         //     int16_t errorData;
         //     int16_t eventData;
-        //     int8_t index; // index==255 means no data
+        //     int8_t index;  // 255: no data
         // }
     }
 
