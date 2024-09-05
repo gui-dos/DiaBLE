@@ -204,8 +204,7 @@ let libre2DumpMap = [
 
                 if output.count == 6 {
                     log("NFC: enabled BLE streaming on \(type) \(serial) (unlock code: \(streamingUnlockCode), MAC address: \(Data(output.reversed()).hexAddress))")
-                    // "Publishing changes from background threads is not allowed"
-                    DispatchQueue.main.async { [self] in
+                    Task { @MainActor in
                         settings.activeSensorSerial = serial
                         settings.activeSensorAddress = Data(output.reversed())
                         initialPatchInfo = patchInfo

@@ -325,7 +325,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     }
                 }
                 sensor.patchInfo = patchInfo
-                DispatchQueue.main.async { [self] in
+                Task { @MainActor in
                     app.sensor = sensor
                 }
             }
@@ -371,7 +371,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 log("NFC: sensor region: \(sensor.region.description) (\(sensor.region.rawValue))")
                 log("NFC: sensor security generation [0-3]: \(sensor.securityGeneration)")
 
-                DispatchQueue.main.async { [self] in
+                Task { @MainActor in
                     settings.currentSensorUid = sensor.uid
                     settings.currentPatchInfo = sensor.patchInfo
                 }
@@ -474,7 +474,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 let lastReadingDate = Date()
 
                 // "Publishing changes from background threads is not allowed"
-                DispatchQueue.main.async { [self] in
+                Task { @MainActor in
                     app.lastReadingDate = lastReadingDate
                 }
                 sensor.lastReadingDate = lastReadingDate

@@ -52,14 +52,14 @@ class Nightscout: NSObject, Logging {
                 debugLog("Nightscout: response data: \(data.string)")
                 if let json = try? JSONSerialization.jsonObject(with: data) {
                     if let array = json as? [Any] {
-                        DispatchQueue.main.async {
+                        Task { @MainActor in
                             handler(data, response, error, array)
                         }
                     }
                 }
             } else if let error {
                 log("Nightscout: server error: \(error.localizedDescription)")
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     handler(data, response, error, [])
                 }
             }
@@ -192,7 +192,7 @@ class Nightscout: NSObject, Logging {
                     debugLog("Nightscout: delete \((200..<300).contains(status) ? "success" : "error") (\(status)): \(data.string)")
                 }
             }
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 handler?(data, response, error)
             }
         }.resume()
@@ -218,7 +218,7 @@ class Nightscout: NSObject, Logging {
                     debugLog("Nightscout: authorization \((200..<300).contains(status) ? "success" : "error") (\(status)): \(data.string)")
                 }
             }
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 handler?(data, response, error)
             }
         }.resume()

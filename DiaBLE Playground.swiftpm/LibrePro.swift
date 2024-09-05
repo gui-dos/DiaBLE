@@ -78,7 +78,7 @@ class LibrePro: Libre {
         let historyGap = 22 * 8 + historyIndex * 6 - history.count - fram.count
         let blankFRAM = historyGap > 0 ? Data(count: historyGap) : Data()
 
-        DispatchQueue.main.async { [self] in
+        Task { @MainActor in
             main.history.rawTrend  = trend
             main.history.rawValues = self.history
         }
@@ -183,7 +183,7 @@ class LibrePro: Libre {
         region = SensorRegion(rawValue: Int(fram[43])) ?? .unknown
 
         maxLife = Int(fram[46]) + Int(fram[47]) << 8   // footer[6...7]
-        DispatchQueue.main.async { [self] in
+        Task { @MainActor in
             main?.settings.activeSensorMaxLife = maxLife
         }
 
@@ -197,7 +197,7 @@ class LibrePro: Libre {
         let i6 = readBits(fram, b, 0x34, 0xc) << 2
 
         calibrationInfo = CalibrationInfo(i1: i1, i2: i2, i3: negativei3 ? -i3 : i3, i4: i4, i5: i5, i6: i6)
-        DispatchQueue.main.async { [self] in
+        Task { @MainActor in
             main?.settings.activeSensorCalibrationInfo = calibrationInfo
         }
     }
@@ -344,7 +344,7 @@ class LibrePro: Libre {
         main.debugLog("TEST: Libre Pro: trend: \(sensor.trend)")
         main.log("TEST: Libre Pro: history values: \(sensor.history.map(\.value))")
         main.debugLog("TEST: Libre Pro: history: \(sensor.history)")
-        DispatchQueue.main.async {
+        Task { @MainActor in
             main.history.rawTrend  = sensor.trend
             main.history.rawValues = sensor.history
         }
@@ -362,7 +362,7 @@ class LibrePro: Libre {
         main.debugLog("TEST: Libre Pro: trend: \(sensor.trend)")
         main.log("TEST: Libre Pro: history values: \(sensor.history.map(\.value))")
         main.debugLog("TEST: Libre Pro: history: \(sensor.history)")
-        DispatchQueue.main.async {
+        Task { @MainActor in
             main.history.rawTrend  = sensor.trend
             main.history.rawValues = sensor.history
         }

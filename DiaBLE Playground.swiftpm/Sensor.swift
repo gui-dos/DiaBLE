@@ -277,7 +277,7 @@ enum SensorState: UInt8, CustomStringConvertible {
         // fram[322...323] (footer[2..3]) corresponds to patchInfo[2...3]
         region = SensorRegion(rawValue: Int(fram[323])) ?? .unknown
         maxLife = Int(fram[326]) + Int(fram[327]) << 8
-        DispatchQueue.main.async { [self] in
+        Task { @MainActor in
             main?.settings.activeSensorMaxLife = maxLife
         }
 
@@ -290,7 +290,7 @@ enum SensorState: UInt8, CustomStringConvertible {
         let i6 = readBits(fram, 0x150, 0x34, 0xc) << 2
 
         calibrationInfo = CalibrationInfo(i1: i1, i2: i2, i3: negativei3 ? -i3 : i3, i4: i4, i5: i5, i6: i6)
-        DispatchQueue.main.async { [self] in
+        Task { @MainActor in
             main?.settings.activeSensorCalibrationInfo = calibrationInfo
         }
 

@@ -56,7 +56,7 @@ struct OnlineView: View {
                     libreLinkUpHistory = graphHistory.reversed()
                     libreLinkUpLogbookHistory = logbookHistory
                     if graphHistory.count > 0 {
-                        DispatchQueue.main.async {
+                        Task { @MainActor in
                             settings.lastOnlineDate = Date()
                             let lastMeasurement = libreLinkUpHistory[0]
                             app.lastReadingDate = lastMeasurement.glucose.date

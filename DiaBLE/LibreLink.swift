@@ -169,7 +169,7 @@ class LibreLinkUp: Logging {
                         if let redirect = data?["redirect"] as? Bool,
                            let region = data?["region"] as? String {
                             redirected = redirect
-                            DispatchQueue.main.async { [self] in
+                            Task { @MainActor in
                                 settings.libreLinkUpRegion = region
                             }
                             log("LibreLinkUp: redirecting to \(regionalSiteURL)/\(loginEndpoint) ")
@@ -185,7 +185,7 @@ class LibreLinkUp: Logging {
                            let authTicketData = try? JSONSerialization.data(withJSONObject: authTicketDict),
                            let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
                             log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
-                            DispatchQueue.main.async { [self] in
+                            Task { @MainActor in
                                 settings.libreLinkUpUserId = id
                                 settings.libreLinkUpPatientId = id  // avoid scraping patientId when following ourselves
                                 settings.libreLinkUpCountry = country
@@ -210,7 +210,7 @@ class LibreLinkUp: Logging {
                                         let regionIndex = server.firstIndex(of: "-")
                                         let region = regionIndex == nil ? defaultRegion : String(server[server.index(regionIndex!, offsetBy: 1) ... server.index(regionIndex!, offsetBy: 2)])
                                         log("LibreLinkUp: regional server: \(server), saved default region: \(region)")
-                                        DispatchQueue.main.async { [self] in
+                                        Task { @MainActor in
                                             settings.libreLinkUpRegion = region
                                         }
                                         if settings.userLevel >= .test {
@@ -248,7 +248,7 @@ class LibreLinkUp: Logging {
                                         let connection = data[0]
                                         let patientId = connection["patientId"] as! String
                                         log("LibreLinkUp: first patient Id: \(patientId)")
-                                        DispatchQueue.main.async { [self] in
+                                        Task { @MainActor in
                                             settings.libreLinkUpPatientId = patientId
                                         }
                                     }
@@ -357,7 +357,7 @@ class LibreLinkUp: Logging {
                         let sensorType = deviceTypes[deviceId]!
                         let activationTime = deviceActivationTimes[deviceId]!
                         let activationDate = Date(timeIntervalSince1970: Double(activationTime))
-                        DispatchQueue.main.async { [self] in
+                        Task { @MainActor in
                             if app.sensor == nil {
                                 app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Sensor(main: self.main) // TODO: Libre2Gen2
                                 app.sensor.type = sensorType
@@ -370,7 +370,7 @@ class LibreLinkUp: Logging {
                         }
                         let sensor = await main.app.sensor!
                         if sensor.serial.hasSuffix(serial) || deviceTypes.count == 1 {
-                            DispatchQueue.main.async { [self] in
+                            Task { @MainActor in
                                 sensor.activationTime = UInt32(activationTime)
                                 sensor.age = Int(Date().timeIntervalSince(activationDate)) / 60
                                 sensor.state = .active
@@ -394,7 +394,7 @@ class LibreLinkUp: Logging {
                             let lastGlucose = LibreLinkUpGlucose(glucose: Glucose(measurement.valueInMgPerDl, id: lifeCount, date: date, source: "LibreLinkUp"), color: measurement.measurementColor, trendArrow: measurement.trendArrow)
                             debugLog("LibreLinkUp: last glucose measurement: \(measurement) (JSON: \(lastGlucoseMeasurement))")
                             if lastGlucose.trendArrow != nil {
-                                DispatchQueue.main.async { [self] in
+                                Task { @MainActor in
                                     app.trendArrow = lastGlucose.trendArrow!
                                 }
                             }

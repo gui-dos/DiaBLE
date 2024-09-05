@@ -97,7 +97,7 @@ class HealthKit: Logging {
 
             if results.count > 0 {
                 let values = results.enumerated().map { Glucose(Int($0.1.quantity.doubleValue(for: self.glucoseUnit)), id: $0.0, date: $0.1.endDate, source: $0.1.sourceRevision.source.name + " " + $0.1.sourceRevision.source.bundleIdentifier) }
-                DispatchQueue.main.async { [self] in
+                Task { @MainActor in
                     main.history.storedValues = values
                     handler?(values)
                 }
