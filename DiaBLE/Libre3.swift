@@ -875,6 +875,27 @@ extension String {
     }
 
 
+    enum SensorError: Int {
+        case sensorTransmissionError = 0
+        case sensorNotActive         = 1
+        case sensorExpired           = 2
+        case sensorInWarmup          = 3
+        case sensorTerminated        = 4
+        case sensorInsertionFailure  = 5
+        case sensorNotCompatible     = 6
+        case sensorRemoved           = 7
+        case sensorAlreadyStarted    = 8
+        case sensorTemporaryProblem  = 9
+        case sensorHot               = 10
+        case sensorCold              = 11
+        case sensorResponseCorrupt   = 12
+        case sensorESACheck          = 13
+        case sensorNoError           = 14
+    //  case sensorNotYours          = 15  // TODO: Android only?
+        case invalidData             = 15
+    }
+
+
     struct MSLibre3Constants {
         static let LIBRE3_HISTORIC_LIFECOUNT_INTERVAL = 5
         static let LIBRE3_MAX_HISTORIC_READING_IN_PACKET = 10
