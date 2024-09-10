@@ -9,7 +9,7 @@
 
 ## Builds
 
-To build the project you have to duplicate the file _DiaBLE.xcconfig_, rename the copy to ***DiaBLEOverride.xcconfig*** (the missing reference displayed by Xcode in red should then point to it) and edit it by deleting the trailing lines after `// Remove the following...` and replacing `##TEAM_ID##` with your Apple Team ID so that the first line should read for example `DEVELOPMENT_TEAM = Z25SC9UDC8`.
+To build the project you have to duplicate the file _DiaBLE.xcconfig_, rename the copy to ***DiaBLEOverride.xcconfig*** (the missing reference displayed by Xcode in red should then point to it) and edit it by commenting out the trailing lines after `// Comment out the following...` and replacing `##TEAM_ID##` with your Apple Team ID so that the first line should read for example `DEVELOPMENT_TEAM = Z25SC9UDC8`.
 
 The NFC capabilities require a paid Apple Developer Program **annual membership**. If you won't [request](https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/) a *Critical Alert Notifications Entitlement* you have to edit out the lines `<key>com.apple.developer.usernotifications.critical-alerts</key>` `<true/>` from the _.entitlements_ files in the folders _DiaBLE_ and _DiaBLE Watch_.
 
