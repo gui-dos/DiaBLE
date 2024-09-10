@@ -350,11 +350,12 @@ class LibreLinkUp: Logging {
                             }
                         }
                     }
+                    let sensorTypes: [String: SensorType] = deviceTypes
                     if let device = connection["patientDevice"] as? [String: Any],
                        let deviceId = device["did"] as? String,
                        let alarms = device["alarms"] as? Bool,
                        let serial = deviceSerials[deviceId] {
-                        let sensorType = deviceTypes[deviceId]!
+                        let sensorType = sensorTypes[deviceId]!
                         let activationTime = deviceActivationTimes[deviceId]!
                         let activationDate = Date(timeIntervalSince1970: Double(activationTime))
                         Task { @MainActor in
@@ -367,10 +368,8 @@ class LibreLinkUp: Logging {
                                     app.sensor.serial = serial
                                 }
                             }
-                        }
-                        let sensor = await main.app.sensor!
-                        if sensor.serial.hasSuffix(serial) || deviceTypes.count == 1 {
-                            Task { @MainActor in
+                            let sensor = main.app.sensor!
+                            if sensor.serial.hasSuffix(serial) || sensorTypes.count == 1 {
                                 sensor.activationTime = UInt32(activationTime)
                                 sensor.age = Int(Date().timeIntervalSince(activationDate)) / 60
                                 sensor.state = .active
