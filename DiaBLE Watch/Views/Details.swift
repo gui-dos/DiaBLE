@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 
-struct Details: View {
+struct Details: View, LoggingView {
     @Environment(AppState.self) var app: AppState
     @Environment(Settings.self) var settings: Settings
 
@@ -339,7 +339,7 @@ struct Details: View {
                                                 if let appDevice = app.device {
                                                     app.main.centralManager.cancelPeripheralConnection(appDevice.peripheral!)
                                                 }
-                                                app.main.log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
+                                                log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                                                 app.main.settings.preferredTransmitter = .none
                                                 app.main.bluetoothDelegate.centralManager(app.main.centralManager, didDiscover: peripheral, advertisementData: [:], rssi: 0)
                                             }

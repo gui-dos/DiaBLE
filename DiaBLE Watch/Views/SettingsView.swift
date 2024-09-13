@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 
-struct SettingsView: View {
+struct SettingsView: View, LoggingView {
     @Environment(AppState.self) var app: AppState
     @Environment(Settings.self) var settings: Settings
 
@@ -22,7 +22,7 @@ struct SettingsView: View {
                     if settings.stoppedBluetooth {
                         app.main.centralManager.stopScan()
                         app.main.status("Stopped scanning")
-                        app.main.log("Bluetooth: stopped scanning")
+                        log("Bluetooth: stopped scanning")
                     } else {
                         app.main.rescan()
                     }

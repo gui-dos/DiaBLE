@@ -16,6 +16,14 @@ extension Logging {
     var settings: Settings       { main.settings }
 }
 
+protocol LoggingView {
+    var app: AppState { get }
+}
+
+extension View where Self: LoggingView {
+    func log(_ msg: String) { app.main?.log(msg) }
+}
+
 
 public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDelegate, UNUserNotificationCenterDelegate {
 

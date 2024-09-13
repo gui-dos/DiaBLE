@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 
-struct Monitor: View {
+struct Monitor: View, LoggingView {    
     @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(History.self) var history: History
@@ -182,7 +182,7 @@ struct Monitor: View {
                             Button {
                                 app.main.centralManager.stopScan()
                                 app.main.status("Stopped scanning")
-                                app.main.log("Bluetooth: stopped scanning")
+                                log("Bluetooth: stopped scanning")
                             } label: {
                                 Image(systemName: "stop.circle").resizable().frame(width: 32, height: 32)
                             }

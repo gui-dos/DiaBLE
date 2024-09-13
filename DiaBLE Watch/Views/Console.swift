@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 
-struct Console: View {
+struct Console: View, LoggingView {
     @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
@@ -131,7 +131,7 @@ struct Console: View {
                     Button {
                         app.main.centralManager.stopScan()
                         app.main.status("Stopped scanning")
-                        app.main.log("Bluetooth: stopped scanning")
+                        log("Bluetooth: stopped scanning")
                     } label: {
                         Image(systemName: "octagon").resizable().frame(width: 24, height: 24)
                             .overlay((Image(systemName: "hand.raised.fill").resizable().frame(width: 12, height: 12).offset(x: 1)))
@@ -239,7 +239,7 @@ struct Console: View {
 
                 Button {
                     settings.logging.toggle()
-                    app.main.log("\(settings.logging ? "Log started" : "Log stopped") \(Date().local)")
+                    log("\(settings.logging ? "Log started" : "Log stopped") \(Date().local)")
                 } label: {
                     VStack {
                         Image(systemName: settings.logging ? "stop.circle" : "play.circle").resizable().frame(width: 24, height: 24)

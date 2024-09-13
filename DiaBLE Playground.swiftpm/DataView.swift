@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 
-struct DataView: View {
+struct DataView: View, LoggingView {
     @Environment(AppState.self) var app: AppState
     @Environment(History.self) var history: History
     @Environment(Log.self) var log: Log
@@ -190,7 +190,7 @@ struct DataView: View {
                             .task {
                                 if let (values, _) = try? await app.main.nightscout?.read() {
                                     history.nightscoutValues = values
-                                    app.main.log("Nightscout: values read count \(history.nightscoutValues.count)")
+                                    log("Nightscout: values read count \(history.nightscoutValues.count)")
                                 }
                             }
                         }

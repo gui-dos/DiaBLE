@@ -14,7 +14,7 @@ extension MeasurementColor {
 }
 
 
-struct OnlineView: View {
+struct OnlineView: View, LoggingView {
     @Environment(AppState.self) var app: AppState
     @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
@@ -266,7 +266,7 @@ struct OnlineView: View {
                 .task {
                     if let (values, _) = try? await app.main.nightscout?.read() {
                         history.nightscoutValues = values
-                        app.main.log("Nightscout: values read count \(history.nightscoutValues.count)")
+                        log("Nightscout: values read count \(history.nightscoutValues.count)")
                     }
                 }
             }
