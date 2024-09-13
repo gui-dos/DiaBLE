@@ -22,6 +22,7 @@ protocol LoggingView {
 
 extension View where Self: LoggingView {
     func log(_ msg: String) { app.main?.log(msg) }
+    func debugLog(_ msg: String) { app.main?.debugLog(msg) }
 }
 
 

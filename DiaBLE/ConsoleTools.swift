@@ -190,9 +190,9 @@ struct ShellView: View, LoggingView {
                                                     }
                                                     realm = try Realm(configuration: config)
                                                     if !file.contains("decrypted") {
-                                                        app.main.debugLog("Realm: opened encrypted \(tridentContainer)/Documents/\(file) by using the key \(tridentRealmKey)")
+                                                        debugLog("Realm: opened encrypted \(tridentContainer)/Documents/\(file) by using the key \(tridentRealmKey)")
                                                     } else {
-                                                        app.main.debugLog("Realm: opened already decrypted \(tridentContainer)/Documents/\(file)")
+                                                        debugLog("Realm: opened already decrypted \(tridentContainer)/Documents/\(file)")
                                                     }
                                                     let sensors = realm.objects(SensorEntity.self)
                                                     log("Realm: sensors: \(sensors)")
