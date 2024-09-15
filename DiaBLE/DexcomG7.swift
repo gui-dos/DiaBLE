@@ -389,6 +389,19 @@ import CoreBluetooth
                 log("\(tx.name): battery info response: status: 0x\(status.hex), static voltage A: \(voltageA), dynamic voltage B: \(voltageB), run time: \(runtimeDays) days, temperature: \(temperature)")
 
 
+            // struct G7TxController.G7StaticInfo {
+            //     let apiVersion: Swift.UInt
+            //     var firmwareVersion: Swift.String
+            //     var softwareNumber: Swift.UInt
+            //     var siliconVersion: Swift.UInt
+            //     var algorithmVersion: Swift.UInt
+            //     var hardwareVersion: Swift.UInt
+            //     var maxRuntime: Swift.UInt
+            //     var sessionLength: Swift.UInt
+            //     var warmupLength: Swift.UInt
+            // }
+
+
             case .transmitterVersion:
                 // TODO: i.e. 4a 00 20c06852 2a340000 30454141 443499bb8c00 (20 bytes)
                 let status = data[1]
