@@ -25,11 +25,11 @@ extension String {
         /// advertising via BLE already 10/15 minutes after activation
         case paired             = 4
 
-        /// if Trident is not run on the 15th day, still advertising further than 12 hours, almost 24
+        /// if Trident is not run on the final day, still advertising for further 24 hours
         case expired            = 5
 
-        /// Trident sent the shutdown command as soon as run on the 15th day or
-        /// the sensor stopped advertising via BLE by itself on the 16th day anyway
+        /// Trident sent the shutdown command as soon as run on the final day or
+        /// the sensor stopped advertising via BLE by itself on the following day anyway
         case terminated         = 6
 
         /// detected for a sensor that fell off
