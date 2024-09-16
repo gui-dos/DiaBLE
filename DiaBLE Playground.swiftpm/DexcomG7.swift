@@ -269,7 +269,9 @@ import CoreBluetooth
                 log("\(tx.name): glucose value (EGV): status: 0x\(status.hex), message timestamp: \(txTime.formattedInterval), sensor activation date: \(tx.activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(egvAge) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), algorithm state: \(Dexcom.AlgorithmState(rawValue: algorithmState)?.description ?? "unknown") (0x\(algorithmState.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
                 // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                 if main.settings.userLevel >= .test {
-                    let backfillCmd = Opcode.backfill.data + (timestamp - 180 * 60).data + (timestamp - 5 * 60).data
+                    let startTime = timestamp > 3 * 60 * 60 ? timestamp - 3 * 60 * 60 : 5 * 60
+                    let endTime = timestamp - 5 * 60
+                    let backfillCmd = Opcode.backfill.data + startTime.data + endTime.data
                     log("TEST: sending \(tx.name) backfill 3 hours command 0x\(backfillCmd.hex)")
                     tx.write(backfillCmd, .withResponse)
                 }

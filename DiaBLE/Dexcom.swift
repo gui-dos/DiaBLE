@@ -77,7 +77,10 @@ import CoreBluetooth
         // Control
         case disconnectTx = 0x09
 
-        case exchangePakePayload = 0x0a  // Auth ONE/G7: 0A00, 0A01, 0A02 sent during initial pairing
+        case exchangePakePayload = 0x0a  // ONE/G7: 0A00, 0A01, 0A02 J-PAKE phases during initial pairing
+        case certificateExchange = 0x0b
+        case proofOfPossession = 0x0c
+
         case changeAppLevelKeyTx = 0x0f
         case appLevelKeyAcceptedTx = 0x10
 
