@@ -43,8 +43,8 @@ import CoreBluetooth
         case requestBond                = 0x07
         case requestBondResponse        = 0x08
         case exchangePakePayload        = 0x0a
-        case certInfo                   = 0x0b  // keks
-        case signChallenge              = 0x0c  // keks
+        case certificateExchange        = 0x0b  // keks: certInfo
+        case proofOfPossession          = 0x0c  // keks: signChallenge
 
         var data: Data { Data([rawValue]) }
     }
@@ -96,7 +96,7 @@ import CoreBluetooth
     // notify 3535  03 + 16 bytes
     // write  3535  04 + 8 bytes
     // notify 3535  05 01 02
-    // write  3535  0B00 + 4 bytes
+    // write  3535  0B00 + 4 bytes     // certificateExchange phase 0
     // notify 3538  20 * 6 bytes
     // notify 3535  0B0000 + 4 bytes
     // notify 3538  20 * 18 + 12 bytes
@@ -108,11 +108,11 @@ import CoreBluetooth
     // write  3538  20 * 23/22 + 6 bytes  // *21+14 when repairing
     // write  3535  0B02 0000 0000
     // notify 3535  0B00 0200 0000 00
-    // write  3535  0C + 16 bytes
+    // write  3535  0C + 16 bytes      // proofOfPossession
     // notify 3538  20 * 3 + 4 bytes
     // notify 3535  0C00 + 16 bytes
     // write  3538  20 * 3 + 4 bytes
-    // write  3535  06 + byte
+    // write  3535  06 19              // keepConnectionAlive 25
     // notify 3535  06 00
     // write  3535  07
     // notify 3535  07 00
