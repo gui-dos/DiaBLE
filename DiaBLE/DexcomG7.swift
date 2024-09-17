@@ -273,7 +273,7 @@ import CoreBluetooth
                     let startTime = timestamp > backfillMinutes * 60 ? timestamp - backfillMinutes * 60 : 5 * 60
                     let endTime = timestamp - 5 * 60
                     let backfillCmd = Opcode.backfill.data + startTime.data + endTime.data
-                    log("TEST: sending \(tx.name) backfill 3 hours command 0x\(backfillCmd.hex)")
+                    log("TEST: sending \(tx.name) backfill \(backfillMinutes) minutes command 0x\(backfillCmd.hex)")
                     tx.write(backfillCmd, .withResponse)
                 }
                 let item = Glucose(value != nil ? Int(value!) : -1, trendRate: Double(trend ?? 0), id: Int(Double(timestamp) / 60 / 5), date: date)

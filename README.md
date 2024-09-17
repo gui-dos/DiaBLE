@@ -15,7 +15,7 @@ The NFC capabilities require a paid Apple Developer Program **annual membership*
 
 A public beta of DiaBLE is availaBLE at **[TestFlight](https://testflight.apple.com/join/H48doU3l)**: I'll periodically expunge anonymous users I didn't invite or who didn't sponsor me through PayPal $-). If you own an iPad you can download the [zipped archive](https://github.com/gui-dos/DiaBLE/archive/refs/heads/main.zip) of this repository and just tap _DiaBLE Playground.swiftpm_ to test the corresponding features and even more past legacy ones.
 
-Currently I am targeting only the **latest betas of Xcode 16 and iOS 18** and focusing on the new **Libre 3** and **Dexcom G7**. Please refer to the [**TODOs**](https://github.com/gui-dos/DiaBLE/blob/main/TODO.md) list for the up-to-date status of all the current limitations and known bugs of this **prototype**.
+Currently I am targeting only the latest betas of Xcode and iOS and focusing on the new **Libre 3** and **Dexcom G7**. Please refer to the [**TODOs**](https://github.com/gui-dos/DiaBLE/blob/main/TODO.md) list for the up-to-date status of all the current limitations and known bugs of this **prototype**.
 
 ## Warnings
 
