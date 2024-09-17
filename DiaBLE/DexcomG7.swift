@@ -108,10 +108,10 @@ import CoreBluetooth
     // write  3538  20 * 23/22 + 6 bytes  // *21+14 when repairing
     // write  3535  0B02 0000 0000
     // notify 3535  0B00 0200 0000 00
-    // write  3535  0C + 16 bytes      // proofOfPossession
+    // write  3535  0C + 16 bytes      // proofOfPossession challenge
     // notify 3538  20 * 3 + 4 bytes
     // notify 3535  0C00 + 16 bytes
-    // write  3538  20 * 3 + 4 bytes
+    // write  3538  20 * 3 + 4 bytes   // proofOfPossession signature
     // write  3535  06 19              // keepConnectionAlive 25
     // notify 3535  06 00
     // write  3535  07
@@ -268,8 +268,9 @@ import CoreBluetooth
                 let calibration = data[18]
                 log("\(tx.name): glucose value (EGV): status: 0x\(status.hex), message timestamp: \(txTime.formattedInterval), sensor activation date: \(tx.activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(egvAge) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), algorithm state: \(Dexcom.AlgorithmState(rawValue: algorithmState)?.description ?? "unknown") (0x\(algorithmState.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
                 // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
-                if main.settings.userLevel >= .test {
-                    let startTime = timestamp > 3 * 60 * 60 ? timestamp - 3 * 60 * 60 : 5 * 60
+                let backfillMinutes = UInt32(main.settings.backfillMinutes)
+                if main.settings.userLevel >= .test && backfillMinutes > 0 {
+                    let startTime = timestamp > backfillMinutes * 60 ? timestamp - backfillMinutes * 60 : 5 * 60
                     let endTime = timestamp - 5 * 60
                     let backfillCmd = Opcode.backfill.data + startTime.data + endTime.data
                     log("TEST: sending \(tx.name) backfill 3 hours command 0x\(backfillCmd.hex)")

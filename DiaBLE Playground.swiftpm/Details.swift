@@ -334,6 +334,16 @@ struct Details: View, LoggingView {
                                 .foregroundStyle(.blue)
                         }
 
+
+                        HStack {
+                            Text("Backfill Minutes")
+                            TextField("Backfill Minutes", value: $settings.backfillMinutes, formatter: NumberFormatter())
+                                .keyboardType(.numbersAndPunctuation)
+                                .multilineTextAlignment(.trailing)
+                                .foregroundStyle(.blue)
+                        }
+
+
                         HStack {
                             Spacer()
                             Button {

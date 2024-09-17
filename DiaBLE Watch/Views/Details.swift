@@ -312,6 +312,15 @@ struct Details: View, LoggingView {
                                 .foregroundStyle(.blue)
                         }
 
+                        HStack {
+                            Text("Backfill Minutes")
+                            Spacer(minLength: 32)
+                            TextField("Backfill Minutes", value: $settings.backfillMinutes,
+                                      formatter: NumberFormatter())
+                            .multilineTextAlignment(.trailing)
+                            .foregroundStyle(.blue)
+                        }
+
                         Button {
                             app.main.rescan()
                         } label: {

@@ -64,6 +64,8 @@ import Foundation
         "activeTransmitterSerial": "",
         "activeSensorCode": "",
 
+        "backfillMinutes": 0,
+
         "calibrating": false,
         "calibration": try! JSONEncoder().encode(Calibration()),
         "usingOOP": false,
@@ -295,6 +297,10 @@ import Foundation
 
     var activeSensorCode: String = UserDefaults.standard.string(forKey: "activeSensorCode")! {
         didSet { UserDefaults.standard.set(self.activeSensorCode, forKey: "activeSensorCode") }
+    }
+
+    var backfillMinutes: Int = UserDefaults.standard.integer(forKey: "backfillMinutes") {
+        didSet { UserDefaults.standard.set(self.backfillMinutes, forKey: "backfillMinutes") }
     }
 
     var currentSensorUid: SensorUid = UserDefaults.standard.data(forKey: "currentSensorUid")! {
