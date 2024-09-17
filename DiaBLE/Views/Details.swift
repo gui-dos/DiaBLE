@@ -336,10 +336,21 @@ struct Details: View, LoggingView {
 
                         HStack {
                             Text("Backfill Minutes")
-                            TextField("Backfill Minutes", value: $settings.backfillMinutes, formatter: NumberFormatter())
-                                .keyboardType(.numbersAndPunctuation)
-                                .multilineTextAlignment(.trailing)
-                                .foregroundStyle(.blue)
+                            HStack(spacing: 0) {
+                                Spacer()
+                                if settings.backfillMinutes > 0 {
+                                    Button {
+                                        settings.backfillMinutes = 0
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                    }
+                                }
+                                TextField("Backfill Minutes", value: $settings.backfillMinutes, formatter: NumberFormatter())
+                                    .keyboardType(.numbersAndPunctuation)
+                                    .multilineTextAlignment(.trailing)
+                                    .fixedSize()
+                            }
+                            .foregroundStyle(.tint)
                         }
 
                         HStack {
