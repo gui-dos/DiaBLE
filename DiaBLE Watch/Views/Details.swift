@@ -314,15 +314,16 @@ struct Details: View, LoggingView {
 
                         HStack(spacing: 0) {
                             Text("Backfill Minutes")
-                            Spacer(minLength: 10)
+                            Spacer(minLength: 8)
                             if settings.backfillMinutes > 0 {
                                 Button {
                                     settings.backfillMinutes = 0
                                 } label: {
                                     Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(.blue)
                                 }
                             }
-                            Spacer(minLength: 10)
+                            Spacer(minLength: 8)
                             TextField("Backfill Minutes", value: $settings.backfillMinutes,
                                       formatter: NumberFormatter())
                             .multilineTextAlignment(.trailing)
