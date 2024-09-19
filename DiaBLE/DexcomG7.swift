@@ -138,25 +138,29 @@ import CoreBluetooth
     //     let txResponse: G7TxController.TransmitterResponseCode
     // }
 
-    // enum G7TxController.TransmitterResponseCode {
-    //     case success         = 0
-    //     case notPermitted    = 1
-    //     case notFound        = 2
-    //     case ioError         = 3
-    //     case badHandle       = 4
-    //     case tryLater        = 5
-    //     case outOfMemory     = 6
-    //     case noAccess        = 7
-    //     case segfault        = 8
-    //     case busy            = 9
-    //     case badArgument     = 10
-    //     case noSpace         = 11
-    //     case badRange        = 12
-    //     case notImplemented  = 13
-    //     case timeout         = 14
-    //     case protocolError   = 15
-    //     case unexpectedError = 16
-    // }
+
+    enum TransmitterResponseCode: Int {
+        case unknown         = -1
+        case success         = 0
+        case notPermitted    = 1
+        case notFound        = 2
+        case ioError         = 3
+        case badHandle       = 4
+        case tryLater        = 5
+        case outOfMemory     = 6
+        case noAccess        = 7
+        case segfault        = 8
+        case busy            = 9
+        case badArgument     = 10
+        case noSpace         = 11
+        case badRange        = 12
+        case notImplemented  = 13
+        case timeout         = 14
+        case protocolError   = 15
+        case unexpectedError = 16
+
+        var lowercasedWords: String { String(describing: self).replacing(#/[[:upper:]]/#) { " " + $0.output }.lowercased() }
+    }
 
 
     /// called by Dexcom Transmitter class
@@ -164,6 +168,7 @@ import CoreBluetooth
 
         let opCode = Opcode(rawValue: data[0]) ?? .unknown
         let tx = transmitter as! Dexcom
+        let txResponseCode = TransmitterResponseCode(rawValue: Int(data[1])) ?? .unknown
 
         switch Dexcom.UUID(rawValue: uuid) {
 
