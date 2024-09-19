@@ -251,7 +251,6 @@ import CoreBluetooth
                 //     var timeStamp: Swift.UInt32
                 // }
 
-                let status = data[1]
                 let txTime = UInt32(data[2..<6])
                 tx.activationDate = Date.now - TimeInterval(txTime)
                 activationTime = UInt32(tx.activationDate.timeIntervalSince1970)
@@ -271,7 +270,7 @@ import CoreBluetooth
                 let predictionData = UInt16(data[16..<18])
                 let predictedValue: UInt16? = predictionData != 0xffff ? predictionData & 0xfff : nil
                 let calibration = data[18]
-                log("\(tx.name): glucose value (EGV): status: 0x\(status.hex), message timestamp: \(txTime.formattedInterval), sensor activation date: \(tx.activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(egvAge) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), algorithm state: \(Dexcom.AlgorithmState(rawValue: algorithmState)?.description ?? "unknown") (0x\(algorithmState.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
+                log("\(tx.name): glucose value (EGV): response code: \(txResponseCode.lowercasedWords), message timestamp: \(txTime.formattedInterval), sensor activation date: \(tx.activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(egvAge) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), algorithm state: \(Dexcom.AlgorithmState(rawValue: algorithmState)?.description ?? "unknown") (0x\(algorithmState.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
                 // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                 let backfillMinutes = UInt32(main.settings.backfillMinutes)
                 if main.settings.userLevel >= .test && backfillMinutes > 0 {
@@ -309,7 +308,6 @@ import CoreBluetooth
                 //     let lastProcessingUpdateTime: Swift.UInt32
                 // }
 
-                let status = data[1]
                 let sessionNumber = data[2]
                 let sessionSignature = UInt32(data[3...6])
                 let lastBGValue = UInt16(data[7...8])
@@ -318,13 +316,12 @@ import CoreBluetooth
                 let calibrationsPermitted = data[14] != 0
                 let lastBGDisplay = Dexcom.DisplayType(rawValue: Int(data[15]))!
                 let lastProcessingUpdateTime = TimeInterval(UInt32(data[16...19]))
-                log("\(tx.name): calibration bounds: status: \(status), session number: \(sessionNumber), session signature: \(sessionSignature.hex), last BG value: \(lastBGValue), last calibration time: \(lastCalibrationTime.formattedInterval), calibration processing status: \(String(describing: calibrationProcessingStatus)), calibrations permitted: \(calibrationsPermitted), last BG display: \(String(describing: lastBGDisplay)), last processing update time: \(lastProcessingUpdateTime.formattedInterval)")
+                log("\(tx.name): calibration bounds: response code: \(txResponseCode.lowercasedWords), session number: \(sessionNumber), session signature: \(sessionSignature.hex), last BG value: \(lastBGValue), last calibration time: \(lastCalibrationTime.formattedInterval), calibration processing status: \(String(describing: calibrationProcessingStatus)), calibrations permitted: \(calibrationsPermitted), last BG display: \(String(describing: lastBGDisplay)), last processing update time: \(lastProcessingUpdateTime.formattedInterval)")
 
 
             case .diagnosticData:
                 // TODO: i. e. 51 00 00 a0160000 9a44 ea430200 ec5f0200 (17 bytes)
                 // TODO: DataStreamType and DataStreamFilterType first bytes
-                let status = data[1]
                 enum DiagnosticDataResult: UInt8 { case success, empty, truncated }
                 let backfillStatus = DiagnosticDataResult(rawValue: data[2])!
                 let bufferLength = UInt32(data[3...6])
@@ -332,7 +329,7 @@ import CoreBluetooth
                 let startTime = TimeInterval(UInt32(data[9...12]))
                 let endTime = TimeInterval(UInt32(data[13...16]))
                 // TODO
-                log("\(tx.name): backfill: status: \(status), backfill status: \(String(describing: backfillStatus)), buffer length: \(bufferLength), buffer CRC: \(bufferCRC.hex), start time: \(startTime.formattedInterval), end time: \(endTime.formattedInterval)")
+                log("\(tx.name): backfill: response code: \(txResponseCode.lowercasedWords), backfill status: \(String(describing: backfillStatus)), buffer length: \(bufferLength), buffer CRC: \(bufferCRC.hex), start time: \(startTime.formattedInterval), end time: \(endTime.formattedInterval)")
                 var packets = [Data]()
                 for i in 0 ..< (tx.buffer.count + 19) / 20 {
                     packets.append(Data(tx.buffer[i * 20 ..< min((i + 1) * 20, tx.buffer.count)]))
@@ -344,7 +341,6 @@ import CoreBluetooth
 
             case .backfill:
                 // TODO: i. e. 59 00 00 3F000000 AB93 3802 E2960200 EA9D0200 (19 bytes)
-                let status = data[1]
                 enum EGVBackfillResult: UInt8 { case success, noRecord, oversized }
                 let backfillStatus = EGVBackfillResult(rawValue: data[2])!
                 let length = UInt32(data[3...6])
@@ -352,7 +348,7 @@ import CoreBluetooth
                 let firstSequenceNumber = UInt16(data[9...10])
                 let firstTimestamp = TimeInterval(UInt32(data[11...14]))
                 let lastTimestamp = TimeInterval(UInt32(data[15...18]))
-                log("\(tx.name): backfill response: status: \(status), backfill status: \(String(describing: backfillStatus)), buffer length: \(length), buffer CRC: \(crc.hex), valid CRC: \(crc == tx.buffer.crc), first sequence number: \(firstSequenceNumber), first timestamp: \(firstTimestamp.formattedInterval), last timestamp: \(lastTimestamp.formattedInterval)")
+                log("\(tx.name): backfill: response code: \(txResponseCode.lowercasedWords), backfill status: \(String(describing: backfillStatus)), buffer length: \(length), buffer CRC: \(crc.hex), valid CRC: \(crc == tx.buffer.crc), first sequence number: \(firstSequenceNumber), first timestamp: \(firstTimestamp.formattedInterval), last timestamp: \(lastTimestamp.formattedInterval)")
                 var packets = [Data]()
                 for i in 0 ..< (tx.buffer.count / 9) {
                     packets.append(Data(tx.buffer[i * 9 ..< min((i + 1) * 9, tx.buffer.count)]))
@@ -389,12 +385,11 @@ import CoreBluetooth
 
 
             case .batteryStatus:
-                let status = data[1]
                 let voltageA = Int(UInt16(data[2...3]))
                 let voltageB = Int(UInt16(data[4...5]))
                 let runtimeDays = Int(data[6])
                 let temperature = Int(data[7])
-                log("\(tx.name): battery info response: status: 0x\(status.hex), static voltage A: \(voltageA), dynamic voltage B: \(voltageB), run time: \(runtimeDays) days, temperature: \(temperature)")
+                log("\(tx.name): battery status: response code: \(txResponseCode.lowercasedWords), static voltage A: \(voltageA), dynamic voltage B: \(voltageB), run time: \(runtimeDays) days, temperature: \(temperature)")
 
 
             // struct G7TxController.G7StaticInfo {
@@ -412,7 +407,6 @@ import CoreBluetooth
 
             case .transmitterVersion:
                 // TODO: i.e. 4a 00 20c06852 2a340000 30454141 443499bb8c00 (20 bytes)
-                let status = data[1]
                 let versionMajor = data[2]
                 let versionMinor = data[3]
                 let versionRevision = data[4]
@@ -423,28 +417,26 @@ import CoreBluetooth
                 let siliconVersion = UInt32(data[10...13])
                 let serialNumber: UInt64 = UInt64(data[14]) + UInt64(data[15]) << 8 + UInt64(data[16]) << 16 + UInt64(data[17]) << 24 + UInt64(data[18]) << 32 + UInt64(data[19]) << 40
                 serial = String(serialNumber)
-                log("\(tx.name): version response: status: \(status), firmware: \(firmwareVersion), software number: \(swNumber), silicon version: \(siliconVersion) (0x\(siliconVersion.hex)), serial number: \(serialNumber)")
+                log("\(tx.name): transmitter version: response code: \(txResponseCode.lowercasedWords), firmware: \(firmwareVersion), software number: \(swNumber), silicon version: \(siliconVersion) (0x\(siliconVersion.hex)), serial number: \(serialNumber)")
 
 
             case .transmitterVersionExtended:
                 // TODO: i.e. 52 00 c0d70d00 5406 02010404 ff 0c00 (15 bytes)
-                let status = data[1]
                 let sessionLength = TimeInterval(UInt32(data[2...5]))
                 maxLife = Int(UInt32(data[2...5]) / 60)  // inlcuding 12h grace period
                 let warmupLength = TimeInterval(UInt16(data[6...7]))
                 let algorithmVersion = UInt32(data[8...11])
                 let hardwareVersion = Int(data[12])
                 let maxLifetimeDays = UInt16(data[13...14])
-                log("\(tx.name): extended version response: status: \(status), session length: \(sessionLength.formattedInterval), warmup length: \(warmupLength.formattedInterval), algorithm version: 0x\(algorithmVersion.hex), hardware version: \(hardwareVersion), max lifetime days: \(maxLifetimeDays)")
+                log("\(tx.name): extended transmission version: response code: \(txResponseCode.lowercasedWords), session length: \(sessionLength.formattedInterval), warmup length: \(warmupLength.formattedInterval), algorithm version: 0x\(algorithmVersion.hex), hardware version: \(hardwareVersion), max lifetime days: \(maxLifetimeDays)")
 
 
             case .encryptionInfo:
                 // i.e. 38 00 84000000
-                let status = data[1]
                 let bufferLength = UInt32(data[2...5])
                 // TODO: buffer starting with 02000000
                 let dataStreamType = Dexcom.DataStreamType(rawValue: Int(tx.buffer[0]))!
-                log("\(tx.name): encryption info: status: \(status), buffer length: \(bufferLength), stream type: \(String(describing: dataStreamType)), encryption info: \(tx.buffer.hex)")
+                log("\(tx.name): encryption info: response code: \(txResponseCode.lowercasedWords), buffer length: \(bufferLength), stream type: \(String(describing: dataStreamType)), encryption info: \(tx.buffer.hex)")
                 tx.buffer = Data()
 
 
