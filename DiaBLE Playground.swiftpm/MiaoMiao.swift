@@ -144,7 +144,7 @@ import CoreBluetooth
                     // https://github.com/dabear/LibreOOPAlgorithm/blob/master/app/src/main/java/com/hg4/oopalgorithm/oopalgorithm/AlgorithmRunner.java
                     sensor!.patchInfo = Data([0xDF, 0x00, 0x00, 0x01, 0x01, 0x02])
                 }
-                sensor!.fram = Data(buffer[18 ..< 18 + framBlocks * 8])
+                (sensor! as! Libre).fram = Data(buffer[18 ..< 18 + framBlocks * 8])
 
                 main.status("\(sensor!.type)  +  \(name)")
             }

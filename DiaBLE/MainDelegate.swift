@@ -256,7 +256,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
 
     func parseSensorData(_ sensor: Sensor) {
 
-        sensor.detailFRAM()
+        (sensor as? Libre)?.detailFRAM()
 
         if sensor.history.count > 0 || sensor.trend.count > 0 {
 

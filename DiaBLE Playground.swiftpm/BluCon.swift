@@ -200,7 +200,7 @@ import Foundation
                 log("\(name): partial buffer size: \(buffer.count)")
                 if buffer.count == 344 {
                     write(request: .sleep)
-                    sensor!.fram = Data(buffer)
+                    (sensor! as! Libre).fram = Data(buffer)
                     main.status("\(sensor!.type)  +  \(name)")
                 }
             }

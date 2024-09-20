@@ -21,6 +21,8 @@ extension NFC {
 
     func execute(_ taskRequest: TaskRequest) async throws {
 
+        let sensor = self.sensor as! Libre
+
         switch taskRequest {
 
 

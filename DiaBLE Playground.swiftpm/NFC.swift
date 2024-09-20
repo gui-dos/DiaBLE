@@ -412,7 +412,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
                     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
                     if sensor.type != .libre3 {
-                        sensor.detailFRAM()
+                        (sensor as! Libre).detailFRAM()
                     }
 
                     taskRequest = .none
@@ -473,7 +473,6 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
                 let lastReadingDate = Date()
 
-                // "Publishing changes from background threads is not allowed"
                 Task { @MainActor in
                     app.lastReadingDate = lastReadingDate
                 }
@@ -496,7 +495,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     }
                 }
 
-                sensor.fram = Data(data)
+                (sensor as! Libre).fram = Data(data)
 
             } catch {
                 AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
@@ -504,7 +503,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
             }
 
             if taskRequest == .readFRAM {
-                sensor.detailFRAM()
+                (sensor as! Libre).detailFRAM()
                 taskRequest = .none
                 return
             }

@@ -129,8 +129,8 @@ struct Details: View, LoggingView {
                         Row("State", app.sensor.state.description,
                             foregroundColor: app.sensor.state == .active ? .green : .red)
 
-                        if app.sensor.state == .failure && app.sensor.fram.count > 8 {
-                            let fram = app.sensor.fram
+                        if app.sensor.state == .failure && (app.sensor as? Libre)?.fram.count ?? 0 > 8 {
+                            let fram = (app.sensor as! Libre).fram
                             let errorCode = fram[6]
                             let failureAge = Int(fram[7]) + Int(fram[8]) << 8
                             let failureInterval = failureAge == 0 ? "an unknown time" : "\(failureAge.formattedInterval)"

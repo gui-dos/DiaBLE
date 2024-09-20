@@ -322,7 +322,7 @@ extension MainDelegate {
             return
         }
 
-        guard let sensor = sensor else {
+        guard let sensor = sensor as? Libre else {
             return
         }
 

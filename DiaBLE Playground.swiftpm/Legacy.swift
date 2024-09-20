@@ -388,7 +388,7 @@ import SwiftUI
                     } else {
                         bridge.sensor!.patchInfo = Data([0xDF, 0x00, 0x00, 0x01, 0x01, 0x02])
                     }
-                    bridge.sensor!.fram = Data(bridge.buffer[18 ..< 362])
+                    (bridge.sensor! as! Libre).fram = Data(bridge.buffer[18 ..< 362])
                     readSetup()
                     main.status("\(bridge.sensor!.type)  +  \(bridgeName)")
                 }
@@ -415,7 +415,7 @@ import SwiftUI
 
             if bridge.buffer.count == 344 {
                 let fram = bridge.buffer[..<344]
-                bridge.sensor!.fram = Data(fram)
+                (bridge.sensor! as! Libre).fram = Data(fram)
                 readSetup()
                 main.status("\(bridge.sensor!.type)  +  \(bridgeName)")
             }

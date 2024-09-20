@@ -45,6 +45,193 @@ extension SensorType {
         )
     }
 
+    var crcReport: String = ""
+
+    var encryptedFram: Data = Data()
+
+    @ObservationIgnored
+    var fram: Data = Data() {
+        didSet {
+            encryptedFram = Data()
+            if (family == .libre2 || type == .libreUS14day) && UInt16(fram[0...1]) != crc16(fram[2...23]) {
+                encryptedFram = fram
+                if fram.count >= 344 {
+                    if let decryptedFRAM = try? Libre2.decryptFRAM(type: type, id: uid, info: patchInfo, data: fram) {
+                        fram = decryptedFRAM
+                    }
+                }
+            }
+            parseFRAM()
+        }
+    }
+
+
+    func parseFRAM() {
+        updateCRCReport()
+        guard crcReport.contains("OK") else {
+            state = .unknown
+            return
+        }
+
+        if fram.count < 344 && encryptedFram.count > 0 { return }
+
+        if let sensorState = SensorState(rawValue: fram[4]) {
+            state = sensorState
+        }
+
+        guard fram.count >= 320 else { return }
+
+        age = Int(fram[316]) + Int(fram[317]) << 8    // body[-4]
+        let startDate = lastReadingDate - Double(age) * 60
+        initializations = Int(fram[318])
+
+        trend = []
+        history = []
+        let trendIndex = Int(fram[26])      // body[2]
+        let historyIndex = Int(fram[27])    // body[3]
+
+        for i in 0 ... 15 {
+            var j = trendIndex - 1 - i
+            if j < 0 { j += 16 }
+            let offset = 28 + j * 6         // body[4 ..< 100]
+            let rawValue = readBits(fram, offset, 0, 0xe)
+            let quality = UInt16(readBits(fram, offset, 0xe, 0xb)) & 0x1FF
+            let qualityFlags = (readBits(fram, offset, 0xe, 0xb) & 0x600) >> 9
+            let hasError = readBits(fram, offset, 0x19, 0x1) != 0
+            let rawTemperature = readBits(fram, offset, 0x1a, 0xc) << 2
+            var temperatureAdjustment = readBits(fram, offset, 0x26, 0x9) << 2
+            let negativeAdjustment = readBits(fram, offset, 0x2f, 0x1)
+            if negativeAdjustment != 0 { temperatureAdjustment = -temperatureAdjustment }
+            let id = age - i
+            let date = startDate + Double(age - i) * 60
+            trend.append(Glucose(rawValue: rawValue, rawTemperature: rawTemperature, temperatureAdjustment: temperatureAdjustment, id: id, date: date, hasError: hasError, dataQuality: Glucose.DataQuality(rawValue: Int(quality)), dataQualityFlags: qualityFlags))
+        }
+
+        // FRAM is updated with a 3 minutes delay:
+        // https://github.com/UPetersen/LibreMonitor/blob/Swift4/LibreMonitor/Model/SensorData.swift
+
+        let preciseHistoryIndex = ((age - 3) / 15) % 32
+        let delay = (age - 3) % 15 + 3
+        var readingDate = lastReadingDate
+        if preciseHistoryIndex == historyIndex {
+            readingDate.addTimeInterval(60.0 * -Double(delay))
+        } else {
+            readingDate.addTimeInterval(60.0 * -Double(delay - 15))
+        }
+
+        for i in 0 ... 31 {
+            var j = historyIndex - 1 - i
+            if j < 0 { j += 32 }
+            let offset = 124 + j * 6    // body[100 ..< 292]
+            let rawValue = readBits(fram, offset, 0, 0xe)
+            let quality = UInt16(readBits(fram, offset, 0xe, 0xb)) & 0x1FF
+            let qualityFlags = (readBits(fram, offset, 0xe, 0xb) & 0x600) >> 9
+            let hasError = readBits(fram, offset, 0x19, 0x1) != 0
+            let rawTemperature = readBits(fram, offset, 0x1a, 0xc) << 2
+            var temperatureAdjustment = readBits(fram, offset, 0x26, 0x9) << 2
+            let negativeAdjustment = readBits(fram, offset, 0x2f, 0x1)
+            if negativeAdjustment != 0 { temperatureAdjustment = -temperatureAdjustment }
+            let id = age - delay - i * 15
+            let date = id > -1 ? readingDate - Double(i) * 15 * 60 : startDate
+            history.append(Glucose(rawValue: rawValue, rawTemperature: rawTemperature, temperatureAdjustment: temperatureAdjustment, id: id, date: date, hasError: hasError, dataQuality: Glucose.DataQuality(rawValue: Int(quality)), dataQualityFlags: qualityFlags))
+        }
+
+        guard fram.count >= 344 else { return }
+
+        // fram[322...323] (footer[2..3]) corresponds to patchInfo[2...3]
+        region = SensorRegion(rawValue: Int(fram[323])) ?? .unknown
+        maxLife = Int(fram[326]) + Int(fram[327]) << 8
+        Task { @MainActor in
+            main?.settings.activeSensorMaxLife = maxLife
+        }
+
+        let i1 = readBits(fram, 2, 0, 3)
+        let i2 = readBits(fram, 2, 3, 0xa)
+        let i3 = readBits(fram, 0x150, 0, 8)    // footer[-8]
+        let i4 = readBits(fram, 0x150, 8, 0xe)
+        let negativei3 = readBits(fram, 0x150, 0x21, 1) != 0
+        let i5 = readBits(fram, 0x150, 0x28, 0xc) << 2
+        let i6 = readBits(fram, 0x150, 0x34, 0xc) << 2
+
+        calibrationInfo = CalibrationInfo(i1: i1, i2: i2, i3: negativei3 ? -i3 : i3, i4: i4, i5: i5, i6: i6)
+        Task { @MainActor in
+            main?.settings.activeSensorCalibrationInfo = calibrationInfo
+        }
+
+    }
+
+
+    func detailFRAM() {
+        if encryptedFram.count > 0 && fram.count >= 344 {
+            log("\(fram.hexDump(header: "Sensor decrypted FRAM:", startBlock: 0))")
+        }
+        if crcReport.count > 0 {
+            log(crcReport)
+            if !crcReport.contains("OK") {
+                if history.count > 0 && type != .libre2 { // bogus raw data with Libre 1
+                    main?.errorStatus("Error while validating sensor data")
+                    return
+                }
+            }
+        }
+        log("Sensor state: \(state.description.lowercased()) (0x\(state.rawValue.hex))")
+
+        if state == .failure {
+            let errorCode = fram[6]
+            let failureAge = Int(fram[7]) + Int(fram[8]) << 8
+            let failureInterval = failureAge == 0 ? "an unknown time" : "\(failureAge) minutes (\(failureAge.formattedInterval))"
+            log("Sensor failure error 0x\(errorCode.hex) (\(decodeFailure(error: errorCode))) at \(failureInterval) after activation.")
+        }
+
+        if fram.count >= 344 && !crcReport.contains("FAILED") {
+
+            if settings.userLevel > .basic {
+                log("Sensor factory values: raw minimum threshold: \(fram[330]) (tied to SENSOR_SIGNAL_LOW error, should be 150 for a Libre 1), maximum ADC delta: \(fram[332]) (tied to FILTER_DELTA error, should be 90 for a Libre 1)")
+            }
+
+            if initializations > 0 {
+                log("Sensor initializations: \(initializations)")
+            }
+
+            log("Sensor region: \(region.description) (0x\(fram[323].hex))")
+        }
+
+        if maxLife > 0 {
+            log("Sensor maximum life: \(maxLife) minutes (\(maxLife.formattedInterval))")
+        }
+
+        if age > 0 {
+            log("Sensor age: \(age) minutes (\(age.formattedInterval)), started on: \((lastReadingDate - Double(age) * 60).shortDateTime)")
+        }
+    }
+
+
+    func updateCRCReport() {
+        if fram.count < 344 {
+            crcReport = "NFC: FRAM read did not complete: can't verify CRC"
+
+        } else {
+            let headerCRC = UInt16(fram[0...1])
+            let bodyCRC   = UInt16(fram[24...25])
+            let footerCRC = UInt16(fram[320...321])
+            let computedHeaderCRC = crc16(fram[2...23])
+            let computedBodyCRC   = crc16(fram[26...319])
+            let computedFooterCRC = crc16(fram[322...343])
+
+            var report = "Sensor header CRC16: \(headerCRC.hex), computed: \(computedHeaderCRC.hex) -> \(headerCRC == computedHeaderCRC ? "OK" : "FAILED")"
+            report += "\nSensor body CRC16: \(bodyCRC.hex), computed: \(computedBodyCRC.hex) -> \(bodyCRC == computedBodyCRC ? "OK" : "FAILED")"
+            report += "\nSensor footer CRC16: \(footerCRC.hex), computed: \(computedFooterCRC.hex) -> \(footerCRC == computedFooterCRC ? "OK" : "FAILED")"
+
+            if fram.count >= 344 + 195 * 8 {
+                let commandsCRC = UInt16(fram[344...345])
+                let computedCommandsCRC = crc16(fram[346 ..< 344 + 195 * 8])
+                report += "\nSensor commands CRC16: \(commandsCRC.hex), computed: \(computedCommandsCRC.hex) -> \(commandsCRC == computedCommandsCRC ? "OK" : "FAILED")"
+            }
+
+            crcReport = report
+        }
+    }
+
 }
 
 

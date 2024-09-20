@@ -133,7 +133,7 @@ import CoreBluetooth
                 if buffer.count >= 344 {
                     let fram = buffer[..<344]
                     // let footer = buffer.suffix(8)    // when firmware < 2.0
-                    sensor!.fram = Data(fram)
+                    (sensor! as! Libre).fram = Data(fram)
                     main.status("\(sensor!.type)  +  \(name)")
                 }
             }
