@@ -173,7 +173,7 @@ struct Details: View, LoggingView {
                             if app.sensor.type == .libre3 && ((app.sensor as? Libre3)?.blePIN ?? Data()).count != 0 {
                                 Row("BLE PIN", "\((app.sensor as! Libre3).blePIN.hex)")
                             }
-                            if !((app.sensor as? Libre)?.patchInfo.isEmpty ?? false) {
+                            if !((app.sensor as? Libre)?.patchInfo.isEmpty ?? true) {
                                 Row("Patch Info", (app.sensor as! Libre).patchInfo.hex)
                                 Row("Firmware", app.sensor.firmware)
                                 Row("Security Generation", "\(app.sensor.securityGeneration)")
