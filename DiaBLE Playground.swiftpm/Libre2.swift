@@ -4,6 +4,7 @@ import Foundation
 import CoreNFC
 #endif
 
+
 let libre2DumpMap = [
     0x000:  (40,  "Extended header"),
     0x028:  (32,  "Extended footer"),
@@ -49,10 +50,15 @@ let libre2DumpMap = [
 
 // https://github.com/ivalkou/LibreTools/blob/master/Sources/LibreTools/Sensor/Libre2.swift
 
+
 @Observable class Libre2: Libre {
 
     static let key: [UInt16] = [0xA0C5, 0x6860, 0x0000, 0x14C6]
     static let secret: UInt16 = 0x1b6a
+
+    var initialPatchInfo: PatchInfo = Data()
+    var streamingUnlockCode: UInt32 = 42
+    var streamingUnlockCount: UInt16 = 0
 
 
     static func prepareVariables(id: SensorUid, x: UInt16, y: UInt16) -> [UInt16] {
@@ -202,7 +208,6 @@ let libre2DumpMap = [
 
                 if output.count == 6 {
                     log("NFC: enabled BLE streaming on \(type) \(serial) (unlock code: \(streamingUnlockCode), MAC address: \(Data(output.reversed()).hexAddress))")
-                    // "Publishing changes from background threads is not allowed"
                     Task { @MainActor in
                         settings.activeSensorSerial = serial
                         settings.activeSensorAddress = Data(output.reversed())

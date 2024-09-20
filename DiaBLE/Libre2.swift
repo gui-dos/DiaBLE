@@ -56,6 +56,10 @@ let libre2DumpMap = [
     static let key: [UInt16] = [0xA0C5, 0x6860, 0x0000, 0x14C6]
     static let secret: UInt16 = 0x1b6a
 
+    var initialPatchInfo: PatchInfo = Data()
+    var streamingUnlockCode: UInt32 = 42
+    var streamingUnlockCount: UInt16 = 0
+
 
     static func prepareVariables(id: SensorUid, x: UInt16, y: UInt16) -> [UInt16] {
         let s1 = UInt16(truncatingIfNeeded: UInt(UInt16(id[5], id[4])) + UInt(x) + UInt(y))

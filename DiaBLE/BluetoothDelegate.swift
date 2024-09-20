@@ -445,12 +445,16 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             app.transmitter.sensor = sensor
 
             if !app.device.serial.isEmpty && app.device.serial == settings.activeSensorSerial {
-                sensor.initialPatchInfo = settings.activeSensorInitialPatchInfo
-                sensor.streamingUnlockCode = UInt32(settings.activeSensorStreamingUnlockCode)
-                sensor.streamingUnlockCount = UInt16(settings.activeSensorStreamingUnlockCount)
+                (sensor as? Libre2)?.initialPatchInfo = settings.activeSensorInitialPatchInfo
+                (sensor as? Libre2)?.streamingUnlockCode = UInt32(settings.activeSensorStreamingUnlockCode)
+                (sensor as? Libre2)?.streamingUnlockCount = UInt16(settings.activeSensorStreamingUnlockCount)
                 sensor.calibrationInfo = settings.activeSensorCalibrationInfo
                 sensor.maxLife = settings.activeSensorMaxLife
-                log("Bluetooth: the active sensor \(app.device.serial) has reconnected: restoring settings: initial patch info: \(sensor.initialPatchInfo.hex), current patch info: \(sensor.patchInfo.hex), unlock count: \(sensor.streamingUnlockCount)")
+                var msg = "Bluetooth: the active sensor \(app.device.serial) has reconnected"
+                if let libre2 = sensor as? Libre2 {
+                    msg += "; restoring settings: initial patch info: \(libre2.initialPatchInfo.hex), current patch info: \(libre2.patchInfo.hex), unlock count: \(libre2.streamingUnlockCount)"
+                }
+                log(msg)
                 app.device.macAddress = settings.activeSensorAddress
             }
 
@@ -471,11 +475,11 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 debugLog("Bluetooth: sent \(app.device.name) read security challenge")
 
             } else if sensor.uid.count > 0 && settings.activeSensorInitialPatchInfo.count > 0 {
-                if settings.userLevel < .test {  // not sniffing Libre 2
-                    sensor.streamingUnlockCount += 1
+                if let libre2 = sensor as? Libre2, settings.userLevel < .test {  // not sniffing Libre 2
+                    libre2.streamingUnlockCount += 1
                     settings.activeSensorStreamingUnlockCount += 1
-                    let unlockPayload = Libre2.streamingUnlockPayload(id: sensor.uid, info: settings.activeSensorInitialPatchInfo, enableTime: sensor.streamingUnlockCode, unlockCount: sensor.streamingUnlockCount)
-                    log("Bluetooth: writing streaming unlock payload: \(Data(unlockPayload).hex) (patch info: \(settings.activeSensorInitialPatchInfo.hex), unlock code: \(sensor.streamingUnlockCode), unlock count: \(sensor.streamingUnlockCount), sensor id: \(sensor.uid.hex), current patch info: \(sensor.patchInfo.hex))")
+                    let unlockPayload = Libre2.streamingUnlockPayload(id: sensor.uid, info: settings.activeSensorInitialPatchInfo, enableTime: libre2.streamingUnlockCode, unlockCount: libre2.streamingUnlockCount)
+                    log("Bluetooth: writing streaming unlock payload: \(Data(unlockPayload).hex) (patch info: \(settings.activeSensorInitialPatchInfo.hex), unlock code: \(libre2.streamingUnlockCode), unlock count: \(libre2.streamingUnlockCount), sensor id: \(sensor.uid.hex), current patch info: \(sensor.patchInfo.hex))")
                     app.device.write(unlockPayload, .withResponse)
                 }
             }

@@ -179,11 +179,6 @@ enum SensorState: UInt8, CustomStringConvertible {
         }
     }
 
-    // Libre 2 and BLE streaming parameters
-    var initialPatchInfo: PatchInfo = Data()
-    var streamingUnlockCode: UInt32 = 42
-    var streamingUnlockCount: UInt16 = 0
-
 
     init(transmitter: Transmitter? = nil, main: MainDelegate? = nil) {
         self.transmitter = transmitter
