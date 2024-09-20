@@ -138,7 +138,7 @@ struct Details: View, LoggingView {
                                 foregroundColor: .red)
                         }
 
-                        Row("Type", "\(app.sensor.type.description)\(app.sensor.patchInfo.hex.hasPrefix("a2") ? " (new 'A2' kind)" : (app.sensor as? Libre)?.isAPlus ?? false ? " Plus" : "")")
+                        Row("Type", "\(app.sensor.type.description)\(((app.sensor as? Libre)?.patchInfo.hex ?? "").hasPrefix("a2") ? " (new 'A2' kind)" : (app.sensor as? Libre)?.isAPlus ?? false ? " Plus" : "")")
 
                         Row("Serial", app.sensor.serial)
 
@@ -173,8 +173,8 @@ struct Details: View, LoggingView {
                             if app.sensor.type == .libre3 && ((app.sensor as? Libre3)?.blePIN ?? Data()).count != 0 {
                                 Row("BLE PIN", "\((app.sensor as! Libre3).blePIN.hex)")
                             }
-                            if !app.sensor.patchInfo.isEmpty {
-                                Row("Patch Info", app.sensor.patchInfo.hex)
+                            if !((app.sensor as? Libre)?.patchInfo.isEmpty ?? false) {
+                                Row("Patch Info", (app.sensor as! Libre).patchInfo.hex)
                                 Row("Firmware", app.sensor.firmware)
                                 Row("Security Generation", "\(app.sensor.securityGeneration)")
                             }

@@ -426,7 +426,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
                 if settings.activeSensorSerial == app.device.serial {
                     if !app.device.serial.isEmpty && !settings.currentPatchInfo.isEmpty {
-                        sensor.patchInfo = settings.currentPatchInfo
+                        (sensor as! Libre).patchInfo = settings.currentPatchInfo
 
                     } else {
                         sensor.serial = app.device.serial
@@ -479,7 +479,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                     libre2.streamingUnlockCount += 1
                     settings.activeSensorStreamingUnlockCount += 1
                     let unlockPayload = Libre2.streamingUnlockPayload(id: sensor.uid, info: settings.activeSensorInitialPatchInfo, enableTime: libre2.streamingUnlockCode, unlockCount: libre2.streamingUnlockCount)
-                    log("Bluetooth: writing streaming unlock payload: \(Data(unlockPayload).hex) (patch info: \(settings.activeSensorInitialPatchInfo.hex), unlock code: \(libre2.streamingUnlockCode), unlock count: \(libre2.streamingUnlockCount), sensor id: \(sensor.uid.hex), current patch info: \(sensor.patchInfo.hex))")
+                    log("Bluetooth: writing streaming unlock payload: \(Data(unlockPayload).hex) (patch info: \(settings.activeSensorInitialPatchInfo.hex), unlock code: \(libre2.streamingUnlockCode), unlock count: \(libre2.streamingUnlockCount), sensor id: \(libre2.uid.hex), current patch info: \(libre2.patchInfo.hex))")
                     app.device.write(unlockPayload, .withResponse)
                 }
             }

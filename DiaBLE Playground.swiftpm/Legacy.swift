@@ -31,7 +31,7 @@ import SwiftUI
 
     override func read(_ data: Data, for uuid: String) {
         if sensor == nil {
-            sensor = Sensor(transmitter: self)
+            sensor = Libre(transmitter: self)
             app.sensor = sensor
         }
         if data.count == 8 {
@@ -59,7 +59,7 @@ import SwiftUI
         // https://github.com/SpikeApp/Spike/blob/master/src/services/bluetooth/CGMBluetoothService.as
 
         if sensor == nil {
-            sensor = Sensor(transmitter: self)
+            sensor = Libre(transmitter: self)
             app.sensor = sensor
         }
 
@@ -359,7 +359,7 @@ import SwiftUI
                 }
             } else {
                 if bridge.sensor == nil {
-                    bridge.sensor = Sensor(transmitter: bridge)
+                    bridge.sensor = Libre(transmitter: bridge)
                     app.sensor = bridge.sensor
                 }
                 if bridge.buffer.count == 0 { bridge.sensor!.lastReadingDate = app.lastReadingDate }
@@ -383,10 +383,10 @@ import SwiftUI
                     log("\(bridgeName): sensor age: \(bridge.sensor!.age) minutes (\(String(format: "%.1f", Double(bridge.sensor!.age)/60/24)) days), patch uid: \(uid.hex), serial number: \(bridge.sensor!.serial)")
 
                     if bridge.buffer.count > 369 {
-                        bridge.sensor!.patchInfo = Data(bridge.buffer[363...368])
-                        log("\(bridgeName): patch info: \(bridge.sensor!.patchInfo.hex)")
+                        (bridge.sensor! as! Libre).patchInfo = Data(bridge.buffer[363...368])
+                        log("\(bridgeName): patch info: \((bridge.sensor! as! Libre).patchInfo.hex)")
                     } else {
-                        bridge.sensor!.patchInfo = Data([0xDF, 0x00, 0x00, 0x01, 0x01, 0x02])
+                        (bridge.sensor! as! Libre).patchInfo = Data([0xDF, 0x00, 0x00, 0x01, 0x01, 0x02])
                     }
                     (bridge.sensor! as! Libre).fram = Data(bridge.buffer[18 ..< 362])
                     readSetup()
@@ -404,7 +404,7 @@ import SwiftUI
                 if app.sensor != nil {
                     bridge.sensor = app.sensor
                 } else {
-                    bridge.sensor = Sensor(transmitter: bridge)
+                    bridge.sensor = Libre(transmitter: bridge)
                     app.sensor = bridge.sensor
                 }
             }

@@ -31,6 +31,38 @@ extension SensorType {
 
 @Observable class Libre: Sensor {
 
+    var patchInfo: PatchInfo = Data() {
+        willSet(info) {
+            if info.count > 0 {
+                type = SensorType(patchInfo: info)
+            } else {
+                type = .unknown
+            }
+            if type != .libre3 {
+                if info.count > 3 {
+                    region = SensorRegion(rawValue: Int(info[3])) ?? .unknown
+                }
+                if info.count >= 6 {
+                    family = SensorFamily(rawValue: Int(info[2] >> 4)) ?? .libre1
+                    if serial != "" {
+                        serial = "\(family.rawValue)\(serial.dropFirst())"
+                    }
+                    let generation = info[2] & 0x0F
+                    if family == .libre2 {
+                        securityGeneration = generation < 9 ? 1 : 2
+                    }
+                    if family == .libreSense {
+                        securityGeneration = generation < 4 ? 1 : 2
+                    }
+                }
+            } else {
+                family = .libre3
+                region = SensorRegion(rawValue: Int(UInt16(info[2...3]))) ?? .unknown
+                securityGeneration = 3 // TODO
+            }
+        }
+    }
+
     // Libre 2+ EU: C6 09 31 01
     // Libre 2+ US: 2C 0A 3A 02
     // Libre 2+ LA: 2B 0A 3A 08

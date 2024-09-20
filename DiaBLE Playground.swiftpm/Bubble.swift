@@ -96,7 +96,7 @@ import CoreBluetooth
         } else {
             // TODO: instantiate specifically a Libre2() (when detecting A4 in the uid, i. e.)
             if sensor == nil {
-                sensor = Sensor(transmitter: self)
+                sensor = Libre(transmitter: self)
                 app.sensor = sensor
             }
             if response == .serialNumber {
@@ -106,10 +106,10 @@ import CoreBluetooth
                 log("\(name): patch uid: \(sensor!.uid.hex)")
 
             } else if response == .patchInfo {
-                sensor!.patchInfo = Data(Double(firmware)! < 1.35 ? data[3...8] : data[5...10])
-                settings.currentPatchInfo = sensor!.patchInfo
+                (sensor! as! Libre).patchInfo = Data(Double(firmware)! < 1.35 ? data[3...8] : data[5...10])
+                settings.currentPatchInfo = (sensor! as! Libre).patchInfo
                 settings.activeSensorSerial = sensor!.serial
-                log("\(name): patch info: \(sensor!.patchInfo.hex), sensor type: \(sensor!.type.rawValue), serial number: \(sensor!.serial)")
+                log("\(name): patch info: \((sensor! as! Libre).patchInfo.hex), sensor type: \(sensor!.type.rawValue), serial number: \(sensor!.serial)")
 
             } else if response == .securityChallenge {
                 if buffer.count == 0 {

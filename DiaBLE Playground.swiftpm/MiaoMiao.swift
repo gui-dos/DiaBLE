@@ -92,7 +92,7 @@ import CoreBluetooth
         } else {
             // TODO: instantiate specifically a Libre2() (when detecting A4 in the uid, i. e.)
             if sensor == nil {
-                sensor = Sensor(transmitter: self)
+                sensor = Libre(transmitter: self)
                 app.sensor = sensor
             }
             if buffer.count == 0 {
@@ -121,17 +121,17 @@ import CoreBluetooth
 
                 if buffer.count >= 369 {  // 18 + 43 * 8 + 1 + 6
                     // TODO: verify that buffer[362] is the end marker 0x29
-                    sensor!.patchInfo = Data(buffer[363...368])
-                    settings.currentPatchInfo = sensor!.patchInfo
+                    (sensor! as! Libre).patchInfo = Data(buffer[363...368])
+                    settings.currentPatchInfo = (sensor! as! Libre).patchInfo
                     settings.activeSensorSerial = sensor!.serial
-                    log("\(name): patch info: \(sensor!.patchInfo.hex), sensor type: \(sensor!.type.rawValue), serial number: \(sensor!.serial)")
+                    log("\(name): patch info: \((sensor! as! Libre).patchInfo.hex), sensor type: \(sensor!.type.rawValue), serial number: \(sensor!.serial)")
 
                     if sensor != nil && sensor!.type == .libreProH {
                         let libreProSensor = LibrePro(transmitter: self)
                         // FIXME: buffer[3...4] doesn't match the real sensor age in body[2...3]
                         libreProSensor.age = sensor!.age
                         libreProSensor.uid = sensor!.uid
-                        libreProSensor.patchInfo = sensor!.patchInfo
+                        libreProSensor.patchInfo = (sensor! as! LibrePro).patchInfo
                         libreProSensor.lastReadingDate = sensor!.lastReadingDate
                         sensor = libreProSensor
                         app.sensor = sensor
@@ -142,7 +142,7 @@ import CoreBluetooth
                     }
                 } else {
                     // https://github.com/dabear/LibreOOPAlgorithm/blob/master/app/src/main/java/com/hg4/oopalgorithm/oopalgorithm/AlgorithmRunner.java
-                    sensor!.patchInfo = Data([0xDF, 0x00, 0x00, 0x01, 0x01, 0x02])
+                    (sensor! as! Libre).patchInfo = Data([0xDF, 0x00, 0x00, 0x01, 0x01, 0x02])
                 }
                 (sensor! as! Libre).fram = Data(buffer[18 ..< 18 + framBlocks * 8])
 

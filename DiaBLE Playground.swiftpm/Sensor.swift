@@ -110,38 +110,6 @@ enum SensorState: UInt8, CustomStringConvertible {
     var generation: Int = 0
     var securityGeneration: Int = 0
 
-    var patchInfo: PatchInfo = Data() {
-        willSet(info) {
-            if info.count > 0 {
-                type = SensorType(patchInfo: info)
-            } else {
-                type = .unknown
-            }
-            if type != .libre3 {
-                if info.count > 3 {
-                    region = SensorRegion(rawValue: Int(info[3])) ?? .unknown
-                }
-                if info.count >= 6 {
-                    family = SensorFamily(rawValue: Int(info[2] >> 4)) ?? .libre1
-                    if serial != "" {
-                        serial = "\(family.rawValue)\(serial.dropFirst())"
-                    }
-                    let generation = info[2] & 0x0F
-                    if family == .libre2 {
-                        securityGeneration = generation < 9 ? 1 : 2
-                    }
-                    if family == .libreSense {
-                        securityGeneration = generation < 4 ? 1 : 2
-                    }
-                }
-            } else {
-                family = .libre3
-                region = SensorRegion(rawValue: Int(UInt16(info[2...3]))) ?? .unknown
-                securityGeneration = 3 // TODO
-            }
-        }
-    }
-
     var uid: SensorUid = Data() {
         willSet(uid) {
             if type != .libre3 {

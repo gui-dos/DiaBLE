@@ -136,7 +136,7 @@ import Foundation
         } else {
             // TODO: instantiate specifically a Libre2() (when detecting A4 in the uid, i. e.)
             if sensor == nil {
-                sensor = Sensor(transmitter: self)
+                sensor = Libre(transmitter: self)
                 app.sensor = sensor
             }
             if dataHex.hasPrefix(ResponseType.sensorInfo.rawValue) {
@@ -179,9 +179,9 @@ import Foundation
             } else if dataHex.hasPrefix(ResponseType.patchUidInfo.rawValue) {
                 if currentRequest == .patchInfo {
                     let patchInfo = Data(data[3...])
-                    sensor!.patchInfo = patchInfo
-                    settings.currentPatchInfo = sensor!.patchInfo
-                    log("\(name): patch info: \(sensor!.patchInfo.hex) (sensor type: \(sensor!.type.rawValue))")
+                    (sensor! as! Libre).patchInfo = patchInfo
+                    settings.currentPatchInfo = (sensor! as! Libre).patchInfo
+                    log("\(name): patch info: \((sensor! as! Libre).patchInfo.hex) (sensor type: \(sensor!.type.rawValue))")
                 } else if currentRequest == .patchUid {
                     sensorUid = Data(data[4...])
                     sensor!.uid = sensorUid

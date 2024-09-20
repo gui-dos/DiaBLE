@@ -482,7 +482,7 @@ extension MainDelegate {
 }
 
 
-extension Sensor {
+extension Libre {
 
     func testOOPActivation() async {
         let server = OOPServer.default
