@@ -7,6 +7,13 @@ import CoreNFC
 
 class Libre2Gen2: Libre2 {
 
+    var streamingContext: Int = 0    // returned by getNfcAuthenticatedCommandBLE(command:...)
+
+    /// formed when passed as third inout argument to verifyEnableStreamingResponse()
+    /// 10 bytes in older US2 models, 12 bytes in new  ones
+    var streamingAuthenticationData: Data = Data()
+
+
     static let GEN_SECURITY_CMD_GET_SESSION_INFO      =  0x1f
 
     static let GEN2_CMD_DECRYPT_BLE_DATA              =   773
@@ -177,7 +184,7 @@ class Libre2Gen2: Libre2 {
     }
 
 
-    static func createSecureStreamingSession(sensor: Sensor, data: Data) -> Int {
+    static func createSecureStreamingSession(sensor: Libre2Gen2, data: Data) -> Int {
         if createSecureSession(context: sensor.streamingContext, 1, data: data) != 0 {
             _ = endSession(context: sensor.streamingContext)
             sensor.streamingContext = 0
@@ -187,7 +194,7 @@ class Libre2Gen2: Libre2 {
 
 
     // TODO:
-    static func getStreamingUnlockPayload(sensor: Sensor, challenge: Data) -> Data {
+    static func getStreamingUnlockPayload(sensor: Libre2Gen2, challenge: Data) -> Data {
         if sensor.streamingContext > 0 {
             _ = endSession(context: sensor.streamingContext)
         }
