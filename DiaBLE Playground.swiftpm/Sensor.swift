@@ -21,7 +21,6 @@ enum SensorType: String, CustomStringConvertible {
     case unknown       = "unknown"
 
     var description: String { rawValue }
-    var isALibre: Bool { self == .libre3 || self == .libre2Gen2 || self == .libre2 || self == .libre1 || self == .libreUS14day || self == .libreProH || self == .lingo }
 }
 
 
@@ -66,14 +65,14 @@ enum SensorRegion: Int, CustomStringConvertible {
 
 
 enum SensorState: UInt8, CustomStringConvertible {
-    case unknown      = 0x00
+    case unknown      = 0
 
-    case notActivated = 0x01
-    case warmingUp    = 0x02    // 60 minutes
-    case active       = 0x03    // ≈ 14.5 days
-    case expired      = 0x04    // 12 hours more; Libre 2: Bluetooth shutdown
-    case shutdown     = 0x05    // 15th day onwards
-    case failure      = 0x06
+    case notActivated = 1
+    case warmingUp    = 2
+    case active       = 3
+    case expired      = 4
+    case shutdown     = 5
+    case failure      = 6
 
     var description: String {
         switch self {

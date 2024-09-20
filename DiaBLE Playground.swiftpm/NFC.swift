@@ -180,7 +180,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
     var session: NFCTagReaderSession?
     var connectedTag: NFCISO15693Tag?
     var systemInfo: NFCISO15693SystemInfo!
-    var sensor: Sensor!
+    var sensor: Libre!
 
     // Gen2
     var securityChallenge: Data = Data()
@@ -304,11 +304,11 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
             let currentSensor = app.sensor
             if currentSensor != nil && currentSensor!.uid == Data(tag.identifier.reversed()) {
-                sensor = app.sensor
+                sensor = (app.sensor as! Libre)
                 sensor.patchInfo = patchInfo
             } else {
                 if patchInfo.count == 0 {
-                    sensor = Sensor(main: main)
+                    sensor = Libre(main: main)
                 } else {
                     let sensorType = SensorType(patchInfo: patchInfo)
                     switch sensorType {
@@ -321,7 +321,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     case .libreProH:
                         sensor = LibrePro(main: main)
                     default:
-                        sensor = Sensor(main: main)
+                        sensor = Libre(main: main)
                     }
                 }
                 sensor.patchInfo = patchInfo
@@ -412,7 +412,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
                     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
                     if sensor.type != .libre3 {
-                        (sensor as! Libre).detailFRAM()
+                        sensor.detailFRAM()
                     }
 
                     taskRequest = .none
@@ -495,7 +495,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     }
                 }
 
-                (sensor as! Libre).fram = Data(data)
+                sensor.fram = Data(data)
 
             } catch {
                 AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
@@ -503,7 +503,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
             }
 
             if taskRequest == .readFRAM {
-                (sensor as! Libre).detailFRAM()
+                sensor.detailFRAM()
                 taskRequest = .none
                 return
             }
