@@ -595,6 +595,30 @@ import CoreBluetooth
     //     case error
     // }
 
+
+    // TODO:
+    //
+    // class G7TxKit.TxRecordAggregator {
+    //     let pairingCode: Swift.String
+    //     var txId: Swift.String?
+    //     let communicationStartTime: CgmFoundation.CalculatedTime
+    //     var txTimeOffsetInfo: G7TxKit.TxTimeOffsetInfo?
+    //     var encryptionInfo: Foundation.Data?
+    //     var diagnosticData: [G7TxController.G7DiagnosticReading]?
+    //     var calibrationBounds: G7TxController.G7CalibrationBounds?
+    //     var sensorReadings: [G7TxKit.G7SensorReading]?
+    //     var authenticationErrors: s0(null)XY
+    //     var communicationErrors: [G7TxController.G7CommunicationError]?
+    //     var stopCommandResponse: G7TxController.G7StopSensorStatus?
+    //     var calibrationCommandResponse: G7TxController.G7CalibrationStatus?
+    //     var deviceList: G7TxController.G7DeviceList?
+    //     var txFailed: Swift.Bool
+    //     var state: G7TxKit.TxCommState
+    //     let dataSource: CgmKit.SourceStream
+    //     var txSW: Swift.String?
+    //     var status: Swift.String?
+    // }
+
 }
 
 
