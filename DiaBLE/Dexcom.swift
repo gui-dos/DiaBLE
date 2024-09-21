@@ -11,6 +11,33 @@ import CoreBluetooth
 // https://github.com/NightscoutFoundation/xDrip/tree/master/libkeks/src/main/java/jamorham/keks
 
 
+// enum CgmFoundation.TxProduct
+enum ProductType: Int {
+    case g6
+    case g7
+    case stelo  // frontier
+    case d1Plus
+}
+
+
+// enum CgmFoundation.DisplayType
+enum DisplayType: Int {
+    case unknown, medical, phone, watch, receiver, pump, reader, tool, other, transmitter, router
+}
+
+// enum G7TxController.AdvertisementDisplayType
+enum AdvertisementDisplayType: UInt8 {
+    case medical  =   1
+    case phone    =   2
+    case watch    =   4
+    case receiver =   8
+    case pump     =  16
+    case reader   =  32
+    case tool     =  64
+    case other    = 128
+}
+
+
 @Observable class Dexcom: Transmitter {
     override class var type: DeviceType { DeviceType.transmitter(.dexcom) }
     override class var name: String { "Dexcom" }
@@ -453,33 +480,6 @@ import CoreBluetooth
         if let sensor = sensor as? DexcomG7 {
             sensor.read(data, for: uuid)
         }
-    }
-
-
-    // enum CgmFoundation.TxProduct
-    enum ProductType: Int {
-        case g6
-        case g7
-        case stelo  // frontier
-        case d1Plus
-    }
-
-
-    // enum CgmFoundation.DisplayType
-    enum DisplayType: Int {
-        case unknown, medical, phone, watch, receiver, pump, reader, tool, other, transmitter, router
-    }
-
-    // enum G7TxController.AdvertisementDisplayType
-    enum AdvertisementDisplayType: UInt8 {
-        case medical  =   1
-        case phone    =   2
-        case watch    =   4
-        case receiver =   8
-        case pump     =  16
-        case reader   =  32
-        case tool     =  64
-        case other    = 128
     }
 
 

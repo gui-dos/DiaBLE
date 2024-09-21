@@ -5,10 +5,10 @@ struct HamburgerMenu: View {
 
     @Environment(\.colorScheme) var colorScheme
 
-    @State private var showingSidebar = false
+    @State var showingSidebar = false
 
-    @State private var showingHelp = false
-    @State private var showingAbout = false
+    @State var showingHelp = false
+    @State var showingAbout = false
 
     let credits = [
         "@bubbledevteam": "https://github.com/bubbledevteam",
