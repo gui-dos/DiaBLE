@@ -444,7 +444,6 @@ import CoreBluetooth
                 // WhitelistResponse i.e. ea 00 03 0100000000000200000045ffffff
                 //                        ea 00 03 010200000000620000004dffffff
                 //                        ea 00 03 020100000000430000004dffffff
-                //                              03 = maxDevices?
                 // StreamSizeResponse     ea 00 70170000
                 //
                 // class G7TxController.DeviceListResponse {
@@ -457,7 +456,23 @@ import CoreBluetooth
                 // class G7TxController.StreamSizeResponse {
                 //     let size: Swift.UInt32
                 // }
-                break
+
+                // TODO: store the BLE pending user commands queue
+
+                switch data.count {
+
+                case 17:
+                    let maxDevices = data[2]
+                    // TODO
+                    log("\(tx.name): BLE whitelist: response code: \(txResponseCode.decamelized), max devices: \(maxDevices)")
+
+                case 6:
+                    let streamSize = UInt32(data[2...5])
+                    log("\(tx.name): BLE stream size: response code: \(txResponseCode.decamelized), stream size: \(streamSize)")
+
+                default:
+                    break
+                }
 
 
             default:

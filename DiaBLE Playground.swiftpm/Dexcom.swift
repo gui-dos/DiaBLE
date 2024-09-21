@@ -404,8 +404,8 @@ import CoreBluetooth
 
             case .bleControl:
                 // TODO: i.e. ea00030100000000000200000045ffffff
-                let status = data[1]
-                log("\(name): BLE control: status: \(status)")
+                let responseCode = data[1]
+                log("\(name): BLE control: response code: \(responseCode)")
 
 
             default:
