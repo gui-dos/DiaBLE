@@ -122,7 +122,7 @@ import CoreBluetooth
     // notify 3534  4A00 + 18 bytes    // transmitterVersion
     // write  3534  52
     // notify 3534  5200 + 13 bytes    // transmitterVersionExtended
-    // write  3534  EA02 01            // BLE StreamSpeed
+    // write  3534  EA02 01            // BLE StreamSpeed (1: fast)
     // notify 3534  EA00 01
     // write  3534  EA03 7017 0000     // BLE StreamSize
     // notify 3534  EA00 7017 0000
@@ -470,6 +470,10 @@ import CoreBluetooth
                     let streamSize = UInt32(data[2...5])
                     log("\(tx.name): BLE stream size: response code: \(txResponseCode.decamelized), stream size: \(streamSize)")
 
+                case 3:
+                    let streamSpeed = UInt32(data[2])
+                    log("\(tx.name): BLE stream speed: response code: \(txResponseCode.decamelized), stream speed: \(streamSpeed)\(streamSpeed == 1 ? " (fast)" : "")")
+
                 default:
                     break
                 }
@@ -598,6 +602,12 @@ import CoreBluetooth
 
     // TODO:
     //
+    // class G7TxController.G7DiagnosticReading {
+    //     let startTime: Swift.UInt32
+    //     let endTime: Swift.UInt32
+    //     let data: Foundation.Data
+    // }    //
+
     // class G7TxKit.TxRecordAggregator {
     //     let pairingCode: Swift.String
     //     var txId: Swift.String?
