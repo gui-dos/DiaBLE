@@ -58,6 +58,7 @@ extension SensorType {
             } else {
                 family = .libre3
                 region = SensorRegion(rawValue: Int(UInt16(info[2...3]))) ?? .unknown
+                generation = Int(UInt16(info[4...5]))
                 securityGeneration = 3 // TODO
             }
         }
