@@ -357,6 +357,8 @@ struct Details: View, LoggingView {
                             Spacer()
                             Button {
                                 // TODO
+                                settings.logging = true
+                                settings.selectedTab = .console
                                 app.main.rescan()
                             } label: {
                                 VStack(spacing: 0) {

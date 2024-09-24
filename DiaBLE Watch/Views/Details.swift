@@ -331,6 +331,9 @@ struct Details: View, LoggingView {
                         }
 
                         Button {
+                            // TODO
+                            settings.logging = true
+                            settings.selectedTab = .console
                             app.main.rescan()
                         } label: {
                             Label {

@@ -471,7 +471,7 @@ import CoreBluetooth
                     log("\(tx.name): BLE stream size: response code: \(txResponseCode.decamelized), stream size: \(streamSize)")
 
                 case 3:
-                    let streamSpeed = UInt32(data[2])
+                    let streamSpeed = data[2]
                     log("\(tx.name): BLE stream speed: response code: \(txResponseCode.decamelized), stream speed: \(streamSpeed)\(streamSpeed == 1 ? " (fast)" : "")")
 
                 default:
