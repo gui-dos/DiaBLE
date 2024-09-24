@@ -126,7 +126,7 @@ extension String {
 protocol Decamelizable {
     var decamelized: String { get }
 }
-/// Converts camelCased strings into separate lowercased words
+/// Converts camelCased strings/enums into separate lowercased words
 extension Decamelizable {
     var decamelized: String { String(describing: self).replacing(#/[[:upper:]]/#) { " " + $0.output }.lowercased() }
 }

@@ -2,6 +2,7 @@ import SwiftUI
 import CoreBluetooth
 import AVFoundation
 import os.log
+import UserNotifications
 
 
 protocol Logging {
@@ -26,7 +27,7 @@ extension View where Self: LoggingView {
 }
 
 
-public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSessionDelegate {
+public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCenterDelegate, WKExtendedRuntimeSessionDelegate {
 
     var app: AppState
     var logger: Logger
@@ -70,6 +71,9 @@ public class MainDelegate: NSObject, WKApplicationDelegate, WKExtendedRuntimeSes
         app.main = self
         extendedSession.delegate = self
         bluetoothDelegate.main = self
+
+        UNUserNotificationCenter.current().delegate = self
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .criticalAlert]) { _, _ in }
 
         let numberFormatter = NumberFormatter()
         numberFormatter.minimumFractionDigits = 8

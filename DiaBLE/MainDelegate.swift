@@ -73,7 +73,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         nfc.main = self
 
         UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .criticalAlert]) { _, _ in }
 
         let numberFormatter = NumberFormatter()
         numberFormatter.minimumFractionDigits = 8
