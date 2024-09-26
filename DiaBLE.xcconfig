@@ -5,5 +5,5 @@ APP_GROUP_ID = group.com.$(DEVELOPMENT_TEAM).DiaBLE
 
 // Comment out all the following lines in DiaBLEOverride.xcconfig
 MARKETING_VERSION = 0.0.1
-CURRENT_PROJECT_VERSION = 116
+CURRENT_PROJECT_VERSION = 117
 #include? "DiaBLEOverride.xcconfig"
