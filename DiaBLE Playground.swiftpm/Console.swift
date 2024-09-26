@@ -24,10 +24,13 @@ struct Console: View {
 
     @State private var showingNFCAlert = false
     @State private var showingRePairConfirmationDialog = false
+    @State private var showingActivateConfirmationDialog = false
+
+    #if DEBUG
     @State private var showingUnlockConfirmationDialog = false
     @State private var showingResetConfirmationDialog = false
     @State private var showingProlongConfirmationDialog = false
-    @State private var showingActivateConfirmationDialog = false
+    #endif
 
     @State private var showingFilterField = false
     @State private var filterText = ""
@@ -185,7 +188,7 @@ struct Console: View {
                         Label("Read FRAM", systemImage: "memorychip")
                     }
 
-
+                    #if DEBUG
                     Menu {
 
                         Button {
@@ -221,22 +224,10 @@ struct Console: View {
                             Label("Prolong", systemImage: "infinity.circle")
                         }
 
-                        Button {
-                            if app.main.nfc.isAvailable {
-                                settings.logging = true
-                                showingActivateConfirmationDialog = true
-                            } else {
-                                showingNFCAlert = true
-                            }
-                        } label: {
-                            Label("Activate", systemImage: "bolt.circle")
-                        }
-
-
                     } label: {
                         Label("Hacks", systemImage: "wand.and.stars")
                     }
-
+                    #endif // DEBUG
 
                     Button {
                         if app.main.nfc.isAvailable {
@@ -249,6 +240,16 @@ struct Console: View {
                         Label("Dump Memory", systemImage: "cpu")
                     }
 
+                    Button {
+                        if app.main.nfc.isAvailable {
+                            settings.logging = true
+                            showingActivateConfirmationDialog = true
+                        } else {
+                            showingNFCAlert = true
+                        }
+                    } label: {
+                        Label("Activate", systemImage: "bolt.circle")
+                    }
 
                 } label: {
                     VStack(spacing: 0) {
@@ -267,6 +268,12 @@ struct Console: View {
                 app.main.nfc.taskRequest = .enableStreaming
             }
         }
+        .confirmationDialog("Activating a fresh/ened sensor will put it in the usual warming-up state for 60 minutes.", isPresented: $showingActivateConfirmationDialog, titleVisibility: .visible) {
+            Button("Activate", role: .destructive) {
+                app.main.nfc.taskRequest = .activate
+            }
+        }
+        #if DEBUG
         .confirmationDialog("Unlocking the Libre 2 is not reversible and will make it unreadable by LibreLink and other apps.", isPresented: $showingUnlockConfirmationDialog, titleVisibility: .visible) {
             Button("Unlock", role: .destructive) {
                 app.main.nfc.taskRequest = .unlock
@@ -282,11 +289,7 @@ struct Console: View {
                 app.main.nfc.taskRequest = .prolong
             }
         }
-        .confirmationDialog("Activating a fresh/ened sensor will put it in the usual warming-up state for 60 minutes.", isPresented: $showingActivateConfirmationDialog, titleVisibility: .visible) {
-            Button("Activate", role: .destructive) {
-                app.main.nfc.taskRequest = .activate
-            }
-        }
+        #endif // DEBUG
 
     }
 }
