@@ -51,8 +51,6 @@
 		C5DB4E4F2B168E08005AD792 /* Libre.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DB4E4D2B168E08005AD792 /* Libre.swift */; };
 		C5E015E02989B0EA00F6EDF9 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015DF2989B0EA00F6EDF9 /* README.md */; };
 		C5E015E12989B0EA00F6EDF9 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015DF2989B0EA00F6EDF9 /* README.md */; };
-		C5E015E32989B0F600F6EDF9 /* TODO.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015E22989B0F600F6EDF9 /* TODO.md */; };
-		C5E015E42989B0F600F6EDF9 /* TODO.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015E22989B0F600F6EDF9 /* TODO.md */; };
 		C5E015E62989B10500F6EDF9 /* LICENSE.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015E52989B10500F6EDF9 /* LICENSE.md */; };
 		C5E015E72989B10500F6EDF9 /* LICENSE.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015E52989B10500F6EDF9 /* LICENSE.md */; };
 		C5E165052ACBE5E600970835 /* HamburgerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E165042ACBE5E600970835 /* HamburgerMenu.swift */; };
@@ -203,7 +201,6 @@
 		C5DB4E4D2B168E08005AD792 /* Libre.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Libre.swift; sourceTree = "<group>"; };
 		C5DED87529899B8A00164AEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C5E015DF2989B0EA00F6EDF9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		C5E015E22989B0F600F6EDF9 /* TODO.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
 		C5E015E52989B10500F6EDF9 /* LICENSE.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		C5E165042ACBE5E600970835 /* HamburgerMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HamburgerMenu.swift; sourceTree = "<group>"; };
 		C5E4004429825C710021C6B7 /* alarm_high.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alarm_high.mp3; sourceTree = "<group>"; };
@@ -317,7 +314,6 @@
 				49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */,
 				49DE8D3429AFFB3000BB7CF4 /* DiaBLEOverride.xcconfig */,
 				C5E015DF2989B0EA00F6EDF9 /* README.md */,
-				C5E015E22989B0F600F6EDF9 /* TODO.md */,
 				C5E015E52989B10500F6EDF9 /* LICENSE.md */,
 				C5AAA6172981CF7000CA3EC1 /* DiaBLE */,
 				C59960E02981E381005999C2 /* DiaBLE Watch */,
@@ -541,7 +537,6 @@
 			files = (
 				C5E015E12989B0EA00F6EDF9 /* README.md in Resources */,
 				C5E400A029825F580021C6B7 /* company_ids.json in Resources */,
-				C5E015E42989B0F600F6EDF9 /* TODO.md in Resources */,
 				C52AF6682BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */,
 				C5E4004A29825C710021C6B7 /* alarm_low.mp3 in Resources */,
 				C5E015E72989B10500F6EDF9 /* LICENSE.md in Resources */,
@@ -557,7 +552,6 @@
 			files = (
 				C5E015E02989B0EA00F6EDF9 /* README.md in Resources */,
 				C5E4009F29825F580021C6B7 /* company_ids.json in Resources */,
-				C5E015E32989B0F600F6EDF9 /* TODO.md in Resources */,
 				C52AF6672BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */,
 				C5E4004929825C710021C6B7 /* alarm_low.mp3 in Resources */,
 				C5E015E62989B10500F6EDF9 /* LICENSE.md in Resources */,

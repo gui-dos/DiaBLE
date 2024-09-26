@@ -218,7 +218,7 @@ import CoreBluetooth
                 let tokenHash = data.subdata(in: 1 ..< 9)
                 let challenge = data.subdata(in: 9 ..< 17)
                 log("\(name): tokenHash: \(tokenHash.hex), challenge: \(challenge.hex)")
-                if settings.userLevel < .test { // not sniffing
+                if settings.userLevel < .test { // not eavesdropping
                     let doubleChallenge = challenge + challenge
                     let cryptKey = "00\(serial)00\(serial)".data(using: .utf8)!
                     let encrypted = doubleChallenge.aes128Encrypt(keyData: cryptKey)!

@@ -677,7 +677,7 @@ extension String {
             if data.count == 2 {
                 expectedStreamSize = Int(data[1] + data[1] / 20 + 1)
                 log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): expected response size: \(expectedStreamSize) bytes (payload: \(data[1]) bytes)")
-                // TEST: when sniffing Trident:
+                // TEST: when eavesdropping Trident:
                 if data[1] == 23 {
                     currentSecurityCommand = .readChallenge
                 } else if data[1] == 67 {  // encrypted KAuth
@@ -689,7 +689,7 @@ extension String {
                 }
             }
             if currentSecurityCommand == .certificateLoadDone && lastSecurityEvent == .certificateAccepted {
-                if settings.userLevel < .test { // not sniffing Trident
+                if settings.userLevel < .test { // not eavesdropping Trident
                     send(securityCommand: .security_09)
                 }
             }
@@ -710,7 +710,7 @@ extension String {
                 switch currentSecurityCommand {
 
                 case .security_09:
-                    if settings.userLevel < .test { // not sniffing Trident
+                    if settings.userLevel < .test { // not eavesdropping Trident
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate: \(payload.hex)")
                         send(securityCommand: .security_0D)
                         // TODO:
@@ -721,7 +721,7 @@ extension String {
                     }
 
                 case .ephemeralLoadDone:
-                    if settings.userLevel < .test { // not sniffing Trident
+                    if settings.userLevel < .test { // not eavesdropping Trident
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch ephemeral: \(payload.hex)")
                         send(securityCommand: .readChallenge)
                         // TODO
@@ -743,7 +743,7 @@ extension String {
                     // TODO:
                     // let response = process2(command: 7, nonce1, Data(r1 + r2 + blePIN)) // CRYPTO_EXTENSION_ENCRYPT
 
-                    if settings.userLevel < .test { // not sniffing Trident
+                    if settings.userLevel < .test { // not eavesdropping Trident
                         log("\(type) \(transmitter!.peripheral!.name!): writing 40-zero challenge response")
 
                         let challengeData = Data(count: 40)

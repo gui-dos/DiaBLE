@@ -354,7 +354,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 app.device.readCharacteristic = characteristic
                 msg += " (data read)"
 
-                // enable notifications only in didWriteValueFor() unless sniffing the Libre 2 in TEST mode
+                // enable notifications only in didWriteValueFor() unless eavesdropping the Libre 2 in TEST mode
                 if uuid != Abbott.dataReadCharacteristicUUID || settings.userLevel >= .test {
                     app.device.peripheral?.setNotifyValue(true, for: app.device.readCharacteristic!)
                     msg += "; enabling notifications"
@@ -460,7 +460,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
             if serviceUUID == Libre3.UUID.security.rawValue {
                 if sensor.transmitter == nil { sensor.transmitter = app.transmitter }
-                if settings.userLevel < .test { // not sniffing Trident
+                if settings.userLevel < .test { // not eavesdropping Trident
                     ((app.device as? Abbott)?.sensor as? Libre3)?.send(securityCommand: .readChallenge)
                     // ((app.device as? Abbott)?.sensor as? Libre3)?.pair()  // TEST
                 }
@@ -475,7 +475,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 debugLog("Bluetooth: sent \(app.device.name) read security challenge")
 
             } else if sensor.uid.count > 0 && settings.activeSensorInitialPatchInfo.count > 0 {
-                if let libre2 = sensor as? Libre2, settings.userLevel < .test {  // not sniffing Libre 2
+                if let libre2 = sensor as? Libre2, settings.userLevel < .test {  // not eavesdropping Libre 2
                     libre2.streamingUnlockCount += 1
                     settings.activeSensorStreamingUnlockCount += 1
                     let unlockPayload = Libre2.streamingUnlockPayload(id: sensor.uid, info: settings.activeSensorInitialPatchInfo, enableTime: libre2.streamingUnlockCode, unlockCount: libre2.streamingUnlockCount)
@@ -505,7 +505,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 app.sensor = sensor
             }
             app.transmitter.sensor = sensor
-            if settings.userLevel < .test { // not sniffing
+            if settings.userLevel < .test { // not eavesdropping
 
                 // G7 uses appKeyChallenge/authRequest2Tx (0x02), see: https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/message/AuthRequestTxMessage2.java
                 // TODO: send 01 00 first anyway
