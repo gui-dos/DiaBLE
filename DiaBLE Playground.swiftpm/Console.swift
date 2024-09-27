@@ -25,9 +25,9 @@ struct Console: View {
     @State private var showingNFCAlert = false
     @State private var showingRePairConfirmationDialog = false
     @State private var showingActivateConfirmationDialog = false
+    @State private var showingUnlockConfirmationDialog = false
 
     #if DEBUG
-    @State private var showingUnlockConfirmationDialog = false
     @State private var showingResetConfirmationDialog = false
     @State private var showingProlongConfirmationDialog = false
     #endif
@@ -188,7 +188,6 @@ struct Console: View {
                         Label("Read FRAM", systemImage: "memorychip")
                     }
 
-                    #if DEBUG
                     Menu {
 
                         Button {
@@ -202,6 +201,18 @@ struct Console: View {
                             Label("Unlock", systemImage: "lock.open")
                         }
 
+                        Button {
+                            if app.main.nfc.isAvailable {
+                                settings.logging = true
+                                app.main.nfc.taskRequest = .dump
+                            } else {
+                                showingNFCAlert = true
+                            }
+                        } label: {
+                            Label("Dump Memory", systemImage: "cpu")
+                        }
+
+                        #if DEBUG
                         Button {
                             if app.main.nfc.isAvailable {
                                 settings.logging = true
@@ -223,21 +234,10 @@ struct Console: View {
                         } label: {
                             Label("Prolong", systemImage: "infinity.circle")
                         }
+                        #endif // DEBUG
 
                     } label: {
                         Label("Hacks", systemImage: "wand.and.stars")
-                    }
-                    #endif // DEBUG
-
-                    Button {
-                        if app.main.nfc.isAvailable {
-                            settings.logging = true
-                            app.main.nfc.taskRequest = .dump
-                        } else {
-                            showingNFCAlert = true
-                        }
-                    } label: {
-                        Label("Dump Memory", systemImage: "cpu")
                     }
 
                     Button {
@@ -273,12 +273,12 @@ struct Console: View {
                 app.main.nfc.taskRequest = .activate
             }
         }
-        #if DEBUG
         .confirmationDialog("Unlocking the Libre 2 is not reversible and will make it unreadable by LibreLink and other apps.", isPresented: $showingUnlockConfirmationDialog, titleVisibility: .visible) {
             Button("Unlock", role: .destructive) {
                 app.main.nfc.taskRequest = .unlock
             }
         }
+        #if DEBUG
         .confirmationDialog("Resetting the sensor will clear its measurements memory and put it in an inactivated state.", isPresented: $showingResetConfirmationDialog, titleVisibility: .visible) {
             Button("Reset", role: .destructive) {
                 app.main.nfc.taskRequest = .reset
