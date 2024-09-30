@@ -9,9 +9,9 @@
 
 ## Builds
 
-To build the project, you have to duplicate the file _DiaBLE.xcconfig_, rename the copy to ***DiaBLEOverride.xcconfig*** (the missing reference displayed by Xcode in red should then point to it) and edit it by commenting out the trailing lines after `// Comment out the following...` and replacing `##TEAM_ID##` with your Apple Team ID, so that the first line should read for example `DEVELOPMENT_TEAM = Z25SC9UDC8`.
+To build the project, you have to duplicate the file _DiaBLE.xcconfig_, rename the copy to ***DiaBLEOverride.xcconfig*** (the missing reference displayed by Xcode in red should then point to it) and edit it by commenting out the trailing lines after `// Comment out the following...` and replacing `##TEAM_ID##` with your Apple Team ID, so that the first line should read, for example, `DEVELOPMENT_TEAM = Z25SC9UDC8`.
 
-The NFC capabilities require a paid Apple Developer Program **annual membership**. If you won't [request](https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/) a *Critical Alert Notifications Entitlement* you have to edit out the lines `<key>com.apple.developer.usernotifications.critical-alerts</key>` `<true/>` from the _.entitlements_ files in the folders _DiaBLE_ and _DiaBLE Watch_.
+The NFC capabilities require a paid Apple Developer Program **annual membership**. If you won't [request](https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/) a *Critical Alert Notifications Entitlement*, you have to edit out the lines `<key>com.apple.developer.usernotifications.critical-alerts</key>` `<true/>` from the _.entitlements_ files in the folders _DiaBLE_ and _DiaBLE Watch_.
 
 A public beta of DiaBLE is availaBLE at **[TestFlight](https://testflight.apple.com/join/H48doU3l)**: I'll periodically expunge anonymous users I didn't invite or who didn't sponsor me through [PayPal](https://paypal.me/guisor) $-). If you own an iPad you can download the [zipped archive](https://github.com/gui-dos/DiaBLE/archive/refs/heads/main.zip) of this repository and just tap _DiaBLE Playground.swiftpm_ to test the corresponding features and even more past legacy ones.
 

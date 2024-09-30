@@ -397,7 +397,7 @@ import CoreBluetooth
                 let voltageA = Int(UInt16(data[2...3]))
                 let voltageB = Int(UInt16(data[4...5]))
                 let runtimeDays = Int(data[6])
-                let temperature = Int(data[7])
+                let temperature = Int(Int8(bitPattern: data[7]))
                 log("\(name): battery info response: status: 0x\(status.hex), static voltage A: \(voltageA), dynamic voltage B: \(voltageB), run time: \(runtimeDays) days, temperature: \(temperature), valid CRC: \(data.dropLast(2).crc == UInt16(data.suffix(2)))")
 
 
