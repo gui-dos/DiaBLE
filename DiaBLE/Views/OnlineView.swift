@@ -46,7 +46,7 @@ struct OnlineView: View, LoggingView {
                     do {
                         try await libreLinkUp.login()
                     } catch {
-                        libreLinkUpResponse = error.localizedDescription.capitalized
+                        libreLinkUpResponse = error.localizedDescription
                     }
                 }
                 if !(settings.libreLinkUpUserId.isEmpty ||
@@ -89,7 +89,7 @@ struct OnlineView: View, LoggingView {
                     retries += 1
                 }
             } catch {
-                libreLinkUpResponse = error.localizedDescription.capitalized
+                libreLinkUpResponse = error.localizedDescription
             }
         } while retries == 1
         }

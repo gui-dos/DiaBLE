@@ -9,12 +9,14 @@ enum LibreLinkUpError: LocalizedError {
     case noConnection
     case notAuthenticated
     case jsonDecoding
+    case touMustBeReaccepted
 
     var errorDescription: String? {
         switch self {
-        case .noConnection:     "no connection"
-        case .notAuthenticated: "not authenticated"
-        case .jsonDecoding:     "JSON decoding"
+        case .noConnection:        "No connection"
+        case .notAuthenticated:    "Not authenticated"
+        case .jsonDecoding:        "JSON decoding error"
+        case .touMustBeReaccepted: "Terms of Use must be re-accepted by running LibreLink (tip: log out and re-login)"
         }
     }
 }
@@ -135,6 +137,9 @@ class LibreLinkUp: Logging {
                     }
                 }
                 do {
+                    let data = """
+                    {"status":4,"data":{"step":{"type":"tou","componentName":"AcceptDocument","props":{"reaccept":true,"titleKey":"Common.termsOfUse","type":"tou"}},"user":{"accountType":"pat","country":"DE","uiLanguage":"de-DE"},"authTicket":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjMTFhMmNlLTY1MmYtMTFlZi1hOGY5LWU2NTlhODBiNTU2OSIsImZpcnN0TmFtZSI6IkxpYnJlICIsImxhc3ROYW1lIjoiV3Jpc3QiLCJjb3VudHJ5IjoiREUiLCJyZWdpb24iOiJkZSIsInJvbGUiOiJwYXRpZW50IiwiZW1haWwiOiJsaWJyZXdpZGdldEBjbWRsaW5lLm5ldCIsImMiOjEsInMiOiJsbHUuaW9zIiwiZXhwIjoxNzI3MzQyNTE4fQ._-kekmE1JEmpmdUUhpKTyqg15xwGXLSo3vh9wbTLVn8","expires":1727342518,"duration":3600000}}}
+                    """.data(using: .utf8)!
                     if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                        let status = json["status"] as? Int {
 
@@ -159,10 +164,35 @@ class LibreLinkUp: Logging {
                             throw LibreLinkUpError.notAuthenticated
                         }
 
-                        // TODO: status 4 requires accepting new Terms of Use: api.libreview.io/auth/continue/tou
+                        // TODO: status 4 requires accepting new Terms of Use
+
+                        // https://github.com/poml88/LibreWrist/blob/a4fdf7b/SharedPhoneWatch/LibreLinkUp.swift#L249
+                        // let mockupData = """
+                        // {"status":4,"data":{"step":{"type":"tou","componentName":"AcceptDocument","props":{"reaccept":true,"titleKey":"Common.termsOfUse","type":"tou"}},"user":{"accountType":"pat","country":"DE","uiLanguage":"de-DE"},"authTicket":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjMTFhMmNlLTY1MmYtMTFlZi1hOGY5LWU2NTlhODBiNTU2OSIsImZpcnN0TmFtZSI6IkxpYnJlICIsImxhc3ROYW1lIjoiV3Jpc3QiLCJjb3VudHJ5IjoiREUiLCJyZWdpb24iOiJkZSIsInJvbGUiOiJwYXRpZW50IiwiZW1haWwiOiJsaWJyZXdpZGdldEBjbWRsaW5lLm5ldCIsImMiOjEsInMiOiJsbHUuaW9zIiwiZXhwIjoxNzI3MzQyNTE4fQ._-kekmE1JEmpmdUUhpKTyqg15xwGXLSo3vh9wbTLVn8","expires":1727342518,"duration":3600000}}}
+                        // """.data(using: .utf8)!
+
                         if status == 4 {
-                            log("LibreLinkUp: Terms of Use have been updated and must be accepted by running LibreLink (tip: log out and re-login)")
-                            throw LibreLinkUpError.notAuthenticated
+                            if let data,
+
+                                let step = data["step"] as? [String: Any],
+                               let type = step["type"] as? String,  // "tou", "pp"
+                               let componentName = step["componentName"] as? String,
+                               let props = step["props"] as? [String: Any],
+                               let reaccept = props["reaccept"] as? Bool,
+                               let titleKey = props["titleKey"] as? String,
+                               let componentType = props["type"] as? String,
+
+                                let user = data["user"] as? [String: Any],
+                               let country = user["country"] as? String,
+                               let authTicketDict = data["authTicket"] as? [String: Any],
+                               let authTicketData = try? JSONSerialization.data(withJSONObject: authTicketDict),
+                               let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
+                                debugLog("LibreLinkUp: reacccept step: type: \(type), component name: \(componentName), reaccept: \(reaccept), title key: \(titleKey), component type: \(componentType), user country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
+
+                                throw LibreLinkUpError.touMustBeReaccepted
+
+                                // TODO: api.libreview.io/auth/continue/tou (or `pp` type)
+                            }
                         }
 
                         // {"status":0,"data":{"redirect":true,"region":"fr"}}
@@ -269,6 +299,9 @@ class LibreLinkUp: Logging {
         } catch LibreLinkUpError.notAuthenticated {
             log("LibreLinkUp: error: \(LibreLinkUpError.notAuthenticated.localizedDescription)")
             throw LibreLinkUpError.notAuthenticated
+        } catch LibreLinkUpError.touMustBeReaccepted {
+            log("LibreLinkUp: WARNING: \(LibreLinkUpError.touMustBeReaccepted.localizedDescription)")
+            throw LibreLinkUpError.touMustBeReaccepted
         } catch {
             log("LibreLinkUp: server error: \(error.localizedDescription)")
             throw LibreLinkUpError.noConnection
