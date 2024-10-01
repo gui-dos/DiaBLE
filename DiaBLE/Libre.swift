@@ -58,7 +58,7 @@ extension SensorType {
                     }
                 }
             } else {
-                family = SensorFamily(rawValue: Int(info[12]))!  // same as Libre3/Lingo  4/9product type
+                family = SensorFamily(rawValue: Int(info[12]))!  // same as Libre3/Lingo 4/9 product type
                 region = SensorRegion(rawValue: Int(UInt16(info[2...3]))) ?? .unknown
                 generation = Int(UInt16(info[4...5]))
                 securityGeneration = 3 // TODO
