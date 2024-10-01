@@ -189,7 +189,7 @@ struct Details: View, LoggingView {
 
                         @Bindable var settings = settings
 
-                        if app.sensor?.type != .libre3 {
+                        if app.sensor?.type != .libre3 && app.sensor?.type != .lingo {
 
                             HStack {
                                 Text("Patch Info")
