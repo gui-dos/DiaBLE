@@ -20,7 +20,9 @@ extension SensorType {
         case 0x2C:       .libre2Gen2 // Gen2 US Libre 2+
         default:
             if patchInfo.count == 24 {
-                .libre3
+                patchInfo[12] == 4 ? .libre3 :
+                patchInfo[12] == 9 ? .lingo :
+                    .unknown
             } else {
                 .unknown
             }
@@ -38,7 +40,7 @@ extension SensorType {
             } else {
                 type = .unknown
             }
-            if type != .libre3 {
+            if type != .libre3 && type != .lingo {
                 if info.count > 3 {
                     region = SensorRegion(rawValue: Int(info[3])) ?? .unknown
                 }
@@ -56,7 +58,7 @@ extension SensorType {
                     }
                 }
             } else {
-                family = .libre3
+                family = SensorFamily(rawValue: Int(info[12]))!  // same as Libre3/Lingo  4/9product type
                 region = SensorRegion(rawValue: Int(UInt16(info[2...3]))) ?? .unknown
                 generation = Int(UInt16(info[4...5]))
                 securityGeneration = 3 // TODO

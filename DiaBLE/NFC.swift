@@ -45,7 +45,7 @@ extension Sensor {
             NFCCommand(code: 0xA0, parameters: backdoor + readerSerial, description: "activate")
         case .libre2:
             nfcCommand(.activate)
-        case .libre3:
+        case .libre3, .lingo:
             (self as! Libre3).activationNFCCommand
         default:
             NFCCommand(code: 0x00)
@@ -335,7 +335,6 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 manufacturer.append(" (Texas Instruments)")
             } else if manufacturer == "7a" {
                 manufacturer.append(" (Abbott Diabetes Care)")
-                sensor.type = .libre3
                 sensor.securityGeneration = 3 // TODO
             }
             log("NFC: IC manufacturer code: 0x\(manufacturer)")
@@ -375,7 +374,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 }
             }
 
-            if sensor.type == .libre3 && sensor.state != .notActivated && (taskRequest == .none || taskRequest == .enableStreaming) {
+            if (sensor.type == .libre3 || sensor.type == .lingo) && sensor.state != .notActivated && (taskRequest == .none || taskRequest == .enableStreaming) {
                 // get the current Libre 3 blePIN and activationTime by sending `A0` to an already activated sensor
                 taskRequest = .activate
             }
@@ -409,7 +408,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     }
 
                     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-                    if sensor.type != .libre3 {
+                    if sensor.type != .libre3 && sensor.type != .lingo {
                         sensor.detailFRAM()
                     }
 
@@ -773,7 +772,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
         if settings.userLevel > .basic {
 
-            if sensor.type == .libre3 {
+            if sensor.type == .libre3 || sensor.type == .lingo {
                 for c in [0xAA, 0xAB, 0xAC] {
                     do {
                         var output = try await send(NFCCommand(code: c))

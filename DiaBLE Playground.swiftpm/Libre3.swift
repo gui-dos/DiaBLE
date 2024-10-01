@@ -72,13 +72,13 @@ extension String {
 
     enum ProductType: Int, CustomStringConvertible {
         case others = 1
-        case sensor = 4    // very probably Libre 3's product family
+        case sensor = 4    // Libre 3's product family
         case lingo  = 9
 
         var description: String {
             switch self {
-            case .others: "OTHERS"
-            case .sensor: "SENSOR"
+            case .others: "others"  // OTHERS
+            case .sensor: "sensor"  // SENSOR
             case .lingo:  "Lingo"
             }
         }
