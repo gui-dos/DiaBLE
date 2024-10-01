@@ -314,6 +314,8 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     switch sensorType {
                     case .libre3:
                         sensor = Libre3(main: main)
+                    case .lingo:
+                        sensor = Lingo(main: main)
                     case .libre2Gen2:
                         sensor = Libre2Gen2(main: main)
                     case .libre2:
