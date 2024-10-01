@@ -5,7 +5,7 @@ import CoreNFC
 #endif
 
 
-class Libre2Gen2: Libre2 {
+@Observable class Libre2Gen2: Libre2 {
 
     var streamingContext: Int = 0    // returned by getNfcAuthenticatedCommandBLE(command:...)
 

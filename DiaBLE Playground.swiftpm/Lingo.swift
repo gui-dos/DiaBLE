@@ -1,9 +1,11 @@
+import Foundation
+
 // Lingo Metabolic Coaching: https://decrypt.day/app/id1670445335
 
 // Lingo.app/Frameworks/BSMCoreKit.framework
 
 
-class Lingo {
+@Observable class Lingo: Libre3 {
 
 
     // enum DCMGK.GKAnalyteType {
