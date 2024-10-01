@@ -184,7 +184,7 @@ class LibreLinkUp: Logging {
                                let authTicketDict = data["authTicket"] as? [String: Any],
                                let authTicketData = try? JSONSerialization.data(withJSONObject: authTicketDict),
                                let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
-                                debugLog("LibreLinkUp: reacccept step: type: \(type), component name: \(componentName), reaccept: \(reaccept), title key: \(titleKey), component type: \(componentType), user country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
+                                debugLog("LibreLinkUp: reaccept step: type: \(type), component name: \(componentName), reaccept: \(reaccept), title key: \(titleKey), component type: \(componentType), user country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
 
                                 throw LibreLinkUpError.touMustBeReaccepted
 
