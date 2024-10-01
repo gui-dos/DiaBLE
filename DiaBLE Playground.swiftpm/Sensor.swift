@@ -31,6 +31,7 @@ enum SensorFamily: Int, CustomStringConvertible {
     case libre2     = 3
     case libre3     = 4
     case libreSense = 7
+    case lingo      = 9
 
     var description: String {
         switch self {
@@ -40,6 +41,7 @@ enum SensorFamily: Int, CustomStringConvertible {
         case .libre2:     "Libre 2"
         case .libre3:     "Libre 3"
         case .libreSense: "Libre Sense"
+        case .lingo:      "Lingo"
         }
     }
 }
