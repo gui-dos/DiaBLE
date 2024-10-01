@@ -551,7 +551,7 @@ extension String {
         firmware = "\(fwVersion[3]).\(fwVersion[2]).\(fwVersion[1]).\(fwVersion[0])"
         log("Libre 3: firmware version: \(firmware)")
 
-        let productType = Int(patchInfo[12])  // 04 = SENSOR
+        let productType = Int(patchInfo[12])  // 04: SENSOR (Libre 3), 09: Lingo
         log("Libre 3: product type: \(ProductType(rawValue: productType)?.description ?? "unknown") (0x\(productType.hex))")
 
         let warmupTime = patchInfo[13]
@@ -563,7 +563,7 @@ extension String {
         log("Libre 3: specific state: \(State(rawValue: sensorState)!.description.lowercased()) (0x\(sensorState.hex)), state: \(state.description.lowercased()) ")
 
         let serialNumber = Data(patchInfo[15...23])
-        serial = serialNumber.string
+        serial = (productType == 9 ? "9" : "") + serialNumber.string  // prepend `9` family to a Lingo serial
         log("Libre 3: serial number: \(serial) (0x\(serialNumber.hex))")
 
     }
