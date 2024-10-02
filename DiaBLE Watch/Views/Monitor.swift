@@ -144,7 +144,7 @@ struct Monitor: View, LoggingView {
                                     battery > 65 ? 75 :
                                     battery > 35 ? 50 :
                                     battery > 10 ? 25 : 0
-                                    Image(systemName: "battery.\(ext)")
+                                    Image(systemName: "battery.\(ext)percent")
                                     Text("\(app.device.battery)%")
                                 }
                                 .foregroundStyle(app.device.battery > 10 ? .green : .red)

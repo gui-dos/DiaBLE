@@ -2,10 +2,15 @@
 <br><br>
 
 **ChangeLog:**
+
+* 1/10/2024 - [Build 119](https://github.com/gui-dos/DiaBLE/commit/619382a)  
+  - Scan Lingo's `patchInfo` via NFC:
+<p align="center"><img src="https://github.com/user-attachments/assets/d4f921b9-73a7-4b3d-8015-48343cf7f078" width="33.3%"/> &nbsp; <img src="https://github.com/user-attachments/assets/a30dda70-be3f-47d8-955a-19cd7a9b0e47" width="33.3%"/></p>
+<br><br>
+
 * 20/1/2024 - [Build 88](https://github.com/gui-dos/DiaBLE/commit/d1333f3)  
   - Shell: import and dump LibreView CSV files by using TabularData:
-<p align="center"><img src="https://github.com/gui-dos/DiaBLE/assets/7220550/01050cf3-2f75-4034-8861-5e33475c972b" width="75%"/>
-<br><br>
+<p align="center"><img src="https://github.com/gui-dos/DiaBLE/assets/7220550/01050cf3-2f75-4034-8861-5e33475c972b" width="75%"/></p>
 
 ## Builds
 
