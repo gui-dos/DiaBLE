@@ -25,17 +25,12 @@ Currently I am targeting only the latest betas of Xcode and iOS and focusing on 
   
 The Shell in the Console allows opening both encrypted and decrypted _trident.realm_ files from a backup of the Libre 3 app data (the Container folder extracted for example by using iMazing): see the nice technical post (mentioning me 😎) ["Liberating glucose data from the Freestyle Libre 3"](https://frdmtoplay.com/freeing-glucose-data-from-the-freestyle-libre-3/) (a rooted Android Virtual Machine like Waydroid or the default _Google APIs System Image_ in Android Studio is required to unwrap the Realm encryption key).
 
-
-## FIXMEs
-
-* Libre 3:
-  - Gen2 `.getSessionInfo` outpassed by new certificate data and ECDH ephemeral keys (whiteCryption's Secure Key Box)
-* iOS 16:
-  - *"This method should not be called on the main thread as it may lead to UI unresponsiveness"* warning for `App.swift`
-
-
 ## TODOs
 
+* Libre 3:
+  - tackle AES 128 CCM, ECDH, Zimperium zShield... (see [Juggluco](https://github.com/j-kaltes/Juggluco))
+* Dexcom G7:
+  - J-PAKE authentication protocol (see [xDrip+'s _keks_](https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/))
 * Apple Watch app:
   - workout and extended runtime background sessions, complications
   - ["Get timely alerts from Bluetooth devices in watchOS" - WWDC 2022](https://developer.apple.com/wwdc22/10135/)
@@ -43,7 +38,7 @@ The Shell in the Console allows opening both encrypted and decrypted _trident.re
 * scrollable graph, offline trend arrow, landscape mode
 * smooth the historic values and project the trend ones (see [LibreTransmitter](https://github.com/dabear/LibreTransmitter/commit/49b50d7995955b76861440e5e34a0accd064d18f))
 * log: limit to a number of readings, prepend time, Share menu, record to a file
-* new iOS Widgets and App Intents (see [Glucose Direct](https://github.com/creepymonster/GlucoseDirect))
+* new iOS Widgets and App Intents (see [Glucose Direct](https://github.com/creepymonster/GlucoseDirect), [OpenGlück](https://github.com/open-gluck))
 * SwiftData and/or TabularData as persistence layers (see [Glupreview](https://github.com/solanovisitor/glupreview) for CoreML use)
 
 ---
