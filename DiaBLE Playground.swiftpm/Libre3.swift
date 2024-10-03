@@ -535,36 +535,37 @@ extension String {
 
     func parsePatchInfo() {
 
+        let productType = Int(patchInfo[12])
+        type = [4: SensorType.libre3, 9: SensorType.lingo][productType] ?? .libre3
+        log("\(type): product type: \(ProductType(rawValue: productType)?.description ?? "unknown") (0x\(productType.hex))")
+
         let securityVersion = UInt16(patchInfo[0...1])
         let localization    = UInt16(patchInfo[2...3])
         let generation      = UInt16(patchInfo[4...5])
-        log("Libre 3: security version: \(securityVersion) (0x\(securityVersion.hex)), localization: \(localization) (0x\(localization.hex)), generation: \(generation) (0x\(generation.hex))")
+        log("\(type): security version: \(securityVersion) (0x\(securityVersion.hex)), localization: \(localization) (0x\(localization.hex)), generation: \(generation) (0x\(generation.hex))")
 
         self.generation = Int(generation)  // 1: Libre 3+
         region = SensorRegion(rawValue: Int(localization)) ?? .unknown
 
         let wearDuration = patchInfo[6...7]
         maxLife = Int(UInt16(wearDuration))
-        log("Libre 3: wear duration: \(maxLife) minutes (\(maxLife.formattedInterval), 0x\(maxLife.hex))")
+        log("\(type): wear duration: \(maxLife) minutes (\(maxLife.formattedInterval), 0x\(maxLife.hex))")
 
         let fwVersion = patchInfo.subdata(in: 8 ..< 12)
         firmware = "\(fwVersion[3]).\(fwVersion[2]).\(fwVersion[1]).\(fwVersion[0])"
-        log("Libre 3: firmware version: \(firmware)")
-
-        let productType = Int(patchInfo[12])  // 04: SENSOR (Libre 3), 09: Lingo
-        log("Libre 3: product type: \(ProductType(rawValue: productType)?.description ?? "unknown") (0x\(productType.hex))")
+        log("\(type): firmware version: \(firmware)")
 
         let warmupTime = patchInfo[13]
-        log("Libre 3: warmup time: \(warmupTime * 5) minutes (0x\(warmupTime.hex) * 5)")
+        log("\(type): warmup time: \(warmupTime * 5) minutes (0x\(warmupTime.hex) * 5)")
 
         let sensorState = patchInfo[14]
         // TODO: manage specific Libre 3 states
         state = SensorState(rawValue: sensorState <= 2 ? sensorState: sensorState - 1) ?? .unknown
-        log("Libre 3: specific state: \(State(rawValue: sensorState)!.description.lowercased()) (0x\(sensorState.hex)), state: \(state.description.lowercased()) ")
+        log("\(type): specific state: \(State(rawValue: sensorState)!.description.lowercased()) (0x\(sensorState.hex)), state: \(state.description.lowercased()) ")
 
         let serialNumber = Data(patchInfo[15...23])
         serial = (productType == 9 ? "9" : "") + serialNumber.string  // prepend `9` family to a Lingo serial
-        log("Libre 3: serial number: \(serial) (0x\(serialNumber.hex))")
+        log("\(type): serial number: \(serial) (0x\(serialNumber.hex))")
 
     }
 
@@ -822,7 +823,7 @@ extension String {
         let output = Data(output.drop(while: { $0 == 0xA5 }))
 
         if output[0] == 0x01 && output.count == 2 {
-            log("NFC: Libre 3 activation error: 0x\(output.hex)")
+            log("NFC: \(type) activation error: 0x\(output.hex)")
             // getting 0x01b0 on an expired sensor
             // getting 0x01b1 on a sensor activated by the reader
             // getting error 0xc2 when altering crc16
@@ -844,7 +845,7 @@ extension String {
             )
             let crc = UInt16(output[15 ... 16])
             let computedCrc = output[1 ... 14].crc16
-            log("NFC: Libre 3 activation response: \(activationResponse), BLE address: \(activationResponse.bdAddress.hexAddress), BLE PIN: \(activationResponse.BLE_Pin.hex), activation time: \(Date(timeIntervalSince1970: Double(activationResponse.activationTime))), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
+            log("NFC: \(type) activation response: \(activationResponse), BLE address: \(activationResponse.bdAddress.hexAddress), BLE PIN: \(activationResponse.BLE_Pin.hex), activation time: \(Date(timeIntervalSince1970: Double(activationResponse.activationTime))), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
 
             transmitter?.macAddress = activationResponse.bdAddress
             blePIN = activationResponse.BLE_Pin
