@@ -7,7 +7,8 @@
   - Scan Lingo's `patchInfo` via NFC:<br><br><div align="center"><img src="https://github.com/user-attachments/assets/d4f921b9-73a7-4b3d-8015-48343cf7f078" width="33.3%"/> &nbsp; <img src="https://github.com/user-attachments/assets/a30dda70-be3f-47d8-955a-19cd7a9b0e47" width="33.3%"/></div><br><br>
   - Detect Stelo's device name starting with `DX01xx`
   - Display warning when LibreLinkUp needs to re-accept Terms of Use:<br><br><div align="center"><img src="https://github.com/user-attachments/assets/1e02cbf2-96eb-4d3c-ad90-90eb3b0540e8" width="33.3%"/> &nbsp; <img src="https://github.com/user-attachments/assets/10ccfd08-62a9-46d7-849b-3c45f8d51835" width="33.3%"/></div><br><br>
-  - Detail when a Libre is a Plus:<br><br><div align="center"><img src="https://github.com/user-attachments/assets/be3db3f1-8cab-4d2e-a1a7-a5f1eaaa0441" width="33.3%"/><br><br>
+  - Detail when a Libre is a Plus
+  - Clear Dexcom G7 backfill minutes in BLE Setup:<br><br><div align="center"><img src="https://github.com/user-attachments/assets/be3db3f1-8cab-4d2e-a1a7-a5f1eaaa0441" width="33.3%"/> &nbsp; <img src="https://github.com/user-attachments/assets/f0fe63f6-4504-43d8-970a-2589bace56ee" width="33.3%"/></div><br><br>
   
 * 20/1/2024 - [Build 88](https://github.com/gui-dos/DiaBLE/commit/d1333f3)  
   - Shell: import and dump LibreView CSV files by using TabularData:
