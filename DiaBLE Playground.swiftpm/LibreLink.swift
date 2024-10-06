@@ -390,7 +390,7 @@ class LibreLinkUp: Logging {
                         let activationDate = Date(timeIntervalSince1970: Double(activationTime))
                         Task { @MainActor in
                             if app.sensor == nil {
-                                app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Sensor(main: self.main) // TODO: Libre2Gen2
+                                app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Libre(main: self.main) // TODO: Libre2Gen2
                                 app.sensor.type = sensorType
                                 app.sensor.serial = serial
                             } else {
