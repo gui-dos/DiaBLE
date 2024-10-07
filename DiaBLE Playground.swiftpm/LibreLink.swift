@@ -102,6 +102,9 @@ class LibreLinkUp: Logging {
         "Cache-Control": "no-cache",
     ]
 
+    var history: [LibreLinkUpGlucose] = []
+    var logbookHistory: [LibreLinkUpGlucose] = []
+
 
     init(main: MainDelegate) {
         self.main = main
@@ -545,6 +548,71 @@ class LibreLinkUp: Logging {
             log("LibreLinkUp: server error: \(error.localizedDescription)")
             throw LibreLinkUpError.noConnection
         }
+    }
+
+
+    @discardableResult
+    func reload() async -> String {
+        var response = ""
+        var dataString = ""
+        var retries = 0
+        loop: repeat {
+            do {
+                if settings.libreLinkUpUserId.isEmpty ||
+                    settings.libreLinkUpToken.isEmpty ||
+                    settings.libreLinkUpTokenExpirationDate < Date() ||
+                    retries == 1 {
+                    do {
+                        try await login()
+                    } catch {
+                        response = error.localizedDescription
+                    }
+                }
+                if !(settings.libreLinkUpUserId.isEmpty ||
+                     settings.libreLinkUpToken.isEmpty) {
+                    let (data, _, graphHistory, logbookData, logbookHistory, _) = try await getPatientGraph()
+                    dataString = (data as! Data).string
+                    response = dataString + (logbookData as! Data).string
+                    // TODO: just merge with newer values
+                    history = graphHistory.reversed()
+                    self.logbookHistory = logbookHistory
+                    if graphHistory.count > 0 {
+                        Task { @MainActor in
+                            settings.lastOnlineDate = Date()
+                            let lastMeasurement = history[0]
+                            app.lastReadingDate = lastMeasurement.glucose.date
+                            app.sensor?.lastReadingDate = app.lastReadingDate
+                            app.currentGlucose = lastMeasurement.glucose.value
+                            // TODO: keep the raw values filling the gaps with -1 values
+                            main.history.rawValues = []
+                            main.history.factoryValues = history.dropFirst().map(\.glucose) // TEST
+                            var trend = main.history.factoryTrend
+                            if trend.isEmpty || lastMeasurement.id > trend[0].id {
+                                trend.insert(lastMeasurement.glucose, at: 0)
+                            }
+                            if let sensor = app.sensor as? Libre3, main.history.factoryValues.count > 0 {
+                                sensor.currentLifeCount = lastMeasurement.id
+                                sensor.lastHistoricLifeCount = main.history.factoryValues[0].id
+                                sensor.lastHistoricReadingDate = main.history.factoryValues[0].date
+                            }
+                            // keep only the latest 22 minutes considering the 17-minute latency of the historic values update
+                            trend = trend.filter { lastMeasurement.id - $0.id < 22 }
+                            main.history.factoryTrend = trend
+                            // TODO: merge and update sensor history / trend
+                            app.main.didParseSensor(app.sensor)
+                        }
+                    }
+                    if dataString != "{\"message\":\"MissingCachedUser\"}\n" {
+                        break loop
+                    }
+                    retries += 1
+                }
+            } catch {
+                response = error.localizedDescription
+            }
+        } while retries == 1
+
+        return response
     }
 
 }
