@@ -1,9 +1,6 @@
 import Foundation
 
 
-// TODO: move here specific Libre code from Sensor class
-
-
 typealias SensorUid = Data
 typealias PatchInfo = Data
 

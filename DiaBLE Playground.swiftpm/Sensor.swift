@@ -98,6 +98,8 @@ enum SensorState: UInt8, CustomStringConvertible {
     var serial: String = ""
     var readerSerial: Data = Data()
     var firmware: String = ""
+    var generation: Int = 0
+    var securityGeneration: Int = 0
 
     var transmitter: Transmitter?
     var main: MainDelegate!
@@ -108,9 +110,6 @@ enum SensorState: UInt8, CustomStringConvertible {
     var age: Int = 0
     var maxLife: Int = 0
     var initializations: Int = 0
-
-    var generation: Int = 0
-    var securityGeneration: Int = 0
 
     var uid: SensorUid = Data() {
         willSet(uid) {
