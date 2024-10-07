@@ -26,74 +26,9 @@ struct OnlineView: View, LoggingView {
     @State private var readingCountdown: Int = 0
 
     @State private var libreLinkUpResponse: String = "[...]"
-    @State private var libreLinkUpHistory: [LibreLinkUpGlucose] = []
-    @State private var libreLinkUpLogbookHistory: [LibreLinkUpGlucose] = []
 
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
-
-
-    func reloadLibreLinkUp() async {
-        if let libreLinkUp = app.main?.libreLinkUp {
-            var dataString = ""
-            var retries = 0
-        loop: repeat {
-            do {
-                if settings.libreLinkUpUserId.isEmpty ||
-                    settings.libreLinkUpToken.isEmpty ||
-                    settings.libreLinkUpTokenExpirationDate < Date() ||
-                    retries == 1 {
-                    do {
-                        try await libreLinkUp.login()
-                    } catch {
-                        libreLinkUpResponse = error.localizedDescription
-                    }
-                }
-                if !(settings.libreLinkUpUserId.isEmpty ||
-                     settings.libreLinkUpToken.isEmpty) {
-                    let (data, _, graphHistory, logbookData, logbookHistory, _) = try await libreLinkUp.getPatientGraph()
-                    dataString = (data as! Data).string
-                    libreLinkUpResponse = dataString + (logbookData as! Data).string
-                    // TODO: just merge with newer values
-                    libreLinkUpHistory = graphHistory.reversed()
-                    libreLinkUpLogbookHistory = logbookHistory
-                    if graphHistory.count > 0 {
-                        Task { @MainActor in
-                            settings.lastOnlineDate = Date()
-                            let lastMeasurement = libreLinkUpHistory[0]
-                            app.lastReadingDate = lastMeasurement.glucose.date
-                            app.sensor?.lastReadingDate = app.lastReadingDate
-                            app.currentGlucose = lastMeasurement.glucose.value
-                            // TODO: keep the raw values filling the gaps with -1 values
-                            history.rawValues = []
-                            history.factoryValues = libreLinkUpHistory.dropFirst().map(\.glucose) // TEST
-                            var trend = history.factoryTrend
-                            if trend.isEmpty || lastMeasurement.id > trend[0].id {
-                                trend.insert(lastMeasurement.glucose, at: 0)
-                            }
-                            if let sensor = app.sensor as? Libre3, history.factoryValues.count > 0 {
-                                sensor.currentLifeCount = lastMeasurement.id
-                                sensor.lastHistoricLifeCount = history.factoryValues[0].id
-                                sensor.lastHistoricReadingDate = history.factoryValues[0].date
-                            }
-                            // keep only the latest 22 minutes considering the 17-minute latency of the historic values update
-                            trend = trend.filter { lastMeasurement.id - $0.id < 22 }
-                            history.factoryTrend = trend
-                            // TODO: merge and update sensor history / trend
-                            app.main.didParseSensor(app.sensor)
-                        }
-                    }
-                    if dataString != "{\"message\":\"MissingCachedUser\"}\n" {
-                        break loop
-                    }
-                    retries += 1
-                }
-            } catch {
-                libreLinkUpResponse = error.localizedDescription
-            }
-        } while retries == 1
-        }
-    }
 
 
     var body: some View {
@@ -139,7 +74,7 @@ struct OnlineView: View, LoggingView {
                                         settings.libreLinkUpUserId = ""
                                         libreLinkUpResponse = "[Logging in...]"
                                         Task {
-                                            await reloadLibreLinkUp()
+                                            libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
                                         }
                                     }
                                 SecureField("password", text: $settings.libreLinkUpPassword)
@@ -148,7 +83,7 @@ struct OnlineView: View, LoggingView {
                                         settings.libreLinkUpUserId = ""
                                         libreLinkUpResponse = "[Logging in...]"
                                         Task {
-                                            await reloadLibreLinkUp()
+                                            libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
                                         }
                                     }
                             }
@@ -161,7 +96,7 @@ struct OnlineView: View, LoggingView {
                             libreLinkUpResponse = "[Logging in...]"
                             settings.libreLinkUpUserId = ""
                             Task {
-                                await reloadLibreLinkUp()
+                                libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
                             }
                         } label: {
                             Image(systemName: settings.libreLinkUpFollowing ? "f.circle.fill" : "f.circle").font(.title)
@@ -174,7 +109,7 @@ struct OnlineView: View, LoggingView {
                                 if settings.libreLinkUpScrapingLogbook {
                                     libreLinkUpResponse = "[...]"
                                     Task {
-                                        await reloadLibreLinkUp()
+                                        libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
                                     }
                                 }
                             } label: {
@@ -197,7 +132,7 @@ struct OnlineView: View, LoggingView {
                             Button {
                                 app.main.rescan()
                                 Task {
-                                    await reloadLibreLinkUp()
+                                    libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
                                 }
                             } label: {
                                 Image(systemName: "arrow.clockwise.circle").font(.title)
@@ -290,8 +225,8 @@ struct OnlineView: View, LoggingView {
                             .padding()
                             #endif
 
-                            if libreLinkUpHistory.count > 0 {
-                                Chart(libreLinkUpHistory) {
+                            if app.main.libreLinkUp?.history.count ?? 0 > 0 {
+                                Chart(app.main.libreLinkUp!.history) {
                                     PointMark(x: .value("Time", $0.glucose.date),
                                               y: .value("Glucose", $0.glucose.value)
                                     )
@@ -311,7 +246,7 @@ struct OnlineView: View, LoggingView {
                             HStack {
 
                                 List {
-                                    ForEach(libreLinkUpHistory) { libreLinkUpGlucose in
+                                    ForEach(app.main.libreLinkUp?.history ?? [LibreLinkUpGlucose]()) { libreLinkUpGlucose in
                                         let glucose = libreLinkUpGlucose.glucose
                                         (Text("\(String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)])) \(glucose.date.shortDateTime)") + Text("  \(glucose.value, specifier: "%3d") ").bold() + Text(libreLinkUpGlucose.trendArrow?.symbol ?? "").font(.subheadline))
                                             .foregroundStyle(libreLinkUpGlucose.color.color)
@@ -324,7 +259,7 @@ struct OnlineView: View, LoggingView {
                                     Task {
                                         debugLog("DEBUG: fired onlineView minuteTimer: timeInterval: \(Int(Date().timeIntervalSince(settings.lastOnlineDate)))")
                                         if settings.onlineInterval > 0 && Int(Date().timeIntervalSince(settings.lastOnlineDate)) >= settings.onlineInterval * 60 - 5 {
-                                            await reloadLibreLinkUp()
+                                            libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
                                         }
                                     }
                                 }
@@ -332,7 +267,7 @@ struct OnlineView: View, LoggingView {
                                 if settings.libreLinkUpScrapingLogbook {
                                     // TODO: alarms
                                     List {
-                                        ForEach(libreLinkUpLogbookHistory) { libreLinkUpGlucose in
+                                        ForEach(app.main.libreLinkUp?.logbookHistory ?? [LibreLinkUpGlucose]()) { libreLinkUpGlucose in
                                             let glucose = libreLinkUpGlucose.glucose
                                             (Text("\(String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)])) \(glucose.date.shortDateTime)") + Text("  \(glucose.value, specifier: "%3d") ").bold() + Text(libreLinkUpGlucose.trendArrow!.symbol).font(.subheadline))
                                                 .foregroundStyle(libreLinkUpGlucose.color.color)
@@ -347,7 +282,7 @@ struct OnlineView: View, LoggingView {
                             .font(.system(.caption, design: .monospaced))
                         }
                         .task {
-                            await reloadLibreLinkUp()
+                            libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
                         }
                         #if targetEnvironment(macCatalyst)
                         .padding(.leading, 15)

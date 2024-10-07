@@ -566,6 +566,7 @@ class LibreLinkUp: Logging {
                         try await login()
                     } catch {
                         response = error.localizedDescription
+                        log("LibreLinkUp: error: \(response)")
                     }
                 }
                 if !(settings.libreLinkUpUserId.isEmpty ||
@@ -609,7 +610,9 @@ class LibreLinkUp: Logging {
                 }
             } catch {
                 response = error.localizedDescription
+                log("LibreLinkUp: error: \(response)")
             }
+
         } while retries == 1
 
         return response
