@@ -189,10 +189,15 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
             log("Bluetooth is powered off: cannot scan")
         }
         Task {
-            healthKit?.read()
-            if let (values, _) = try? await nightscout?.read() {
-                history.nightscoutValues = values
+            if settings.onlineInterval > 0 {
+                if settings.selectedService == .libreLinkUp {
+                    await libreLinkUp?.reload()
+                }
+                if let (values, _) = try? await nightscout?.read() {
+                    history.nightscoutValues = values
+                }
             }
+            healthKit?.read()
         }
     }
 
