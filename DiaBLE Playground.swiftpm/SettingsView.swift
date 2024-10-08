@@ -28,8 +28,13 @@ struct SettingsView: View, LoggingView {
                                 settings.stoppedBluetooth.toggle()
                                 if settings.stoppedBluetooth {
                                     app.main.centralManager.stopScan()
-                                    app.main.status("Stopped scanning")
-                                    log("Bluetooth: stopped scanning")
+                                    if let device = app.device {
+                                        app.main.centralManager.cancelPeripheralConnection(device.peripheral!)
+                                        app.main.status("Stopped connection")
+                                    } else {
+                                        app.main.status("Stopped scanning")
+                                        log("Bluetooth: stopped scanning")
+                                    }
                                 } else {
                                     app.main.rescan()
                                 }
