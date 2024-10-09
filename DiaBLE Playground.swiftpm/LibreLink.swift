@@ -413,9 +413,8 @@ class LibreLinkUp: Logging {
                         let serial = deviceSerials[deviceId] ?? sn
                         let activationTime = deviceActivationTimes[deviceId] ?? a
                         let activationDate = Date(timeIntervalSince1970: Double(activationTime))
-                        // TODO:
-                        // let isStreaming = patientSensor["s"] as? Bool ?? false
-                        // let isLateJoined = patientSensor["lj"] as? Bool ?? false
+                        let isLateJoined = patientSensor["lj"] as? Bool ?? false
+                        let isStreaming = ((patientSensor["s"] as? Bool ?? false) || sensorType == .libre3) && !isLateJoined
                         Task { @MainActor in
                             if app.sensor == nil {
                                 app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Libre(main: self.main) // TODO: Libre2Gen2
@@ -442,7 +441,7 @@ class LibreLinkUp: Logging {
                                 main.status("\(sensor.type)  +  LLU")
                             }
                         }
-                        log("LibreLinkUp: sensor serial: \(serial), activation date: \(activationDate) (timestamp = \(activationTime)), device id: \(deviceId), product type: \(pt), sensor type: \(sensorType), alarms: \(alarms)")
+                        log("LibreLinkUp: sensor serial: \(serial), activation date: \(activationDate) (timestamp = \(activationTime)), device id: \(deviceId), product type: \(pt), sensor type: \(sensorType), alarms: \(alarms), late joined: \(isLateJoined), is streaming: \(isStreaming)")
                         if let lastGlucoseMeasurement = connection["glucoseMeasurement"] as? [String: Any],
                            let measurementData = try? JSONSerialization.data(withJSONObject: lastGlucoseMeasurement),
                            let measurement = try? JSONDecoder().decode(GlucoseMeasurement.self, from: measurementData) {
