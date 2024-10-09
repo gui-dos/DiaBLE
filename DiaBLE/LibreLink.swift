@@ -355,7 +355,7 @@ class LibreLinkUp: Logging {
                                let deviceId = sensor["deviceId"] as? String,
                                var sn = sensor["sn"] as? String,
                                let a = sensor["a"] as? Int,
-                               // pruduct type should be 0: .libre1, 3: .libre2, 4: .libre3 but happening a Libre 1 with `pt` = 3...
+                               // FIXME: pruduct type should be 0: .libre1, 3: .libre2, 4: .libre3 but happening a Libre 1 with `pt` = 3...
                                let pt = sensor["pt"] as? Int {
                                 var sensorType: SensorType =
                                 dtid == 40068 ? .libre3 :
@@ -384,12 +384,34 @@ class LibreLinkUp: Logging {
                         }
                     }
                     let sensorTypes: [String: SensorType] = deviceTypes
-                    if let device = connection["patientDevice"] as? [String: Any],
-                       let deviceId = device["did"] as? String,
-                       let alarms = device["alarms"] as? Bool,
-                       let serial = deviceSerials[deviceId] {
-                        let sensorType = sensorTypes[deviceId]!
-                        let activationTime = deviceActivationTimes[deviceId]!
+                    if let patientDevice = connection["patientDevice"] as? [String: Any],
+                       let patientSensor = connection["sensor"] as? [String: Any],
+                       let deviceId = patientDevice["did"] as? String,
+                       let dtid = patientDevice["dtid"] as? Int,
+                       let alarms = patientDevice["alarms"] as? Bool,
+                       var sn = patientSensor["sn"] as? String,
+                       let a = patientSensor["a"] as? Int,
+                       let pt = patientSensor["pt"] as? Int {
+                        // FIXME: pruduct type should be 0: .libre1, 3: .libre2, 4: .libre3 but happening a Libre 1 with `pt` = 3...
+                        var sensorType = sensorTypes[deviceId] ?? (
+                            dtid == 40068 ? .libre3 :
+                                dtid == 40067 ? .libre2 :
+                                dtid == 40066 ? .libre1 : .unknown
+                        )
+                        // FIXME:
+                        // according to bundle.js, if `alarms` is true 40066 is also a .libre2
+                        // but happening a Libre 1 with `alarms` = true...
+                        if sensorType == .libre1 && alarms == true { sensorType = .libre2 }
+                        if sn.count == 10 {
+                            switch sensorType {
+                            case .libre1: sn = "0" + sn
+                            case .libre2: sn = "3" + sn
+                            case .libre3: sn = String(sn.dropLast()) // trim final 0
+                            default: break
+                            }
+                        }
+                        let serial = deviceSerials[deviceId] ?? sn
+                        let activationTime = deviceActivationTimes[deviceId] ?? a
                         let activationDate = Date(timeIntervalSince1970: Double(activationTime))
                         Task { @MainActor in
                             if app.sensor == nil {
@@ -417,7 +439,7 @@ class LibreLinkUp: Logging {
                                 main.status("\(sensor.type)  +  LLU")
                             }
                         }
-                        log("LibreLinkUp: sensor serial: \(serial), activation date: \(activationDate) (timestamp = \(activationTime)), device id: \(deviceId), sensor type: \(sensorType), alarms: \(alarms)")
+                        log("LibreLinkUp: sensor serial: \(serial), activation date: \(activationDate) (timestamp = \(activationTime)), device id: \(deviceId),  product type: \(pt), sensor type: \(sensorType), alarms: \(alarms)")
                         if let lastGlucoseMeasurement = connection["glucoseMeasurement"] as? [String: Any],
                            let measurementData = try? JSONSerialization.data(withJSONObject: lastGlucoseMeasurement),
                            let measurement = try? JSONDecoder().decode(GlucoseMeasurement.self, from: measurementData) {
