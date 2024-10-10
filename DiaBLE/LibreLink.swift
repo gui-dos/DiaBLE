@@ -433,7 +433,9 @@ class LibreLinkUp: Logging {
                                 sensor.lastReadingDate = Date()
                                 if sensor.type == .libre3 {
                                     sensor.serial = serial
-                                    sensor.maxLife = 20160 // TODO: 21600 for 15-day Libre 3+
+                                    if sensor.maxLife == 0 {
+                                        sensor.maxLife = 20160 // TODO: 21600 for 15-day Libre 3+
+                                    }
                                     let receiverId = settings.libreLinkUpPatientId.fnv32Hash
                                     (sensor as! Libre3).receiverId = receiverId
                                     log("LibreLinkUp: LibreView receiver ID: \(receiverId)")
