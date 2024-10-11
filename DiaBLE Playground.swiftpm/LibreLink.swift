@@ -541,15 +541,19 @@ class LibreLinkUp: Logging {
                                     for entry in data {
                                         let type = entry["type"] as! Int
 
-                                        // TODO: type 3 has also an alarmType: 0 = fixedLow, 1 = low, 2 = high
-
                                         if type == 1 || type == 3 {  // measurement
                                             if let measurementData = try? JSONSerialization.data(withJSONObject: entry),
                                                let measurement = try? JSONDecoder().decode(GlucoseMeasurement.self, from: measurementData) {
                                                 i += 1
                                                 let date = dateFormatter.date(from: measurement.timestamp)!
                                                 logbookHistory.append(LibreLinkUpGlucose(glucose: Glucose(measurement.valueInMgPerDl, id: i, date: date, source: "LibreLinkUp"), color: measurement.measurementColor, trendArrow: measurement.trendArrow))
-                                                debugLog("LibreLinkUp: logbook measurement # \(i - history.count) of \(data.count): \(measurement) (JSON: \(entry))")
+                                                let alarmDescription = if let alarmType = measurement.alarmType {
+                                                    ["fixed low", "low", "high"][measurement.alarmType!]
+                                                } else {
+                                                    ""
+                                                }
+                                                // TODO
+                                                debugLog("LibreLinkUp: logbook measurement # \(i - history.count) of \(data.count): \(measurement)\(alarmDescription != "" ? ", alarm: \(alarmDescription)" : "") (JSON: \(entry))")
                                             }
 
                                         } else if type == 2 {  // alarm
