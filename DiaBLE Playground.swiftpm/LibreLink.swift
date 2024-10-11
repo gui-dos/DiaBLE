@@ -548,7 +548,7 @@ class LibreLinkUp: Logging {
                                                 let date = dateFormatter.date(from: measurement.timestamp)!
                                                 logbookHistory.append(LibreLinkUpGlucose(glucose: Glucose(measurement.valueInMgPerDl, id: i, date: date, source: "LibreLinkUp"), color: measurement.measurementColor, trendArrow: measurement.trendArrow))
                                                 let alarmDescription = if let alarmType = measurement.alarmType {
-                                                    ["fixed low", "low", "high"][measurement.alarmType!]
+                                                    ["fixed low", "low", "high"][alarmType]
                                                 } else {
                                                     ""
                                                 }
