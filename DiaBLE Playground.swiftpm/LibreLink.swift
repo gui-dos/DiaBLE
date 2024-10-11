@@ -444,6 +444,9 @@ class LibreLinkUp: Logging {
                             }
                         }
                         log("LibreLinkUp: sensor serial: \(serial), activation date: \(activationDate) (timestamp = \(activationTime)), device id: \(deviceId), product type: \(pt), sensor type: \(sensorType), alarms: \(alarms), late joined: \(isLateJoined), is streaming: \(isStreaming)")
+                        // TODO: glucoseAlarm not null
+                        let glucoseAlarm = connection["glucoseAlarm"] as? Int?
+                        log ("LibreLinkUp: glucose alarm: \(String(describing: glucoseAlarm))")
                         if let lastGlucoseMeasurement = connection["glucoseMeasurement"] as? [String: Any],
                            let measurementData = try? JSONSerialization.data(withJSONObject: lastGlucoseMeasurement),
                            let measurement = try? JSONDecoder().decode(GlucoseMeasurement.self, from: measurementData) {
