@@ -138,7 +138,6 @@ class Abbott: Transmitter {
 
                     // TODO: call applyOOP(), didParseSensor()
 
-                    let bleTrend = bleGlucose[0...6].map { factoryGlucose(rawGlucose: $0, calibrationInfo:settings.activeSensorCalibrationInfo) }
                     let bleTrend = bleGlucose[0...6].map { factoryGlucose(rawGlucose: $0, calibrationInfo: settings.activeSensorCalibrationInfo) }
                     let bleHistory = bleGlucose[7...9].map { factoryGlucose(rawGlucose: $0, calibrationInfo: settings.activeSensorCalibrationInfo) }
 
