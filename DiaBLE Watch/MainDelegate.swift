@@ -219,7 +219,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
                 } catch { }
             }
         }
-        if !settings.disabledNotifications {
+        if !(settings.disabledNotifications && settings.alarmSnoozeInterval == 0) {
             let hapticDirection: WKHapticType = currentGlucose > Int(settings.alarmHigh) ? .directionUp : .directionDown
             WKInterfaceDevice.current().play(hapticDirection)
             let times = currentGlucose > Int(settings.alarmHigh) ? 3 : 4

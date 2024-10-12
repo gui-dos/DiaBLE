@@ -209,11 +209,17 @@ struct SettingsView: View, LoggingView {
                         }
                         if settings.disabledNotifications {
                             Picker(selection: $settings.alarmSnoozeInterval, label: Text("")) {
-                                ForEach([5, 15, 30, 60, 120], id: \.self) { t in
-                                    Text("\([5: "5 min", 15: "15 min", 30: "30 min", 60: "1 h", 120: "2 h"][t]!)")
+                                ForEach([0, 5, 15, 30, 60, 120], id: \.self) { t in
+                                    Text("\([0: "OFF", 5: "5 min", 15: "15 min", 30: "30 min", 60: "1 h", 120: "2 h"][t]!)")
                                 }
                             }
                             .labelsHidden()
+                            .onChange(of: settings.alarmSnoozeInterval) { oldInterval, newInterval in
+                                if settings.alarmSnoozeInterval == 0 {
+                                    settings.disabledNotifications = false
+                                    settings.alarmSnoozeInterval = oldInterval
+                                }
+                            }
                         }
                     }
 

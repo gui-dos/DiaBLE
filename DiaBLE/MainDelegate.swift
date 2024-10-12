@@ -245,7 +245,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                 } catch { }
             }
         }
-        if !settings.disabledNotifications {
+        if !(settings.disabledNotifications && settings.alarmSnoozeInterval == 0) {
             let times = currentGlucose > Int(settings.alarmHigh) ? 3 : 4
             let pause = times == 3 ? 1.0 : 5.0 / 6
             for s in 0 ..< times {
@@ -352,7 +352,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
 
             if !snoozed {
                 playAlarm()
-                if (settings.calendarTitle == "" || !settings.calendarAlarmIsOn) && !settings.disabledNotifications { // TODO: notifications settings
+                if (settings.calendarTitle == "" || !settings.calendarAlarmIsOn) && !(settings.disabledNotifications && settings.alarmSnoozeInterval == 0) { // TODO: notifications settings
                     title += "  \(settings.displayingMillimoles ? GlucoseUnit.mmoll : GlucoseUnit.mgdl)"
 
                     let alarm = app.glycemicAlarm
@@ -383,7 +383,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
             }
         }
 
-        if !settings.disabledNotifications {
+        if !(settings.disabledNotifications && settings.alarmSnoozeInterval == 0) {
             UNUserNotificationCenter.current().setBadgeCount(
                 settings.displayingMillimoles ? Int(Float(currentGlucose.units)! * 10) : Int(currentGlucose.units)!
             )
