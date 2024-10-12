@@ -68,7 +68,7 @@ class Abbott: Transmitter {
 
         switch UUID(rawValue: uuid) {
 
-            // Gen2
+        // Gen2
         case .bleLogin:
             if authenticationState == .challengeResponse {
                 if data.count == 14 {
@@ -181,6 +181,13 @@ class Abbott: Transmitter {
                     log(error.localizedDescription)
                     main.errorStatus(error.localizedDescription)
                     buffer = Data()
+                    // TODO: test with Libre2Gen2
+                    if settings.onlineInterval > 0 && settings.selectedService == .libreLinkUp {
+                        Task { @MainActor in
+                            try await Task.sleep(nanoseconds: 2_000_000_000)
+                            await main.libreLinkUp?.reload()
+                        }
+                    }
                 }
             }
 

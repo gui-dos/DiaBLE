@@ -23,7 +23,7 @@ struct HamburgerMenu: View {
         "@keencave": "https://github.com/keencave",
         "LibreMonitor": "https://github.com/UPetersen/LibreMonitor/tree/Swift4",
         "LibreWrist": "https://github.com/poml88/LibreWrist",
-        "Loop": "https://github.com/LoopKit/Loop",
+        "Loop": "https://github.com/LoopKit",
         "Marek Macner": "https://github.com/MarekM60",
         "@monder": "https://github.com/monder",
         "Nightguard": "https://github.com/nightscout/nightguard",

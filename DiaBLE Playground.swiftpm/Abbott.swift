@@ -27,7 +27,6 @@ class Abbott: Transmitter {
     override class var dataWriteCharacteristicUUID: String { UUID.bleLogin.rawValue }
     override class var dataReadCharacteristicUUID: String  { UUID.compositeRawData.rawValue }
 
-
     enum AuthenticationState: Int, CustomStringConvertible {
         case notAuthenticated   = 0
         // Gen2
@@ -140,6 +139,7 @@ class Abbott: Transmitter {
                     // TODO: call applyOOP(), didParseSensor()
 
                     let bleTrend = bleGlucose[0...6].map { factoryGlucose(rawGlucose: $0, calibrationInfo:settings.activeSensorCalibrationInfo) }
+                    let bleTrend = bleGlucose[0...6].map { factoryGlucose(rawGlucose: $0, calibrationInfo: settings.activeSensorCalibrationInfo) }
                     let bleHistory = bleGlucose[7...9].map { factoryGlucose(rawGlucose: $0, calibrationInfo: settings.activeSensorCalibrationInfo) }
 
                     log("BLE temperatures: \((bleTrend + bleHistory).map { Double(String(format: "%.1f", $0.temperature))! })")
@@ -184,6 +184,13 @@ class Abbott: Transmitter {
                     log(error.localizedDescription)
                     main.errorStatus(error.localizedDescription)
                     buffer = Data()
+                    // TODO: test with Libre2Gen2
+                    if settings.onlineInterval > 0 && settings.selectedService == .libreLinkUp {
+                        Task { @MainActor in
+                            try await Task.sleep(nanoseconds: 2_000_000_000)
+                            await main.libreLinkUp?.reload()
+                        }
+                    }
                 }
             }
 
