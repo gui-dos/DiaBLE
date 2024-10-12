@@ -74,6 +74,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
 
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .criticalAlert]) { _, _ in }
+        settings.lastAlarmDate = .distantPast
 
         let numberFormatter = NumberFormatter()
         numberFormatter.minimumFractionDigits = 8
@@ -200,7 +201,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
     }
 
 
-    public func playAlarm() {
+    public func playAlarm(vibrating: Bool = true) {
         let currentGlucose = app.currentGlucose
         if !settings.mutedAudio {
             do {
@@ -219,7 +220,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
                 } catch { }
             }
         }
-        if !(settings.disabledNotifications && settings.alarmSnoozeInterval == 0) {
+        if !settings.disabledNotifications || vibrating {
             let hapticDirection: WKHapticType = currentGlucose > Int(settings.alarmHigh) ? .directionUp : .directionDown
             WKInterfaceDevice.current().play(hapticDirection)
             let times = currentGlucose > Int(settings.alarmHigh) ? 3 : 4
@@ -321,20 +322,29 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
             app.trendDelta = delta
         }
 
-        // var title = currentGlucose > 0 ? currentGlucose.units : "---"
+        let remainingSnooze = (Double(settings.alarmSnoozeInterval * 60) + settings.lastAlarmDate.timeIntervalSinceNow)
 
-        let snoozed = settings.lastAlarmDate.timeIntervalSinceNow >= -Double(settings.alarmSnoozeInterval * 60) && settings.disabledNotifications
+        let snoozed = (remainingSnooze - 3.0) >= 0 && settings.disabledNotifications
+        var alarmed = false
 
         if currentGlucose > 0 && (currentGlucose > Int(settings.alarmHigh) || currentGlucose < Int(settings.alarmLow)) {
-            log("ALARM: current glucose: \(currentGlucose.units) (settings: high: \(settings.alarmHigh.units), low: \(settings.alarmLow.units), muted audio: \(settings.mutedAudio ? "yes" : "no")), \(snoozed ? "" : "not ")snoozed")
+            alarmed = true
+            log("ALARM: current glucose: \(currentGlucose.units) (settings: high: \(settings.alarmHigh.units), low: \(settings.alarmLow.units), muted audio: \(settings.mutedAudio ? "yes" : "no")), \(snoozed ? "" : "not ")snoozed\(snoozed ? " for \((Int(remainingSnooze + 3.0) / 60)) mins" : "")")
 
             if !snoozed {
+                settings.lastAlarmDate = Date.now
                 playAlarm()
             }
         }
 
-        if !snoozed {
-            settings.lastAlarmDate = Date.now
+        if !settings.disabledNotifications || snoozed || alarmed {
+            // TODO:
+            // UNUserNotificationCenter.current().setBadgeCount(
+            //     settings.displayingMillimoles ? Int(Float(currentGlucose.units)! * 10) : Int(currentGlucose.units)!
+            // )
+        } else {
+            // TODO:
+            // UNUserNotificationCenter.current().setBadgeCount(0)
         }
 
         if history.values.count > 0 || history.factoryValues.count > 0 || currentGlucose > 0 {

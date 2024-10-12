@@ -74,6 +74,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
 
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .criticalAlert]) { _, _ in }
+        settings.lastAlarmDate = .distantPast
 
         let numberFormatter = NumberFormatter()
         numberFormatter.minimumFractionDigits = 8
@@ -226,7 +227,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
     }
 
 
-    public func playAlarm() {
+    public func playAlarm(vibrating: Bool = true) {
         let currentGlucose = app.currentGlucose
         if !settings.mutedAudio {
             do {
@@ -245,7 +246,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                 } catch { }
             }
         }
-        if !(settings.disabledNotifications && settings.alarmSnoozeInterval == 0) {
+        if !settings.disabledNotifications || vibrating {
             let times = currentGlucose > Int(settings.alarmHigh) ? 3 : 4
             let pause = times == 3 ? 1.0 : 5.0 / 6
             for s in 0 ..< times {
@@ -343,16 +344,24 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
             app.trendDelta = delta
         }
 
-        var title = currentGlucose > 0 ? currentGlucose.units : "---"
+        let remainingSnooze = (Double(settings.alarmSnoozeInterval * 60) + settings.lastAlarmDate.timeIntervalSinceNow)
 
-        let snoozed = settings.lastAlarmDate.timeIntervalSinceNow >= -Double(settings.alarmSnoozeInterval * 60) && settings.disabledNotifications
+        let snoozed = (remainingSnooze - 3.0) >= 0 && settings.disabledNotifications
+        var alarmed = false
 
         if currentGlucose > 0 && (currentGlucose > Int(settings.alarmHigh) || currentGlucose < Int(settings.alarmLow)) {
-            log("ALARM: current glucose: \(currentGlucose.units) (settings: high: \(settings.alarmHigh.units), low: \(settings.alarmLow.units), muted audio: \(settings.mutedAudio ? "yes" : "no")), \(snoozed ? "" : "not ")snoozed")
+            alarmed = true
+            log("ALARM: current glucose: \(currentGlucose.units) (settings: high: \(settings.alarmHigh.units), low: \(settings.alarmLow.units), muted audio: \(settings.mutedAudio ? "yes" : "no")), \(snoozed ? "" : "not ")snoozed\(snoozed ? " for \((Int(remainingSnooze + 3.0) / 60)) mins" : "")")
 
             if !snoozed {
+                settings.lastAlarmDate = Date.now
                 playAlarm()
-                if (settings.calendarTitle == "" || !settings.calendarAlarmIsOn) && !(settings.disabledNotifications && settings.alarmSnoozeInterval == 0) { // TODO: notifications settings
+
+                var title = currentGlucose > 0 ? currentGlucose.units : "---"
+
+                // TODO: notifications settings
+                if (settings.calendarTitle == "" || !settings.calendarAlarmIsOn) && (!settings.disabledNotifications || snoozed || alarmed) {
+
                     title += "  \(settings.displayingMillimoles ? GlucoseUnit.mmoll : GlucoseUnit.mgdl)"
 
                     let alarm = app.glycemicAlarm
@@ -383,7 +392,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
             }
         }
 
-        if !(settings.disabledNotifications && settings.alarmSnoozeInterval == 0) {
+        if !settings.disabledNotifications || snoozed || alarmed {
             UNUserNotificationCenter.current().setBadgeCount(
                 settings.displayingMillimoles ? Int(Float(currentGlucose.units)! * 10) : Int(currentGlucose.units)!
             )
@@ -392,10 +401,6 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         }
 
         eventKit?.sync()
-
-        if !snoozed {
-            settings.lastAlarmDate = Date.now
-        }
 
         if history.values.count > 0 || history.factoryValues.count > 0 || currentGlucose > 0 {
             var entries = [Glucose]()

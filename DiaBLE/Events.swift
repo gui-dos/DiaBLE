@@ -89,7 +89,8 @@ class EventKit: Logging {
                     title += "\n Computing trend"
                 }
 
-                let snoozed = settings.lastAlarmDate.timeIntervalSinceNow >= -Double(settings.alarmSnoozeInterval * 60) && settings.disabledNotifications
+                let remainingSnooze = (Double(settings.alarmSnoozeInterval * 60) + settings.lastAlarmDate.timeIntervalSinceNow)
+                let snoozed = (remainingSnooze - 3.0) >= 0 && settings.disabledNotifications
 
                 let event = EKEvent(eventStore: store)
                 event.title = title
