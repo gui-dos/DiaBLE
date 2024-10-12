@@ -183,7 +183,7 @@ struct SettingsView: View, LoggingView {
                     if settings.disabledNotifications {
                         Picker(selection: $settings.alarmSnoozeInterval, label: Text("")) {
                             ForEach([0, 5, 15, 30, 60, 120], id: \.self) { t in
-                                Text("\([0: "OFF", 5: "5m", 15: "15 m", 30: "30m", 60: "1h", 120: "2h"][t]!)")
+                                Text("\([0: "OFF", 5: "5m", 15: "15m", 30: "30m", 60: "1h", 120: "2h"][t]!)")
                             }
                         }
                         .labelsHidden().frame(width: 48, height: 20)
