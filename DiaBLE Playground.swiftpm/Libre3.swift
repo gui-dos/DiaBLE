@@ -652,7 +652,7 @@ extension String {
                     let id = UInt16(buffer.suffix(2))
                     log("\(type) \(transmitter!.peripheral!.name!): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), id: \(id.hex)")
                     buffer = Data()
-                    if settings.onlineInterval > 0 && settings.selectedService == .libreLinkUp {
+                    if settings.selectedService == .libreLinkUp {
                         Task { @MainActor in
                             try await Task.sleep(nanoseconds: 2_000_000_000)
                             await main.libreLinkUp?.reload()

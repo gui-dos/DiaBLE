@@ -216,7 +216,7 @@ struct Monitor: View, LoggingView {
         .onAppear {
             timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
             minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
-            if settings.onlineInterval > 0 && settings.selectedService == .libreLinkUp {
+            if settings.selectedService == .libreLinkUp {
                 Task {
                     await app.main.libreLinkUp?.reload()
                 }

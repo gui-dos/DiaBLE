@@ -184,7 +184,7 @@ class Abbott: Transmitter {
                     main.errorStatus(error.localizedDescription)
                     buffer = Data()
                     // TODO: test with Libre2Gen2
-                    if settings.onlineInterval > 0 && settings.selectedService == .libreLinkUp {
+                    if settings.selectedService == .libreLinkUp {
                         Task { @MainActor in
                             try await Task.sleep(nanoseconds: 2_000_000_000)
                             await main.libreLinkUp?.reload()

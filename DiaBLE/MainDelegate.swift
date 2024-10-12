@@ -215,13 +215,11 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
             log("Bluetooth is powered off: cannot scan")
         }
         Task {
-            if settings.onlineInterval > 0 {
-                if settings.selectedService == .libreLinkUp {
-                    await libreLinkUp?.reload()
-                }
-                if let (values, _) = try? await nightscout?.read() {
-                    history.nightscoutValues = values
-                }
+            if settings.selectedService == .libreLinkUp {
+                await libreLinkUp?.reload()
+            }
+            if let (values, _) = try? await nightscout?.read() {
+                history.nightscoutValues = values
             }
             healthKit?.read()
         }

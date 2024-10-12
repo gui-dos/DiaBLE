@@ -586,6 +586,7 @@ class LibreLinkUp: Logging {
 
     @discardableResult
     func reload() async -> String {
+        guard settings.onlineInterval > 0 else { return "[Online mode is disabled]" }
         var response = ""
         var dataString = ""
         var retries = 0

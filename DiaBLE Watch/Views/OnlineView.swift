@@ -248,7 +248,7 @@ struct OnlineView: View, LoggingView {
                             .onReceive(minuteTimer) { _ in
                                 Task {
                                     debugLog("DEBUG: fired onlineView minuteTimer: timeInterval: \(Int(Date().timeIntervalSince(settings.lastOnlineDate)))")
-                                    if settings.onlineInterval > 0 && Int(Date().timeIntervalSince(settings.lastOnlineDate)) >= settings.onlineInterval * 60 - 5 {
+                                    if Int(Date().timeIntervalSince(settings.lastOnlineDate)) >= settings.onlineInterval * 60 - 5 {
                                         libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
                                     }
                                 }
