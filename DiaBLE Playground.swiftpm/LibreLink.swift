@@ -5,27 +5,27 @@ class LibreLink {
 
     public static let countryIds = ["AR", "AU", "AT", "BH", "BE", "BR", "CA", "CL", "CO", "CZ", "HR", "DK", "EG", "FI", "FR", "DE", "GR", "HK", "IN", "IE", "IL", "IT", "JO", "JP", "KW", "LU", "LB", "MX", "NL", "NO", "NZ", "OM", "PL", "PT", "QA", "SA", "SG", "ZA", "ES", "SE", "SI", "SK", "CH", "TR", "TW", "AE", "GB", "US"] + ["CN", "RU"]
 
-    // TODO: verify `com.abbott.librelink.CC` and `com.abbott.libre3.CC` CFBundleIdentifier's
+    // TODO: verify `com.abbott.librelink.xx` and `com.abbott.libre3.xx` CFBundleIdentifier's
     // https://apps.apple.com/developer/abbott-labs/id1027177119
     //
-    // .libre1: "FreeStyle LibreLink – XX" - https://apps.apple.com/cc/app/freestyle-librelink-cc/idxxxxxxxxxx
-    // .libre2: "FreeStyle Libre 2 – XX"   - https://apps.apple.com/cc/app/freestyle-libre-2-cc/idxxxxxxxxxx
-    // .libre3: "FreeStyle Libre 3 - XX"   - https://apps.apple.com/cc/app/freestyle-libre-3-cc/idxxxxxxxxxx
+    // .libre1: "FreeStyle LibreLink – XX" - https://apps.apple.com/xx/app/freestyle-librelink-xx/idxxxxxxxxxx
+    // .libre2: "FreeStyle Libre 2 – XX"   - https://apps.apple.com/xx/app/freestyle-libre-2-xx/idxxxxxxxxxx
+    // .libre3: "FreeStyle Libre 3 - XX"   - https://apps.apple.com/xx/app/freestyle-libre-3-xx/idxxxxxxxxxx
 
-    public static let bundleIds: [String: [UInt64: SensorFamily]] = [
+    public static let appStoreIds: [String: [UInt64: SensorFamily]] = [
         "ar": [1449777200: .libre1],
         "at": [1449777200: .libre1],
         "au": [1331664436: .libre1],
         // ...
         "ca": [1472261764: .libre2],
         // ...
-        "cn": [1401595601: .libre1], // 瞬感宝 -> "%E7%9E%AC%E6%84%9F%E5%AE%9D"
+        "cn": [1401595601: .libre1], // TODO: 瞬感宝 -> "%E7%9E%AC%E6%84%9F%E5%AE%9D"
         // ...
         "de": [1525101160: .libre3],
         // ...
         "fr": [1610185297: .libre3, 1307006511: .libre1],
         // ...
-        "gb": [1610185835: .libre3, 1307017454: .libre1, 1670445335: .lingo], // TODO: Lingo by Abbott / lingo-by-abbott
+        "gb": [1610185835: .libre3, 1307017454: .libre1, 1670445335: .lingo],
         // ...
         "in": [6448857658: .libre1],
         "ie": [1307010255: .libre1],
