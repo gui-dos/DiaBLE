@@ -6,7 +6,7 @@ class LibreLink {
     public static let countryIds = ["AR", "AU", "AT", "BH", "BE", "BR", "CA", "CL", "CO", "CZ", "HR", "DK", "EG", "FI", "FR", "DE", "GR", "HK", "IN", "IE", "IL", "IT", "JO", "JP", "KW", "LU", "LB", "MX", "NL", "NO", "NZ", "OM", "PL", "PT", "QA", "SA", "SG", "ZA", "ES", "SE", "SI", "SK", "CH", "TR", "TW", "AE", "GB", "US"] + ["CN", "RU"]
 
     // TODO: verify `com.abbott.librelink.xx` and `com.abbott.libre3.xx` CFBundleIdentifier's
-    // https://apps.apple.com/developer/abbott-labs/id1027177119
+    // https://apps.apple.com/xx/developer/abbott-labs/id1027177119
     //
     // .libre1: "FreeStyle LibreLink – XX" - https://apps.apple.com/xx/app/freestyle-librelink-xx/idxxxxxxxxxx
     // .libre2: "FreeStyle Libre 2 – XX"   - https://apps.apple.com/xx/app/freestyle-libre-2-xx/idxxxxxxxxxx
@@ -14,10 +14,13 @@ class LibreLink {
 
     public static let appStoreIds: [String: [UInt64: SensorFamily]] = [
         "ar": [1449777200: .libre1],
-        "at": [1449777200: .libre1],
+        "at": [6446912740: .libre3, 1307002746: .libre1],
         "au": [1331664436: .libre1],
-        // ...
+        "be": [1610189706: .libre3, 1307005072: .libre1],
+        "bh": [1404613642: .libre1],
+        "br": [1448904780: .libre1],
         "ca": [1472261764: .libre2],
+        "cl": [1444948958: .libre1],
         // ...
         "cn": [1401595601: .libre1], // TODO: 瞬感宝 -> "%E7%9E%AC%E6%84%9F%E5%AE%9D"
         // ...
@@ -37,7 +40,7 @@ class LibreLink {
         "ru": [1523326671: .libre2, 1449293800: .libre1],
         // ...
         "us": [1524572429: .libre3, 1472261444: .libre2, 1325992472: .libre1, 1670445335: .lingo]
-        // TODO: Lingo by Abbott -> lingo-by-abbott
+        // TODO: developer/abbott/id402314324: Lingo by Abbott -> lingo-by-abbott
         // TODO: 6501954823: MyFreeStyle -> myfreestyle
     ]
 }
