@@ -1,13 +1,12 @@
 import Foundation
 
 
-// TODO
-//
-// https://apps.apple.com/developer/abbott-labs/id1027177119
-//
-// ["AR", "AU", "AT", "BH", "BE", "BR", "CA", "CL", "CO", "CZ", "HR", "DK", "EG", "FI", "FR", "DE", "GR", "HK", "IN", "IE", "IL", "IT", "JO", "JP", "KW", "LU", "LB", "MX", "NL", "NO", "NZ", "OM", "PL", "PT", "QA", "SA", "SG", "ZA", "ES", "SE", "SI", "SK", "CH", "TR", "TW", "AE", "GB", "US"]
-
 class LibreLink {
+
+    public static let countryIds = ["AR", "AU", "AT", "BH", "BE", "BR", "CA", "CL", "CO", "CZ", "HR", "DK", "EG", "FI", "FR", "DE", "GR", "HK", "IN", "IE", "IL", "IT", "JO", "JP", "KW", "LU", "LB", "MX", "NL", "NO", "NZ", "OM", "PL", "PT", "QA", "SA", "SG", "ZA", "ES", "SE", "SI", "SK", "CH", "TR", "TW", "AE", "GB", "US"]
+
+    // TODO
+    // https://apps.apple.com/developer/abbott-labs/id1027177119
 
     public static let bundleIds = [
         "ar": [
