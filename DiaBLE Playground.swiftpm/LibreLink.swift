@@ -463,7 +463,7 @@ class LibreLinkUp: Logging {
                        let a = patientSensor["a"] as? Int,
                        let pt = patientSensor["pt"] as? Int {
                         // FIXME: pruduct type should be 0: .libre1, 3: .libre2, 4: .libre3 but happening a Libre 1 with `pt` = 3...
-                        var sensorType = sensorTypes[deviceId] ?? (
+                        var patientSensorType = sensorTypes[deviceId] ?? (
                             dtid == 40068 ? .libre3 :
                                 dtid == 40067 ? .libre2 :
                                 dtid == 40066 ? .libre1 : .unknown
@@ -471,7 +471,8 @@ class LibreLinkUp: Logging {
                         // FIXME:
                         // according to bundle.js, if `alarms` is true 40066 is also a .libre2
                         // but happening a Libre 1 with `alarms` = true...
-                        if sensorType == .libre1 && alarms == true { sensorType = .libre2 }
+                        if patientSensorType == .libre1 && alarms == true { patientSensorType = .libre2 }
+                        let sensorType = patientSensorType // to pass to Task
                         if sn.count == 10 {
                             switch sensorType {
                             case .libre1: sn = "0" + sn
