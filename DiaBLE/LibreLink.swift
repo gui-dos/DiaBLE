@@ -37,8 +37,8 @@ class LibreLink {
         "hk": [1449774428: .libre1],
         "hr": [1624981463: .libre1],
         "ie": [1307010255: .libre1],
-        "in": [6448857658: .libre1],
         "il": [1444947368: .libre1],
+        "in": [6448857658: .libre1],
         "it": [1610190599: .libre3, 1307012550: .libre1],
         "jo": [1404614365: .libre1],
         "jp": [1449296861: .libre1],
@@ -457,6 +457,7 @@ class LibreLinkUp: Logging {
                        let patientSensor = connection["sensor"] as? [String: Any],
                        let deviceId = patientDevice["did"] as? String,
                        let dtid = patientDevice["dtid"] as? Int,
+                       let v = patientDevice["v"] as? String,
                        let alarms = patientDevice["alarms"] as? Bool,
                        var sn = patientSensor["sn"] as? String,
                        let a = patientSensor["a"] as? Int,
@@ -512,7 +513,7 @@ class LibreLinkUp: Logging {
                                 main.status("\(sensor.type)  +  LLU")
                             }
                         }
-                        log("LibreLinkUp: sensor serial: \(serial), activation date: \(activationDate) (timestamp = \(activationTime)), device id: \(deviceId), product type: \(pt), sensor type: \(sensorType), alarms: \(alarms), late joined: \(isLateJoined), is streaming: \(isStreaming)")
+                        log("LibreLinkUp: sensor serial: \(serial), activation date: \(activationDate) (timestamp = \(activationTime)),  LibreLink version: \(v), device id: \(deviceId), product type: \(pt), sensor type: \(sensorType), alarms: \(alarms), late joined: \(isLateJoined), is streaming: \(isStreaming)")
                         // TODO: glucoseAlarm not null
                         let glucoseAlarm = connection["glucoseAlarm"] as? Int?
                         log ("LibreLinkUp: glucose alarm: \(String(describing: glucoseAlarm))")
