@@ -1,6 +1,42 @@
 import Foundation
 
 
+// TODO
+//
+// https://apps.apple.com/developer/abbott-labs/id1027177119
+//
+// ["AR", "AU", "AT", "BH", "BE", "BR", "CA", "CL", "CO", "CZ", "HR", "DK", "EG", "FI", "FR", "DE", "GR", "HK", "IN", "IE", "IL", "IT", "JO", "JP", "KW", "LU", "LB", "MX", "NL", "NO", "NZ", "OM", "PL", "PT", "QA", "SA", "SG", "ZA", "ES", "SE", "SI", "SK", "CH", "TR", "TW", "AE", "GB", "US"]
+
+class LibreLink {
+
+    public static let bundleIds = [
+        "ar": [
+            1449777200: ["", "FreeStyle LibreLink – AR", "freestyle-librelink-ar"]
+        ],
+        "au": [
+            1331664436: ["", "FreeStyle LibreLink – AU", "freestyle-librelink-au"]
+        ],
+        // ...
+        "gb": [
+            1610185835: ["", "FreeStyle Libre 3 - GB", "freestyle-libre-3-gb"],
+            1307017454: ["", "FreeStyle LibreLink – GB", "freestyle-librelink-gb"]
+        ],
+        // ...
+        "it": [
+            1610190599: ["", "FreeStyle Libre 3 - IT", "freestyle-libre-3-it"],
+            1307012550: ["", "FreeStyle LibreLink – IT", "freestyle-librelink-it"]
+        ],
+        // ...
+        "us": [
+            6501954823: ["", "MyFreeStyle", "myfreestyle"],
+            1524572429: ["", "FreeStyle Libre 3 – US", "freestyle-libre-3-us"],
+            1472261444: ["", "FreeStyle Libre 2 - US", "freestyle-libre-2-us"],
+            1325992472: ["", "FreeStyle LibreLink - US", "freestyle-librelink-us"]
+        ]
+    ]
+}
+
+
 // https://github.com/timoschlueter/nightscout-librelink-up
 // https://gist.github.com/khskekec/6c13ba01b10d3018d816706a32ae8ab2
 
@@ -43,13 +79,13 @@ struct GlucoseMeasurement: Codable {
     let type: Int                // 0: graph, 1: logbook, 2: alarm, 3: hybrid
     let alarmType: Int?          // when type = 3  0: fixedLow, 1: low, 2: high
     let valueInMgPerDl: Int
-    let trendArrow: TrendArrow?  // in logbook but not in graph data
+    let trendArrow: TrendArrow?  // in logbook but not in graph data, 0: HI/LO
     let trendMessage: String?
     let measurementColor: MeasurementColor
     let glucoseUnits: Int        // 0: mmoll, 1: mgdl
     let value: Int
-    let isHigh: Bool
-    let isLow: Bool
+    let isHigh: Bool             // HI
+    let isLow: Bool              // LO
     enum CodingKeys: String, CodingKey { case factoryTimestamp = "FactoryTimestamp", timestamp = "Timestamp", type, alarmType, valueInMgPerDl = "ValueInMgPerDl", trendArrow = "TrendArrow", trendMessage = "TrendMessage", measurementColor = "MeasurementColor", glucoseUnits = "GlucoseUnits", value = "Value", isHigh, isLow }
 }
 
@@ -250,6 +286,7 @@ class LibreLinkUp: Logging {
                                                 for country in countries {
                                                     countryCodes.append(country["ValueMember"] as! String)
                                                 }
+                                                // ["AR", "AU", "AT", "BH", "BE", "BR", "CA", "CL", "CO", "CZ", "HR", "DK", "EG", "FI", "FR", "DE", "GR", "HK", "IN", "IE", "IL", "IT", "JO", "JP", "KW", "LU", "LB", "MX", "NL", "NO", "NZ", "OM", "PL", "PT", "QA", "SA", "SG", "ZA", "ES", "SE", "SI", "SK", "CH", "TR", "TW", "AE", "GB", "US"]
                                                 debugLog("LibreLinkUp: country codes: \(countryCodes)")
                                             }
                                         }
