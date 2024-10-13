@@ -3,74 +3,42 @@ import Foundation
 
 class LibreLink {
 
-    public static let countryIds = ["AR", "AU", "AT", "BH", "BE", "BR", "CA", "CL", "CO", "CZ", "HR", "DK", "EG", "FI", "FR", "DE", "GR", "HK", "IN", "IE", "IL", "IT", "JO", "JP", "KW", "LU", "LB", "MX", "NL", "NO", "NZ", "OM", "PL", "PT", "QA", "SA", "SG", "ZA", "ES", "SE", "SI", "SK", "CH", "TR", "TW", "AE", "GB", "US"]
+    public static let countryIds = ["AR", "AU", "AT", "BH", "BE", "BR", "CA", "CL", "CO", "CZ", "HR", "DK", "EG", "FI", "FR", "DE", "GR", "HK", "IN", "IE", "IL", "IT", "JO", "JP", "KW", "LU", "LB", "MX", "NL", "NO", "NZ", "OM", "PL", "PT", "QA", "SA", "SG", "ZA", "ES", "SE", "SI", "SK", "CH", "TR", "TW", "AE", "GB", "US"] + ["CN", "RU"]
 
     // TODO: verify `com.abbott.librelink.CC` and `com.abbott.libre3.CC` CFBundleIdentifier's
     // https://apps.apple.com/developer/abbott-labs/id1027177119
+    //
+    // .libre1: "FreeStyle LibreLink – XX" - https://apps.apple.com/cc/app/freestyle-librelink-cc/idxxxxxxxxxx
+    // .libre2: "FreeStyle Libre 2 – XX"   - https://apps.apple.com/cc/app/freestyle-libre-2-cc/idxxxxxxxxxx
+    // .libre3: "FreeStyle Libre 3 - XX"   - https://apps.apple.com/cc/app/freestyle-libre-3-cc/idxxxxxxxxxx
 
-    public static let bundleIds: [String: [UInt64: [String]]] = [
-        "ar": [
-            1449777200: ["", "FreeStyle LibreLink – AR", "freestyle-librelink-ar"]
-        ],
-        "au": [
-            1331664436: ["", "FreeStyle LibreLink – AU", "freestyle-librelink-au"]
-        ],
+    public static let bundleIds: [String: [UInt64: SensorFamily]] = [
+        "ar": [1449777200: .libre1],
+        "at": [1449777200: .libre1],
+        "au": [1331664436: .libre1],
         // ...
-        "ca": [
-            1472261764: ["", "FreeStyle Libre 2 – CA", "freestyle-libre-2-ca"]
-        ],
+        "ca": [1472261764: .libre2],
         // ...
-        "cn": [
-            1401595601: ["", "瞬感宝", "%E7%9E%AC%E6%84%9F%E5%AE%9D"]
-        ],
+        "cn": [1401595601: .libre1], // 瞬感宝 -> "%E7%9E%AC%E6%84%9F%E5%AE%9D"
         // ...
-        "de": [
-            1525101160: ["", "FreeStyle Libre 3 - DE", "freestyle-libre-3-de"]
-        ],
+        "de": [1525101160: .libre3],
         // ...
-        "fr": [
-            1610185297: ["", "FreeStyle Libre 3 - FR", "freestyle-libre-3-fr"],
-            1307006511: ["", "FreeStyle LibreLink – FR", "freestyle-librelink-fr"]
-        ],
+        "fr": [1610185297: .libre3, 1307006511: .libre1],
         // ...
-        "gb": [
-            1610185835: ["", "FreeStyle Libre 3 - GB", "freestyle-libre-3-gb"],
-            1307017454: ["", "FreeStyle LibreLink – GB", "freestyle-librelink-gb"]
-            // TODO: https://apps.apple.com/gb/app/lingo-by-abbott/id1670445335
-        ],
+        "gb": [1610185835: .libre3, 1307017454: .libre1, 1670445335: .lingo], // TODO: Lingo by Abbott / lingo-by-abbott
         // ...
-        "in": [
-            6448857658: ["", "FreeStyle LibreLink – IN", "freestyle-librelink-in"]
-        ],
-        "ie": [
-            1307010255: ["", "FreeStyle LibreLink – IE", "freestyle-librelink-ie"]
-        ],
-        "il": [
-            1444947368: ["", "FreeStyle LibreLink – IL", "freestyle-librelink-il"]
-        ],
-        "it": [
-            1610190599: ["", "FreeStyle Libre 3 - IT", "freestyle-libre-3-it"],
-            1307012550: ["", "FreeStyle LibreLink – IT", "freestyle-librelink-it"]
-        ],
-        "jo": [
-            1404614365: ["", "FreeStyle LibreLink – JO", "freestyle-librelink-jo"]
-        ],
-        "jp": [
-            1449296861: ["", "FreeStyle LibreLink – JP", "freestyle-librelink-jp"]
-        ],
+        "in": [6448857658: .libre1],
+        "ie": [1307010255: .libre1],
+        "il": [1444947368: .libre1],
+        "it": [1610190599: .libre3, 1307012550: .libre1],
+        "jo": [1404614365: .libre1],
+        "jp": [1449296861: .libre1],
         // ...
-        "ru": [
-            1523326671: ["", "FreeStyle Libre 2 - RU", "freestyle-libre-2-ru"],
-            1449293800: ["", "FreeStyle LibreLink – RU", "freestyle-librelink-ru"]
-        ],
+        "ru": [1523326671: .libre2, 1449293800: .libre1],
         // ...
-        "us": [
-            6501954823: ["", "MyFreeStyle", "myfreestyle"],
-            1524572429: ["", "FreeStyle Libre 3 – US", "freestyle-libre-3-us"],
-            1472261444: ["", "FreeStyle Libre 2 - US", "freestyle-libre-2-us"],
-            1325992472: ["", "FreeStyle LibreLink - US", "freestyle-librelink-us"]
-            // TODO: https://apps.apple.com/us/app/lingo-by-abbott/id1670445335
-        ]
+        "us": [1524572429: .libre3, 1472261444: .libre2, 1325992472: .libre1, 1670445335: .lingo]
+        // TODO: Lingo by Abbott -> lingo-by-abbott
+        // TODO: 6501954823: MyFreeStyle -> myfreestyle
     ]
 }
 
