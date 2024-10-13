@@ -21,6 +21,10 @@ class LibreLink {
             1472261764: ["", "FreeStyle Libre 2 – CA", "freestyle-libre-2-ca"]
         ],
         // ...
+        "cn": [
+            1401595601: ["", "瞬感宝", "%E7%9E%AC%E6%84%9F%E5%AE%9D"]
+        ],
+        // ...
         "de": [
             1525101160: ["", "FreeStyle Libre 3 - DE", "freestyle-libre-3-de"]
         ],
@@ -36,14 +40,29 @@ class LibreLink {
             // TODO: https://apps.apple.com/gb/app/lingo-by-abbott/id1670445335
         ],
         // ...
+        "in": [
+            6448857658: ["", "FreeStyle LibreLink – IN", "freestyle-librelink-in"]
+        ],
+        "ie": [
+            1307010255: ["", "FreeStyle LibreLink – IE", "freestyle-librelink-ie"]
+        ],
+        "il": [
+            1444947368: ["", "FreeStyle LibreLink – IL", "freestyle-librelink-il"]
+        ],
         "it": [
             1610190599: ["", "FreeStyle Libre 3 - IT", "freestyle-libre-3-it"],
             1307012550: ["", "FreeStyle LibreLink – IT", "freestyle-librelink-it"]
         ],
+        "jo": [
+            1404614365: ["", "FreeStyle LibreLink – JO", "freestyle-librelink-jo"]
+        ],
+        "jp": [
+            1449296861: ["", "FreeStyle LibreLink – JP", "freestyle-librelink-jp"]
+        ],
         // ...
         "ru": [
             1523326671: ["", "FreeStyle Libre 2 - RU", "freestyle-libre-2-ru"],
-            1449293800: ["", " FreeStyle LibreLink – RU", "freestyle-librelink-ru"]
+            1449293800: ["", "FreeStyle LibreLink – RU", "freestyle-librelink-ru"]
         ],
         // ...
         "us": [
