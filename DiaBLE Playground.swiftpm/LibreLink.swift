@@ -17,9 +17,23 @@ class LibreLink {
             1331664436: ["", "FreeStyle LibreLink – AU", "freestyle-librelink-au"]
         ],
         // ...
+        "ca": [
+            1472261764: ["", "FreeStyle Libre 2 – CA", "freestyle-libre-2-ca"]
+        ],
+        // ...
+        "de": [
+            1525101160: ["", "FreeStyle Libre 3 - DE", "freestyle-libre-3-de"]
+        ],
+        // ...
+        "fr": [
+            1610185297: ["", "FreeStyle Libre 3 - FR", "freestyle-libre-3-fr"],
+            1307006511: ["", "FreeStyle LibreLink – FR", "freestyle-librelink-fr"]
+        ],
+        // ...
         "gb": [
             1610185835: ["", "FreeStyle Libre 3 - GB", "freestyle-libre-3-gb"],
             1307017454: ["", "FreeStyle LibreLink – GB", "freestyle-librelink-gb"]
+            // TODO: https://apps.apple.com/gb/app/lingo-by-abbott/id1670445335
         ],
         // ...
         "it": [
@@ -27,11 +41,17 @@ class LibreLink {
             1307012550: ["", "FreeStyle LibreLink – IT", "freestyle-librelink-it"]
         ],
         // ...
+        "ru": [
+            1523326671: ["", "FreeStyle Libre 2 - RU", "freestyle-libre-2-ru"],
+            1449293800: ["", " FreeStyle LibreLink – RU", "freestyle-librelink-ru"]
+        ],
+        // ...
         "us": [
             6501954823: ["", "MyFreeStyle", "myfreestyle"],
             1524572429: ["", "FreeStyle Libre 3 – US", "freestyle-libre-3-us"],
             1472261444: ["", "FreeStyle Libre 2 - US", "freestyle-libre-2-us"],
             1325992472: ["", "FreeStyle LibreLink - US", "freestyle-librelink-us"]
+            // TODO: https://apps.apple.com/us/app/lingo-by-abbott/id1670445335
         ]
     ]
 }
