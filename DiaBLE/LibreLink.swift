@@ -13,6 +13,7 @@ class LibreLink {
     // .libre3: "FreeStyle Libre 3 - XX"   - https://apps.apple.com/xx/app/freestyle-libre-3-xx/idxxxxxxxxxx
 
     public static let appStoreIds: [String: [UInt64: SensorFamily]] = [
+        "ae": [1303805538: .libre1],
         "ar": [1449777200: .libre1],
         "at": [6446912740: .libre3, 1307002746: .libre1],
         "au": [1331664436: .libre1],
@@ -20,25 +21,47 @@ class LibreLink {
         "bh": [1404613642: .libre1],
         "br": [1448904780: .libre1],
         "ca": [1472261764: .libre2],
+        "ch": [1610191342: .libre3, 1307016232: .libre1],
         "cl": [1444948958: .libre1],
-        // ...
         "cn": [1401595601: .libre1], // TODO: 瞬感宝 -> "%E7%9E%AC%E6%84%9F%E5%AE%9D"
-        // ...
+        "co": [1444948961: .libre1],
+        "cz": [1620058766: .libre1],
         "de": [1525101160: .libre3],
-        // ...
+        "dk": [1459182321: .libre1],
+        "eg": [1620058780: .libre1],
+        "es": [1610196996: .libre3, 1307013620: .libre1],
+        "fi": [1610184646: .libre3, 1307006148: .libre1],
         "fr": [1610185297: .libre3, 1307006511: .libre1],
-        // ...
         "gb": [1610185835: .libre3, 1307017454: .libre1, 1670445335: .lingo],
-        // ...
-        "in": [6448857658: .libre1],
+        "gr": [1510846765: .libre1],
+        "hk": [1449774428: .libre1],
+        "hr": [1624981463: .libre1],
         "ie": [1307010255: .libre1],
+        "in": [6448857658: .libre1],
         "il": [1444947368: .libre1],
         "it": [1610190599: .libre3, 1307012550: .libre1],
         "jo": [1404614365: .libre1],
         "jp": [1449296861: .libre1],
-        // ...
+        "kw": [1404615911: .libre1],
+        "lb": [1404615931: .libre1],
+        "lu": [1459185581: .libre1],
+        "mx": [1444948977: .libre1],
+        "nl": [1610186860: .libre3, 1307013272: .libre1],
+        "no": [1610187870: .libre3, 1455572221: .libre1],
+        "nz": [1449682730: .libre1],
+        "om": [1404617727: .libre1],
+        "pl": [1404591671: .libre1],
+        "pt": [1459186046: .libre1],
+        "qa": [6466910868: .libre3, 1404618364: .libre1],
+        "sa": [1338938836: .libre1],
+        "se": [1610188806: .libre3, 1307014059: .libre1],
+        "sg": [1398447126: .libre1],
+        "si": [1625156441: .libre1],
+        "sk": [1625157323: .libre1],
         "ru": [1523326671: .libre2, 1449293800: .libre1],
-        // ...
+        "tr": [1439483369: .libre1],
+        "tw": [1495861686: .libre1],
+        "za": [1444947746: .libre1],
         "us": [1524572429: .libre3, 1472261444: .libre2, 1325992472: .libre1, 1670445335: .lingo]
         // TODO: developer/abbott/id402314324: Lingo by Abbott -> lingo-by-abbott
         // TODO: 6501954823: MyFreeStyle -> myfreestyle
