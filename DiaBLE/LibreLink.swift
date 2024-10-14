@@ -657,13 +657,15 @@ class LibreLinkUp: Logging {
 
     @discardableResult
     func reload(enforcing: Bool = false) async -> String {
+
         guard settings.onlineInterval > 0 else {
             debugLog("LibreLinkUp: online mode is disabled - didn't reload")
             return "[Online mode is disabled]"
         }
+
         guard enforcing || Int(Date().timeIntervalSince(settings.lastOnlineDate)) >= settings.onlineInterval * 60 - 5 else {
             debugLog("LibreLinkUp: throttled reload (\(Int(Date().timeIntervalSince(settings.lastOnlineDate))) of \(settings.onlineInterval * 60) seconds passed)")
-            return "[Reload was throttled]"
+            return "[Reload was throttled: \(Int(Date().timeIntervalSince(settings.lastOnlineDate))) of \(settings.onlineInterval * 60) secs passed)]"
         }
 
         var response = ""
