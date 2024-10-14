@@ -60,7 +60,7 @@ struct OnlineView: View, LoggingView {
                             if settings.libreLinkUpScrapingLogbook {
                                 serviceResponse = "[...]"
                                 Task {
-                                    serviceResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
+                                    await app.main.libreLinkUp?.reload(enforcing: true)
                                 }
                             }
                         } label: {
@@ -128,7 +128,7 @@ struct OnlineView: View, LoggingView {
                                 settings.libreLinkUpUserId = ""
                                 serviceResponse = "[Logging in...]"
                                 Task {
-                                    serviceResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
+                                    await app.main.libreLinkUp?.reload(enforcing: true)
                                 }
                             }
                         SecureField("password", text: $settings.libreLinkUpPassword)
@@ -137,7 +137,7 @@ struct OnlineView: View, LoggingView {
                                 settings.libreLinkUpUserId = ""
                                 serviceResponse = "[Logging in...]"
                                 Task {
-                                    serviceResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
+                                    await app.main.libreLinkUp?.reload(enforcing: true)
                                 }
                             }
                     }
@@ -151,7 +151,7 @@ struct OnlineView: View, LoggingView {
                     settings.libreLinkUpUserId = ""
                     serviceResponse = "[Logging in...]"
                     Task {
-                        serviceResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
+                        await app.main.libreLinkUp?.reload(enforcing: true)
                     }
                 }
             }
@@ -243,7 +243,7 @@ struct OnlineView: View, LoggingView {
                             }
                             .onReceive(minuteTimer) { _ in
                                 Task {
-                                    serviceResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
+                                    await app.main.libreLinkUp?.reload()
                                 }
                             }
 
@@ -273,7 +273,7 @@ struct OnlineView: View, LoggingView {
 
                 }
                 .task {
-                    serviceResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
+                    await app.main.libreLinkUp?.reload()
                 }
             }
         }
