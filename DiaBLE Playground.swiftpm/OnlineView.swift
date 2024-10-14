@@ -25,8 +25,6 @@ struct OnlineView: View, LoggingView {
     @State private var onlineCountdown: Int = 0
     @State private var readingCountdown: Int = 0
 
-    @State private var serviceResponse: String = "[...]"
-
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
@@ -72,7 +70,7 @@ struct OnlineView: View, LoggingView {
                                     .autocorrectionDisabled(true)
                                     .onSubmit {
                                         settings.libreLinkUpUserId = ""
-                                        serviceResponse = "[Logging in...]"
+                                        app.serviceResponse = "[Logging in...]"
                                         Task {
                                             await app.main.libreLinkUp?.reload(enforcing: true)
                                         }
@@ -81,7 +79,7 @@ struct OnlineView: View, LoggingView {
                                     .textContentType(.password)
                                     .onSubmit {
                                         settings.libreLinkUpUserId = ""
-                                        serviceResponse = "[Logging in...]"
+                                        app.serviceResponse = "[Logging in...]"
                                         Task {
                                             await app.main.libreLinkUp?.reload(enforcing: true)
                                         }
@@ -93,7 +91,7 @@ struct OnlineView: View, LoggingView {
 
                         Button {
                             withAnimation { settings.libreLinkUpFollowing.toggle() }
-                            serviceResponse = "[Logging in...]"
+                            app.serviceResponse = "[Logging in...]"
                             settings.libreLinkUpUserId = ""
                             Task {
                                 await app.main.libreLinkUp?.reload(enforcing: true)
@@ -107,7 +105,7 @@ struct OnlineView: View, LoggingView {
                             Button {
                                 withAnimation { settings.libreLinkUpScrapingLogbook.toggle() }
                                 if settings.libreLinkUpScrapingLogbook {
-                                    serviceResponse = "[...]"
+                                    app.serviceResponse = "[...]"
                                     Task {
                                         await app.main.libreLinkUp?.reload(enforcing: true)
                                     }
@@ -213,7 +211,7 @@ struct OnlineView: View, LoggingView {
                     if settings.selectedService == .libreLinkUp {
                         VStack {
                             ScrollView(showsIndicators: true) {
-                                Text(serviceResponse)
+                                Text(app.serviceResponse)
                                     .font(.system(.footnote, design: .monospaced))
                                     .foregroundStyle(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
                                     .textSelection(.enabled)

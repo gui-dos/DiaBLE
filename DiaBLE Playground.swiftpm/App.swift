@@ -144,6 +144,8 @@ enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
 
     var deviceState: String = ""
     var lastConnectionDate: Date = Date.distantPast
+    var serviceResponse: String = ""
+
     var status: String = "Welcome to DiaBLE!"
 
     var calibration: Calibration = Calibration() {
