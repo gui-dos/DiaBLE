@@ -74,7 +74,7 @@ struct OnlineView: View, LoggingView {
                                         settings.libreLinkUpUserId = ""
                                         libreLinkUpResponse = "[Logging in...]"
                                         Task {
-                                            libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
+                                            libreLinkUpResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
                                         }
                                     }
                                 SecureField("password", text: $settings.libreLinkUpPassword)
@@ -83,7 +83,7 @@ struct OnlineView: View, LoggingView {
                                         settings.libreLinkUpUserId = ""
                                         libreLinkUpResponse = "[Logging in...]"
                                         Task {
-                                            libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
+                                            libreLinkUpResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
                                         }
                                     }
                             }
@@ -96,7 +96,7 @@ struct OnlineView: View, LoggingView {
                             libreLinkUpResponse = "[Logging in...]"
                             settings.libreLinkUpUserId = ""
                             Task {
-                                libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
+                                libreLinkUpResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
                             }
                         } label: {
                             Image(systemName: settings.libreLinkUpFollowing ? "f.circle.fill" : "f.circle").font(.title)
@@ -109,7 +109,7 @@ struct OnlineView: View, LoggingView {
                                 if settings.libreLinkUpScrapingLogbook {
                                     libreLinkUpResponse = "[...]"
                                     Task {
-                                        libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
+                                        libreLinkUpResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
                                     }
                                 }
                             } label: {
@@ -131,9 +131,6 @@ struct OnlineView: View, LoggingView {
 
                             Button {
                                 app.main.rescan()
-                                Task {
-                                    libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
-                                }
                             } label: {
                                 Image(systemName: "arrow.clockwise.circle").font(.title)
                             }
@@ -254,13 +251,9 @@ struct OnlineView: View, LoggingView {
                                     }
                                     .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
-                                // TODO: respect onlineInterval
                                 .onReceive(minuteTimer) { _ in
                                     Task {
-                                        debugLog("DEBUG: fired onlineView minuteTimer: timeInterval: \(Int(Date().timeIntervalSince(settings.lastOnlineDate)))")
-                                        if Int(Date().timeIntervalSince(settings.lastOnlineDate)) >= settings.onlineInterval * 60 - 5 {
-                                            libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
-                                        }
+                                        libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
                                     }
                                 }
 

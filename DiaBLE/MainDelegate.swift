@@ -74,7 +74,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
 
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .criticalAlert]) { _, _ in }
-        settings.lastAlarmDate = .distantPast
+        settings.lastAlarmDate = .now
 
         let numberFormatter = NumberFormatter()
         numberFormatter.minimumFractionDigits = 8
@@ -94,6 +94,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                 log("HealthKit: not available")
             }
 
+            settings.lastOnlineDate = .distantPast
             libreLinkUp = LibreLinkUp(main: self)
             nightscout = Nightscout(main: self)
             if let (values, _) = try? await nightscout?.read() {
@@ -217,7 +218,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         }
         Task {
             if settings.selectedService == .libreLinkUp {
-                await libreLinkUp?.reload()
+                await libreLinkUp?.reload(enforcing: true)
             }
             if let (values, _) = try? await nightscout?.read() {
                 history.nightscoutValues = values
@@ -354,7 +355,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
             log("ALARM: current glucose: \(currentGlucose.units) (settings: high: \(settings.alarmHigh.units), low: \(settings.alarmLow.units), muted audio: \(settings.mutedAudio ? "yes" : "no")), \(snoozed ? "" : "not ")snoozed\(snoozed ? " for \((Int(remainingSnooze + 3.0) / 60)) mins" : "")")
 
             if !snoozed {
-                settings.lastAlarmDate = Date.now
+                settings.lastAlarmDate = .now
                 playAlarm()
 
                 var title = currentGlucose > 0 ? currentGlucose.units : "---"

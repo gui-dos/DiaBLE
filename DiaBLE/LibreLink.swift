@@ -5,7 +5,7 @@ class LibreLink {
 
     public static let countryIds = ["AR", "AU", "AT", "BH", "BE", "BR", "CA", "CL", "CO", "CZ", "HR", "DK", "EG", "FI", "FR", "DE", "GR", "HK", "IN", "IE", "IL", "IT", "JO", "JP", "KW", "LU", "LB", "MX", "NL", "NO", "NZ", "OM", "PL", "PT", "QA", "SA", "SG", "ZA", "ES", "SE", "SI", "SK", "CH", "TR", "TW", "AE", "GB", "US"] + ["CN", "RU"]
 
-    // TODO: verify `com.abbott.librelink.xx` and `com.abbott.libre3.xx` CFBundleIdentifier's
+    // TODO: verify `com.abbott.librelink.xx`, `com.abbott.librelink.xx2` and `com.abbott.libre3.xx` CFBundleIdentifier's
     // https://apps.apple.com/xx/developer/abbott-labs/id1027177119
     //
     // .libre1: "FreeStyle LibreLink – XX" - https://apps.apple.com/xx/app/freestyle-librelink-xx/idxxxxxxxxxx
@@ -656,8 +656,16 @@ class LibreLinkUp: Logging {
 
 
     @discardableResult
-    func reload() async -> String {
-        guard settings.onlineInterval > 0 else { return "[Online mode is disabled]" }
+    func reload(enforcing: Bool = false) async -> String {
+        guard settings.onlineInterval > 0 else {
+            debugLog("LibreLinkUp: online mode is disabled - didn't reload")
+            return "[Online mode is disabled]"
+        }
+        guard enforcing || Int(Date().timeIntervalSince(settings.lastOnlineDate)) >= settings.onlineInterval * 60 - 5 else {
+            debugLog("LibreLinkUp: throttled reload (\(Int(Date().timeIntervalSince(settings.lastOnlineDate))) of \(settings.onlineInterval * 60) seconds passed)")
+            return "[Reload was throttled]"
+        }
+
         var response = ""
         var dataString = ""
         var retries = 0
