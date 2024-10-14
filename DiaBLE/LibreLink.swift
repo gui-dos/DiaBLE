@@ -730,6 +730,8 @@ class LibreLinkUp: Logging {
 
         } while retries == 1
 
+        app.serviceResponse = response
+
         return response
     }
 
