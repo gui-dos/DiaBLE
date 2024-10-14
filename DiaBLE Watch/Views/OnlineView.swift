@@ -22,7 +22,7 @@ struct OnlineView: View, LoggingView {
     @State private var onlineCountdown: Int = 0
     @State private var readingCountdown: Int = 0
 
-    @State private var libreLinkUpResponse: String = "[...]"
+    @State private var serviceResponse: String = "[...]"
 
     @State private var showingCredentials: Bool = false
 
@@ -58,9 +58,9 @@ struct OnlineView: View, LoggingView {
                         Button {
                             withAnimation { settings.libreLinkUpScrapingLogbook.toggle() }
                             if settings.libreLinkUpScrapingLogbook {
-                                libreLinkUpResponse = "[...]"
+                                serviceResponse = "[...]"
                                 Task {
-                                    libreLinkUpResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
+                                    serviceResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
                                 }
                             }
                         } label: {
@@ -126,18 +126,18 @@ struct OnlineView: View, LoggingView {
                             .textInputAutocapitalization(.never)
                             .onSubmit {
                                 settings.libreLinkUpUserId = ""
-                                libreLinkUpResponse = "[Logging in...]"
+                                serviceResponse = "[Logging in...]"
                                 Task {
-                                    libreLinkUpResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
+                                    serviceResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
                                 }
                             }
                         SecureField("password", text: $settings.libreLinkUpPassword)
                             .textContentType(.password)
                             .onSubmit {
                                 settings.libreLinkUpUserId = ""
-                                libreLinkUpResponse = "[Logging in...]"
+                                serviceResponse = "[Logging in...]"
                                 Task {
-                                    libreLinkUpResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
+                                    serviceResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
                                 }
                             }
                     }
@@ -149,9 +149,9 @@ struct OnlineView: View, LoggingView {
                 }
                 .onChange(of: settings.libreLinkUpFollowing) {
                     settings.libreLinkUpUserId = ""
-                    libreLinkUpResponse = "[Logging in...]"
+                    serviceResponse = "[Logging in...]"
                     Task {
-                        libreLinkUpResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
+                        serviceResponse = await app.main.libreLinkUp?.reload(enforcing: true) ?? "[...]"
                     }
                 }
             }
@@ -243,7 +243,7 @@ struct OnlineView: View, LoggingView {
                             }
                             .onReceive(minuteTimer) { _ in
                                 Task {
-                                    libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
+                                    serviceResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
                                 }
                             }
 
@@ -264,7 +264,7 @@ struct OnlineView: View, LoggingView {
                         // .font(.system(.footnote, design: .monospaced))
                         .frame(minHeight: 64)
 
-                        Text(libreLinkUpResponse)
+                        Text(serviceResponse)
                         //  .font(.system(.footnote, design: .monospaced))
                         //  .foregroundStyle(Color(.lightGray))
                             .font(.footnote)
@@ -273,7 +273,7 @@ struct OnlineView: View, LoggingView {
 
                 }
                 .task {
-                    libreLinkUpResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
+                    serviceResponse = await app.main.libreLinkUp?.reload() ?? "[...]"
                 }
             }
         }
