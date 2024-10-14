@@ -656,6 +656,7 @@ extension String {
                         Task { @MainActor in
                             try await Task.sleep(nanoseconds: 2_000_000_000)
                             await main.libreLinkUp?.reload()
+                            settings.lastOnlineDate = app.lastReadingDate + 3
                         }
                     }
                 }
