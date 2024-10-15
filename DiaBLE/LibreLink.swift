@@ -663,7 +663,9 @@ class LibreLinkUp: Logging {
             return "[Online mode is disabled]"
         }
 
-        guard enforcing || Int(Date().timeIntervalSince(settings.lastOnlineDate)) >= settings.onlineInterval * 60 - 5 else {
+        // workaround: watchOS fails converting the interval to an Int32
+
+        guard enforcing || Int64(Date().timeIntervalSince(settings.lastOnlineDate)) >= settings.onlineInterval * 60 - 5 else {
             debugLog("LibreLinkUp: throttled reload (\(Int(Date().timeIntervalSince(settings.lastOnlineDate))) of \(settings.onlineInterval * 60) seconds passed)")
             return "[Reload was throttled: \(Int(Date().timeIntervalSince(settings.lastOnlineDate))) of \(settings.onlineInterval * 60) secs passed)]"
         }
