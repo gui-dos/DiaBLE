@@ -6,47 +6,34 @@ import HealthKit
 
 class HealthKit: Logging {
 
-    enum DataType: CaseIterable {
+    enum DataType: CaseIterable, CustomStringConvertible {
         case glucose
         case insulin
         case carbs
 
         var description: String {
             switch self {
-                case .glucose: "Glucose"
-                case .insulin: "Insulin"
-                case .carbs:   "Carbs"
+            case .glucose: "glucose"
+            case .insulin: "insulin"
+            case .carbs:   "carbs"
             }
         }
-
-        var identifier: HKQuantityTypeIdentifier {
+        var quantityType: HKQuantityType {
             switch self {
-            case .glucose: .bloodGlucose
-            case .insulin: .insulinDelivery
-            case .carbs:   .dietaryCarbohydrates
+            case .glucose: HKQuantityType(.bloodGlucose)
+            case .insulin: HKQuantityType(.insulinDelivery)
+            case .carbs:   HKQuantityType(.dietaryCarbohydrates)
             }
         }
-        var quantityType: HKQuantityType? { HKQuantityType.quantityType(forIdentifier: identifier) }
     }
+
+    var dataTypes: Set<HKQuantityType> { Set(DataType.allCases.map(\.quantityType)) }
 
     var store: HKHealthStore?
     var glucoseUnit = HKUnit(from: "mg/dl")
     var lastDate: Date?
 
-    private var quantityTypes: Set<HKQuantityType> {
-        var typeSet: Set<HKQuantityType> = []
-        for identifier in DataType.allCases.map(\.identifier) {
-            if let type = HKQuantityType.quantityType(forIdentifier: identifier) {
-                typeSet.insert(type)
-            } else {
-                log("HealthKit: cannot create \(identifier) quantity type")
-            }
-        }
-        return typeSet
-    }
-
     var main: MainDelegate!
-
 
     init() {
         if HKHealthStore.isHealthDataAvailable() {
@@ -56,34 +43,30 @@ class HealthKit: Logging {
 
     func requestAuthorization() async {
         do {
-            try await store?.requestAuthorization(toShare: quantityTypes, read: quantityTypes)
+            try await store?.requestAuthorization(toShare: dataTypes, read: dataTypes)
         } catch {
-            self.log("HealthKit: error while requesting authorization for \(self.quantityTypes) quantity types: \(error.localizedDescription)")
+            self.log("HealthKit: error while requesting authorization for \(DataType.allCases) quantity types: \(error.localizedDescription)")
         }
     }
 
     var isAuthorized: Bool {
         var statuses = [DataType: HKAuthorizationStatus]()
         for type in DataType.allCases {
-            if let quantityType = type.quantityType, let status = store?.authorizationStatus(for: quantityType) {
+            if let status = store?.authorizationStatus(for: type.quantityType) {
                 statuses[type] = status
             }
         }
-        debugLog("HealthKit: authorization statuses: \(statuses.map { "\($0.key): \(["not determined", "denied", "authorized"][$0.value.rawValue])" })")
-        if let glucoseType = DataType.glucose.quantityType {
-            return store?.authorizationStatus(for: glucoseType) == .sharingAuthorized
-        } else {
-            return false
-        }
+        debugLog("HealthKit: authorization statuses: \(statuses.map { "\($0.key): \(["not determined", "denied", "authorized"][$0.value.rawValue])" }.joined(separator: ", "))")
+        return statuses[.glucose] == .sharingAuthorized
     }
 
     func getAuthorizationRequestStatus() async -> HKAuthorizationRequestStatus {
         do {
-            let requestStatus = try await store?.statusForAuthorizationRequest(toShare: quantityTypes, read: quantityTypes) ?? .unknown
-            log("HealthKit: authorization request status for \(self.quantityTypes) quantity types: \(self.quantityTypes)")
+            let requestStatus = try await store?.statusForAuthorizationRequest(toShare: dataTypes, read: dataTypes) ?? .unknown
+            log("HealthKit: authorization request status for \(DataType.allCases) quantity types: request status: \(requestStatus)")
             return requestStatus
         } catch {
-            log("HealthKit: error while requesting authorization status for \(self.quantityTypes) quantity types: \(error.localizedDescription)")
+            log("HealthKit: error while requesting authorization status for \(DataType.allCases) quantity types: \(error.localizedDescription)")
             return .unknown
         }
     }
@@ -100,7 +83,7 @@ class HealthKit: Logging {
                              metadata: nil)
         }
         store?.save(samples) { [self] success, error in
-            if let error  {
+            if let error {
                 log("HealthKit: error while saving: \(error.localizedDescription)")
             }
             self.lastDate = samples.last?.endDate
