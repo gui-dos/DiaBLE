@@ -319,15 +319,18 @@ import CoreBluetooth
                 log("\(name): glucose response (EGV): status: 0x\(status.hex), sequence number: \(sequenceNumber), timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value), is display only: \(glucoseIsDisplayOnly), state: \(AlgorithmState(rawValue: state)?.description ?? "unknown") (0x\(state.hex)), trend: \(trend), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"),  valid CRC: \(data.dropLast(2).crc == UInt16(data.suffix(2)))")
                 // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                 let item = Glucose(value, trendRate: Double(trend), id: Int(Double(timestamp) / 60 / 5), date: date)
-                sensor?.trend.insert(item, at: 0)
-                app.currentGlucose = item.value
-                app.lastReadingDate = item.date
-                sensor?.lastReadingDate = app.lastReadingDate
-                main.history.factoryTrend.insert(item, at: 0)
-                if main.history.factoryValues.count == 0 || main.history.factoryValues[0].id < item.id {
-                    main.history.factoryValues = [item] + main.history.factoryValues
+                Task { @MainActor in
+                    sensor?.trend.insert(item, at: 0)
+                    app.currentGlucose = item.value
+                    app.lastReadingDate = item.date
+                    sensor?.lastReadingDate = app.lastReadingDate
+                    main.history.factoryTrend.insert(item, at: 0)
+                    if main.history.factoryValues.count == 0 || main.history.factoryValues[0].id < item.id {
+                        main.history.factoryValues = [item] + main.history.factoryValues
+                    }
+                    await main.healthKit?.write([item])
+                    main.healthKit?.read()
                 }
-                main.healthKit?.write([item]); main.healthKit?.read()
 
 
             case .calibrationDataRx:  // G6Bounds

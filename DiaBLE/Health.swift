@@ -71,7 +71,7 @@ class HealthKit: Logging {
         }
     }
 
-    func write(_ glucoseData: [Glucose]) {
+    func write(_ glucoseData: [Glucose]) async {
         guard let glucoseType = HKQuantityType.quantityType(forIdentifier: .bloodGlucose) else {
             return
         }
@@ -82,24 +82,23 @@ class HealthKit: Logging {
                              end: $0.date,
                              metadata: nil)
         }
-        store?.save(samples) { [self] success, error in
-            if let error {
-                log("HealthKit: error while saving: \(error.localizedDescription)")
-            }
-            self.lastDate = samples.last?.endDate
+        do {
+            try await store?.save(samples)
+            lastDate = samples.last?.endDate
+        } catch {
+            log("HealthKit: error while saving: \(error.localizedDescription)")
         }
     }
 
 
     func read(handler: (([Glucose]) -> Void)? = nil) {
         guard let glucoseType = HKQuantityType.quantityType(forIdentifier: .bloodGlucose) else {
-            let msg = "HealthKit: error: unable to create glucose quantity type"
-            log(msg)
             return
         }
 
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
-        let query = HKSampleQuery(sampleType: glucoseType, predicate: nil, limit: 12 * 8, sortDescriptors: [sortDescriptor]) { [self] query, results, error in
+        let query = HKSampleQuery(sampleType: glucoseType, predicate: nil, limit: 12 * 8, sortDescriptors: [sortDescriptor]) {
+            [self] query, results, error in
             guard let results = results as? [HKQuantitySample] else {
                 if let error {
                     log("HealthKit: error: \(error.localizedDescription)")

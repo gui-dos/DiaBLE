@@ -280,14 +280,17 @@ import CoreBluetooth
                 }
                 let item = Glucose(value != nil ? Int(value!) : -1, trendRate: Double(trend ?? 0), id: Int(Double(timestamp) / 60 / 5), date: date)
                 self.trend.insert(item, at: 0)
-                app.currentGlucose = item.value
-                app.lastReadingDate = item.date
-                lastReadingDate = item.date
-                main.history.factoryTrend.insert(item, at: 0)
-                if main.history.factoryValues.count == 0 || main.history.factoryValues[0].id < item.id {
-                    main.history.factoryValues = [item] + main.history.factoryValues
+                Task { @MainActor in
+                    app.currentGlucose = item.value
+                    app.lastReadingDate = item.date
+                    lastReadingDate = item.date
+                    main.history.factoryTrend.insert(item, at: 0)
+                    if main.history.factoryValues.count == 0 || main.history.factoryValues[0].id < item.id {
+                        main.history.factoryValues = [item] + main.history.factoryValues
+                    }
+                    await main.healthKit?.write([item])
+                    main.healthKit?.read()
                 }
-                main.healthKit?.write([item]); main.healthKit?.read()
 
 
             case .calibrationBounds:

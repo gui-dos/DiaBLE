@@ -364,7 +364,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
 
                 let newEntries = (entries.filter { $0.date > healthKit?.lastDate ?? Calendar.current.date(byAdding: .hour, value: -8, to: Date())! })
                 if newEntries.count > 0 {
-                    healthKit?.write(newEntries)
+                    await healthKit?.write(newEntries)
                     healthKit?.read()
                 }
 
