@@ -96,6 +96,9 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
 
             settings.lastOnlineDate = .distantPast
             libreLinkUp = LibreLinkUp(main: self)
+            if settings.selectedService == .libreLinkUp {
+                await libreLinkUp?.reload(enforcing: true)
+            }
             nightscout = Nightscout(main: self)
             if let (values, _) = try? await nightscout?.read() {
                 history.nightscoutValues = values

@@ -272,9 +272,6 @@ struct OnlineView: View, LoggingView {
                             .listStyle(.plain)
                             .font(.system(.caption, design: .monospaced))
                         }
-                        .task {
-                            await app.main.libreLinkUp?.reload()
-                        }
                         #if targetEnvironment(macCatalyst)
                         .padding(.leading, 15)
                         #endif

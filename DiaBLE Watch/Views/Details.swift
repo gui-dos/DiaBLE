@@ -118,6 +118,14 @@ struct Details: View, LoggingView {
                             Row("Battery", "\(app.device.battery)%",
                                 foregroundColor: app.device.battery > 10 ? .green : .red)
                         }
+
+                        if app.device.characteristics.count > 0 {
+                            NavigationLink(destination: CharacteristicsDetails()) {
+                                Text("Characteristics (\(app.device.characteristics.count))")
+                                    .foregroundStyle(.tint)
+                            }
+                        }
+
                     }
                 }
 
@@ -441,6 +449,31 @@ struct Details: View, LoggingView {
                 minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate)/60)
             }
         }
+    }
+}
+
+
+struct CharacteristicsDetails: View, LoggingView {
+    @Environment(AppState.self) var app: AppState
+    @Environment(Log.self) var log: Log
+    @Environment(Settings.self) var settings: Settings
+
+
+    var body: some View {
+
+        VStack {
+
+            // TODO
+            Text("[TODO]")
+            Spacer()
+            Text(String(describing: app.device.characteristics))
+            Spacer()
+
+        }
+        .buttonStyle(.plain)
+        .navigationTitle { Text("Characteristics").foregroundStyle(.tint) }
+        .toolbarForegroundStyle(.blue, for: .automatic)
+        .tint(.blue)
     }
 }
 

@@ -270,9 +270,6 @@ struct OnlineView: View, LoggingView {
                     }
 
                 }
-                .task {
-                    await app.main.libreLinkUp?.reload()
-                }
             }
         }
         .padding(.top, -4)

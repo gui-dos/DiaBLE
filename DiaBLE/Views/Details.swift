@@ -118,6 +118,13 @@ struct Details: View, LoggingView {
                                 foregroundColor: app.device.battery > 10 ? .green : .red)
                         }
 
+                        if app.device.characteristics.count > 0 {
+                            NavigationLink(destination: CharacteristicsDetails()) {
+                                Text("Characteristics (\(app.device.characteristics.count))")
+                                    .foregroundStyle(.tint)
+                            }
+                        }
+
                     }
                     .font(.callout)
                 }
@@ -465,9 +472,9 @@ struct Details: View, LoggingView {
             }
             .padding(.bottom, 8)
 
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle("Details")
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Details")
         .onAppear {
             if app.sensor != nil {
                 minutesSinceLastReading = Int(Date().timeIntervalSince(app.sensor.lastReadingDate)/60)
@@ -475,6 +482,29 @@ struct Details: View, LoggingView {
                 minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate)/60)
             }
         }
+    }
+}
+
+
+struct CharacteristicsDetails: View, LoggingView {
+    @Environment(AppState.self) var app: AppState
+    @Environment(Log.self) var log: Log
+    @Environment(Settings.self) var settings: Settings
+
+
+    var body: some View {
+
+        VStack {
+
+            // TODO
+            Text("[TODO]")
+            Spacer()
+            Text(String(describing: app.device.characteristics))
+            Spacer()
+
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle("Characteristics")
     }
 }
 
