@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import CoreBluetooth
 
 
 struct Details: View, LoggingView {
@@ -486,6 +487,14 @@ struct Details: View, LoggingView {
 }
 
 
+// TODO: iOS 18 fix:
+// extension CBCharacteristic: @retroactive Comparable {
+extension CBCharacteristic: Comparable {
+    public static func < (lhs: CBCharacteristic, rhs: CBCharacteristic) -> Bool {
+        return lhs.uuid.uuidString < rhs.uuid.uuidString
+    }
+}
+
 struct CharacteristicsDetails: View, LoggingView {
     @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
@@ -499,8 +508,15 @@ struct CharacteristicsDetails: View, LoggingView {
             // TODO
             Text("[TODO]")
             Spacer()
-            Text(String(describing: app.device.characteristics))
-            Spacer()
+            ScrollView() {
+                VStack(alignment: .leading) {
+                    ForEach(app.device.characteristics.sorted(by: <), id: \.key) { uuid, characteristic in
+                        Text(uuid).bold()
+                        Text(characteristic.description)
+                            .padding(.bottom, 8)
+                    }
+                }
+            }
 
         }
         .navigationBarTitleDisplayMode(.inline)
