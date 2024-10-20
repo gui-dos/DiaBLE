@@ -267,9 +267,7 @@ class LibreLinkUp: Logging {
                         if let redirect = data?["redirect"] as? Bool,
                            let region = data?["region"] as? String {
                             redirected = redirect
-                            Task { @MainActor in
-                                settings.libreLinkUpRegion = region
-                            }
+                            settings.libreLinkUpRegion = region
                             log("LibreLinkUp: redirecting to \(regionalSiteURL)/\(loginEndpoint) ")
                             request.url = URL(string: "\(regionalSiteURL)/\(loginEndpoint)")!
                             continue loop
@@ -283,13 +281,11 @@ class LibreLinkUp: Logging {
                            let authTicketData = try? JSONSerialization.data(withJSONObject: authTicketDict),
                            let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
                             log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
-                            Task { @MainActor in
-                                settings.libreLinkUpUserId = id
-                                settings.libreLinkUpPatientId = id  // avoid scraping patientId when following ourselves
-                                settings.libreLinkUpCountry = country
-                                settings.libreLinkUpToken = authTicket.token
-                                settings.libreLinkUpTokenExpirationDate = Date(timeIntervalSince1970: Double(authTicket.expires))
-                            }
+                            settings.libreLinkUpUserId = id
+                            settings.libreLinkUpPatientId = id  // avoid scraping patientId when following ourselves
+                            settings.libreLinkUpCountry = country
+                            settings.libreLinkUpToken = authTicket.token
+                            settings.libreLinkUpTokenExpirationDate = Date(timeIntervalSince1970: Double(authTicket.expires))
 
                             if !country.isEmpty {
                                 // default "de" and "fr" regional servers
@@ -308,9 +304,7 @@ class LibreLinkUp: Logging {
                                         let regionIndex = server.firstIndex(of: "-")
                                         let region = regionIndex == nil ? defaultRegion : String(server[server.index(regionIndex!, offsetBy: 1) ... server.index(regionIndex!, offsetBy: 2)])
                                         log("LibreLinkUp: regional server: \(server), saved default region: \(region)")
-                                        Task { @MainActor in
-                                            settings.libreLinkUpRegion = region
-                                        }
+                                        settings.libreLinkUpRegion = region
                                         if settings.userLevel >= .test {
                                             var countryCodes = [String]()
                                             if let countryList = data["CountryList"] as? [String: Any],
@@ -347,9 +341,7 @@ class LibreLinkUp: Logging {
                                         let connection = data[0]
                                         let patientId = connection["patientId"] as! String
                                         log("LibreLinkUp: first patient Id: \(patientId)")
-                                        Task { @MainActor in
-                                            settings.libreLinkUpPatientId = patientId
-                                        }
+                                        settings.libreLinkUpPatientId = patientId
                                     }
                                 }
                             }
@@ -486,33 +478,31 @@ class LibreLinkUp: Logging {
                         let activationDate = Date(timeIntervalSince1970: Double(activationTime))
                         let isLateJoined = patientSensor["lj"] as? Bool ?? false
                         let isStreaming = ((patientSensor["s"] as? Bool ?? false) || sensorType == .libre3) && !isLateJoined
-                        Task { @MainActor in
-                            if app.sensor == nil {
-                                app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Libre(main: self.main) // TODO: Libre2Gen2
-                                app.sensor.type = sensorType
+                        if app.sensor == nil {
+                            app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Libre(main: self.main) // TODO: Libre2Gen2
+                            app.sensor.type = sensorType
+                            app.sensor.serial = serial
+                        } else {
+                            if app.sensor.serial.isEmpty {
                                 app.sensor.serial = serial
-                            } else {
-                                if app.sensor.serial.isEmpty {
-                                    app.sensor.serial = serial
-                                }
                             }
-                            let sensor = main.app.sensor!
-                            if sensor.serial.hasSuffix(serial) || sensorTypes.count == 1 {
-                                sensor.activationTime = UInt32(activationTime)
-                                sensor.age = Int(Date().timeIntervalSince(activationDate)) / 60
-                                sensor.state = .active
-                                sensor.lastReadingDate = Date()
-                                if sensor.type == .libre3 {
-                                    sensor.serial = serial
-                                    if sensor.maxLife == 0 {
-                                        sensor.maxLife = 20160 // TODO: 21600 for 15-day Libre 3+
-                                    }
-                                    let receiverId = settings.libreLinkUpPatientId.fnv32Hash
-                                    (sensor as! Libre3).receiverId = receiverId
-                                    log("LibreLinkUp: LibreView receiver ID: \(receiverId)")
+                        }
+                        let sensor = await main.app.sensor!
+                        if sensor.serial.hasSuffix(serial) || sensorTypes.count == 1 {
+                            sensor.activationTime = UInt32(activationTime)
+                            sensor.age = Int(Date().timeIntervalSince(activationDate)) / 60
+                            sensor.state = .active
+                            sensor.lastReadingDate = Date()
+                            if sensor.type == .libre3 {
+                                sensor.serial = serial
+                                if sensor.maxLife == 0 {
+                                    sensor.maxLife = 20160 // TODO: 21600 for 15-day Libre 3+
                                 }
-                                main.status("\(sensor.type)  +  LLU")
+                                let receiverId = settings.libreLinkUpPatientId.fnv32Hash
+                                (sensor as! Libre3).receiverId = receiverId
+                                log("LibreLinkUp: LibreView receiver ID: \(receiverId)")
                             }
+                            await main.status("\(sensor.type)  +  LLU")
                         }
                         log("LibreLinkUp: sensor serial: \(serial), activation date: \(activationDate) (timestamp = \(activationTime)),  LibreLink version: \(v), device id: \(deviceId), product type: \(pt), sensor type: \(sensorType), alarms: \(alarms), late joined: \(isLateJoined), is streaming: \(isStreaming)")
                         // TODO: glucoseAlarm not null
@@ -526,9 +516,7 @@ class LibreLinkUp: Logging {
                             let lastGlucose = LibreLinkUpGlucose(glucose: Glucose(measurement.valueInMgPerDl, id: lifeCount, date: date, source: "LibreLinkUp"), color: measurement.measurementColor, trendArrow: measurement.trendArrow)
                             debugLog("LibreLinkUp: last glucose measurement: \(measurement) (JSON: \(lastGlucoseMeasurement))")
                             if lastGlucose.trendArrow != nil {
-                                Task { @MainActor in
-                                    app.trendArrow = lastGlucose.trendArrow!
-                                }
+                                app.trendArrow = lastGlucose.trendArrow!
                             }
                             // TODO: scrape historic data only when the 17-minute delay has passed
                             var i = 0
