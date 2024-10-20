@@ -34,7 +34,10 @@ struct OnlineView: View, LoggingView {
             HStack {
 
                 Button {
-                    settings.selectedService = settings.selectedService == .nightscout ? .libreLinkUp : .nightscout
+                    settings.selectedService =
+                    settings.selectedService == .nightscout ? .libreLinkUp :
+                    // settings.selectedService == .libreLinkUp ? .dexcomShare :
+                    .nightscout
                 } label: {
                     Image(settings.selectedService.rawValue).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
                 }

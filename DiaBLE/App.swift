@@ -49,6 +49,7 @@ enum TabTitle: String {
 enum OnlineService: String, CaseIterable {
     case nightscout  = "Nightscout"
     case libreLinkUp = "LibreLinkUp"
+    case dexcomShare = "DexcomShare"
 }
 
 
