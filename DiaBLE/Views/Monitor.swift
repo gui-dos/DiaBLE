@@ -12,6 +12,7 @@ struct Monitor: View, LoggingView {
 
     @State private var readingCountdown: Int = 0
     @State private var minutesSinceLastReading: Int = 0
+    @State private var onlineCountdown: Int = 0
 
     @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
@@ -102,6 +103,13 @@ struct Monitor: View, LoggingView {
                                     readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
                                 }
                             }
+                            Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : " ")
+                                .fixedSize()
+                                .font(.callout.monospacedDigit())
+                                .foregroundStyle(.cyan)
+                                .onReceive(timer) { _ in
+                                    onlineCountdown = settings.onlineInterval * 60 - Int(Date().timeIntervalSince(settings.lastOnlineDate))
+                                }
                         }
                     }
 

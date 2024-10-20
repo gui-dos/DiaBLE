@@ -40,7 +40,7 @@ struct DataView: View, LoggingView {
                         }
                     }
 
-                    Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
+                    Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : " ")
                         .foregroundStyle(.cyan)
                         .onReceive(timer) { _ in
                             onlineCountdown = settings.onlineInterval * 60 - Int(Date().timeIntervalSince(settings.lastOnlineDate))

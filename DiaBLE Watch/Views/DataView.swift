@@ -44,7 +44,7 @@ struct DataView: View, LoggingView {
                         }
                     }
 
-                    Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
+                    Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : " ")
                         .foregroundStyle(.cyan)
                         .onReceive(timer) { _ in
                             // workaround: watchOS fails converting the interval to an Int32
