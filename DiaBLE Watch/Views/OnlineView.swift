@@ -86,7 +86,7 @@ struct OnlineView: View, LoggingView {
                     Button {
                         app.main.rescan()
                     } label: {
-                        Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 16, height: 16)
+                        Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 20, height: 20)
                             .foregroundStyle(.blue)
                     }
                     Text(app.deviceState != "Disconnected" && (readingCountdown > 0 || app.deviceState == "Reconnecting...") ?
