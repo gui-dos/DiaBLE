@@ -137,6 +137,9 @@ enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
 
     var main: MainDelegate!
 
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+
     var currentGlucose: Int = 0
     var lastReadingDate: Date = Date.distantPast
     var glycemicAlarm: GlycemicAlarm = .unknown

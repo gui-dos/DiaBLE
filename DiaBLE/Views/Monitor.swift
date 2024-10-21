@@ -14,8 +14,6 @@ struct Monitor: View, LoggingView {
     @State private var minutesSinceLastReading: Int = 0
     @State private var onlineCountdown: Int64 = 0
 
-    @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
 
     var body: some View {
         NavigationView {
@@ -37,7 +35,7 @@ struct Monitor: View, LoggingView {
                                     Text("\(minutesSinceLastReading) min ago")
                                         .font(.footnote)
                                         .monospacedDigit()
-                                        .onReceive(minuteTimer) { _ in
+                                        .onReceive(app.minuteTimer) { _ in
                                             minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate) / 60)
                                         }
                                 } else {
@@ -99,7 +97,7 @@ struct Monitor: View, LoggingView {
                                 .fixedSize()
                                 .font(.callout.monospacedDigit())
                                 .foregroundStyle(.orange)
-                                .onReceive(timer) { _ in
+                                .onReceive(app.timer) { _ in
                                     readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
                                 }
                             }
@@ -107,7 +105,7 @@ struct Monitor: View, LoggingView {
                                 .fixedSize()
                                 .font(.callout.monospacedDigit())
                                 .foregroundStyle(.cyan)
-                                .onReceive(timer) { _ in
+                                .onReceive(app.timer) { _ in
                                     onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
                                 }
                         }
@@ -205,15 +203,9 @@ struct Monitor: View, LoggingView {
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle("Monitor")
                 .onAppear {
-                    timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-                    minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
                     if app.lastReadingDate != Date.distantPast {
                         minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate) / 60)
                     }
-                }
-                .onDisappear {
-                    timer.upstream.connect().cancel()
-                    minuteTimer.upstream.connect().cancel()
                 }
                 .toolbar {
 

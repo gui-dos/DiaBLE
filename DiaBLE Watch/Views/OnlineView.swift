@@ -24,9 +24,6 @@ struct OnlineView: View, LoggingView {
 
     @State private var showingCredentials: Bool = false
 
-    @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
-
 
     var body: some View {
         VStack {
@@ -73,7 +70,7 @@ struct OnlineView: View, LoggingView {
                             .fixedSize()
                             .foregroundStyle(.cyan)
                             .font(.footnote.monospacedDigit())
-                            .onReceive(timer) { _ in
+                            .onReceive(app.timer) { _ in
                                 onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
                             }
                     }
@@ -92,7 +89,7 @@ struct OnlineView: View, LoggingView {
                     .fixedSize()
                     .foregroundStyle(.orange)
                     .font(.footnote.monospacedDigit())
-                    .onReceive(timer) { _ in
+                    .onReceive(app.timer) { _ in
                         readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
                     }
                 }
@@ -232,7 +229,7 @@ struct OnlineView: View, LoggingView {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .topLeading)
                             }
-                            .onReceive(minuteTimer) { _ in
+                            .onReceive(app.minuteTimer) { _ in
                                 Task {
                                     await app.main.libreLinkUp?.reload()
                                 }

@@ -305,7 +305,6 @@ struct ConsoleSidebar: View, LoggingView {
     @State private var onlineCountdown: Int64 = 0
     @State private var readingCountdown: Int64 = 0
 
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
@@ -373,7 +372,7 @@ struct ConsoleSidebar: View, LoggingView {
                     .fixedSize()
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(.orange)
-                    .onReceive(timer) { _ in
+                    .onReceive(app.timer) { _ in
                         readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
                     }
                 } else {
@@ -387,7 +386,7 @@ struct ConsoleSidebar: View, LoggingView {
                     .fixedSize()
                     .foregroundStyle(.cyan)
                     .font(.caption.monospacedDigit())
-                    .onReceive(timer) { _ in
+                    .onReceive(app.timer) { _ in
                         onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
                     }
 

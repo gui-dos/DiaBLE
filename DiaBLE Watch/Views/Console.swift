@@ -13,7 +13,6 @@ struct Console: View, LoggingView {
     @State private var showingFilterField = false
     @State private var filterText = ""
 
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -166,7 +165,7 @@ struct Console: View, LoggingView {
                     .frame(width: 24, height: 24)
                     .allowsTightening(true)
                     .fixedSize()
-                    .onReceive(timer) { _ in
+                    .onReceive(app.timer) { _ in
                         readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
                     }
                 } else {
@@ -177,7 +176,7 @@ struct Console: View, LoggingView {
                     .fixedSize()
                     .foregroundStyle(.cyan)
                     .font(.footnote.monospacedDigit())
-                    .onReceive(timer) { _ in
+                    .onReceive(app.timer) { _ in
                         onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
                     }
 

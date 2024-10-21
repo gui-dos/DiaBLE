@@ -15,9 +15,6 @@ struct Details: View, LoggingView {
     @State private var secondsSinceLastConnection: Int = 0
     @State private var minutesSinceLastReading: Int = 0
 
-    @State private var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    @State private var minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
-
 
     // TODO:
     @ViewBuilder func Row(_ label: String, _ value: String, foregroundColor: Color? = .yellow) -> some View {
@@ -74,7 +71,7 @@ struct Details: View, LoggingView {
                                     Text("\(secondsSinceLastConnection.minsAndSecsFormattedInterval)")
                                         .monospacedDigit()
                                         .foregroundStyle(app.device.state == .connected ? .yellow : .red)
-                                        .onReceive(timer) { _ in
+                                        .onReceive(app.timer) { _ in
                                             if let device = app.device {
                                                 secondsSinceLastConnection = Int(Date().timeIntervalSince(device.lastConnectionDate))
                                             } else {
@@ -168,7 +165,7 @@ struct Details: View, LoggingView {
                                 }
                                 Row("Started on", (app.sensor.activationTime > 0 ? Date(timeIntervalSince1970: Double(app.sensor.activationTime)) : (app.sensor.lastReadingDate - Double(app.sensor.age) * 60)).shortDateTime)
                             }
-                            .onReceive(minuteTimer) { _ in
+                            .onReceive(app.minuteTimer) { _ in
                                 minutesSinceLastReading = Int(Date().timeIntervalSince(app.sensor.lastReadingDate)/60)
                             }
                         }
@@ -441,8 +438,6 @@ struct Details: View, LoggingView {
 
                     Button {
                         app.main.rescan()
-                        self.timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-                        self.minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
                     } label: {
                         Image(systemName: "arrow.clockwise.circle").resizable().frame(width: 32, height: 32)
                             .foregroundStyle(.tint)
@@ -453,7 +448,7 @@ struct Details: View, LoggingView {
                     .fixedSize()
                     .foregroundStyle(.orange)
                     .font(.caption.monospacedDigit())
-                    .onReceive(timer) { _ in
+                    .onReceive(app.timer) { _ in
                         readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
                     }
                 }

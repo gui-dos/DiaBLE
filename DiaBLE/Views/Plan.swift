@@ -11,8 +11,6 @@ struct Plan: View {
     @State private var onlineCountdown: Int64 = 0
     @State private var readingCountdown: Int64 = 0
 
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
 
     var body: some View {
         NavigationView {
@@ -33,7 +31,7 @@ struct Plan: View {
                         Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                              "\(readingCountdown) s" : " ")
                         .foregroundStyle(.orange)
-                        .onReceive(timer) { _ in
+                        .onReceive(app.timer) { _ in
                             readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
                         }
                     }
@@ -41,7 +39,7 @@ struct Plan: View {
 
                 Text(onlineCountdown != 0 ? "\(onlineCountdown) s" : " ")
                     .foregroundStyle(.cyan)
-                    .onReceive(timer) { _ in
+                    .onReceive(app.timer) { _ in
                         onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
                     }
             }
