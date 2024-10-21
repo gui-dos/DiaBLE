@@ -108,12 +108,7 @@ struct Monitor: View, LoggingView {
                             .font(.footnote.monospacedDigit())
                             .foregroundStyle(.orange)
                             .onReceive(timer) { _ in
-                                // workaround: watchOS fails converting the interval to an Int32
-                                if app.lastConnectionDate == Date.distantPast {
-                                    readingCountdown = 0
-                                } else {
-                                    readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
-                                }
+                                readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
                             }
                         }
                         Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : " ")
@@ -121,12 +116,7 @@ struct Monitor: View, LoggingView {
                             .font(.footnote.monospacedDigit())
                             .foregroundStyle(.cyan)
                             .onReceive(timer) { _ in
-                                // workaround: watchOS fails converting the interval to an Int32
-                                if settings.lastOnlineDate == Date.distantPast {
-                                    onlineCountdown = 0
-                                } else {
-                                    onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
-                                }
+                                onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
                             }
 
                     }
