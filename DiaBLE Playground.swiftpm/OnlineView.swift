@@ -117,7 +117,7 @@ struct OnlineView: View, LoggingView {
                                 Image(systemName: settings.libreLinkUpScrapingLogbook ? "book.closed.circle.fill" : "book.closed.circle").font(.title)
                             }
 
-                            Text(onlineCountdown > -1 ? "\(onlineCountdown) s" : "...")
+                            Text(onlineCountdown != 0 ? "\(onlineCountdown) s" : "...")
                                 .fixedSize()
                                 .foregroundStyle(.cyan)
                                 .font(.caption.monospacedDigit())
