@@ -505,6 +505,10 @@ struct CharacteristicsDetails: View, LoggingView {
                 VStack(alignment: .leading) {
                     ForEach(app.device.characteristics.sorted(by: <), id: \.key) { uuid, characteristic in
                         Text(uuid).bold()
+                        if characteristic.uuid.description != uuid {
+                            Text(characteristic.uuid.description)
+                        }
+                        Text(characteristic.properties.description)
                         Text(characteristic.description)
                             .padding(.bottom, 8)
                     }

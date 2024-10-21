@@ -45,7 +45,7 @@ class HealthKit: Logging {
         do {
             try await store?.requestAuthorization(toShare: dataTypes, read: dataTypes)
         } catch {
-            self.log("HealthKit: error while requesting authorization for \(DataType.allCases) quantity types: \(error.localizedDescription)")
+            log("HealthKit: error while requesting authorization for \(DataType.allCases) quantity types: \(error.localizedDescription)")
         }
     }
 
@@ -76,11 +76,12 @@ class HealthKit: Logging {
             return
         }
         let samples = glucoseData.map {
-            HKQuantitySample(type: glucoseType,
-                             quantity: HKQuantity(unit: glucoseUnit, doubleValue: Double($0.value)),
-                             start: $0.date,
-                             end: $0.date,
-                             metadata: nil)
+            HKQuantitySample(
+                type: glucoseType,
+                quantity: HKQuantity(unit: glucoseUnit, doubleValue: Double($0.value)),
+                start: $0.date,
+                end: $0.date,
+                metadata: nil)
         }
         do {
             try await store?.save(samples)
@@ -111,7 +112,14 @@ class HealthKit: Logging {
             self.lastDate = results.first?.endDate
 
             if results.count > 0 {
-                let values = results.enumerated().map { Glucose(Int($0.1.quantity.doubleValue(for: self.glucoseUnit)), id: $0.0, date: $0.1.endDate, source: $0.1.sourceRevision.source.name + " " + $0.1.sourceRevision.source.bundleIdentifier) }
+                let values = results.enumerated().map {
+                    Glucose(
+                        Int($0.1.quantity.doubleValue(for: self.glucoseUnit)),
+                        id: $0.0,
+                        date: $0.1.endDate,
+                        source: $0.1.sourceRevision.source.name + " " + $0.1.sourceRevision.source.bundleIdentifier
+                    )
+                }
                 Task { @MainActor in
                     main.history.storedValues = values
                     handler?(values)
