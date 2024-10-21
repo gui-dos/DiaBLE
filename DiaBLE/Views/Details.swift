@@ -11,7 +11,7 @@ struct Details: View, LoggingView {
     @State private var showingRePairConfirmationDialog = false
     @State private var showingCalibrationInfoForm = false
 
-    @State private var readingCountdown: Int = 0
+    @State private var readingCountdown: Int64 = 0
     @State private var secondsSinceLastConnection: Int = 0
     @State private var minutesSinceLastReading: Int = 0
 
@@ -454,7 +454,7 @@ struct Details: View, LoggingView {
                     .foregroundStyle(.orange)
                     .font(.caption.monospacedDigit())
                     .onReceive(timer) { _ in
-                        readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
+                        readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
                     }
                 }
 

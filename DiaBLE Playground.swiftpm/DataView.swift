@@ -8,8 +8,8 @@ struct DataView: View, LoggingView {
     @Environment(Log.self) var log: Log
     @Environment(Settings.self) var settings: Settings
 
-    @State private var onlineCountdown: Int = 0
-    @State private var readingCountdown: Int = 0
+    @State private var onlineCountdown: Int64 = 0
+    @State private var readingCountdown: Int64 = 0
 
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -35,7 +35,7 @@ struct DataView: View, LoggingView {
                                  "\(readingCountdown) s" : " ")
                             .foregroundStyle(.orange)
                             .onReceive(timer) { _ in
-                                readingCountdown = settings.readingInterval * 60 - Int(Date().timeIntervalSince(app.lastConnectionDate))
+                                readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
                             }
                         }
                     }
@@ -43,7 +43,7 @@ struct DataView: View, LoggingView {
                     Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : " ")
                         .foregroundStyle(.cyan)
                         .onReceive(timer) { _ in
-                            onlineCountdown = settings.onlineInterval * 60 - Int(Date().timeIntervalSince(settings.lastOnlineDate))
+                            onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
                         }
                 }
 
