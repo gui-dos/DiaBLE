@@ -111,7 +111,7 @@ struct Monitor: View, LoggingView {
                                 readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
                             }
                         }
-                        Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : " ")
+                        Text(onlineCountdown != 0 ? "\(onlineCountdown) s" : " ")
                             .fixedSize()
                             .font(.footnote.monospacedDigit())
                             .foregroundStyle(.cyan)

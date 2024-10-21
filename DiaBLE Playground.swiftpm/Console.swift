@@ -383,7 +383,7 @@ struct ConsoleSidebar: View, LoggingView {
                         .hidden()
                 }
 
-                Text(onlineCountdown > 0 ? "\(onlineCountdown) s" : "")
+                Text(onlineCountdown != 0 ? "\(onlineCountdown) s" : " ")
                     .fixedSize()
                     .foregroundStyle(.cyan)
                     .font(.caption.monospacedDigit())
