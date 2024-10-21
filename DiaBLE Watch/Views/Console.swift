@@ -179,6 +179,11 @@ struct Console: View, LoggingView {
                     .onReceive(app.timer) { _ in
                         onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
                     }
+                    .onReceive(app.minuteTimer) { _ in
+                        Task {
+                            await app.main.libreLinkUp?.reload()
+                        }
+                    }
 
                 Spacer()
 
