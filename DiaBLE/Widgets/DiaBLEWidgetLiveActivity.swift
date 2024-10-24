@@ -1,4 +1,4 @@
-#if canImport(ActivityKit)
+#if canImport(ActivityKit) && !targetEnvironment(macCatalyst) // TODO: Catalyst support
 
 import ActivityKit
 import WidgetKit
