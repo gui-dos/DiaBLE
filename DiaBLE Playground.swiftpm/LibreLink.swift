@@ -202,7 +202,13 @@ class LibreLinkUp: Logging {
                     let status = response.statusCode
                     debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \(status)")
                     if status == 401 {
-                        log("LibreLinkUp: POST not authorized")
+                        // {"message":"invalid or expired jwt"}
+                        if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                           let message = json["message"] as? String {
+                            log("LibreLinkUp: authentication error: \(message), status: \(status)")
+                        } else {
+                            log("LibreLinkUp: POST not authorized")
+                        }
                     } else {
                         log("LibreLinkUp: POST \((200..<300).contains(status) ? "success" : "error")")
                     }
@@ -257,9 +263,27 @@ class LibreLinkUp: Logging {
                                let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
                                 debugLog("LibreLinkUp: reaccept step: type: \(type), component name: \(componentName), reaccept: \(reaccept), title key: \(titleKey), component type: \(componentType), user country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
 
-                                throw LibreLinkUpError.touMustBeReaccepted
-
                                 // TODO: api.libreview.io/auth/continue/tou (or `pp` type)
+
+                                if type == "tou" {
+                                    request.url = URL(string: "\(regionalSiteURL)/auth/continue/tou")!
+                                    request.setValue("Bearer \(authTicket.token)", forHTTPHeaderField: "Authorization")
+                                    settings.libreLinkUpToken = authTicket.token
+                                    settings.libreLinkUpTokenExpirationDate = Date(timeIntervalSince1970: Double(authTicket.expires))
+                                    debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
+                                    let (data, response) = try await URLSession.shared.data(for: request)
+                                    if let response = response as? HTTPURLResponse {
+                                        let status = response.statusCode
+                                        debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \(status)")
+                                        // {"message":"invalid or expired jwt"}, status: 401
+                                        if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                                           let message = json["message"] as? String {
+                                            log("LibreLinkUp: error: \(message), status: \(status)")
+                                            throw LibreLinkUpError.touMustBeReaccepted
+                                        }
+                                    }
+                                }
+
                             }
                         }
 
