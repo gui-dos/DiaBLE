@@ -503,17 +503,17 @@ struct CharacteristicsDetails: View, LoggingView {
             // TODO
             Text("[TODO]")
             Spacer()
-            ScrollView() {
-                VStack(alignment: .leading) {
-                    ForEach(app.device.characteristics.sorted(by: <), id: \.key) { uuid, characteristic in
+            List {
+                ForEach(app.device.characteristics.sorted(by: <), id: \.key) { uuid, characteristic in
+                    VStack(alignment: .leading) {
                         Text(uuid).bold()
                         if characteristic.uuid.description != uuid {
                             Text(characteristic.uuid.description)
                         }
                         Text(characteristic.properties.description)
                         Text(characteristic.description)
-                            .padding(.bottom, 8)
                     }
+                    .listRowSpacing(8)
                 }
             }
 
