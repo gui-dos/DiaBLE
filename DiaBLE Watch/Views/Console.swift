@@ -172,7 +172,7 @@ struct Console: View, LoggingView {
                     Spacer()
                 }
 
-                Text(onlineCountdown != 0 ? "\(onlineCountdown) s" : " ")
+                Text(onlineCountdown != 0 ? "\(String(onlineCountdown).count > 5 ? "..." : "\(onlineCountdown) s")" : " ")
                     .fixedSize()
                     .foregroundStyle(.cyan)
                     .font(.footnote.monospacedDigit())
