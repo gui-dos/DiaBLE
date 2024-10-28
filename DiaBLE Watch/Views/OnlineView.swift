@@ -55,19 +55,6 @@ struct OnlineView: View, LoggingView {
                         }
 
                         Button {
-                            withAnimation { settings.libreLinkUpScrapingLogbook.toggle() }
-                            if settings.libreLinkUpScrapingLogbook {
-                                app.serviceResponse = "[...]"
-                                Task {
-                                    await app.main.libreLinkUp?.reload(enforcing: true)
-                                }
-                            }
-                        } label: {
-                            Image(systemName: settings.libreLinkUpScrapingLogbook ? "book.closed.circle.fill" : "book.closed.circle").resizable().frame(width: 20, height: 20)
-                                .foregroundStyle(.blue)
-                        }
-
-                        Button {
                             withAnimation { showingPercentiles.toggle() }
                         } label: {
                             Image(systemName: showingPercentiles ? "chart.line.uptrend.xyaxis.circle.fill" : "chart.line.uptrend.xyaxis.circle").resizable().frame(width: 20, height: 20)
