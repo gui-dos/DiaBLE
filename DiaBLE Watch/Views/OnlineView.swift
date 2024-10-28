@@ -241,7 +241,7 @@ struct OnlineView: View, LoggingView {
                                 }
                             }
                             .chartXAxis {
-                                AxisMarks(values: .stride(by: .hour, count: 3)) { _ in
+                                AxisMarks(values: .stride(by: .hour, count: 6)) { _ in
                                     AxisGridLine()
                                     AxisTick()
                                     AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .omitted)).minute(), anchor: .top)
