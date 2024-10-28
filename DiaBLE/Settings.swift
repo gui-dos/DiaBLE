@@ -45,6 +45,8 @@ import Foundation
         "libreLinkUpTokenExpirationDate": Date.distantPast,
         "libreLinkUpFollowing": false,
         "libreLinkUpScrapingLogbook": false,
+        "libreLinkUpPeriod": 14,
+        "libreLinkUpNumPeriods": 2,
 
         "selectedService": OnlineService.libreLinkUp.rawValue,
         "onlineInterval": 5,
@@ -218,6 +220,14 @@ import Foundation
 
     var libreLinkUpScrapingLogbook: Bool = UserDefaults.standard.bool(forKey: "libreLinkUpScrapingLogbook") {
         didSet { UserDefaults.standard.set(self.libreLinkUpScrapingLogbook, forKey: "libreLinkUpScrapingLogbook") }
+    }
+
+    var libreLinkUpPeriod: Int = UserDefaults.standard.integer(forKey: "libreLinkUpPeriod") {
+        didSet { UserDefaults.standard.set(self.libreLinkUpPeriod, forKey: "libreLinkUpPeriod") }
+    }
+
+    var libreLinkUpNumPeriods: Int = UserDefaults.standard.integer(forKey: "libreLinkUpNumPeriods") {
+        didSet { UserDefaults.standard.set(self.libreLinkUpNumPeriods, forKey: "libreLinkUpNumPeriods") }
     }
 
     var selectedService: OnlineService = OnlineService(rawValue: UserDefaults.standard.string(forKey: "selectedService")!)! {

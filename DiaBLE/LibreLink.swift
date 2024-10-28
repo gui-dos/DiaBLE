@@ -573,15 +573,13 @@ class LibreLinkUp: Logging {
                             log("LibreLinkUp: graph values: \(history.map { ($0.glucose.id, $0.glucose.value, $0.glucose.date.shortDateTime, $0.color) })")
 
                             // TODO: https://api-eu.libreview.io/glucoseHistory?from=1700092800&numPeriods=5&period=14
-                            if settings.userLevel >= .test {
-                                let period = 14
-                                let numPeriods = 2
+                            if settings.userLevel >= .test && percentiles.isEmpty {
                                 if let ticketDict = json["ticket"] as? [String: Any],
                                    let token = ticketDict["token"] as? String {
                                     log("LibreView: new token for glucoseHistory: \(token)")
                                     request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
                                     request.setValue(settings.libreLinkUpUserId.SHA256, forHTTPHeaderField: "Account-Id")
-                                    request.url = URL(string: "https://api.libreview.io/glucoseHistory?numPeriods=\(numPeriods)&period=\(period)")!
+                                    request.url = URL(string: "https://api.libreview.io/glucoseHistory?numPeriods=\(settings.libreLinkUpNumPeriods)&period=\(settings.libreLinkUpPeriod)")!
                                     debugLog("LibreView: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
                                     let (data, response) = try await URLSession.shared.data(for: request)
                                     debugLog("LibreView: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
