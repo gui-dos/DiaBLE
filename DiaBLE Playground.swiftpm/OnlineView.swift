@@ -265,35 +265,42 @@ struct OnlineView: View, LoggingView {
                             .font(.system(.caption, design: .monospaced))
 
                             if let percentiles = app.main.libreLinkUp?.percentiles, percentiles.count > 0 {
+                                let midnight = Calendar.current.startOfDay(for: Date.now)
                                 Chart {
-                                    ForEach(percentiles, id: \.time) { p in
+                                    ForEach(percentiles, id: \.time) {
                                         AreaMark(
-                                            x: .value("Time", p.time),
-                                            yStart: .value("P5", p.percentile5),
-                                            yEnd: .value("P95", p.percentile95),
+                                            x: .value("Time", midnight + TimeInterval($0.time)),
+                                            yStart: .value("P5", $0.percentile5),
+                                            yEnd: .value("P95", $0.percentile95),
                                             series: .value("", 0)
                                         )
                                         .foregroundStyle(.blue)
                                     }
-                                    ForEach(percentiles, id: \.time) { p in
+                                    ForEach(percentiles, id: \.time) {
                                         AreaMark(
-                                            x: .value("Time", p.time),
-                                            yStart: .value("P25", p.percentile25),
-                                            yEnd: .value("P75", p.percentile75),
+                                            x: .value("Time", midnight + TimeInterval($0.time)),
+                                            yStart: .value("P25", $0.percentile25),
+                                            yEnd: .value("P75", $0.percentile75),
                                             series: .value("", 1)
                                         )
                                         .foregroundStyle(.cyan)
                                     }
-                                    ForEach(percentiles, id: \.time) { p in
+                                    ForEach(percentiles, id: \.time) {
                                         LineMark(
-                                            x: .value("Time", p.time),
-                                            y: .value("P50", p.percentile50),
+                                            x: .value("Time", midnight + TimeInterval($0.time)),
+                                            y: .value("P50", $0.percentile50),
                                             series: .value("", 2)
                                         )
                                         .foregroundStyle(.white)
                                     }
                                 }
-                                .chartXScale(domain: [0, app.main.libreLinkUp!.percentiles.map { $0.time }.max()!])
+                                .chartXAxis {
+                                    AxisMarks(values: .stride(by: .hour, count: 3)) { _ in
+                                        AxisGridLine()
+                                        AxisTick()
+                                        AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .omitted)).minute(), anchor: .top)
+                                    }
+                                }
                             }
 
                             ScrollView(showsIndicators: true) {
@@ -302,9 +309,6 @@ struct OnlineView: View, LoggingView {
                                     .foregroundStyle(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
                                     .textSelection(.enabled)
                             }
-                            #if targetEnvironment(macCatalyst)
-                            .padding()
-                            #endif
 
                         }
                         #if targetEnvironment(macCatalyst)
