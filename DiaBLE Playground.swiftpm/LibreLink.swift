@@ -143,6 +143,16 @@ struct LibreLinkUpAlarm: Identifiable, Codable, CustomStringConvertible {
 }
 
 
+struct LibreViewPercentiles: Codable {
+    let time: Int
+    let percentile5:  Double
+    let percentile25: Double
+    let percentile50: Double
+    let percentile75: Double
+    let percentile95: Double
+}
+
+
 class LibreLinkUp: Logging {
 
     var main: MainDelegate!
@@ -172,6 +182,7 @@ class LibreLinkUp: Logging {
 
     var history: [LibreLinkUpGlucose] = []
     var logbookHistory: [LibreLinkUpGlucose] = []
+    var percentiles: [LibreViewPercentiles] = []
 
 
     init(main: MainDelegate) {
@@ -598,10 +609,17 @@ class LibreLinkUp: Logging {
                                             let blocks = data["blocks"] as! [[[String: Any]]]
                                             i += 1
                                             debugLog("LibreView: period # \(i) of \(periods.count), start date: \(startDate.local), end date: \(endDate.local), days of data: \(daysOfData)")
-                                            var j = 0
-                                            for block in blocks {
-                                                j += 1
-                                                debugLog("LibreView: block # \(j) of period # \(i): \(block.count) percentiles times: \(block.map { $0["time"] as! Int })")
+                                            if i == 1 { // chart percentiles only for first period
+                                                var j = 0
+                                                for block in blocks {
+                                                    for entry in block {
+                                                        if let entryData = try? JSONSerialization.data(withJSONObject: entry),
+                                                           let percentiles = try? JSONDecoder().decode(LibreViewPercentiles.self, from: entryData) {
+                                                            self.percentiles.append(percentiles)
+                                                        }
+                                                    }
+                                                    j += 1
+                                                }
                                             }
                                         }
                                     }
