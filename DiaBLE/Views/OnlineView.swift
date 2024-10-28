@@ -39,7 +39,7 @@ struct OnlineView: View, LoggingView {
                             settings.selectedService =
                             settings.selectedService == .nightscout ? .libreLinkUp :
                             // settings.selectedService == .libreLinkUp ? .dexcomShare :
-                            .nightscout
+                                .nightscout
                         } label: {
                             Image(settings.selectedService.rawValue).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
                         }
@@ -210,20 +210,12 @@ struct OnlineView: View, LoggingView {
 
                     if settings.selectedService == .libreLinkUp {
                         VStack {
-                            ScrollView(showsIndicators: true) {
-                                Text(app.serviceResponse)
-                                    .font(.system(.footnote, design: .monospaced))
-                                    .foregroundStyle(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
-                                    .textSelection(.enabled)
-                            }
-                            #if targetEnvironment(macCatalyst)
-                            .padding()
-                            #endif
 
                             if app.main.libreLinkUp?.history.count ?? 0 > 0 {
                                 Chart(app.main.libreLinkUp!.history) {
-                                    PointMark(x: .value("Time", $0.glucose.date),
-                                              y: .value("Glucose", $0.glucose.value)
+                                    PointMark(
+                                        x: .value("Time", $0.glucose.date),
+                                        y: .value("Glucose", $0.glucose.value)
                                     )
                                     .foregroundStyle($0.color.color)
                                     .symbolSize(12)
@@ -271,6 +263,49 @@ struct OnlineView: View, LoggingView {
                             }
                             .listStyle(.plain)
                             .font(.system(.caption, design: .monospaced))
+
+                            if let percentiles = app.main.libreLinkUp?.percentiles, percentiles.count > 0 {
+                                Chart {
+                                    ForEach(percentiles, id: \.time) { p in
+                                        AreaMark(
+                                            x: .value("Time", p.time),
+                                            yStart: .value("P5", p.percentile5),
+                                            yEnd: .value("P95", p.percentile95),
+                                            series: .value("", 0)
+                                        )
+                                        .foregroundStyle(.blue)
+                                    }
+                                    ForEach(percentiles, id: \.time) { p in
+                                        AreaMark(
+                                            x: .value("Time", p.time),
+                                            yStart: .value("P25", p.percentile25),
+                                            yEnd: .value("P75", p.percentile75),
+                                            series: .value("", 1)
+                                        )
+                                        .foregroundStyle(.cyan)
+                                    }
+                                    ForEach(percentiles, id: \.time) { p in
+                                        LineMark(
+                                            x: .value("Time", p.time),
+                                            y: .value("P50", p.percentile50),
+                                            series: .value("", 2)
+                                        )
+                                        .foregroundStyle(.white)
+                                    }
+                                }
+                                .chartXScale(domain: [0, app.main.libreLinkUp!.percentiles.map { $0.time }.max()!])
+                            }
+
+                            ScrollView(showsIndicators: true) {
+                                Text(app.serviceResponse)
+                                    .font(.system(.footnote, design: .monospaced))
+                                    .foregroundStyle(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
+                                    .textSelection(.enabled)
+                            }
+                            #if targetEnvironment(macCatalyst)
+                            .padding()
+                            #endif
+
                         }
                         #if targetEnvironment(macCatalyst)
                         .padding(.leading, 15)

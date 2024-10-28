@@ -574,7 +574,7 @@ class LibreLinkUp: Logging {
 
                             // TODO: https://api-eu.libreview.io/glucoseHistory?from=1700092800&numPeriods=5&period=14
                             if settings.userLevel >= .test {
-                                let period = 15
+                                let period = 14
                                 let numPeriods = 2
                                 if let ticketDict = json["ticket"] as? [String: Any],
                                    let token = ticketDict["token"] as? String {
@@ -610,6 +610,7 @@ class LibreLinkUp: Logging {
                                             i += 1
                                             debugLog("LibreView: period # \(i) of \(periods.count), start date: \(startDate.local), end date: \(endDate.local), days of data: \(daysOfData)")
                                             if i == 1 { // chart percentiles only for first period
+                                                self.percentiles = []
                                                 var j = 0
                                                 for block in blocks {
                                                     for entry in block {
