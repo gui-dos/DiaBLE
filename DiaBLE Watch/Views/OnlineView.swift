@@ -23,6 +23,7 @@ struct OnlineView: View, LoggingView {
     @State private var readingCountdown: Int64 = 0
 
     @State private var showingCredentials: Bool = false
+    @State private var showingPercentiles: Bool = false
 
 
     var body: some View {
@@ -34,7 +35,7 @@ struct OnlineView: View, LoggingView {
                     settings.selectedService =
                     settings.selectedService == .nightscout ? .libreLinkUp :
                     // settings.selectedService == .libreLinkUp ? .dexcomShare :
-                    .nightscout
+                        .nightscout
                 } label: {
                     Image(settings.selectedService.rawValue).resizable().frame(width: 32, height: 32).shadow(color: .cyan, radius: 4.0 )
                 }
@@ -50,6 +51,26 @@ struct OnlineView: View, LoggingView {
                             withAnimation { showingCredentials.toggle() }
                         } label: {
                             Image(systemName: showingCredentials ? "person.crop.circle.fill" : "person.crop.circle").resizable().frame(width: 20, height: 20)
+                                .foregroundStyle(.blue)
+                        }
+
+                        Button {
+                            withAnimation { settings.libreLinkUpScrapingLogbook.toggle() }
+                            if settings.libreLinkUpScrapingLogbook {
+                                app.serviceResponse = "[...]"
+                                Task {
+                                    await app.main.libreLinkUp?.reload(enforcing: true)
+                                }
+                            }
+                        } label: {
+                            Image(systemName: settings.libreLinkUpScrapingLogbook ? "book.closed.circle.fill" : "book.closed.circle").resizable().frame(width: 20, height: 20)
+                                .foregroundStyle(.blue)
+                        }
+
+                        Button {
+                            withAnimation { showingPercentiles.toggle() }
+                        } label: {
+                            Image(systemName: showingPercentiles ? "chart.line.uptrend.xyaxis.circle.fill" : "chart.line.uptrend.xyaxis.circle").resizable().frame(width: 20, height: 20)
                                 .foregroundStyle(.blue)
                         }
 
@@ -99,7 +120,7 @@ struct OnlineView: View, LoggingView {
             if showingCredentials {
 
                 @Bindable var settings = settings
-                
+
                 HStack {
 
                     if settings.selectedService == .nightscout {
@@ -155,8 +176,9 @@ struct OnlineView: View, LoggingView {
                             let now = Date()
                             let nightscoutHistory = history.nightscoutValues.filter { now.timeIntervalSince($0.date) <= twelveHours }
                             Chart(nightscoutHistory) {
-                                PointMark(x: .value("Time", $0.date),
-                                          y: .value("Glucose", $0.value)
+                                PointMark(
+                                    x: .value("Time", $0.date),
+                                    y: .value("Glucose", $0.value)
                                 )
                                 .foregroundStyle(.cyan)
                                 .symbolSize(6)
@@ -199,10 +221,53 @@ struct OnlineView: View, LoggingView {
 
                     VStack(spacing: 0) {
 
-                        if app.main.libreLinkUp?.history.count ?? 0 > 0 {
+                        if let percentiles = app.main.libreLinkUp?.percentiles,
+                           percentiles.count > 0,
+                           showingPercentiles {
+                            let midnight = Calendar.current.startOfDay(for: Date.now)
+                            Chart {
+                                ForEach(percentiles, id: \.time) {
+                                    AreaMark(
+                                        x: .value("Time", midnight + TimeInterval($0.time)),
+                                        yStart: .value("P5", $0.percentile5),
+                                        yEnd: .value("P95", $0.percentile95),
+                                        series: .value("", 0)
+                                    )
+                                    .foregroundStyle(.blue)
+                                }
+                                ForEach(percentiles, id: \.time) {
+                                    AreaMark(
+                                        x: .value("Time", midnight + TimeInterval($0.time)),
+                                        yStart: .value("P25", $0.percentile25),
+                                        yEnd: .value("P75", $0.percentile75),
+                                        series: .value("", 1)
+                                    )
+                                    .foregroundStyle(.cyan)
+                                }
+                                ForEach(percentiles, id: \.time) {
+                                    LineMark(
+                                        x: .value("Time", midnight + TimeInterval($0.time)),
+                                        y: .value("P50", $0.percentile50),
+                                        series: .value("", 2)
+                                    )
+                                    .foregroundStyle(.white)
+                                }
+                            }
+                            .chartXAxis {
+                                AxisMarks(values: .stride(by: .hour, count: 3)) { _ in
+                                    AxisGridLine()
+                                    AxisTick()
+                                    AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .omitted)).minute(), anchor: .top)
+                                }
+                            }
+                            .padding()
+                            .frame(maxHeight: 64)
+
+                        } else if app.main.libreLinkUp?.history.count ?? 0 > 0 {
                             Chart(app.main.libreLinkUp!.history) {
-                                PointMark(x: .value("Time", $0.glucose.date),
-                                          y: .value("Glucose", $0.glucose.value)
+                                PointMark(
+                                    x: .value("Time", $0.glucose.date),
+                                    y: .value("Glucose", $0.glucose.value)
                                 )
                                 .foregroundStyle($0.color.color)
                                 .symbolSize(6)
