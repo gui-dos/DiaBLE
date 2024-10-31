@@ -609,21 +609,22 @@ class LibreLinkUp: Logging {
                                                 let dateStart = period["dateStart"] as! Int
                                                 let startDate = Date(timeIntervalSince1970: Double(dateStart))
                                                 let daysOfData = period["daysOfData"] as! Int
-                                                let data = period["data"] as! [String: Any]
-                                                let blocks = data["blocks"] as! [[[String: Any]]]
-                                                i += 1
-                                                debugLog("LibreView: period # \(i) of \(periods.count), start date: \(startDate.local), end date: \(endDate.local), days of data: \(daysOfData)")
-                                                if i == 1 { // chart percentiles only for first period
-                                                    self.percentiles = []
-                                                    var j = 0
-                                                    for block in blocks {
-                                                        for entry in block {
-                                                            if let entryData = try? JSONSerialization.data(withJSONObject: entry),
-                                                               let percentiles = try? JSONDecoder().decode(LibreViewPercentiles.self, from: entryData) {
-                                                                self.percentiles.append(percentiles)
+                                                if let data = period["data"] as? [String: Any],
+                                                   let blocks = data["blocks"] as? [[[String: Any]]] {
+                                                    i += 1
+                                                    debugLog("LibreView: period # \(i) of \(periods.count), start date: \(startDate.local), end date: \(endDate.local), days of data: \(daysOfData)")
+                                                    if i == 1 { // chart percentiles only for first period
+                                                        self.percentiles = []
+                                                        var j = 0
+                                                        for block in blocks {
+                                                            for entry in block {
+                                                                if let entryData = try? JSONSerialization.data(withJSONObject: entry),
+                                                                   let percentiles = try? JSONDecoder().decode(LibreViewPercentiles.self, from: entryData) {
+                                                                    self.percentiles.append(percentiles)
+                                                                }
                                                             }
+                                                            j += 1
                                                         }
-                                                        j += 1
                                                     }
                                                 }
                                             }
