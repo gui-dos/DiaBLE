@@ -209,46 +209,67 @@ struct OnlineView: View, LoggingView {
                     VStack(spacing: 0) {
 
                         if showingPercentiles {
-                            if let percentiles = app.main.libreLinkUp?.percentiles,
-                               percentiles.count > 0 {
+                            if let percentiles = app.main.libreLinkUp?.percentiles {
+
+                                @Bindable var settings = settings
+
                                 let midnight = Calendar.current.startOfDay(for: Date.now)
-                                Chart {
-                                    ForEach(percentiles, id: \.time) {
-                                        AreaMark(
-                                            x: .value("Time", midnight + TimeInterval($0.time)),
-                                            yStart: .value("P5", $0.percentile5),
-                                            yEnd: .value("P95", $0.percentile95),
-                                            series: .value("", 0)
-                                        )
-                                        .foregroundStyle(.blue)
+
+                                if percentiles.count > 0 {
+
+                                    Chart {
+                                        ForEach(percentiles, id: \.time) {
+                                            AreaMark(
+                                                x: .value("Time", midnight + TimeInterval($0.time)),
+                                                yStart: .value("P5", $0.percentile5),
+                                                yEnd: .value("P95", $0.percentile95),
+                                                series: .value("", 0)
+                                            )
+                                            .foregroundStyle(.blue)
+                                        }
+                                        ForEach(percentiles, id: \.time) {
+                                            AreaMark(
+                                                x: .value("Time", midnight + TimeInterval($0.time)),
+                                                yStart: .value("P25", $0.percentile25),
+                                                yEnd: .value("P75", $0.percentile75),
+                                                series: .value("", 1)
+                                            )
+                                            .foregroundStyle(.cyan)
+                                        }
+                                        ForEach(percentiles, id: \.time) {
+                                            LineMark(
+                                                x: .value("Time", midnight + TimeInterval($0.time)),
+                                                y: .value("P50", $0.percentile50),
+                                                series: .value("", 2)
+                                            )
+                                            .foregroundStyle(.white)
+                                        }
                                     }
-                                    ForEach(percentiles, id: \.time) {
-                                        AreaMark(
-                                            x: .value("Time", midnight + TimeInterval($0.time)),
-                                            yStart: .value("P25", $0.percentile25),
-                                            yEnd: .value("P75", $0.percentile75),
-                                            series: .value("", 1)
-                                        )
-                                        .foregroundStyle(.cyan)
+                                    .chartXAxis {
+                                        AxisMarks(values: .stride(by: .hour, count: 6)) { _ in
+                                            AxisGridLine()
+                                            AxisTick()
+                                            AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .omitted)).minute(), anchor: .top)
+                                        }
                                     }
-                                    ForEach(percentiles, id: \.time) {
-                                        LineMark(
-                                            x: .value("Time", midnight + TimeInterval($0.time)),
-                                            y: .value("P50", $0.percentile50),
-                                            series: .value("", 2)
-                                        )
-                                        .foregroundStyle(.white)
+                                    .padding()
+                                    .frame(maxHeight: 80)
+                                }
+
+                                HStack {
+                                    Text("days")
+                                    Spacer(minLength: 64)
+                                    TextField("days", value: $settings.libreLinkUpPeriod,
+                                              formatter: NumberFormatter())
+                                    .multilineTextAlignment(.trailing)
+                                    .foregroundStyle(.blue)
+                                    .onSubmit {
+                                        app.main.libreLinkUp?.percentiles = []
+                                        Task {
+                                            await app.main.libreLinkUp?.reload(enforcing: true)
+                                        }
                                     }
                                 }
-                                .chartXAxis {
-                                    AxisMarks(values: .stride(by: .hour, count: 6)) { _ in
-                                        AxisGridLine()
-                                        AxisTick()
-                                        AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .omitted)).minute(), anchor: .top)
-                                    }
-                                }
-                                .padding()
-                                .frame(maxHeight: 80)
                             }
 
                         } else if app.main.libreLinkUp?.history.count ?? 0 > 0 {
