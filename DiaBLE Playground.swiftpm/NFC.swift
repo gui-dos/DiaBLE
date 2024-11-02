@@ -291,7 +291,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
             let uid = tag.identifier.hex
             log("NFC: IC identifier: \(uid)")
 
-            // Libre 3: extract the 24-byte patchInfo trimming the leading (A5)+ 00 dummy bytes and verifying the final CRC16
+            // Libre 3: extract the 24-byte patchInfo trimming the leading 0xA5 dummy bytes + 0x00 and verifying the final CRC16
             if patchInfo.count >= 28 && patchInfo[0] == 0xA5 {
                 let crc = UInt16(patchInfo.suffix(2))
                 let info = Data(patchInfo[patchInfo.count - 26 ... patchInfo.count - 3])
@@ -801,7 +801,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
         // Gen2 supported commands: A1, B1, B2, B4
 
         // Libre 3:
-        // getting 28 bytes from A1: dummy `a5 00` + 24-byte PatchInfo + CRC
+        // getting 28 bytes from A1: dummy `a5` + `00` + 24-byte PatchInfo + CRC
         // getting 0xC1 error from A0, A1 20-22, A8, A9, C8, C9  (A0 and A8 activate a sensor)
         // getting 64 0xA5 bytes from A2-A7, AB-C7, CA-DF
         // getting 22 bytes from AA: 44 4f 43 34 32 37 31 35 2d 31 30 31 11 26 20 12 09 00 80 67 73 e0

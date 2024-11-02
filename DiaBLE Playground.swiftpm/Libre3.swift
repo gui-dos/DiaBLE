@@ -383,7 +383,7 @@ extension String {
     // - maximum packet size is 20
     // - notified packets are prefixed by 00, 01, 02, ...
     // - written packets are prefixed by 00 00, 12 00, 24 00, 36 00, ...
-    // - data packets end in a sequential Int: 01 00, 02 00, ...
+    // - data packets end in a sequential Int16: 01 00, 02 00, ...
     //
     // Connection:
     // enable notifications for 2198, 23FA and 22CE
@@ -491,7 +491,7 @@ extension String {
 
     /// 13 bytes written to .patchControl:
     /// - PATCH_CONTROL_COMMAND_SIZE = 7
-    /// - a final sequential Int starting by 01 00 since it is enqueued
+    /// - a final sequential Int16 starting by 01 00 since it is enqueued
     enum ControlCommand {
         /// - 010001 EC2C 0000 requests historical data from lifeCount 11520 (0x2CEC)
         case historic(Data)       // type 1
@@ -641,7 +641,7 @@ extension String {
             }
 
             // The Libre 3 sends every minute 35 bytes as two packets of 15 + 20 bytes
-            // The final Int is a sequential id
+            // The final Int16 is a sequential id
         case .oneMinuteReading:
             if buffer.count == 0 {
                 buffer = Data(data)
@@ -722,11 +722,14 @@ extension String {
                 case .security_09:
                     if settings.userLevel < .test { // not eavesdropping Trident
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate: \(payload.hex)")
+                        debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0D (CMD_KEY_AGREEMENT)")
                         send(securityCommand: .security_0D)
                         // TODO:
                         // write 65-byte ephemeral key
                         let ephemeralKey = Data((0 ..< 65 ).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })  // TEST random ephemeral
+                        debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending random 65-byte ephemeral key 0x\(ephemeralKey.hex)")
                         write(ephemeralKey, for: .certificateData)
+                        debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0E (CMD_EPHEMERAL_LOAD_DONE)")
                         send(securityCommand: .ephemeralLoadDone)
                     }
 
