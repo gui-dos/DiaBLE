@@ -274,10 +274,10 @@ class LibreLinkUp: Logging {
                                let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
                                 debugLog("LibreLinkUp: reaccept step: type: \(type), component name: \(componentName), reaccept: \(reaccept), title key: \(titleKey), component type: \(componentType), user country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
 
-                                // TODO: api.libreview.io/auth/continue/tou (or `pp` type)
+                                // TODO: api.libreview.io/auth/continue/tou (or `pp` type, "Common.privacyPolicy")
 
-                                if type == "tou" {
-                                    request.url = URL(string: "\(regionalSiteURL)/auth/continue/tou")!
+                                if type == "tou" || type == "pp" {
+                                    request.url = URL(string: "\(regionalSiteURL)/auth/continue/\(type)")!
                                     request.setValue("Bearer \(authTicket.token)", forHTTPHeaderField: "Authorization")
                                     settings.libreLinkUpToken = authTicket.token
                                     settings.libreLinkUpTokenExpirationDate = Date(timeIntervalSince1970: Double(authTicket.expires))
@@ -573,7 +573,7 @@ class LibreLinkUp: Logging {
                             log("LibreLinkUp: graph values: \(history.map { ($0.glucose.id, $0.glucose.value, $0.glucose.date.shortDateTime, $0.color) })")
 
                             // TODO: https://api-eu.libreview.io/glucoseHistory?from=1700092800&numPeriods=5&period=14
-                            if settings.userLevel >= .test && percentiles.isEmpty {
+                            if percentiles.isEmpty {
                                 if let ticketDict = json["ticket"] as? [String: Any],
                                    let token = ticketDict["token"] as? String {
                                     log("LibreView: new token for glucoseHistory: \(token)")
