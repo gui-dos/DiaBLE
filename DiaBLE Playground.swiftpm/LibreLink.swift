@@ -260,7 +260,7 @@ class LibreLinkUp: Logging {
                             if let data,
 
                                 let step = data["step"] as? [String: Any],
-                               let type = step["type"] as? String,  // "tou", "pp"
+                               let type = step["type"] as? String,  // "tou", "pp", "verifyEmail"
                                let componentName = step["componentName"] as? String,
                                let props = step["props"] as? [String: Any],
                                let reaccept = props["reaccept"] as? Bool,

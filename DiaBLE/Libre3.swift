@@ -725,7 +725,7 @@ extension String {
                         debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0D (CMD_KEY_AGREEMENT)")
                         send(securityCommand: .security_0D)
                         // TODO:
-                        // write 65-byte ephemeral key
+                        // Natives.processbar(5, null, null) (CRYPTO_EXTENSION_GENERATE_EPHEMERAL)
                         let ephemeralKey = Data((0 ..< 65 ).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })  // TEST random ephemeral
                         debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending random 65-byte ephemeral key 0x\(ephemeralKey.hex)")
                         write(ephemeralKey, for: .certificateData)
