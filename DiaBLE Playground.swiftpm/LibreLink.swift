@@ -251,7 +251,7 @@ class LibreLinkUp: Logging {
 
                         // TODO: status 4 requires accepting new Terms of Use
 
-                        // https://github.com/poml88/LibreWrist/blob/a4fdf7b/SharedPhoneWatch/LibreLinkUp.swift#L249
+                        // https://github.com/poml88/FLwatch/blob/a4fdf7b/SharedPhoneWatch/LibreLinkUp.swift#L249
                         // let mockupData = """
                         // {"status":4,"data":{"step":{"type":"tou","componentName":"AcceptDocument","props":{"reaccept":true,"titleKey":"Common.termsOfUse","type":"tou"}},"user":{"accountType":"pat","country":"DE","uiLanguage":"de-DE"},"authTicket":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjMTFhMmNlLTY1MmYtMTFlZi1hOGY5LWU2NTlhODBiNTU2OSIsImZpcnN0TmFtZSI6IkxpYnJlICIsImxhc3ROYW1lIjoiV3Jpc3QiLCJjb3VudHJ5IjoiREUiLCJyZWdpb24iOiJkZSIsInJvbGUiOiJwYXRpZW50IiwiZW1haWwiOiJsaWJyZXdpZGdldEBjbWRsaW5lLm5ldCIsImMiOjEsInMiOiJsbHUuaW9zIiwiZXhwIjoxNzI3MzQyNTE4fQ._-kekmE1JEmpmdUUhpKTyqg15xwGXLSo3vh9wbTLVn8","expires":1727342518,"duration":3600000}}}
                         // """.data(using: .utf8)!
@@ -337,7 +337,7 @@ class LibreLinkUp: Logging {
                                        let data = json["data"] as? [String: Any],
                                        let server = data["lslApi"] as? String {
                                         let regionIndex = server.firstIndex(of: "-")
-                                        let region = regionIndex == nil ? defaultRegion : String(server[server.index(regionIndex!, offsetBy: 1) ... server.index(regionIndex!, offsetBy: 2)])
+                                        let region = regionIndex == nil ? defaultRegion : String(server[server.index(regionIndex!, offsetBy: 1) ..< server.firstIndex(of: ".")!])
                                         log("LibreLinkUp: regional server: \(server), saved default region: \(region)")
                                         settings.libreLinkUpRegion = region
                                         if settings.userLevel >= .test {
