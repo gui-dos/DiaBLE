@@ -746,7 +746,7 @@ extension String {
                     //                                        increasing
 
                     outCryptoSequence = UInt16(payload[16...17])
-                    log("\(type) \(transmitter!.peripheral!.name!): security challenge: \(payload.hex) (crypto sequence #: \(outCryptoSequence.hex))")
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): security challenge: \(payload.hex) (crypto sequence #: \(outCryptoSequence.hex))")
 
                     let r1 = payload.prefix(16)
                     let nonce1 = payload.suffix(7)
@@ -757,7 +757,7 @@ extension String {
                     // let response = process2(command: 7, nonce1, Data(r1 + r2 + blePIN)) // CRYPTO_EXTENSION_ENCRYPT
 
                     if settings.userLevel < .test { // not eavesdropping Trident
-                        log("\(type) \(transmitter!.peripheral!.name!): writing 40-zero challenge response")
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing 40-zero challenge response")
 
                         let challengeData = Data(count: 40)
                         write(challengeData)
@@ -770,7 +770,7 @@ extension String {
                     let first = payload.subdata(in:  0 ..< 60)
                     let nonce = payload.subdata(in: 60 ..< 67)
                     outCryptoSequence = UInt16(payload[60 ... 61])
-                    log("\(type) \(transmitter!.peripheral!.name!): encrypted KAuth: \(first.hex), nonce: \(nonce.hex) (crypto sequence #: \(outCryptoSequence.hex))")
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): encrypted KAuth: \(first.hex), nonce: \(nonce.hex) (crypto sequence #: \(outCryptoSequence.hex))")
                     // TODO:
                     // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/Libre3GattCallback.java
                     // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/bcrypt/bcrypt.cpp
@@ -780,7 +780,7 @@ extension String {
                     // let kEnc  = decr.subdata(in: 32 ..< 48)
                     // let ivEnc = decr.subdata(in: 48 ..< 56)
                     transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.patchStatus.rawValue]!)
-                    log("\(type) \(transmitter!.peripheral!.name!): enabling notifications on the patch status characteristic")
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): enabling notifications on the patch status characteristic")
                     currentSecurityCommand = nil
 
 
