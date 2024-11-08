@@ -757,7 +757,7 @@ extension String {
                     // let response = process2(command: 7, nonce1, Data(r1 + r2 + blePIN)) // CRYPTO_EXTENSION_ENCRYPT
 
                     if settings.userLevel < .test { // not eavesdropping Trident
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing 40-zero challenge response")
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: writing 40-zero challenge response")
 
                         let challengeData = Data(count: 40)
                         write(challengeData)

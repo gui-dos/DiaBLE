@@ -249,7 +249,7 @@ class LibreLinkUp: Logging {
                             throw LibreLinkUpError.notAuthenticated
                         }
 
-                        // TODO: status 4 requires accepting new Terms of Use
+                        // TODO: {"status":4,"error":{"message":"couldNotLoadPatient"}}, status: 200 with wrong regional servers
 
                         // https://github.com/poml88/FLwatch/blob/a4fdf7b/SharedPhoneWatch/LibreLinkUp.swift#L249
                         // let mockupData = """

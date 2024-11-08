@@ -106,7 +106,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
 
             // features currently in beta testing
             if settings.userLevel >= .test {
-                Libre3.testAESCCM()
+                // Libre3.testAESCCM()
             }
 
         }
