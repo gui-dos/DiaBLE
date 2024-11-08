@@ -873,6 +873,9 @@ extension String {
         write(certificate, for: .certificateData)
         send(securityCommand: .certificateLoadDone)
         // TODO
+        if settings.userLevel == .test {
+            settings.userLevel = .devel  // let sending .security_09 to request patch certificate (CMD_SEND_CERT)
+        }
     }
 
 
