@@ -10,6 +10,8 @@ struct SettingsView: View, LoggingView {
 
     @State private var showingCalendarPicker = false
 
+    @State var showingAllDefaults = false
+
 
     var body: some View {
 
@@ -281,6 +283,26 @@ struct SettingsView: View, LoggingView {
             .font(.body.monospacedDigit())
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Settings")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        withAnimation { showingAllDefaults.toggle() }
+                    } label: {
+                        Image(systemName: showingAllDefaults ? "curlybraces.square.fill" : "curlybraces.square")
+                            .resizable().frame(width: 32, height: 32)
+                    }
+                }
+            }
+            .overlay(
+                showingAllDefaults ?
+                ScrollView(showsIndicators: true) {
+                    // TODO: DefaultsEditor
+                    Text("\(Settings.defaults.keys.map { [$0, UserDefaults.standard.dictionaryRepresentation()[$0]!] }.sorted{($0[0] as! String) < ($1[0] as! String) })")
+                        .font(.system(.footnote, design: .monospaced))
+                        .background(.black)
+                        .textSelection(.enabled)
+                } : nil
+            )
         }
         .navigationViewStyle(.stack)
     }
