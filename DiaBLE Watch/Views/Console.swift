@@ -70,7 +70,7 @@ struct Console: View, LoggingView {
                         }
                     }
                     // .font(.system(.footnote, design: .monospaced))
-                    // ..foregroundStyle(Color(.lightGray))
+                    // .foregroundStyle(Color(.lightGray))
                     .font(.footnote)
                     .foregroundStyle(Color(.lightGray))
                     .onChange(of: log.entries.count) {

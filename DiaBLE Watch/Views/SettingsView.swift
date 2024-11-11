@@ -8,6 +8,8 @@ struct SettingsView: View, LoggingView {
 
     @State private var showingCalendarPicker = false
 
+    @State var showingAllDefaults = false
+
 
     var body: some View {
 
@@ -208,6 +210,27 @@ struct SettingsView: View, LoggingView {
         .font(Font.body.monospacedDigit())
         .buttonStyle(.plain)
         .navigationTitle { Text("Settings").foregroundStyle(.tint) }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    withAnimation { showingAllDefaults.toggle() }
+                } label: {
+                    Image(systemName: showingAllDefaults ? "curlybraces.square.fill" : "curlybraces.square")
+                        .resizable().frame(width: 24, height: 24)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .overlay(
+            showingAllDefaults ?
+            ScrollView(showsIndicators: true) {
+                // TODO: DefaultsEditor
+                Text("\(Settings.defaults.keys.map { [$0, UserDefaults.standard.dictionaryRepresentation()[$0]!] }.sorted{($0[0] as! String) < ($1[0] as! String) })")
+                    .font(.footnote)
+                    .foregroundStyle(Color(.lightGray))
+                    .background(.black)
+            }.offset(y: 16) : nil
+        )
         .toolbarForegroundStyle(.blue, for: .automatic)
         .tint(.blue)
     }
