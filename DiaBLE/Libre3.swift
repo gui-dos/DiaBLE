@@ -627,7 +627,7 @@ extension String {
                 } else {
                     var packets = [Data]()
                     for i in 0 ..< (buffer.count + 19) / 20 {
-                        packets.append(Data(buffer[i * 20 ... min(i * 20 + 17, buffer.count - 3)]))
+                        packets.append(Data(buffer[i * 20 ... min(i * 20 + 17, max(buffer.count - 3, 0))]))
                     }
                     // TODO:
                     // when reactivating a sensor received 20 * 10 + 17 bytes
