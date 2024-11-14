@@ -66,7 +66,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
         super.init()
 
         log.entries = [LogEntry(message: "Welcome to DiaBLE!"), LogEntry(message: "\(settings.logging ? "Log started" : "Log stopped") \(Date().local)")]
-        debugLog("User defaults: \(Settings.defaults.keys.map { [$0, UserDefaults.standard.dictionaryRepresentation()[$0]!] }.sorted{($0[0] as! String) < ($1[0] as! String) })")
+        debugLog("User defaults: \(Settings.defaults.keys.map { [$0, UserDefaults.standard.dictionaryRepresentation()[$0]!] }.sorted { ($0[0] as! String) < ($1[0] as! String) })")
 
         app.main = self
         extendedSession.delegate = self
