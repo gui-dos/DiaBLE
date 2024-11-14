@@ -297,7 +297,7 @@ struct SettingsView: View, LoggingView {
                 showingAllDefaults ?
                 ScrollView(showsIndicators: true) {
                     // TODO: DefaultsEditor
-                    Text("\(Settings.defaults.keys.map { [$0, UserDefaults.standard.dictionaryRepresentation()[$0]!] }.sorted { ($0[0] as! String) < ($1[0] as! String) }.map { "\($0[0]): \($0[1])" }.joined(separator: "\n"))")
+                    Text("\(Settings.defaults.keys.map { [$0, UserDefaults.standard.dictionaryRepresentation()[$0]!] }.sorted { ($0[0] as! String) < ($1[0] as! String) }.map { "\($0[0]): '\(String(reflecting: $0[1]))'" }.joined(separator: "\n"))")
                         .font(.system(.footnote, design: .monospaced))
                         .background(.black)
                         .textSelection(.enabled)
