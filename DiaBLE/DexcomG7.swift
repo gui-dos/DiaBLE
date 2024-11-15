@@ -124,7 +124,7 @@ import CoreBluetooth
     // notify 3534  5200 + 13 bytes    // transmitterVersionExtended
     // write  3534  EA02 01            // BLE StreamSpeed (1: fast)
     // notify 3534  EA00 01
-    // write  3534  EA03 7017 0000     // BLE StreamSize
+    // write  3534  EA03 7017 0000     // BLE StreamSize (6000)
     // notify 3534  EA00 7017 0000
     // [4E 32 EA00 59 51 like for a connection]
     // when repairing:
@@ -263,12 +263,12 @@ import CoreBluetooth
                 let glucoseData = UInt16(data[12..<14])
                 let value: UInt16? = glucoseData != 0xffff ? glucoseData & 0xfff : nil
                 let algorithmState = data[14]  // TODO
-                let trend: Double? = data[15] != 0x7f ? Double(Int8(bitPattern: data[15])) / 10 : nil
+                let rate: Double? = data[15] != 0x7f ? Double(Int8(bitPattern: data[15])) / 10 : nil
                 let glucoseIsDisplayOnly: Bool? = glucoseData != 0xffff ? (data[18] & 0x10) > 0 : nil
                 let predictionData = UInt16(data[16..<18])
                 let predictedValue: UInt16? = predictionData != 0xffff ? predictionData & 0xfff : nil
                 let calibration = data[18]
-                log("\(tx.name): glucose value (EGV): response code: \(txResponseCode.decamelized), message timestamp: \(txTime.formattedInterval), sensor activation date: \(tx.activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(egvAge) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), algorithm state: \(Dexcom.AlgorithmState(rawValue: algorithmState)?.description ?? "unknown") (0x\(algorithmState.hex)), trend: \(trend != nil ? String(trend!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
+                log("\(tx.name): glucose value (EGV): response code: \(txResponseCode.decamelized), message timestamp: \(txTime.formattedInterval), sensor activation date: \(tx.activationDate.local), sensor age: \(sensorAge.formattedInterval), sequence number: \(sequenceNumber), reading age: \(egvAge) seconds, timestamp: \(timestamp.formattedInterval) (0x\(UInt32(timestamp).hex)), date: \(date.local), glucose value: \(value != nil ? String(value!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), algorithm state: \(Dexcom.AlgorithmState(rawValue: algorithmState)?.description ?? "unknown") (0x\(algorithmState.hex)), rate: \(rate != nil ? String(rate!) : "nil"), predicted value: \(predictedValue != nil ? String(predictedValue!) : "nil"), calibration: 0x\(calibration.hex)")
                 // TODO: merge last three hours; move to bluetoothDelegata main.didParseSensor(app.transmitter.sensor!)
                 let backfillMinutes = UInt32(main.settings.backfillMinutes)
                 if main.settings.userLevel >= .test && backfillMinutes > 0 {
@@ -278,7 +278,7 @@ import CoreBluetooth
                     log("TEST: sending \(tx.name) backfill \(backfillMinutes) minutes command 0x\(backfillCmd.hex)")
                     tx.write(backfillCmd, .withResponse)
                 }
-                let item = Glucose(value != nil ? Int(value!) : -1, trendRate: Double(trend ?? 0), id: Int(Double(timestamp) / 60 / 5), date: date)
+                let item = Glucose(value != nil ? Int(value!) : -1, trendRate: Double(rate ?? 0), id: Int(Double(timestamp) / 60 / 5), date: date)
                 self.trend.insert(item, at: 0)
                 Task { @MainActor in
                     app.currentGlucose = item.value
@@ -371,10 +371,10 @@ import CoreBluetooth
                     let glucose = glucoseBytes != 0xffff ? Int(glucoseBytes & 0xfff) : nil
                     let glucoseIsDisplayOnly: Bool? = glucoseBytes != 0xffff ? (glucoseBytes & 0xf000) > 0 : nil
                     let algorithmState = data[6]
-                    let trend: Double? = data[8] != 0x7f ? Double(Int8(bitPattern: data[8])) / 10 : nil
-                    log("\(tx.name): backfilled glucose: timestamp: \(timestamp.formattedInterval), date: \(date.local), glucose: \(glucose != nil ? String(glucose!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), algorithm state: \(Dexcom.AlgorithmState(rawValue: algorithmState)?.description ?? "unknown") (0x\(algorithmState.hex)), trend: \(trend != nil ? String(trend!) : "nil")")
+                    let rate: Double? = data[8] != 0x7f ? Double(Int8(bitPattern: data[8])) / 10 : nil
+                    log("\(tx.name): backfilled glucose: timestamp: \(timestamp.formattedInterval), date: \(date.local), glucose: \(glucose != nil ? String(glucose!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), algorithm state: \(Dexcom.AlgorithmState(rawValue: algorithmState)?.description ?? "unknown") (0x\(algorithmState.hex)), rate: \(rate != nil ? String(rate!) : "nil")")
                     if let glucose {
-                        let item = Glucose(glucose, trendRate: trend ?? 0, id: Int(Double(timestamp) / 60 / 5), date: date)
+                        let item = Glucose(glucose, trendRate: rate ?? 0, id: Int(Double(timestamp) / 60 / 5), date: date)
                         // TODO: manage trend and state
                         history.append(item)
                     }

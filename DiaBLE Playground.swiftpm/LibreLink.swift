@@ -479,6 +479,7 @@ class LibreLinkUp: Logging {
                             }
                         }
                     }
+                    // FIXME: avoid duplicated code with parsing `activeSensors`
                     let sensorTypes: [String: SensorType] = deviceTypes
                     if let patientDevice = connection["patientDevice"] as? [String: Any],
                        let patientSensor = connection["sensor"] as? [String: Any],
