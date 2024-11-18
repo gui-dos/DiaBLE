@@ -53,12 +53,12 @@ class LibreLink {
         "pl": [1404591671: .libre1],
         "pt": [1459186046: .libre1],
         "qa": [6466910868: .libre3, 1404618364: .libre1],
+        "ru": [1523326671: .libre2, 1449293800: .libre1],
         "sa": [1338938836: .libre1],
         "se": [1610188806: .libre3, 1307014059: .libre1],
         "sg": [1398447126: .libre1],
         "si": [1625156441: .libre1],
         "sk": [1625157323: .libre1],
-        "ru": [1523326671: .libre2, 1449293800: .libre1],
         "tr": [1439483369: .libre1],
         "tw": [1495861686: .libre1],
         "za": [1444947746: .libre1],
@@ -165,7 +165,7 @@ class LibreLinkUp: Logging {
 
     let regions = ["ae", "ap", "au", "ca", "de", "eu", "eu2", "fr", "jp", "la", "us"]  // eu2: GB and IE
 
-    var regionalSiteURL: String { "https://api-\(settings.libreLinkUpRegion).libreview.io" }
+    var regionalSiteURL: String { "https://api-\(settings.libreLinkUpRegion).libreview.io" }  // TODO: api.libreview.ru
 
     var unit: GlucoseUnit = .mgdl
 
