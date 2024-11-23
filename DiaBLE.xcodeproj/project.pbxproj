@@ -968,7 +968,7 @@
 				INFOPLIST_FILE = DiaBLE/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DiaBLE;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
-				INFOPLIST_KEY_NFCReaderUsageDescription = "DiaBLE uses NFC to scan Libre sensors.";
+				INFOPLIST_KEY_NFCReaderUsageDescription = "DiaBLE uses NFC to scan Libre sensors and smart insulin pens.";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "DiaBLE uses Bluetooth to receive data from glucose sensors.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "DiaBLE reads your blood glucose, insulin and logged carbs data.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Glucosy tracks your blood glucose and the insulin and carbs data you log.";
@@ -1018,7 +1018,7 @@
 				INFOPLIST_FILE = DiaBLE/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DiaBLE;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
-				INFOPLIST_KEY_NFCReaderUsageDescription = "DiaBLE uses NFC to scan Libre sensors.";
+				INFOPLIST_KEY_NFCReaderUsageDescription = "DiaBLE uses NFC to scan Libre sensors and smart insulin pens.";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "DiaBLE uses Bluetooth to receive data from glucose sensors.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "DiaBLE reads your blood glucose, insulin and logged carbs data.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Glucosy tracks your blood glucose and the insulin and carbs data you log.";
