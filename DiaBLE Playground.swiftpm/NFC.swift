@@ -203,7 +203,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
     func startSession() {
         // execute in the .main queue because of publishing changes to main's observables
-        session = NFCTagReaderSession(pollingOption: [.iso15693, .iso18092], delegate: self, queue: .main)
+        session = NFCTagReaderSession(pollingOption: [.iso15693, .iso14443], delegate: self, queue: .main)
         session?.alertMessage = "Hold the top of your iPhone near the Libre sensor until the second longer vibration"
         session?.begin()
     }
@@ -226,16 +226,11 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
         guard let firstTag = tags.first else { return }
 
-        guard case .iso15693(let tag) = firstTag else {
-            guard case .iso7816(let tag) = firstTag else { return }
-            return
-        }
-
         session.alertMessage = "Scan Complete"
 
         let maxRetries = 5
 
-        if let tag = tag.asNFCISO15693Tag() {
+        if case .iso15693(let tag) = firstTag {
 
             Task {
 
@@ -525,8 +520,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
         }
 
-
-        if let tag = tag.asNFCISO7816Tag() {
+        if case .iso7816(let tag) = firstTag {
 
             Task {
 
