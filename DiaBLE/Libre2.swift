@@ -202,7 +202,7 @@ let libre2DumpMap = [
             streamingUnlockCode = UInt32(settings.activeSensorStreamingUnlockCode)
 
             do {
-                let output = try await nfc.connectedTag!.customCommand(requestFlags: .highDataRate, customCommandCode: cmd.code, customRequestParameters: cmd.parameters)
+                let output = try await nfc.connectedSensor!.customCommand(requestFlags: .highDataRate, customCommandCode: cmd.code, customRequestParameters: cmd.parameters)
 
                 log("NFC: '\(cmd.description)' command output (\(output.count) bytes): 0x\(output.hex)")
 

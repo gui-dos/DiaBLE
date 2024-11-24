@@ -178,7 +178,8 @@ enum TaskRequest {
 class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
     var session: NFCTagReaderSession?
-    var connectedTag: NFCISO15693Tag?
+    var connectedSensor: NFCISO15693Tag?
+    var connectedPen: NFCISO7816Tag?
     var systemInfo: NFCISO15693SystemInfo!
     var sensor: Libre!
 
@@ -202,7 +203,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
     func startSession() {
         // execute in the .main queue because of publishing changes to main's observables
-        session = NFCTagReaderSession(pollingOption: [.iso15693], delegate: self, queue: .main)
+        session = NFCTagReaderSession(pollingOption: [.iso15693, .iso18092], delegate: self, queue: .main)
         session?.alertMessage = "Hold the top of your iPhone near the Libre sensor until the second longer vibration"
         session?.begin()
     }
@@ -224,255 +225,299 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
         log("NFC: did detect tags")
 
         guard let firstTag = tags.first else { return }
-        guard case .iso15693(let tag) = firstTag else { return }
+
+        guard case .iso15693(let tag) = firstTag else {
+            guard case .iso7816(let tag) = firstTag else { return }
+            return
+        }
 
         session.alertMessage = "Scan Complete"
 
-        Task {
+        let maxRetries = 5
 
-            var patchInfo: PatchInfo = Data()
-            let maxRetries = 5
+        if let tag = tag.asNFCISO15693Tag() {
 
-            for retry in 0 ... maxRetries {
+            Task {
 
-                if retry > 0 {
+                var patchInfo: PatchInfo = Data()
+
+                for retry in 0 ... maxRetries {
+
+                    if retry > 0 {
+                        AudioServicesPlaySystemSound(1520)    // "pop" vibration
+                        log("NFC: retry # \(retry)...")
+                        try await Task.sleep(nanoseconds: 250_000_000)
+                    }
+                    do {
+                        try await session.connect(to: firstTag)
+                        connectedSensor = tag
+                        break
+                    } catch {
+                        if retry >= maxRetries {
+                            session.invalidate(errorMessage: "Connection failure: \(error.localizedDescription)")
+                            log("NFC: stopped retrying to connect after \(retry) reattempts: \(error.localizedDescription)")
+                            return
+                        }
+                        log("NFC: \(error.localizedDescription)")
+                    }
+                }
+
+                for retry in 0 ... maxRetries {
+
                     AudioServicesPlaySystemSound(1520)    // "pop" vibration
-                    log("NFC: retry # \(retry)...")
-                    try await Task.sleep(nanoseconds: 250_000_000)
-                }
-                do {
-                    try await session.connect(to: firstTag)
-                    connectedTag = tag
-                    break
-                } catch {
-                    if retry >= maxRetries {
-                        session.invalidate(errorMessage: "Connection failure: \(error.localizedDescription)")
-                        log("NFC: stopped retrying to connect after \(retry) reattempts: \(error.localizedDescription)")
-                        return
+
+                    if retry > 0 {
+                        log("NFC: retry # \(retry)...")
+                        // try await Task.sleep(nanoseconds: 250_000_000) not needed: too long
                     }
-                    log("NFC: \(error.localizedDescription)")
-                }
-            }
-
-            for retry in 0 ... maxRetries {
-
-                AudioServicesPlaySystemSound(1520)    // "pop" vibration
-
-                if retry > 0 {
-                    log("NFC: retry # \(retry)...")
-                    // try await Task.sleep(nanoseconds: 250_000_000) not needed: too long
-                }
-
-                do {
-                    if systemInfo == nil {
-                        systemInfo = try await tag.systemInfo(requestFlags: .highDataRate)
-                    }
-                } catch {
-                    log("NFC: error while getting system info: \(error.localizedDescription)")
-                }
-
-                do {
-                    if patchInfo.count == 0 {
-                        patchInfo = Data(try await tag.customCommand(requestFlags: .highDataRate, customCommandCode: 0xA1, customRequestParameters: Data()))
-                    }
-                } catch {
-                    log("NFC: error while getting patch info: \(error.localizedDescription)")
-                }
-
-                if systemInfo != nil && !(patchInfo.count == 0 && retry < maxRetries) {
-                    break
-                } else if retry >= maxRetries {
-                    session.invalidate(errorMessage: "Error while getting system info")
-                    log("NFC: stopped retrying to get the system info after \(retry) reattempts")
-                    return
-                }
-            }
-
-            let uid = tag.identifier.hex
-            log("NFC: IC identifier: \(uid)")
-
-            // Libre 3: extract the 24-byte patchInfo trimming the leading 0xA5 dummy bytes + 0x00 and verifying the final CRC16
-            if patchInfo.count >= 28 && patchInfo[0] == 0xA5 {
-                let crc = UInt16(patchInfo.suffix(2))
-                let info = Data(patchInfo[patchInfo.count - 26 ... patchInfo.count - 3])
-                let computedCrc = info.crc16
-                if crc == computedCrc {
-                    log("Libre 3: patch info: \(info.hexBytes) (scanned \(patchInfo.hex), CRC: \(crc.hex), computed CRC: \(computedCrc.hex))")
-                    patchInfo = info
-                }
-            }
-
-            let currentSensor = app.sensor
-            if currentSensor != nil && currentSensor!.uid == Data(tag.identifier.reversed()) {
-                sensor = (app.sensor as! Libre)
-                sensor.patchInfo = patchInfo
-            } else {
-                if patchInfo.count == 0 {
-                    sensor = Libre(main: main)
-                } else {
-                    let sensorType = SensorType(patchInfo: patchInfo)
-                    switch sensorType {
-                    case .libre3:
-                        sensor = Libre3(main: main)
-                    case .lingo:
-                        sensor = Lingo(main: main)
-                    case .libre2Gen2:
-                        sensor = Libre2Gen2(main: main)
-                    case .libre2:
-                        sensor = Libre2(main: main)
-                    default:
-                        sensor = Libre(main: main)
-                    }
-                }
-                sensor.patchInfo = patchInfo
-                Task { @MainActor in
-                    app.sensor = sensor
-                }
-            }
-
-            // https://www.st.com/en/embedded-software/stsw-st25ios001.html#get-software
-
-            var manufacturer = tag.icManufacturerCode.hex
-            if manufacturer == "07" {
-                manufacturer.append(" (Texas Instruments)")
-            } else if manufacturer == "7a" {
-                manufacturer.append(" (Abbott Diabetes Care)")
-                sensor.securityGeneration = 3 // TODO
-            }
-            log("NFC: IC manufacturer code: 0x\(manufacturer)")
-            debugLog("NFC: IC serial number: \(tag.icSerialNumber.hex)")
-
-            if let sensor = sensor as? Libre3 {
-                sensor.parsePatchInfo()
-            } else {
-                sensor.firmware = tag.identifier[2].hex
-                log("NFC: firmware version: \(sensor.firmware)")
-            }
-
-            debugLog(String(format: "NFC: IC reference: 0x%X", systemInfo.icReference))
-            if systemInfo.applicationFamilyIdentifier != -1 {
-                debugLog(String(format: "NFC: application family id (AFI): %d", systemInfo.applicationFamilyIdentifier))
-            }
-            if systemInfo.dataStorageFormatIdentifier != -1 {
-                debugLog(String(format: "NFC: data storage format id: %d", systemInfo.dataStorageFormatIdentifier))
-            }
-
-            log(String(format: "NFC: memory size: %d blocks", systemInfo.totalBlocks))
-            log(String(format: "NFC: block size: %d", systemInfo.blockSize))
-
-            sensor.uid = Data(tag.identifier.reversed())
-            log("NFC: sensor uid: \(sensor.uid.hex)")
-            log("NFC: sensor serial number: \(sensor.serial)")
-
-            if sensor.patchInfo.count > 0 {
-                log("NFC: patch info: \(sensor.patchInfo.hex)")
-                log("NFC: sensor type: \(sensor.type.rawValue)\(sensor.patchInfo[0] == 0xA2 ? " (new 'A2' kind)" : sensor.isAPlus ? " Plus" : "")")
-                log("NFC: sensor region: \(sensor.region.description) (\(sensor.region.rawValue))")
-                log("NFC: sensor security generation [0-3]: \(sensor.securityGeneration)")
-
-                Task { @MainActor in
-                    settings.currentSensorUid = sensor.uid
-                    settings.currentPatchInfo = sensor.patchInfo
-                }
-            }
-
-            if (sensor.type == .libre3 || sensor.type == .lingo) && sensor.state != .notActivated && (taskRequest == .none || taskRequest == .enableStreaming) {
-                // get the current Libre 3 blePIN and activationTime by sending `A0` to an already activated sensor
-                taskRequest = .activate
-            }
-
-            if taskRequest != .none {
-
-                if sensor.securityGeneration > 1 && taskRequest != .activate && taskRequest != .enableStreaming {
-                    await testNFCCommands()
-                }
-
-                if sensor.type == .libre2 {
-                    try await sensor.execute(nfc: self, taskRequest: taskRequest!)
-                    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-                }
-
-                if taskRequest == .unlock ||
-                    taskRequest == .dump ||
-                    taskRequest == .reset ||
-                    taskRequest == .prolong ||
-                    taskRequest == .activate {
-
-                    var invalidateMessage = ""
 
                     do {
-                        try await execute(taskRequest!)
-                    } catch let error as NFCError {
-                        if error == .commandNotSupported {
-                            let description = error.localizedDescription
-                            invalidateMessage = description.prefix(1).uppercased() + description.dropFirst() + " by \(sensor.type)"
+                        if systemInfo == nil {
+                            systemInfo = try await tag.systemInfo(requestFlags: .highDataRate)
+                        }
+                    } catch {
+                        log("NFC: error while getting system info: \(error.localizedDescription)")
+                    }
+
+                    do {
+                        if patchInfo.count == 0 {
+                            patchInfo = Data(try await tag.customCommand(requestFlags: .highDataRate, customCommandCode: 0xA1, customRequestParameters: Data()))
+                        }
+                    } catch {
+                        log("NFC: error while getting patch info: \(error.localizedDescription)")
+                    }
+
+                    if systemInfo != nil && !(patchInfo.count == 0 && retry < maxRetries) {
+                        break
+                    } else if retry >= maxRetries {
+                        session.invalidate(errorMessage: "Error while getting system info")
+                        log("NFC: stopped retrying to get the system info after \(retry) reattempts")
+                        return
+                    }
+                }
+
+                let uid = tag.identifier.hex
+                log("NFC: IC identifier: \(uid)")
+
+                // Libre 3: extract the 24-byte patchInfo trimming the leading 0xA5 dummy bytes + 0x00 and verifying the final CRC16
+                if patchInfo.count >= 28 && patchInfo[0] == 0xA5 {
+                    let crc = UInt16(patchInfo.suffix(2))
+                    let info = Data(patchInfo[patchInfo.count - 26 ... patchInfo.count - 3])
+                    let computedCrc = info.crc16
+                    if crc == computedCrc {
+                        log("Libre 3: patch info: \(info.hexBytes) (scanned \(patchInfo.hex), CRC: \(crc.hex), computed CRC: \(computedCrc.hex))")
+                        patchInfo = info
+                    }
+                }
+
+                let currentSensor = app.sensor
+                if currentSensor != nil && currentSensor!.uid == Data(tag.identifier.reversed()) {
+                    sensor = (app.sensor as! Libre)
+                    sensor.patchInfo = patchInfo
+                } else {
+                    if patchInfo.count == 0 {
+                        sensor = Libre(main: main)
+                    } else {
+                        let sensorType = SensorType(patchInfo: patchInfo)
+                        switch sensorType {
+                        case .libre3:
+                            sensor = Libre3(main: main)
+                        case .lingo:
+                            sensor = Lingo(main: main)
+                        case .libre2Gen2:
+                            sensor = Libre2Gen2(main: main)
+                        case .libre2:
+                            sensor = Libre2(main: main)
+                        default:
+                            sensor = Libre(main: main)
                         }
                     }
+                    sensor.patchInfo = patchInfo
+                    Task { @MainActor in
+                        app.sensor = sensor
+                    }
+                }
+
+                // https://www.st.com/en/embedded-software/stsw-st25ios001.html#get-software
+
+                var manufacturer = tag.icManufacturerCode.hex
+                if manufacturer == "07" {
+                    manufacturer.append(" (Texas Instruments)")
+                } else if manufacturer == "7a" {
+                    manufacturer.append(" (Abbott Diabetes Care)")
+                    sensor.securityGeneration = 3 // TODO
+                }
+                log("NFC: IC manufacturer code: 0x\(manufacturer)")
+                debugLog("NFC: IC serial number: \(tag.icSerialNumber.hex)")
+
+                if let sensor = sensor as? Libre3 {
+                    sensor.parsePatchInfo()
+                } else {
+                    sensor.firmware = tag.identifier[2].hex
+                    log("NFC: firmware version: \(sensor.firmware)")
+                }
+
+                debugLog(String(format: "NFC: IC reference: 0x%X", systemInfo.icReference))
+                if systemInfo.applicationFamilyIdentifier != -1 {
+                    debugLog(String(format: "NFC: application family id (AFI): %d", systemInfo.applicationFamilyIdentifier))
+                }
+                if systemInfo.dataStorageFormatIdentifier != -1 {
+                    debugLog(String(format: "NFC: data storage format id: %d", systemInfo.dataStorageFormatIdentifier))
+                }
+
+                log(String(format: "NFC: memory size: %d blocks", systemInfo.totalBlocks))
+                log(String(format: "NFC: block size: %d", systemInfo.blockSize))
+
+                sensor.uid = Data(tag.identifier.reversed())
+                log("NFC: sensor uid: \(sensor.uid.hex)")
+                log("NFC: sensor serial number: \(sensor.serial)")
+
+                if sensor.patchInfo.count > 0 {
+                    log("NFC: patch info: \(sensor.patchInfo.hex)")
+                    log("NFC: sensor type: \(sensor.type.rawValue)\(sensor.patchInfo[0] == 0xA2 ? " (new 'A2' kind)" : sensor.isAPlus ? " Plus" : "")")
+                    log("NFC: sensor region: \(sensor.region.description) (\(sensor.region.rawValue))")
+                    log("NFC: sensor security generation [0-3]: \(sensor.securityGeneration)")
+
+                    Task { @MainActor in
+                        settings.currentSensorUid = sensor.uid
+                        settings.currentPatchInfo = sensor.patchInfo
+                    }
+                }
+
+                if (sensor.type == .libre3 || sensor.type == .lingo) && sensor.state != .notActivated && (taskRequest == .none || taskRequest == .enableStreaming) {
+                    // get the current Libre 3 blePIN and activationTime by sending `A0` to an already activated sensor
+                    taskRequest = .activate
+                }
+
+                if taskRequest != .none {
+
+                    if sensor.securityGeneration > 1 && taskRequest != .activate && taskRequest != .enableStreaming {
+                        await testNFCCommands()
+                    }
+
+                    if sensor.type == .libre2 {
+                        try await sensor.execute(nfc: self, taskRequest: taskRequest!)
+                        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+                    }
+
+                    if taskRequest == .unlock ||
+                        taskRequest == .dump ||
+                        taskRequest == .reset ||
+                        taskRequest == .prolong ||
+                        taskRequest == .activate {
+
+                        var invalidateMessage = ""
+
+                        do {
+                            try await execute(taskRequest!)
+                        } catch let error as NFCError {
+                            if error == .commandNotSupported {
+                                let description = error.localizedDescription
+                                invalidateMessage = description.prefix(1).uppercased() + description.dropFirst() + " by \(sensor.type)"
+                            }
+                        }
+
+                        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+                        if sensor.type != .libre3 && sensor.type != .lingo {
+                            sensor.detailFRAM()
+                        }
+
+                        taskRequest = .none
+
+                        if invalidateMessage.isEmpty {
+                            session.invalidate()
+                        } else {
+                            session.invalidate(errorMessage: invalidateMessage)
+                        }
+                        await main.status("\(sensor.type)  +  NFC")
+                        return
+                    }
+
+                }
+
+                var blocks = 43
+                if taskRequest == .readFRAM {
+                    if sensor.type == .libre1 {
+                        blocks = 244
+                    }
+                }
+
+                do {
+
+                    if sensor.securityGeneration == 2 {
+                        // TODO: use Libre2Gen2.communicateWithPatch(nfc: self)
+                        securityChallenge = try await send(sensor.nfcCommand(.readChallenge))
+                        log("NFC: Gen2 security challenge: \(securityChallenge.hex)")
+                    }
+
+                    let (start, data) = try await sensor.securityGeneration < 2 ?
+                    read(fromBlock: 0, count: blocks) : readBlocks(from: 0, count: blocks)
+
+                    log(data.hexDump(header: "NFC: did read \(data.count / 8) FRAM blocks:", startBlock: start))
+
+                    let lastReadingDate = Date()
+
+                    Task { @MainActor in
+                        app.lastReadingDate = lastReadingDate
+                    }
+                    sensor.lastReadingDate = lastReadingDate
 
                     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-                    if sensor.type != .libre3 && sensor.type != .lingo {
-                        sensor.detailFRAM()
-                    }
+                    session.invalidate()
 
+                    sensor.fram = Data(data)
+
+                } catch {
+                    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+                    session.invalidate(errorMessage: "\(error.localizedDescription)")
+                }
+
+                if taskRequest == .readFRAM {
+                    sensor.detailFRAM()
                     taskRequest = .none
-
-                    if invalidateMessage.isEmpty {
-                        session.invalidate()
-                    } else {
-                        session.invalidate(errorMessage: invalidateMessage)
-                    }
-                    await main.status("\(sensor.type)  +  NFC")
                     return
                 }
 
+                await main.parseSensorData(sensor)
+
+                await main.status("\(sensor.type)  +  NFC")
+
             }
 
-            var blocks = 43
-            if taskRequest == .readFRAM {
-                if sensor.type == .libre1 {
-                    blocks = 244
+        }
+
+
+        if let tag = tag.asNFCISO7816Tag() {
+
+            Task {
+
+                for retry in 0 ... maxRetries {
+
+                    if retry > 0 {
+                        AudioServicesPlaySystemSound(1520)    // "pop" vibration
+                        log("NFC: retry # \(retry)...")
+                        try await Task.sleep(nanoseconds: 250_000_000)
+                    }
+                    do {
+                        try await session.connect(to: firstTag)
+                        connectedPen = tag
+                        break
+                    } catch {
+                        if retry >= maxRetries {
+                            session.invalidate(errorMessage: "Connection failure: \(error.localizedDescription)")
+                            log("NFC: stopped retrying to connect after \(retry) reattempts: \(error.localizedDescription)")
+                            return
+                        }
+                        log("NFC: \(error.localizedDescription)")
+                    }
                 }
-            }
 
-            do {
-
-                if sensor.securityGeneration == 2 {
-                    // TODO: use Libre2Gen2.communicateWithPatch(nfc: self)
-                    securityChallenge = try await send(sensor.nfcCommand(.readChallenge))
-                    log("NFC: Gen2 security challenge: \(securityChallenge.hex)")
-                }
-
-                let (start, data) = try await sensor.securityGeneration < 2 ?
-                read(fromBlock: 0, count: blocks) : readBlocks(from: 0, count: blocks)
-
-                log(data.hexDump(header: "NFC: did read \(data.count / 8) FRAM blocks:", startBlock: start))
-
-                let lastReadingDate = Date()
-
-                Task { @MainActor in
-                    app.lastReadingDate = lastReadingDate
-                }
-                sensor.lastReadingDate = lastReadingDate
+                // TODO
 
                 AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
                 session.invalidate()
 
-                sensor.fram = Data(data)
-
-            } catch {
-                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-                session.invalidate(errorMessage: "\(error.localizedDescription)")
             }
-
-            if taskRequest == .readFRAM {
-                sensor.detailFRAM()
-                taskRequest = .none
-                return
-            }
-
-            await main.parseSensorData(sensor)
-
-            await main.status("\(sensor.type)  +  NFC")
 
         }
 
@@ -484,7 +529,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
         var data = Data()
         do {
             debugLog("NFC: sending \(sensor.type) '\(cmd.code.hex)\(cmd.parameters.count == 0 ? "" : " \(cmd.parameters.hex)")' custom command\(cmd.description == "" ? "" : " (\(cmd.description))")")
-            let output = try await connectedTag?.customCommand(requestFlags: .highDataRate, customCommandCode: cmd.code, customRequestParameters: cmd.parameters)
+            let output = try await connectedSensor?.customCommand(requestFlags: .highDataRate, customCommandCode: cmd.code, customRequestParameters: cmd.parameters)
             data = Data(output!)
         } catch {
             log("NFC: \(sensor.type) '\(cmd.description) \(cmd.code.hex)\(cmd.parameters.count == 0 ? "" : " \(cmd.parameters.hex)")' custom command error: \(error.localizedDescription) (ISO 15693 error 0x\(error.iso15693Code.hex): \(error.iso15693Description))")
@@ -507,7 +552,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
             let blockToRead = start + buffer.count / 8
 
             do {
-                let dataArray = try await connectedTag?.readMultipleBlocks(requestFlags: .highDataRate, blockRange: NSRange(blockToRead ... blockToRead + requested - 1))
+                let dataArray = try await connectedSensor?.readMultipleBlocks(requestFlags: .highDataRate, blockRange: NSRange(blockToRead ... blockToRead + requested - 1))
 
                 for data in dataArray! {
                     buffer += data
@@ -574,7 +619,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
             if buffer.count == 0 { debugLog("NFC: sending '\(readCommand.code.hex) \(readCommand.parameters.hex)' custom command (\(sensor.type) read blocks)") }
 
             do {
-                let output = try await connectedTag?.customCommand(requestFlags: .highDataRate, customCommandCode: readCommand.code, customRequestParameters: readCommand.parameters)
+                let output = try await connectedSensor?.customCommand(requestFlags: .highDataRate, customCommandCode: readCommand.code, customRequestParameters: readCommand.parameters)
                 let data = Data(output!)
 
                 if sensor.securityGeneration < 2 {
@@ -634,7 +679,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
             if buffer.count == 0 { debugLog("NFC: sending '\(readRawCommand.code.hex) \(readRawCommand.parameters.hex)' custom command (\(sensor.type) read raw)") }
 
             do {
-                let output = try await connectedTag?.customCommand(requestFlags: .highDataRate, customCommandCode: readRawCommand.code, customRequestParameters: readRawCommand.parameters)
+                let output = try await connectedSensor?.customCommand(requestFlags: .highDataRate, customCommandCode: readRawCommand.code, customRequestParameters: readRawCommand.parameters)
                 var data = Data(output!)
 
                 if addressToRead % 2 == 1 { data = data.subdata(in: 1 ..< data.count) }
@@ -713,7 +758,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     for j in startIndex ... endIndex { dataBlocks.append(blocksToWrite[j - startIndex]) }
 
                     do {
-                        try await connectedTag?.writeMultipleBlocks(requestFlags: .highDataRate, blockRange: blockRange, dataBlocks: dataBlocks)
+                        try await connectedSensor?.writeMultipleBlocks(requestFlags: .highDataRate, blockRange: blockRange, dataBlocks: dataBlocks)
                         debugLog("NFC: wrote blocks 0x\(startIndex.hex) - 0x\(endIndex.hex) \(dataBlocks.reduce("", { $0 + $1.hex })) at 0x\(((startBlock + i * requestBlocks) * 8).hex)")
                     } catch {
                         log("NFC: error while writing multiple blocks 0x\(startIndex.hex)-0x\(endIndex.hex) \(dataBlocks.reduce("", { $0 + $1.hex })) at 0x\(((startBlock + i * requestBlocks) * 8).hex): \(error.localizedDescription)")
@@ -746,7 +791,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
             }
             let blockRange = NSRange(startIndex ... endIndex)
             do {
-                try await connectedTag?.writeMultipleBlocks(requestFlags: .highDataRate, blockRange: blockRange, dataBlocks: dataBlocks)
+                try await connectedSensor?.writeMultipleBlocks(requestFlags: .highDataRate, blockRange: blockRange, dataBlocks: dataBlocks)
                 debugLog("NFC: wrote blocks 0x\(startIndex.hex) - 0x\(endIndex.hex) \(dataBlocks.reduce("", { $0 + $1.hex }))")
             } catch {
                 log("NFC: error while writing multiple blocks 0x\(startIndex.hex)-0x\(endIndex.hex) \(dataBlocks.reduce("", { $0 + $1.hex }))")
@@ -816,7 +861,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
             for cmd in commands {
                 log("NFC: sending \(sensor.type) '\(cmd.description)' command: code: 0x\(cmd.code.hex), parameters: \(cmd.parameters.count == 0 ? "[]" : "0x\(cmd.parameters.hex)")")
                 do {
-                    let output = try await connectedTag!.customCommand(requestFlags: .highDataRate, customCommandCode: cmd.code, customRequestParameters: cmd.parameters)
+                    let output = try await connectedSensor!.customCommand(requestFlags: .highDataRate, customCommandCode: cmd.code, customRequestParameters: cmd.parameters)
                     log("NFC: '\(cmd.description)' command output (\(output.count) bytes): 0x\(output.hex)")
                     if sensor.securityGeneration == 2 && output.count == 6 { // .readAttribute
                         let state = SensorState(rawValue: output[0]) ?? .unknown
