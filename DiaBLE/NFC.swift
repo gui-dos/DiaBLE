@@ -508,6 +508,8 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
                 // TODO
 
+                log("NFC: smart pen \(connectedPen!) identifier: 0x\(connectedPen!.identifier.hex), initial selected Application ID: \(connectedPen!.initialSelectedAID)")
+
                 AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
                 session.invalidate()
 
