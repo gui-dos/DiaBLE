@@ -13,7 +13,7 @@ struct DataView: View, LoggingView {
 
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
 
                 Text("\((app.lastReadingDate != Date.distantPast ? app.lastReadingDate : Date()).dateTime)")
@@ -184,7 +184,6 @@ struct DataView: View, LoggingView {
             .navigationTitle("Data")
 
         }
-        .navigationViewStyle(.stack)
     }
 }
 

@@ -17,7 +17,7 @@ struct SettingsView: View, LoggingView {
 
         @Bindable var settings = settings
 
-        NavigationView {
+        NavigationStack {
             VStack {
 
                 Spacer()
@@ -304,7 +304,6 @@ struct SettingsView: View, LoggingView {
                 } : nil
             )
         }
-        .navigationViewStyle(.stack)
     }
 }
 

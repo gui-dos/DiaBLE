@@ -493,7 +493,7 @@ struct CharacteristicsDetails: View, LoggingView {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         Details()
             .environment(AppState.test(tab: .monitor))
             .environment(Settings())

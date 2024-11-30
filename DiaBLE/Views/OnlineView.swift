@@ -27,7 +27,7 @@ struct OnlineView: View, LoggingView {
 
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
 
             // Workaround to avoid top textfields scrolling offscreen in iOS 14
             GeometryReader { _ in
@@ -356,7 +356,6 @@ struct OnlineView: View, LoggingView {
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Online")
         }
-        .navigationViewStyle(.stack)
     }
 }
 

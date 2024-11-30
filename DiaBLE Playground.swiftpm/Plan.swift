@@ -13,7 +13,7 @@ struct Plan: View {
 
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
 
                 Text("\((app.lastReadingDate != Date.distantPast ? app.lastReadingDate : Date()).dateTime)")
@@ -55,7 +55,6 @@ struct Plan: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("Plan")
         }
-        .navigationViewStyle(.stack)
     }
 }
 

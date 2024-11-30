@@ -16,7 +16,7 @@ struct Monitor: View, LoggingView {
 
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
 
             ZStack(alignment: .topLeading) {
 
@@ -245,7 +245,6 @@ struct Monitor: View, LoggingView {
 
             }
         }
-        .navigationViewStyle(.stack)
     }
 }
 

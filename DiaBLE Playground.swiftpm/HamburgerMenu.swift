@@ -50,7 +50,7 @@ struct HamburgerMenu: View {
             .padding(.leading, 6)
             .padding(.top, 20)
             .sheet(isPresented: $showingHelp) {
-                NavigationView {
+                NavigationStack {
                     VStack(spacing: 40) {
                         VStack {
                             Text("Wiki").font(.headline)
@@ -63,7 +63,6 @@ struct HamburgerMenu: View {
                     }
                     .navigationBarTitleDisplayMode(.inline)
                     .navigationTitle("Help")
-                    .navigationViewStyle(.stack)
                     .toolbar {
                         Button {
                             withAnimation { showingHelp = false }
@@ -89,7 +88,7 @@ struct HamburgerMenu: View {
             }
             .padding(.leading, 6)
             .sheet(isPresented: $showingAbout) {
-                NavigationView {
+                NavigationStack {
                     VStack(spacing: 40) {
                         VStack {
 
@@ -130,7 +129,6 @@ struct HamburgerMenu: View {
                     }
                     .navigationBarTitleDisplayMode(.inline)
                     .navigationTitle("About")
-                    .navigationViewStyle(.stack)
                     .toolbar {
                         Button {
                             withAnimation { showingAbout = false }

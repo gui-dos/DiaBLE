@@ -530,7 +530,7 @@ struct CharacteristicsDetails: View, LoggingView {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         Details()
             .preferredColorScheme(.dark)
             .environment(AppState.test(tab: .monitor))
