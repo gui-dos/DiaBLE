@@ -268,14 +268,16 @@ import CoreBluetooth
 
 
             case .exchangePakePayload:
-                // TODO
-                let status = data[1]
-                let phase = data[2]
-                var packets = [Data]()
-                for i in 0 ..< (buffer.count + 19) / 20 {
-                    packets.append(Data(buffer[i * 20 ..< min((i + 1) * 20, buffer.count)]))
+                if !(sensor is DexcomG7) {
+                    // TODO
+                    let status = data[1]
+                    let phase = data[2]
+                    var packets = [Data]()
+                    for i in 0 ..< (buffer.count + 19) / 20 {
+                        packets.append(Data(buffer[i * 20 ..< min((i + 1) * 20, buffer.count)]))
+                    }
+                    log("\(name): J-PAKE payload (TODO): status: \(status), phase: \(phase), current buffer length: \(buffer.count), current 20-byte packets received: \(packets.count)")
                 }
-                log("\(name): J-PAKE payload (TODO): status: \(status), phase: \(phase), current buffer length: \(buffer.count), current 20-byte packets received: \(packets.count)")
 
 
             default:

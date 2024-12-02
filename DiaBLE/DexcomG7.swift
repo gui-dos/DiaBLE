@@ -209,6 +209,16 @@ import CoreBluetooth
                     tx.write(streamSizeCmd, .withResponse)
                 }
 
+            case .exchangePakePayload:
+                // TODO
+                let status = data[1]
+                let phase = data[2]
+                var packets = [Data]()
+                for i in 0 ..< (tx.buffer.count + 19) / 20 {
+                    packets.append(Data(tx.buffer[i * 20 ..< min((i + 1) * 20, tx.buffer.count)]))
+                }
+                log("\(tx.name): J-PAKE payload (TODO): status: \(status), phase: \(phase), current buffer length: \(tx.buffer.count), current 20-byte packets received: \(packets.count)")
+
             default:
                 break
 
