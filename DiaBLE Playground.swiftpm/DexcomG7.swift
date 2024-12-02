@@ -209,6 +209,15 @@ import CoreBluetooth
                     tx.write(streamSizeCmd, .withResponse)
                 }
 
+
+            // TODO: Dexcom ONE/G7 J-PAKE
+            // https://github.com/Mbed-TLS/mbedtls/blob/development/tf-psa-crypto/drivers/builtin/include/mbedtls/ecjpake.h
+            // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/dex/java/tk/glucodata/DexGattCallback.java
+            // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/dexcom/
+            // https://github.com/NightscoutFoundation/xDrip/commit/7ee3473 ("Add keks library")
+            // https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/Calc.java
+            // https://github.com/particle-iot/iOSBLEExample/blob/main/iOSBLEExample/ParticleBLECode/ECJPake.swift
+
             case .exchangePakePayload:
                 // TODO
                 let status = data[1]
