@@ -488,6 +488,21 @@ import CoreBluetooth
             }
 
 
+        case .jPake:
+            if tx.buffer.count == 0 {
+                tx.buffer = Data(data)
+            } else {
+                tx.buffer += data
+            }
+            let index = Int(ceil(Double(tx.buffer.count) / 20))
+            log("\(tx.name): J-PAKE exchange: received packet # \(index), partial buffer size: \(tx.buffer.count)")
+            if tx.buffer.count == 160 {
+                log("\(tx.name): 160-byte J-PAKE payload: \(tx.buffer.hex)")
+                // TODO
+                tx.buffer = Data()
+            }
+
+
         default:
             break
 
