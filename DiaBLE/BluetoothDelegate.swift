@@ -509,7 +509,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
                 // G7 uses appKeyChallenge/authRequest2Tx (0x02), see: https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/message/AuthRequestTxMessage2.java
                 // TODO: send 01 00 first anyway
-                var message = (sensor.type == .dexcomG7 || sensor.type == .dexcomONEPlus || sensor.type == .dexcomONE) ? DexcomG7.Opcode.appKeyChallenge.data : Dexcom.Opcode.authRequestTx.data
+                var message = (sensor.type == .dexcomG7 || sensor.type == .stelo || sensor.type == .dexcomONEPlus || sensor.type == .dexcomONE) ? DexcomG7.Opcode.appKeyChallenge.data : Dexcom.Opcode.authRequestTx.data
                 let singleUseToken = UUID().uuidString.data(using: .utf8)!.prefix(8)
                 message += singleUseToken
                 message.append(0x02)
@@ -517,7 +517,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 app.device.write(message, for: Dexcom.UUID.authentication.rawValue, .withResponse)
 
                 // TEST: first JPake phase: send exchangePakePayload 0a + 00 phase
-                if sensor.type == .dexcomG7 || sensor.type == .dexcomONEPlus || sensor.type == .dexcomONE {
+                if sensor.type == .dexcomG7 || sensor.type == .stelo || sensor.type == .dexcomONEPlus || sensor.type == .dexcomONE {
                     let message = Dexcom.Opcode.exchangePakePayload.data + Dexcom.PakePhase.zero.rawValue.data
                     log("TEST: sending \(app.device.name) 'exchangePakePayload phase zero' command \(message.hex)")
                     app.device.write(message, for: Dexcom.UUID.authentication.rawValue, .withResponse)
