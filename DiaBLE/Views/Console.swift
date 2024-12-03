@@ -371,8 +371,11 @@ struct ConsoleSidebar: View, LoggingView {
                     .fixedSize()
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(.orange)
+                    .contentTransition(.numericText(countsDown: true))
                     .onReceive(app.timer) { _ in
-                        readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
+                        withAnimation {
+                            readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
+                        }
                     }
                 } else {
                     Text("")
@@ -385,8 +388,11 @@ struct ConsoleSidebar: View, LoggingView {
                     .fixedSize()
                     .foregroundStyle(.cyan)
                     .font(.caption.monospacedDigit())
+                    .contentTransition(.numericText(countsDown: true))
                     .onReceive(app.timer) { _ in
-                        onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
+                        withAnimation {
+                            onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
+                        }
                     }
                     .onReceive(app.minuteTimer) { _ in
                         Task {

@@ -31,16 +31,22 @@ struct Plan: View {
                         Text(readingCountdown > 0 || app.deviceState == "Reconnecting..." ?
                              "\(readingCountdown) s" : " ")
                         .foregroundStyle(.orange)
+                        .contentTransition(.numericText(countsDown: true))
                         .onReceive(app.timer) { _ in
-                            readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
+                            withAnimation {
+                                readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
+                            }
                         }
                     }
                 }
 
                 Text(onlineCountdown != 0 ? "\(String(onlineCountdown).count > 5 ? "..." : "\(onlineCountdown) s")" : " ")
                     .foregroundStyle(.cyan)
+                    .contentTransition(.numericText(countsDown: true))
                     .onReceive(app.timer) { _ in
-                        onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
+                        withAnimation {
+                            onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
+                        }
                     }
                     .onReceive(app.minuteTimer) { _ in
                         Task {

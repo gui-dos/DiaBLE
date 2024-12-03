@@ -448,8 +448,11 @@ struct Details: View, LoggingView {
                     .fixedSize()
                     .foregroundStyle(.orange)
                     .font(.caption.monospacedDigit())
+                    .contentTransition(.numericText(countsDown: true))
                     .onReceive(app.timer) { _ in
-                        readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
+                        withAnimation {
+                            readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
+                        }
                     }
                 }
 
