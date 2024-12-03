@@ -43,7 +43,8 @@ class HealthKit: Logging {
 
     func requestAuthorization() async {
         do {
-            try await store?.requestAuthorization(toShare: dataTypes, read: dataTypes)
+            // FIXME: *** Terminating app due to uncaught exception 'NSInvalidArgumentException', reason: 'NSHealthUpdateUsageDescription must be set in the app's Info.plist in order to request write authorization for the following types: HKQuantityTypeIdentifierBloodGlucose, HKQuantityTypeIdentifierDietaryCarbohydrates, HKQuantityTypeIdentifierInsulinDelivery'
+            // try await store?.requestAuthorization(toShare: dataTypes, read: dataTypes)
         } catch {
             log("HealthKit: error while requesting authorization for \(DataType.allCases) quantity types: \(error.localizedDescription)")
         }
