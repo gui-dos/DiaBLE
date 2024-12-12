@@ -264,7 +264,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         //         .peripheralUUIDs: [peripheral.identifier]
         //     ]
         // )
-        log("Bluetooth: registerForConnectionEvents: options: [\(CBConnectPeripheralOptionEnableAutoReconnect): true, .peripheralUUIDs: [\(peripheral.identifier)])")
+        // log("Bluetooth: registerForConnectionEvents: options: [\(CBConnectPeripheralOptionEnableAutoReconnect): true, .peripheralUUIDs: [\(peripheral.identifier)])")
         msg += ("; discovering services")
         peripheral.discoverServices(nil)
         log(msg)
@@ -547,7 +547,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         let name = peripheral.name ?? "an unnamed peripheral"
         app.device?.state = peripheral.state
         app.deviceState = peripheral.state.description.capitalized
-        // TODO skip when isReconnecting
+        // TODO: skip when isReconnecting
         if error != nil {
             log("Bluetooth: \(name) has disconnected at \(Date(timeIntervalSinceReferenceDate: timestamp).shortTime), is reconnecting: \(isReconnecting)")
             let errorCode = CBError.Code(rawValue: (error! as NSError).code)! // 6 = timed out when out of range
