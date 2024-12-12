@@ -243,6 +243,8 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         app.device.peripheral?.delegate = self
         log("Bluetooth: connecting to \(name!)...")
         centralManager.connect(app.device.peripheral!, options: nil)
+        // TODO:
+        // centralManager.connect(app.device.peripheral!, options: [CBConnectPeripheralOptionEnableAutoReconnect: true])
         app.device.state = app.device.peripheral!.state
         app.deviceState = app.device.state.description.capitalized + "..."
     }
@@ -255,9 +257,22 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         app.deviceState = app.device.state.description.capitalized
         app.device.lastConnectionDate = Date()
         app.lastConnectionDate = app.device.lastConnectionDate
+        // TODO:
+        // manager.registerForConnectionEvents(
+        //     options: [
+        //         CBConnectionEventMatchingOption(rawValue: CBConnectPeripheralOptionEnableAutoReconnect): true,
+        //         .peripheralUUIDs: [peripheral.identifier]
+        //     ]
+        // )
+        log("Bluetooth: registerForConnectionEvents: options: [\(CBConnectPeripheralOptionEnableAutoReconnect): true, .peripheralUUIDs: [\(peripheral.identifier)])")
         msg += ("; discovering services")
         peripheral.discoverServices(nil)
         log(msg)
+    }
+
+
+    public func centralManager(_ manager: CBCentralManager, connectionEventDidOccur event: CBConnectionEvent, for peripheral: CBPeripheral) {
+        log("Bluetooth: '\(["peer disconnected", "peer connected"][event.rawValue])' connection event did occur for \(peripheral.name ?? "an unnamed") peripheral")
     }
 
 
@@ -528,12 +543,13 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
     }
 
 
-    public func centralManager(_ manager: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+    func centralManager(_ manager: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, timestamp: CFAbsoluteTime, isReconnecting: Bool, error: (any Error)?) {
         let name = peripheral.name ?? "an unnamed peripheral"
         app.device?.state = peripheral.state
         app.deviceState = peripheral.state.description.capitalized
+        // TODO skip when isReconnecting
         if error != nil {
-            log("Bluetooth: \(name) has disconnected.")
+            log("Bluetooth: \(name) has disconnected at \(Date(timeIntervalSinceReferenceDate: timestamp).shortTime), is reconnecting: \(isReconnecting)")
             let errorCode = CBError.Code(rawValue: (error! as NSError).code)! // 6 = timed out when out of range
             log("Bluetooth: error type \(errorCode.rawValue): \(error!.localizedDescription)")
             if app.transmitter != nil && (settings.preferredTransmitter == .none || settings.preferredTransmitter.id == app.transmitter.type.id) {
