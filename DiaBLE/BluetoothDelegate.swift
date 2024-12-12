@@ -34,7 +34,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 } else {
                     // TODO: use centralManager.connect() after retrieval
                     if !settings.preferredDevicePattern.matches("dexcom"),
-                        let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
+                       let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
                         log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                         centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Libre3.UUID.data.rawValue)]], rssi: 0)
                     } else if !settings.preferredDevicePattern.matches("dexcom"),
@@ -543,7 +543,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
     }
 
 
-    func centralManager(_ manager: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, timestamp: CFAbsoluteTime, isReconnecting: Bool, error: (any Error)?) {
+    public func centralManager(_ manager: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, timestamp: CFAbsoluteTime, isReconnecting: Bool, error: (any Error)?) {
         let name = peripheral.name ?? "an unnamed peripheral"
         app.device?.state = peripheral.state
         app.deviceState = peripheral.state.description.capitalized

@@ -72,7 +72,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             name = advertisedLocalName
         }
 
-        if let dataServiceUUIDs = dataServiceUUIDs, dataServiceUUIDs.count > 0, dataServiceUUIDs[0].uuidString == Libre3.UUID.data.rawValue {
+        if let dataServiceUUIDs, dataServiceUUIDs.count > 0, dataServiceUUIDs[0].uuidString == Libre3.UUID.data.rawValue {
             name = "ABBOTT\(name ?? "unnamedLibre")"    // Libre 3 device name is 12 chars long (hexadecimal MAC address)
         }
 
@@ -93,7 +93,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
         var didFindATransmitter = false
 
-        if let name = name {
+        if let name {
             for transmitterType in TransmitterType.allCases {
                 if name.matches(transmitterType.id) {
                     didFindATransmitter = true
@@ -105,7 +105,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         }
 
         var companyId = BLE.companies.count - 1 // "< Unknown >"
-        if let manufacturerData = manufacturerData {
+        if let manufacturerData {
             companyId = Int(manufacturerData[0]) + Int(manufacturerData[1]) << 8
             if companyId >= BLE.companies.count { companyId = BLE.companies.count - 1 }    // when 0xFFFF
         }
@@ -253,10 +253,10 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             msg += ", company: \(app.device.company) (id: 0x\(companyId.hex))"
         }
         log(msg)
-        if let manufacturerData = manufacturerData {
+        if let manufacturerData {
             app.device.parseManufacturerData(manufacturerData)
         }
-        if let dataServiceUUIDs = dataServiceUUIDs {
+        if let dataServiceUUIDs {
             // TODO: assign to device instance vars
             log("Bluetooth: \(name!)'s advertised data service UUIDs: \(dataServiceUUIDs)")
         }
@@ -401,17 +401,17 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 app.device.writeCharacteristic = characteristic
 
 
-                //   } else if let uuid = Custom.UUID(rawValue: uuid) {
-                //      msg += " (\(uuid))"
-                //      if uuid.description.contains("unknown") {
-                //          if characteristic.properties.contains(.notify) {
-                //              app.device.peripheral?.setNotifyValue(true, for: characteristic)
-                //          }
-                //          if characteristic.properties.contains(.read) {
-                //              app.device.peripheral?.readValue(for: characteristic)
-                //              msg += "; reading it"
-                //          }
-                //      }
+            // } else if let uuid = Custom.UUID(rawValue: uuid) {
+            //    msg += " (\(uuid))"
+            //    if uuid.description.contains("unknown") {
+            //        if characteristic.properties.contains(.notify) {
+            //            app.device.peripheral?.setNotifyValue(true, for: characteristic)
+            //        }
+            //        if characteristic.properties.contains(.read) {
+            //            app.device.peripheral?.readValue(for: characteristic)
+            //            msg += "; reading it"
+            //        }
+            //    }
 
 
             } else if let uuid = BLE.UUID(rawValue: uuid) {
@@ -576,11 +576,10 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
             }
         }
-
     }
 
 
-    func centralManager(_ manager: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, timestamp: CFAbsoluteTime, isReconnecting: Bool, error: (any Error)?) {
+    public func centralManager(_ manager: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, timestamp: CFAbsoluteTime, isReconnecting: Bool, error: (any Error)?) {
         let name = peripheral.name ?? "an unnamed peripheral"
         app.device?.state = peripheral.state
         app.deviceState = peripheral.state.description.capitalized
@@ -596,8 +595,8 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 app.device.buffer = Data()
                 // TODO: Dexcom reconnection
                 if app.transmitter.type == .transmitter(.dexcom) {
-                    self.main.status("Scanning for Dexcom...") //  allow stopping from Console
                     debugLog("DEBUG: Dexcom: sleeping 2 seconds before rescanning to reconnect")
+                    self.main.status("Scanning for Dexcom...") //  allow stopping from Console
                     DispatchQueue.global(qos: .utility).async {
                         Thread.sleep(forTimeInterval: 2)
                         // self.centralManager.connect(peripheral, options: nil)
@@ -633,7 +632,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             msg += ", error type \(errorCode!.rawValue): \(error.localizedDescription)"
         }
 
-        if let errorCode = errorCode, errorCode == .peerRemovedPairingInformation {  // i.e. BluCon
+        if let errorCode, errorCode == .peerRemovedPairingInformation {  // i.e. BluCon
             main.errorStatus("Failed to connect: \(error!.localizedDescription)")
         } else {
             msg += "; retrying..."
