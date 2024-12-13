@@ -451,7 +451,7 @@ extension String {
         case security_02         = 0x02
         case certificateLoadDone = 0x03
         case challengeLoadDone   = 0x08
-        case security_09         = 0x09
+        case sendCertificate     = 0x09
         case security_0D         = 0x0D
         case ephemeralLoadDone   = 0x0E
         case readChallenge       = 0x11
@@ -462,7 +462,7 @@ extension String {
             case .security_02:         "security 0x02 command"
             case .certificateLoadDone: "certificate load done"
             case .challengeLoadDone:   "challenge load done"
-            case .security_09:         "security 0x09 command"
+            case .sendCertificate:     "sendCertificate"
             case .security_0D:         "security 0x0D command"
             case .ephemeralLoadDone:   "ephemeral load done"
             case .readChallenge:       "read security challenge"
@@ -693,14 +693,14 @@ extension String {
                 } else if data[1] == 67 {  // encrypted KAuth
                     currentSecurityCommand = .challengeLoadDone
                 } else if data[1] == 140 { // patchCertificate
-                    currentSecurityCommand = .security_09
+                    currentSecurityCommand = .sendCertificate
                 } else if data[1] == 65 { // patchEphemeral
                     currentSecurityCommand = .ephemeralLoadDone
                 }
             }
             if currentSecurityCommand == .certificateLoadDone && lastSecurityEvent == .certificateAccepted {
                 if settings.userLevel < .test { // not eavesdropping Trident
-                    send(securityCommand: .security_09)
+                    send(securityCommand: .sendCertificate)
                 }
             }
 
@@ -719,7 +719,7 @@ extension String {
 
                 switch currentSecurityCommand {
 
-                case .security_09:
+                case .sendCertificate:
                     if settings.userLevel < .test { // not eavesdropping Trident
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate: \(payload.hex)")
                         debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0D (CMD_KEY_AGREEMENT)")
@@ -874,7 +874,7 @@ extension String {
         send(securityCommand: .certificateLoadDone)
         // TODO
         if settings.userLevel == .test {
-            settings.userLevel = .devel  // let sending .security_09 to request patch certificate (CMD_SEND_CERT)
+            settings.userLevel = .devel  // let sending 0x09 to request patch certificate (CMD_SEND_CERT)
         }
     }
 
