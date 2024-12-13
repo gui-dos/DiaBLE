@@ -17,7 +17,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             log("Bluetooth: state: powered off")
             main.errorStatus("Bluetooth powered off")
             if app.device != nil {
-                centralManager.cancelPeripheralConnection(app.device.peripheral!)
+                manager.cancelPeripheralConnection(app.device.peripheral!)
                 app.device.state = .disconnected
             }
             app.deviceState = "Disconnected"
@@ -30,25 +30,25 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 if !(settings.preferredDevicePattern.matches("abbott") || settings.preferredDevicePattern.matches("dexcom")) {
                     main.status("Scanning...")
                     log("Bluetooth: scanning...")
-                    centralManager.scanForPeripherals(withServices: nil, options: nil)
+                    manager.scanForPeripherals(withServices: nil, options: nil)
                 } else {
-                    // TODO: use centralManager.connect() after retrieval
+                    // TODO: use manager.connect() after retrieval
                     if !settings.preferredDevicePattern.matches("dexcom"),
-                       let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
+                       let peripheral = manager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Libre3.UUID.data.rawValue)]).first {
                         log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                         centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Libre3.UUID.data.rawValue)]], rssi: 0)
                     } else if !settings.preferredDevicePattern.matches("dexcom"),
-                              let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
+                              let peripheral = manager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Abbott.dataServiceUUID)]).first {
                         log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                         centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Abbott.dataServiceUUID)]], rssi: 0)
                     } else if !settings.preferredDevicePattern.matches("abbott"),
-                              let peripheral = centralManager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]).first {
+                              let peripheral = manager.retrieveConnectedPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]).first {
                         log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                         centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
                     } else {
                         log("Bluetooth: scanning for a Libre/Dexcom...")
                         main.status("Scanning for a Libre/Dexcom...")
-                        centralManager.scanForPeripherals(withServices: nil, options: nil)
+                        manager.scanForPeripherals(withServices: nil, options: nil)
                     }
                 }
             }
@@ -160,7 +160,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             return
         }
 
-        centralManager.stopScan()
+        manager.stopScan()
         if name!.lowercased().hasPrefix("abbott") {
             app.transmitter = Abbott(peripheral: peripheral, main: main)
             app.device = app.transmitter
@@ -263,9 +263,9 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         main.status("\(app.device.name)")
         app.device.peripheral?.delegate = self
         log("Bluetooth: connecting to \(name!)...")
-        centralManager.connect(app.device.peripheral!, options: nil)
+        manager.connect(app.device.peripheral!, options: nil)
         // TODO:
-        // centralManager.connect(app.device.peripheral!, options: [CBConnectPeripheralOptionEnableAutoReconnect: true])
+        // manager.connect(app.device.peripheral!, options: [CBConnectPeripheralOptionEnableAutoReconnect: true])
         app.device.state = app.device.peripheral!.state
         app.deviceState = app.device.state.description.capitalized + "..."
     }
@@ -599,12 +599,12 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                     self.main.status("Scanning for Dexcom...") //  allow stopping from Console
                     DispatchQueue.global(qos: .utility).async {
                         Thread.sleep(forTimeInterval: 2)
-                        // self.centralManager.connect(peripheral, options: nil)
+                        // manager.connect(peripheral, options: nil)
                         // https://github.com/LoopKit/G7SensorKit/blob/14205c1/G7SensorKit/G7CGMManager/G7BluetoothManager.swift#L224-L229
-                        self.centralManager.scanForPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)], options: nil)
+                        manager.scanForPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)], options: nil)
                     }
                 } else {
-                    centralManager.connect(peripheral, options: nil)
+                    manager.connect(peripheral, options: nil)
                 }
             } else {
                 let lastConnectionDate = Date()
@@ -637,7 +637,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         } else {
             msg += "; retrying..."
             main.errorStatus("Failed to connect, retrying...")
-            centralManager.connect(app.device.peripheral!, options: nil)
+            manager.connect(app.device.peripheral!, options: nil)
         }
 
         log(msg)
