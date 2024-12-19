@@ -18,7 +18,7 @@ extension SensorType {
         default:
             if patchInfo.count == 24 {
                 patchInfo[12] == 4 ? .libre3 :
-                patchInfo[12] == 9 ? .lingo :
+                patchInfo[12] == 9 ? .lingo :  // TODO: .libreRio
                     .unknown
             } else {
                 .unknown
@@ -37,7 +37,7 @@ extension SensorType {
             } else {
                 type = .unknown
             }
-            if type != .libre3 && type != .lingo {
+            if type != .libre3 && type != .lingo && type != .libreRio {
                 if info.count > 3 {
                     region = SensorRegion(rawValue: Int(info[3])) ?? .unknown
                 }

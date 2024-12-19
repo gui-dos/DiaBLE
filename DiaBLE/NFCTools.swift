@@ -294,7 +294,7 @@ extension NFC {
                     log("NFC: \(sensor.type) should be activated and warming up")
                 }
 
-                if sensor.type != .libre3 && sensor.type != .lingo {
+                if sensor.type != .libre3 && sensor.type != .lingo && sensor.type != .libreRio {
                     let (_, data) = try await read(fromBlock: 0, count: 43)
                     sensor.fram = Data(data)
                 } else {

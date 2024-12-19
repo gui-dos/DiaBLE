@@ -74,6 +74,7 @@ extension String {
         case others = 1
         case sensor = 4    // Libre 3's product family
         case lingo  = 9
+        // TODO: .libreRio
 
         var description: String {
             switch self {
@@ -536,7 +537,7 @@ extension String {
     func parsePatchInfo() {
 
         let productType = Int(patchInfo[12])
-        type = [4: SensorType.libre3, 9: SensorType.lingo][productType] ?? .libre3
+        type = [4: SensorType.libre3, 9: SensorType.lingo][productType] ?? .libre3  // TODO: .libreRio
         log("\(type): product type: \(ProductType(rawValue: productType)?.description ?? "unknown") (0x\(productType.hex))")
 
         let securityVersion = UInt16(patchInfo[0...1])
@@ -1149,5 +1150,10 @@ extension String {
         return Data()
     }
 
+
+}
+
+
+@Observable class LibreRio: Libre3 {
 
 }
