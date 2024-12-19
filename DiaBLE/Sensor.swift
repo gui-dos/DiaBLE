@@ -13,7 +13,7 @@ enum SensorType: String, CustomStringConvertible {
     case libre2Gen2    = "Libre 2 Gen2"
     case libre3        = "Libre 3"
     case lingo         = "Lingo"
-    case libreRio      = "Libre Rio "
+    case libreRio      = "Libre Rio"
     case dexcomG6      = "Dexcom G6"
     case dexcomONE     = "Dexcom ONE"
     case dexcomG7      = "Dexcom G7"

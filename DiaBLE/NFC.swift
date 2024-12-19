@@ -817,7 +817,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
         if settings.userLevel > .basic {
 
-            if sensor.type == .libre3 || sensor.type == .lingo || sensor.type = .libreRio {
+            if sensor.type == .libre3 || sensor.type == .lingo || sensor.type == .libreRio {
                 for c in [0xAA, 0xAB, 0xAC] {
                     do {
                         var output = try await send(NFCCommand(code: c))

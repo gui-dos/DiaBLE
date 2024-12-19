@@ -1154,6 +1154,6 @@ extension String {
 }
 
 
-@Observable class LibreRealmRio: Libre3 {
+@Observable class LibreRio: Libre3 {
 
 }
