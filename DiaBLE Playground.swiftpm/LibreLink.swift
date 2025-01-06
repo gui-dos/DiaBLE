@@ -315,7 +315,7 @@ class LibreLinkUp: Logging {
                            let authTicketDict = data["authTicket"] as? [String: Any],
                            let authTicketData = try? JSONSerialization.data(withJSONObject: authTicketDict),
                            let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
-                            log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires)))")
+                            log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires))) (JWT token: \(decodeJWT(authTicket.token) ?? ["": "TODO"]))")
                             settings.libreLinkUpUserId = id
                             settings.libreLinkUpPatientId = id  // avoid scraping patientId when following ourselves
                             settings.libreLinkUpCountry = country
@@ -577,7 +577,7 @@ class LibreLinkUp: Logging {
                             if percentiles.isEmpty {
                                 if let ticketDict = json["ticket"] as? [String: Any],
                                    let token = ticketDict["token"] as? String {
-                                    log("LibreView: new token for glucoseHistory: \(token)")
+                                    log("LibreView: new token for glucoseHistory: \(token) (\(decodeJWT(token) ?? ["": "TODO"]))")
                                     request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
                                     request.setValue(settings.libreLinkUpUserId.SHA256, forHTTPHeaderField: "Account-Id")
                                     request.url = URL(string: "\(regionalSiteURL)/glucoseHistory?numPeriods=\(settings.libreLinkUpNumPeriods)&period=\(settings.libreLinkUpPeriod)")!
@@ -637,7 +637,7 @@ class LibreLinkUp: Logging {
                             if settings.libreLinkUpScrapingLogbook,
                                let ticketDict = json["ticket"] as? [String: Any],
                                let token = ticketDict["token"] as? String {
-                                log("LibreLinkUp: new token for logbook: \(token)")
+                                log("LibreLinkUp: new token for logbook: \(token) (\(decodeJWT(token) ?? ["": "TODO"]))")
                                 request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
                                 request.setValue(settings.libreLinkUpUserId.SHA256, forHTTPHeaderField: "Account-Id")
                                 request.url = URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)/\(settings.libreLinkUpPatientId)/logbook")!
@@ -773,4 +773,31 @@ class LibreLinkUp: Logging {
         return response
     }
 
+}
+
+
+func base64UrlDecode(_ base64Url: String) -> Data? {
+    var base64 = base64Url
+        .replacingOccurrences(of: "-", with: "+")
+        .replacingOccurrences(of: "_", with: "/")
+
+    let padding = 4 - base64.count % 4
+    if padding < 4 {
+        base64 = base64 + String(repeating: "=", count: padding)
+    }
+
+    return Data(base64Encoded: base64)
+}
+
+
+func decodeJWT(_ jwt: String) -> [String: Any]? {
+    let segments = jwt.split(separator: ".")
+    guard segments.count == 3 else { return nil }
+
+    let payloadSegment = String(segments[1])
+    guard let payloadData = base64UrlDecode(payloadSegment),
+          let json = try? JSONSerialization.jsonObject(with: payloadData, options: []),
+          let payload = json as? [String: Any] else { return nil }
+
+    return payload
 }
