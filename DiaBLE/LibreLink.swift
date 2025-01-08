@@ -582,11 +582,20 @@ class LibreLinkUp: Logging {
                                     log("LibreView: new token for glucoseHistory: \(token) (\(decodeJWT(token) ?? ["": "TODO"]))")
                                     request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
                                     request.setValue(settings.libreLinkUpUserId.SHA256, forHTTPHeaderField: "Account-Id")
+                                    // TODO:
+                                    // request.setValue("lv", forHTTPHeaderField: "product")
+                                    // request.setValue(nil, forHTTPHeaderField: "version")
+                                    // request.setValue("3.20.26", forHTTPHeaderField: "NEWYU-LV-Web-Version")
                                     request.url = URL(string: "\(regionalSiteURL)/glucoseHistory?numPeriods=\(settings.libreLinkUpNumPeriods)&period=\(settings.libreLinkUpPeriod)")!
                                     debugLog("LibreView: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
                                     let (data, response) = try await URLSession.shared.data(for: request)
                                     debugLog("LibreView: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
                                     if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                                        // {"message":"ProductMismatch"}, status: 400
+                                        if let message = json["message"] as? String {
+                                            log("LibreView: error: \(message)")
+                                            // TODO
+                                        }
                                         // {"status":2,"error":{"message":"failedToLoadHistory"}}, status: 200
                                         if let status = json["status"] as? Int,
                                            let error = json["error"] as? [String: Any],
