@@ -163,9 +163,11 @@ class LibreLinkUp: Logging {
     let connectionsEndpoint = "llu/connections"
     let measurementsEndpoint = "lsl/api/measurements"
 
-    let regions = ["ae", "ap", "au", "ca", "de", "eu", "eu2", "fr", "jp", "la", "us"]  // eu2: GB and IE
+    let regions = ["ae", "ap", "au", "ca", "de", "eu", "eu2", "fr", "jp", "la", "ru", "us"]  // eu2: GB and IE
 
-    var regionalSiteURL: String { "https://api-\(settings.libreLinkUpRegion).libreview.io" }  // TODO: api.libreview.ru
+    var regionalSiteURL: String {
+        "https://" + (settings.libreLinkUpRegion != "ru" ? "api-\(settings.libreLinkUpRegion).libreview.io" : "api.libreview.ru")
+    }
 
     var unit: GlucoseUnit = .mgdl
 
@@ -315,7 +317,7 @@ class LibreLinkUp: Logging {
                            let authTicketDict = data["authTicket"] as? [String: Any],
                            let authTicketData = try? JSONSerialization.data(withJSONObject: authTicketDict),
                            let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
-                            log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires))) (JWT token: \(decodeJWT(authTicket.token) ?? ["": "TODO"]))")
+                            log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires))) (JWT payload: \(decodeJWT(authTicket.token) ?? ["": "TODO"]))")
                             settings.libreLinkUpUserId = id
                             settings.libreLinkUpPatientId = id  // avoid scraping patientId when following ourselves
                             settings.libreLinkUpCountry = country
@@ -796,7 +798,7 @@ func decodeJWT(_ jwt: String) -> [String: Any]? {
 
     let payloadSegment = String(segments[1])
     guard let payloadData = base64UrlDecode(payloadSegment),
-          let json = try? JSONSerialization.jsonObject(with: payloadData, options: []),
+          let json = try? JSONSerialization.jsonObject(with: payloadData),
           let payload = json as? [String: Any] else { return nil }
 
     return payload
