@@ -215,7 +215,8 @@ struct OnlineView: View, LoggingView {
                     VStack(spacing: 0) {
 
                         if showingPercentiles {
-                            if let percentiles = app.main.libreLinkUp?.percentiles {
+                            if let percentiles = app.main.libreLinkUp?.percentiles,
+                               percentiles.count > 0 {
 
                                 @Bindable var settings = settings
 

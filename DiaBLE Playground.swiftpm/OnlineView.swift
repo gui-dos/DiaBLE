@@ -270,7 +270,8 @@ struct OnlineView: View, LoggingView {
                             .listStyle(.plain)
                             .font(.system(.caption, design: .monospaced))
 
-                            if let percentiles = app.main.libreLinkUp?.percentiles {
+                            if let percentiles = app.main.libreLinkUp?.percentiles,
+                               percentiles.count > 0 {
 
                                 @Bindable var settings = settings
 
