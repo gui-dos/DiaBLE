@@ -10,7 +10,7 @@ import AppleProductTypes
 let package = Package(
     name: "DiaBLE Playground",
     platforms: [
-        .iOS("17.0")
+        .iOS("18.1")
     ],
     products: [
         .iOSApplication(

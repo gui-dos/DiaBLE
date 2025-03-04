@@ -485,9 +485,7 @@ struct Details: View, LoggingView {
 }
 
 
-// TODO: iOS 18 fix:
-// extension CBCharacteristic: @retroactive Comparable {
-extension CBCharacteristic: Comparable {
+extension CBCharacteristic: @retroactive Comparable {
     public static func < (lhs: CBCharacteristic, rhs: CBCharacteristic) -> Bool {
         return lhs.uuid.uuidString < rhs.uuid.uuidString
     }

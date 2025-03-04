@@ -82,9 +82,7 @@ struct BLE {
     static let companies = try! JSONDecoder().decode(Array<BLE.Company>.self, from: Data(contentsOf: Bundle.main.url(forResource: "company_ids", withExtension: "json")!))
 }
 
-// TODO: iOS 18 fix:
-// extension CBPeripheralState: @retroactive CustomStringConvertible { 
-extension CBPeripheralState: CustomStringConvertible {
+extension CBPeripheralState: @retroactive CustomStringConvertible { 
     public var description: String {
         switch self {
         case .connected:     "connected"
@@ -97,9 +95,7 @@ extension CBPeripheralState: CustomStringConvertible {
 }
 
 
-// TODO: iOS 18 fix:
-// extension CBCharacteristicProperties: @retroactive CustomStringConvertible {
-extension CBCharacteristicProperties: CustomStringConvertible {
+extension CBCharacteristicProperties: @retroactive CustomStringConvertible {
     public var description: String {
         var d = [String: Bool]()
         d["Broadcast"]                  = self.contains(.broadcast)
