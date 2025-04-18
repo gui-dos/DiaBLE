@@ -380,18 +380,18 @@ import CoreBluetooth
 
                     // https://github.com/LoopKit/G7SensorKit/blob/main/G7SensorKit/G7CGMManager/G7BackfillMessage.swift
                     //
-                    //    0 1 2 3  4 5  6  7  8
-                    //   TTTTTTTT BGBG SS    TR
-                    //   45a10000 9600 06 0f fc
+                    //    0 1 2  3  4 5  6  7  8
+                    //   TTTTTT    BGBG SS    TR
+                    //   45a100 00 9600 06 0f fc
 
-                    let timestamp = UInt32(data[0..<4]) // seconds since pairing
+                    let timestamp = UInt32(data[0..<3]) // seconds since pairing
                     let date = tx.activationDate + TimeInterval(timestamp)
                     let glucoseBytes = UInt16(data[4..<6])
                     let glucose = glucoseBytes != 0xffff ? Int(glucoseBytes & 0xfff) : nil
-                    let glucoseIsDisplayOnly: Bool? = glucoseBytes != 0xffff ? (glucoseBytes & 0xf000) > 0 : nil
+                    let glucoseIsDisplayOnly = data[7] & 0x10 != 0
                     let algorithmState = data[6]
                     let rate: Double? = data[8] != 0x7f ? Double(Int8(bitPattern: data[8])) / 10 : nil
-                    log("\(tx.name): backfilled glucose: timestamp: \(timestamp.formattedInterval), date: \(date.local), glucose: \(glucose != nil ? String(glucose!) : "nil"), is display only: \(glucoseIsDisplayOnly != nil ? String(glucoseIsDisplayOnly!) : "nil"), algorithm state: \(Dexcom.AlgorithmState(rawValue: algorithmState)?.description ?? "unknown") (0x\(algorithmState.hex)), rate: \(rate != nil ? String(rate!) : "nil")")
+                    log("\(tx.name): backfilled glucose: timestamp: \(timestamp.formattedInterval), date: \(date.local), glucose: \(glucose != nil ? String(glucose!) : "nil"), is display only: \(glucoseIsDisplayOnly), algorithm state: \(Dexcom.AlgorithmState(rawValue: algorithmState)?.description ?? "unknown") (0x\(algorithmState.hex)), rate: \(rate != nil ? String(rate!) : "nil")")
                     if let glucose {
                         let item = Glucose(glucose, trendRate: rate ?? 0, id: Int(Double(timestamp) / 60 / 5), date: date)
                         // TODO: manage trend and state
