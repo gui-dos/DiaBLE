@@ -12,6 +12,7 @@ enum SensorType: String, CustomStringConvertible {
     case libre2        = "Libre 2"
     case libre2Gen2    = "Libre 2 Gen2"
     case libre3        = "Libre 3"
+    case libre4        = "Libre 4"
     case lingo         = "Lingo"
     case libreRio      = "Libre Rio"
     case dexcomG6      = "Dexcom G6"
@@ -31,6 +32,7 @@ enum SensorFamily: Int, CustomStringConvertible {
     case librePro   = 1
     case libre2     = 3
     case libre3     = 4
+    case libre4     = 5 // TODO
     case libreSense = 7
     case lingo      = 9
     // TODO: libreRio
@@ -42,6 +44,7 @@ enum SensorFamily: Int, CustomStringConvertible {
         case .librePro:   "Libre Pro"
         case .libre2:     "Libre 2"
         case .libre3:     "Libre 3"
+        case .libre4:     "Libre 4"
         case .libreSense: "Libre Sense"
         case .lingo:      "Lingo"
         }

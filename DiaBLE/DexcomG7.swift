@@ -384,7 +384,7 @@ import CoreBluetooth
                     //   TTTTTT    BGBG SS    TR
                     //   45a100 00 9600 06 0f fc
 
-                    let timestamp = UInt32(data[0..<3] + [(UInt8)(0)]) // seconds since pairing
+                    let timestamp = UInt32(data[0..<3] + [0]) // seconds since pairing
                     let date = tx.activationDate + TimeInterval(timestamp)
                     let glucoseBytes = UInt16(data[4..<6])
                     let glucose = glucoseBytes != 0xffff ? Int(glucoseBytes & 0xfff) : nil
