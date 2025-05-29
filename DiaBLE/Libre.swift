@@ -72,7 +72,7 @@ extension SensorType {
     var isAPlus: Bool {
         patchInfo.count == 24 && generation == 1 ||
         patchInfo.count > 0 && (
-            patchInfo[0] == 0xC6 ||
+            patchInfo[0] == 0xC6 || patchInfo[0] == 0x7F ||
             patchInfo[0] == 0x2C ||
             patchInfo[0] == 0x2B && patchInfo[2] & 0x0F == 0xA
         )
