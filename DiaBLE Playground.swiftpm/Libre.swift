@@ -15,7 +15,7 @@ extension SensorType {
         case 0x76, 0x2B: .libre2Gen2
         case 0xC6:       .libre2     // non-Gen2 European Libre 2+
         case 0x2C:       .libre2Gen2 // Gen2 US Libre 2+
-        case 0x7F:       .libre2Gen2 // TODO: new Gen2 European Libre 2+?
+        case 0x7F:       .libre2     // newer non-Gen2 European Libre 2+ May 2025
         default:
             if patchInfo.count == 24 {
                 patchInfo[12] == 4 ? .libre3 :
@@ -65,6 +65,7 @@ extension SensorType {
     }
 
     // Libre 2+ EU: C6 09 31 01
+    //              7F 0E 31 01 (May 2025)
     // Libre 2+ US: 2C 0A 3A 02
     // Libre 2+ LA: 2B 0A 3A 08
     // Libre 2  RU: 2B 0A 39 08 (Gen2)

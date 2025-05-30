@@ -342,7 +342,9 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     manufacturer.append(" (Texas Instruments)")
                 } else if manufacturer == "7a" {
                     manufacturer.append(" (Abbott Diabetes Care)")
-                    sensor.securityGeneration = 3 // TODO
+                    if sensor.patchInfo.count == 24 {
+                        sensor.securityGeneration = 3
+                    }
                 }
                 log("NFC: IC manufacturer code: 0x\(manufacturer)")
                 debugLog("NFC: IC serial number: \(tag.icSerialNumber.hex)")
