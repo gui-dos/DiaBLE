@@ -443,9 +443,10 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
                 do {
 
-                    if sensor.securityGeneration == 2 {
-
+                    var gen2Attribute = Data()
+                    if sensor.type == .libre2Gen2 {
                         // TODO: use Libre2Gen2.communicateWithPatch(nfc: self)
+                        gen2Attribute = try await send(sensor.nfcCommand(.readAttribute))
 
                         // FIXME: OOP nfcAuth endpoint still offline
 
@@ -502,6 +503,10 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     }
 
                     sensor.fram = Data(data)
+
+                    if gen2Attribute.count > 0 {
+                        sensor.state = SensorState(rawValue: gen2Attribute[0]) ?? .unknown
+                    }
 
                 } catch {
                     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
