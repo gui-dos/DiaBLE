@@ -76,6 +76,10 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             name = "ABBOTT\(name ?? "unnamedLibre")"    // Libre 3 device name is 12 chars long (hexadecimal MAC address)
         }
 
+        if let dataServiceUUIDs, dataServiceUUIDs.count > 0, dataServiceUUIDs[0].uuidString == Abbott.dataServiceUUID {
+            name = "ABBOTT\(name ?? "unnamedLibre")"    // newer Libre 2+ EU device name is 12 chars long (hexadecimal MAC address)
+        }
+
         if let dataServiceUUIDs = dataServiceUUIDs, dataServiceUUIDs.count > 0, dataServiceUUIDs[0].uuidString == Dexcom.UUID.advertisement.rawValue {
             // Dexcom G7 device name starts with "DXCM" instead of "Dexcom" (both end in the last two chars of the serial number)
             if name!.hasPrefix("DXCM") {
@@ -164,14 +168,19 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         if name!.lowercased().hasPrefix("abbott") {
             app.transmitter = Abbott(peripheral: peripheral, main: main)
             app.device = app.transmitter
-            if name!.count == 18 { // fictitious "ABBOTT" + Libre 3 hexadecimal MAC address
-                app.device.name = "Libre 3"
+            app.lastReadingDate = Date() // TODO
+            if name!.count == 18 { // fictitious "ABBOTT" + Libre 3/2+ hexadecimal MAC address
                 name = String(name!.suffix(12))
                 if name != "unnamedLibre" {
                     app.device.macAddress = name!.bytes
                 }
-                (app.transmitter as! Abbott).securityGeneration = 3
-                app.lastReadingDate = Date() // TODO
+                if dataServiceUUIDs![0].uuidString == Libre3.UUID.data.rawValue {
+                    app.device.name = "Libre 3"
+                    (app.transmitter as! Abbott).securityGeneration = 3
+                } else if dataServiceUUIDs![0].uuidString == Abbott.dataServiceUUID {
+                    app.device.name = "Libre 2"
+                    (app.transmitter as! Abbott).securityGeneration = 1
+                }
             } else {
                 app.device.serial = String(name!.suffix(name!.count - 6))
                 switch app.device.serial.prefix(1) {
