@@ -76,7 +76,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             name = "ABBOTT\(name ?? "unnamedLibre")"    // Libre 3 device name is 12 chars long (hexadecimal MAC address)
         }
 
-        if let dataServiceUUIDs, dataServiceUUIDs.count > 0, dataServiceUUIDs[0].uuidString == Abbott.dataServiceUUID {
+        if let dataServiceUUIDs, dataServiceUUIDs.count > 0, dataServiceUUIDs[0].uuidString == Abbott.dataServiceUUID, !(name ?? "unnamedLibre").hasPrefix("ABBOTT") {
             name = "ABBOTT\(name ?? "unnamedLibre")"    // newer Libre 2+ EU device name is 12 chars long (hexadecimal MAC address)
         }
 
