@@ -42,50 +42,12 @@ struct Console: View {
 
                 ShellView()
 
-                if showingFilterField {
-                    HStack {
-
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .padding(.leading)
-                                .foregroundStyle(Color(.lightGray))
-                            TextField("Filter", text: $filterText)
-                                .textInputAutocapitalization(.never)
-                                .foregroundStyle(.tint)
-                            if filterText.count > 0 {
-                                Button {
-                                    filterText = ""
-                                } label: {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .padding(.trailing)
-                                }
-                            }
-                        }
-                        .background(Color(.secondarySystemBackground))
-                        .cornerRadius(10)
-
-                        HStack {
-                            ForEach(Array(log.labels), id: \.self) { label in
-                                Button {
-                                    filterText = label
-                                } label: {
-                                    Text(label)
-                                        .font(.footnote)
-                                        .foregroundStyle(.blue)
-                                }
-                            }
-                        }
-
-                    }
-                    .padding(.vertical, 6)
-                }
-
-                ConsoleLogView(filterText: filterText)
+                ConsoleLogView(showingFilterField: $showingFilterField, filterText: $filterText)
+                #if targetEnvironment(macCatalyst)
+                .padding(.horizontal, 15)
+                #endif
 
             }
-            #if targetEnvironment(macCatalyst)
-            .padding(.horizontal, 15)
-            #endif
 
             ConsoleSidebar(showingNFCAlert: $showingNFCAlert)
             #if targetEnvironment(macCatalyst)
@@ -257,9 +219,49 @@ struct ConsoleLogView: View {
     @Environment(Settings.self) var settings: Settings
     @Environment(\.colorScheme) var colorScheme
 
-    let filterText: String
+    @Binding var showingFilterField: Bool
+    @Binding var filterText: String
 
     var body: some View {
+
+        if showingFilterField {
+            HStack {
+
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .padding(.leading)
+                        .foregroundStyle(Color(.lightGray))
+                    TextField("Filter", text: $filterText)
+                        .textInputAutocapitalization(.never)
+                        .foregroundStyle(.tint)
+                    if filterText.count > 0 {
+                        Button {
+                            filterText = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .padding(.trailing)
+                        }
+                    }
+                }
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(10)
+
+                HStack {
+                    ForEach(Array(log.labels), id: \.self) { label in
+                        Button {
+                            filterText = label
+                        } label: {
+                            Text(label)
+                                .font(.footnote)
+                                .foregroundStyle(.blue)
+                        }
+                    }
+                }
+
+            }
+            .padding(.vertical, 6)
+        }
+
         ScrollViewReader { proxy in
             ScrollView(showsIndicators: true) {
                 LazyVStack(alignment: .leading, spacing: 20) {
