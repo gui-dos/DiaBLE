@@ -80,50 +80,8 @@ struct Console: View {
                     .padding(.vertical, 6)
                 }
 
-                ScrollViewReader { proxy in
-                    ScrollView(showsIndicators: true) {
-                        LazyVStack(alignment: .leading, spacing: 20) {
-                            if filterText.isEmpty {
-                                ForEach(log.entries) { entry in
-                                    Text(entry.message)
-                                        .textSelection(.enabled)
-                                }
-                            } else {
-                                let pattern = filterText.lowercased()
-                                ForEach(log.entries.filter { $0.message.lowercased().contains(pattern) }) { entry in
-                                    Text(entry.message)
-                                        .textSelection(.enabled)
-                                }
-                            }
-                        }
-                        .padding(4)
-                    }
-                    .font(.system(.footnote, design: .monospaced))
-                    .foregroundStyle(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
-                    .onChange(of: log.entries.count) {
-                        if !settings.reversedLog {
-                            withAnimation {
-                                proxy.scrollTo(log.entries.last!.id, anchor: .bottom)
-                            }
-                        } else {
-                            withAnimation {
-                                proxy.scrollTo(log.entries[0].id, anchor: .top)
-                            }
-                        }
-                    }
-                    .onChange(of: log.entries[0].id) {
-                        if !settings.reversedLog {
-                            withAnimation {
-                                proxy.scrollTo(log.entries.last!.id, anchor: .bottom)
-                            }
-                        } else {
-                            withAnimation {
-                                proxy.scrollTo(log.entries[0].id, anchor: .top)
-                            }
-                        }
-                    }
+                ConsoleLogView(filterText: filterText)
 
-                }
             }
             #if targetEnvironment(macCatalyst)
             .padding(.horizontal, 15)
@@ -290,6 +248,61 @@ struct Console: View {
         }
         #endif // DEBUG
 
+    }
+}
+
+
+struct ConsoleLogView: View {
+    @Environment(Log.self) var log: Log
+    @Environment(Settings.self) var settings: Settings
+    @Environment(\.colorScheme) var colorScheme
+
+    let filterText: String
+
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView(showsIndicators: true) {
+                LazyVStack(alignment: .leading, spacing: 20) {
+                    if filterText.isEmpty {
+                        ForEach(log.entries) { entry in
+                            Text(entry.message)
+                                .textSelection(.enabled)
+                        }
+                    } else {
+                        let pattern = filterText.lowercased()
+                        ForEach(log.entries.filter { $0.message.lowercased().contains(pattern) }) { entry in
+                            Text(entry.message)
+                                .textSelection(.enabled)
+                        }
+                    }
+                }
+                .padding(4)
+            }
+            .font(.system(.footnote, design: .monospaced))
+            .foregroundStyle(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
+            .onChange(of: log.entries.count) {
+                if !settings.reversedLog {
+                    withAnimation {
+                        proxy.scrollTo(log.entries.last!.id, anchor: .bottom)
+                    }
+                } else {
+                    withAnimation {
+                        proxy.scrollTo(log.entries[0].id, anchor: .top)
+                    }
+                }
+            }
+            .onChange(of: log.entries[0].id) {
+                if !settings.reversedLog {
+                    withAnimation {
+                        proxy.scrollTo(log.entries.last!.id, anchor: .bottom)
+                    }
+                } else {
+                    withAnimation {
+                        proxy.scrollTo(log.entries[0].id, anchor: .top)
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -482,3 +495,4 @@ struct ConsoleSidebar: View, LoggingView {
         .environment(History.test)
         .environment(Settings())
 }
+
