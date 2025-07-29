@@ -602,7 +602,7 @@ extension String {
             let offset = i * 18
             let id = Data([UInt8(offset & 0xFF), UInt8(offset >> 8)])
             let packet = id + data[offset ... min(offset + 17, data.count - 1)]
-            debugLog("Bluetooth: writing packet \(packet.hexBytes) to \(transmitter!.peripheral!.name!)'s \(uuid.description) characteristic")
+            debugLog("Bluetooth: writing packet \(packet.hexBytes) to \(transmitter!.peripheral!.name ?? "unnamed Libre 3")'s \(uuid.description) characteristic")
             transmitter!.write(packet, for: uuid.rawValue, .withResponse)
         }
     }
