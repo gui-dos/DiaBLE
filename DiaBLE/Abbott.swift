@@ -55,9 +55,11 @@ class Abbott: Transmitter {
 
     override func parseManufacturerData(_ data: Data) {
         if data.count > 7 {
-            let uid = Data(data[2...7]) + [0x07, 0xe0]
+            let sensorFirmware = data[7]
+            let nfcManufacturer = UInt8(sensorFirmware == 0xa4 ? 0x07 : 0x7a)
+            let uid = Data(data[2...7]) + [nfcManufacturer, 0xe0]
             // Gen2: doesn't match the sensor Uid, for example 0bf3b7aa48b8 != 5f5aab0100a4
-            if data[7] == 0xa4 {
+            if sensorFirmware == 0xa4 || sensorFirmware == 0x00 {
                 sensorUid = uid
             }
             log("Bluetooth: advertised \(name)'s UID: \(uid.hex)")
