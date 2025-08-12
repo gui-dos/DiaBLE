@@ -554,9 +554,22 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                         try await Task.sleep(nanoseconds: 250_000_000)
                     }
                     do {
-                        try await session.connect(to: firstTag)
-                        connectedPen = tag
-                        break
+
+                        // FIXME: async connect crashes on iOS/Xcode 26
+                        // try await session.connect(to: firstTag)
+
+                        // Workaround using sync connect:
+                        var nfcError: Error? = nil
+                        session.connect(to: firstTag) { error in
+                            nfcError = error
+                        }
+                        if nfcError == nil {
+                            connectedPen = tag
+                            break
+                        } else {
+                            throw nfcError!
+                        }
+
                     } catch {
                         if retry >= maxRetries {
                             session.invalidate(errorMessage: "Connection failure: \(error.localizedDescription)")
