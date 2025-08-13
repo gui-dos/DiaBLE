@@ -164,6 +164,22 @@ extension Error {
 }
 
 
+// Our own asyncronous connect since iOS 26 one is crashing
+extension NFCTagReaderSession {
+    func asyncConnect(to tag: NFCTag) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            self.connect(to: tag) { error in
+                if let error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume()
+                }
+            }
+        }
+    }
+}
+
+
 enum TaskRequest {
     case enableStreaming
     case readFRAM
@@ -243,22 +259,17 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                         log("NFC: retry # \(retry)...")
                         try await Task.sleep(nanoseconds: 250_000_000)
                     }
+
                     do {
-                        
+
                         // FIXME: async connect crashes on iOS/Xcode 26
                         // try await session.connect(to: firstTag)
-                        
-                        // Workaround using sync connect:
-                        var nfcError: Error? = nil
-                        session.connect(to: firstTag) { error in
-                            nfcError = error
-                        }
-                        if nfcError == nil {
-                            connectedSensor = tag
-                            break
-                        } else {
-                            throw nfcError!
-                        }
+
+                        // Workaround: use our own asyncronous connect
+                        try await session.asyncConnect(to: firstTag)
+
+                        connectedSensor = tag
+                        break
                         
                     } catch {
                         if retry >= maxRetries {
@@ -515,22 +526,17 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                         log("NFC: retry # \(retry)...")
                         try await Task.sleep(nanoseconds: 250_000_000)
                     }
+
                     do {
 
                         // FIXME: async connect crashes on iOS/Xcode 26
                         // try await session.connect(to: firstTag)
 
-                        // Workaround using sync connect:
-                        var nfcError: Error? = nil
-                        session.connect(to: firstTag) { error in
-                            nfcError = error
-                        }
-                        if nfcError == nil {
-                            connectedPen = tag
-                            break
-                        } else {
-                            throw nfcError!
-                        }
+                        // Workaround: use our own asyncronous connect
+                        try await session.asyncConnect(to: firstTag)
+
+                        connectedPen = tag
+                        break
 
                     } catch {
                         if retry >= maxRetries {
