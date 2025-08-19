@@ -164,7 +164,7 @@ extension Error {
 }
 
 
-// Our own asyncronous connect since iOS 26 one is crashing
+// Our own asynchronous connect since iOS 26 one is crashing
 extension NFCTagReaderSession {
     func asyncConnect(to tag: NFCTag) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
@@ -265,7 +265,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                         // FIXME: async connect crashes on iOS/Xcode 26
                         // try await session.connect(to: firstTag)
 
-                        // Workaround: use our own asyncronous connect
+                        // Workaround: use our own asynchronous connect
                         try await session.asyncConnect(to: firstTag)
 
                         connectedSensor = tag
@@ -570,7 +570,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                         // FIXME: async connect crashes on iOS/Xcode 26
                         // try await session.connect(to: firstTag)
 
-                        // Workaround: use our own asyncronous connect
+                        // Workaround: use our own asynchronous connect
                         try await session.asyncConnect(to: firstTag)
 
                         connectedPen = tag

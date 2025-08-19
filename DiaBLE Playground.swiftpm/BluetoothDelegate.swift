@@ -399,7 +399,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 app.device.readCharacteristic = characteristic
                 msg += " (data read)"
 
-                // enable notifications only in didWriteValueFor() unless eavesdropping the Libre 2 in TEST mode
+                // enable notifications only in didWriteValueFor() unless eavesdropping on the Libre 2 in TEST mode
                 if uuid != Abbott.dataReadCharacteristicUUID || settings.userLevel >= .test {
                     app.device.peripheral?.setNotifyValue(true, for: app.device.readCharacteristic!)
                     msg += "; enabling notifications"
@@ -505,7 +505,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
             if serviceUUID == Libre3.UUID.security.rawValue {
                 if sensor.transmitter == nil { sensor.transmitter = app.transmitter }
-                if settings.userLevel < .test { // not eavesdropping Trident
+                if settings.userLevel < .test { // not eavesdropping on Trident
                     ((app.device as? Abbott)?.sensor as? Libre3)?.send(securityCommand: .readChallenge)
                     // ((app.device as? Abbott)?.sensor as? Libre3)?.pair()  // TEST
                 }
@@ -520,7 +520,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 debugLog("Bluetooth: sent \(app.device.name) read security challenge")
 
             } else if sensor.uid.count > 0 && settings.activeSensorInitialPatchInfo.count > 0 {
-                if let libre2 = sensor as? Libre2, settings.userLevel < .test {  // not eavesdropping Libre 2
+                if let libre2 = sensor as? Libre2, settings.userLevel < .test {  // not eavesdropping on Libre 2
                     libre2.streamingUnlockCount += 1
                     settings.activeSensorStreamingUnlockCount += 1
                     let unlockPayload = Libre2.streamingUnlockPayload(id: sensor.uid, info: settings.activeSensorInitialPatchInfo, enableTime: libre2.streamingUnlockCode, unlockCount: libre2.streamingUnlockCount)
