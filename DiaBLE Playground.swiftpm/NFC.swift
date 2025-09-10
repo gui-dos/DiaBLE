@@ -164,22 +164,6 @@ extension Error {
 }
 
 
-// Our own asynchronous connect since iOS 26 one is crashing
-extension NFCTagReaderSession {
-    func asyncConnect(to tag: NFCTag) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            self.connect(to: tag) { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume()
-                }
-            }
-        }
-    }
-}
-
-
 enum TaskRequest {
     case enableStreaming
     case readFRAM
@@ -261,16 +245,9 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     }
 
                     do {
-
-                        // FIXME: async connect crashes on iOS/Xcode 26
-                        // try await session.connect(to: firstTag)
-
-                        // Workaround: use our own asynchronous connect
-                        try await session.asyncConnect(to: firstTag)
-
+                        try await session.connect(to: firstTag)
                         connectedSensor = tag
                         break
-
                     } catch {
                         if retry >= maxRetries {
                             session.invalidate(errorMessage: "Connection failure: \(error.localizedDescription)")
@@ -566,16 +543,9 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     }
 
                     do {
-
-                        // FIXME: async connect crashes on iOS/Xcode 26
-                        // try await session.connect(to: firstTag)
-
-                        // Workaround: use our own asynchronous connect
-                        try await session.asyncConnect(to: firstTag)
-
+                        try await session.connect(to: firstTag)
                         connectedPen = tag
                         break
-
                     } catch {
                         if retry >= maxRetries {
                             session.invalidate(errorMessage: "Connection failure: \(error.localizedDescription)")
