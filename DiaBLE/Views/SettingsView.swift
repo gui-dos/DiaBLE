@@ -156,7 +156,7 @@ struct SettingsView: View, LoggingView {
                                 minValue: 40,
                                 maxValue: 99,
                                 stepValue: 1,
-                                minTrackColor: .init(uiColor: colorScheme == .dark ? .systemFill : .secondarySystemFill), // FIXME
+                                minTrackColor: .init(uiColor: colorScheme == .dark ? .systemGray6 : .systemGray5 ), // TODO: .systemFill
                                 maxTrackColor: .green
                             )
                             Slider(value: $settings.targetHigh, in: 120 ... 300, step: 1)
@@ -178,7 +178,7 @@ struct SettingsView: View, LoggingView {
                                 minValue: 120,
                                 maxValue: 300,
                                 stepValue: 1,
-                                minTrackColor: .init(uiColor: colorScheme == .dark ? .systemFill : .secondarySystemFill), // FIXME
+                                minTrackColor: .init(uiColor: colorScheme == .dark ? .systemGray6 : .systemGray5), // TODO: .systemFill
                                 maxTrackColor: .red
                             )
                         }
