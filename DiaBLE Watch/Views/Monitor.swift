@@ -221,6 +221,7 @@ struct Monitor: View, LoggingView {
 
         }
         .edgesIgnoringSafeArea([.bottom])
+        .scrollEdgeEffectHidden()
         .padding(.top, -26)
         .buttonStyle(.plain)
         .multilineTextAlignment(.center)
