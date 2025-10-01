@@ -12,9 +12,10 @@ enum SensorType: String, CustomStringConvertible {
     case libre2        = "Libre 2"
     case libre2Gen2    = "Libre 2 Gen2"
     case libre3        = "Libre 3"
-    case libre4        = "Libre 4"
+    case libreX        = "Libre X"
     case lingo         = "Lingo"
-    case libreRio      = "Libre Rio"
+    case libreSelect   = "Libre Select"
+    case libreInstinct = "Libre Instinct"
     case dexcomG6      = "Dexcom G6"
     case dexcomONE     = "Dexcom ONE"
     case dexcomG7      = "Dexcom G7"
@@ -32,10 +33,10 @@ enum SensorFamily: Int, CustomStringConvertible {
     case librePro   = 1
     case libre2     = 3
     case libre3     = 4
-    case libre4     = 5 // TODO
+    case libreX     = 5 // TODO
     case libreSense = 7
     case lingo      = 9
-    // TODO: libreRio
+    // TODO: libreSelect
 
     var description: String {
         switch self {
@@ -44,7 +45,7 @@ enum SensorFamily: Int, CustomStringConvertible {
         case .librePro:   "Libre Pro"
         case .libre2:     "Libre 2"
         case .libre3:     "Libre 3"
-        case .libre4:     "Libre 4"
+        case .libreX:     "Libre X"
         case .libreSense: "Libre Sense"
         case .lingo:      "Lingo"
         }
@@ -118,7 +119,7 @@ enum SensorState: UInt8, CustomStringConvertible {
 
     var uid: SensorUid = Data() {
         willSet(uid) {
-            if type != .libre3 && type != .lingo && type != .libreRio {
+            if type != .libre3 && type != .lingo && type != .libreSelect {
                 serial = serialNumber(uid: uid, family: self.family)
             }
         }

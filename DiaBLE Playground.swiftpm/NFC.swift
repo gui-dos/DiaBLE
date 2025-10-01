@@ -45,7 +45,7 @@ extension Sensor {
             NFCCommand(code: 0xA0, parameters: backdoor + readerSerial, description: "activate")
         case .libre2:
             nfcCommand(.activate)
-        case .libre3, .lingo, .libreRio:
+        case .libre3, .lingo, .libreSelect:
             (self as! Libre3).activationNFCCommand
         default:
             NFCCommand(code: 0x00)
@@ -320,8 +320,8 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                             sensor = Libre3(main: main)
                         case .lingo:
                             sensor = Lingo(main: main)
-                        case .libreRio:
-                            sensor = LibreRio(main: main)
+                        case .libreSelect:
+                            sensor = LibreSelect(main: main)
                         case .libre2Gen2:
                             sensor = Libre2Gen2(main: main)
                         case .libre2:
@@ -386,7 +386,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     }
                 }
 
-                if (sensor.type == .libre3 || sensor.type == .lingo || sensor.type == .libreRio) && sensor.state != .notActivated && (taskRequest == .none || taskRequest == .enableStreaming) {
+                if (sensor.type == .libre3 || sensor.type == .lingo || sensor.type == .libreSelect) && sensor.state != .notActivated && (taskRequest == .none || taskRequest == .enableStreaming) {
                     // get the current Libre 3 blePIN and activationTime by sending `A0` to an already activated sensor
                     taskRequest = .activate
                 }
@@ -420,7 +420,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                         }
 
                         AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-                        if sensor.type != .libre3 && sensor.type != .lingo && sensor.type != .libreRio {
+                        if sensor.type != .libre3 && sensor.type != .lingo && sensor.type != .libreSelect {
                             sensor.detailFRAM()
                         }
 
@@ -865,7 +865,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
         if settings.userLevel > .basic {
 
-            if sensor.type == .libre3 || sensor.type == .lingo || sensor.type == .libreRio {
+            if sensor.type == .libre3 || sensor.type == .lingo || sensor.type == .libreSelect {
                 for c in [0xAA, 0xAB, 0xAC] {
                     do {
                         var output = try await send(NFCCommand(code: c))

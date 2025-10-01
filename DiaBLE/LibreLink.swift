@@ -12,7 +12,7 @@ class LibreLink {
     // .libre1: "FreeStyle LibreLink – XX" - https://apps.apple.com/xx/app/freestyle-librelink-xx/idxxxxxxxxxx
     // .libre2: "FreeStyle Libre 2 – XX"   - https://apps.apple.com/xx/app/freestyle-libre-2-xx/idxxxxxxxxxx
     // .libre3: "FreeStyle Libre 3 - XX"   - https://apps.apple.com/xx/app/freestyle-libre-3-xx/idxxxxxxxxxx
-    // .libre4: "Libre by Abbott"          - https://apps.apple.com/xx/app/libre-by-abbott/idxxxxxxxxxx
+    // .libreX: "Libre by Abbott"          - https://apps.apple.com/xx/app/libre-by-abbott/idxxxxxxxxxx
 
     public static let appStoreIds: [String: [UInt64: SensorFamily]] = [
         "ae": [1303805538: .libre1],
@@ -64,7 +64,7 @@ class LibreLink {
         "tr": [1439483369: .libre1],
         "tw": [1495861686: .libre1],
         "za": [1444947746: .libre1],
-        "us": [6670330506: .libre4, 1524572429: .libre3, 1472261444: .libre2, 1325992472: .libre1, 1670445335: .lingo]
+        "us": [6670330506: .libreX, 1524572429: .libre3, 1472261444: .libre2, 1325992472: .libre1, 1670445335: .lingo]
         // TODO: https://apps.apple.com/us/app/libre-by-abbott/id6670330506)
         // TODO: developer/abbott/id402314324: Lingo by Abbott -> lingo-by-abbott
         // TODO: 6501954823: MyFreeStyle -> myfreestyle
