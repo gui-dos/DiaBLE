@@ -30,7 +30,7 @@ struct OnlineView: View, LoggingView {
         NavigationStack {
 
             // Workaround to avoid top textfields scrolling offscreen in iOS 14
-            GeometryReader { _ in
+            GeometryReader { proxy in
                 VStack(spacing: 0) {
 
                     HStack(alignment: .top, spacing: 2) {
@@ -184,7 +184,7 @@ struct OnlineView: View, LoggingView {
                         @Bindable var app = app
 
                         WebView(site: settings.nightscoutSite, query: "token=\(settings.nightscoutToken)", delegate: app.main.nightscout )
-                            .frame(height: UIScreen.main.bounds.size.height * 0.60)
+                            .frame(height: proxy.size.height * 0.60)
                             .alert("JavaScript", isPresented: $app.showingJSConfirmAlert) {
                                 Button("OK") { log("JavaScript alert: selected OK") }
                                 Button("Cancel", role: .cancel) { log("JavaScript alert: selected Cancel") }
