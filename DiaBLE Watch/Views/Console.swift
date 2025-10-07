@@ -216,8 +216,9 @@ struct Console: View, LoggingView {
                 //      }
 
                 Button {
-                    log.entries = [LogEntry(message: "Log cleared \(Date().local)")]
                     log.labels = []
+                    log.entries.removeAll()
+                    log("Log cleared \(Date().local)")
                     print("Log cleared \(Date().local)")
                 } label: {
                     VStack {
