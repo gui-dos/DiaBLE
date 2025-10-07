@@ -199,7 +199,7 @@ struct LogEntry: Identifiable {
 @Observable class Log {
     var entries: [LogEntry]
     var labels: Set<String>
-    init(_ text: String = "Log \(Date().local)\n") {
+    init(_ text: String = "Log \(Date().local)") {
         entries = [LogEntry(message: text)]
         labels = []
     }

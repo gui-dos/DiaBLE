@@ -222,6 +222,8 @@ struct ConsoleLogView: View {
     @Binding var showingFilterField: Bool
     @Binding var filterText: String
 
+    @State private var scrollPosition: ScrollPosition = ScrollPosition()
+
     var body: some View {
 
         if showingFilterField {
@@ -262,46 +264,47 @@ struct ConsoleLogView: View {
             .padding(.vertical, 6)
         }
 
-        ScrollViewReader { proxy in
-            ScrollView(showsIndicators: true) {
-                LazyVStack(alignment: .leading, spacing: 20) {
-                    if filterText.isEmpty {
-                        ForEach(log.entries) { entry in
-                            Text(entry.message)
-                                .textSelection(.enabled)
-                        }
-                    } else {
-                        let pattern = filterText.lowercased()
-                        ForEach(log.entries.filter { $0.message.lowercased().contains(pattern) }) { entry in
-                            Text(entry.message)
-                                .textSelection(.enabled)
-                        }
-                    }
-                }
-                .padding(4)
-            }
-            .font(.system(.footnote, design: .monospaced))
-            .foregroundStyle(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
-            .onChange(of: log.entries.count) {
-                if !settings.reversedLog {
-                    withAnimation {
-                        proxy.scrollTo(log.entries.last!.id, anchor: .bottom)
+        ScrollView(showsIndicators: true) {
+            LazyVStack(alignment: .leading, spacing: 20) {
+                if filterText.isEmpty {
+                    ForEach(log.entries) { entry in
+                        Text(entry.message)
+                            .textSelection(.enabled)
                     }
                 } else {
-                    withAnimation {
-                        proxy.scrollTo(log.entries[0].id, anchor: .top)
+                    let pattern = filterText.lowercased()
+                    ForEach(log.entries.filter { $0.message.lowercased().contains(pattern) }) { entry in
+                        Text(entry.message)
+                            .textSelection(.enabled)
                     }
                 }
             }
-            .onChange(of: log.entries[0].id) {
-                if !settings.reversedLog {
-                    withAnimation {
-                        proxy.scrollTo(log.entries.last!.id, anchor: .bottom)
-                    }
-                } else {
-                    withAnimation {
-                        proxy.scrollTo(log.entries[0].id, anchor: .top)
-                    }
+            .padding(4)
+        }
+        .font(.system(.footnote, design: .monospaced))
+        .foregroundStyle(colorScheme == .dark ? Color(.lightGray) : Color(.darkGray))
+        .scrollPosition($scrollPosition)
+        .onChange(of: log.entries.count) {
+            guard !log.entries.isEmpty else { return }
+            if !settings.reversedLog {
+                withAnimation {
+                    scrollPosition.scrollTo(id: log.entries.last!.id, anchor: .bottom)
+                }
+            } else {
+                withAnimation {
+                    scrollPosition.scrollTo(id: log.entries.first!.id, anchor: .top)
+                }
+            }
+        }
+        .onChange(of: settings.reversedLog) {
+            guard !log.entries.isEmpty else { return }
+            if !settings.reversedLog {
+                withAnimation {
+                    scrollPosition.scrollTo(id: log.entries.last!.id, anchor: .bottom)
+                }
+            } else {
+                withAnimation {
+                    scrollPosition.scrollTo(id: log.entries.first!.id, anchor: .top)
                 }
             }
         }
@@ -444,8 +447,9 @@ struct ConsoleSidebar: View, LoggingView {
                 }
 
                 Button {
-                    log.entries = [LogEntry(message: "Log cleared \(Date().local)")]
                     log.labels = []
+                    log.entries.removeAll()
+                    log("Log cleared \(Date().local)")
                     print("Log cleared \(Date().local)")
                 } label: {
                     VStack {

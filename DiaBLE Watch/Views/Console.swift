@@ -13,6 +13,7 @@ struct Console: View, LoggingView {
     @State private var showingFilterField = false
     @State private var filterText = ""
 
+    @State private var scrollPosition: ScrollPosition = ScrollPosition()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -54,45 +55,46 @@ struct Console: View, LoggingView {
                     }
                 }
 
-                ScrollViewReader { proxy in
-                    ScrollView(showsIndicators: true) {
-                        LazyVStack(alignment: .leading, spacing: 10) {
-                            if filterText.isEmpty {
-                                ForEach(log.entries) { entry in
-                                    Text(entry.message)
-                                }
-                            } else {
-                                let pattern = filterText.lowercased()
-                                ForEach(log.entries.filter { $0.message.lowercased().contains(pattern) }) { entry in
-                                    Text(entry.message)
-                                }
+                ScrollView(showsIndicators: true) {
+                    LazyVStack(alignment: .leading, spacing: 10) {
+                        if filterText.isEmpty {
+                            ForEach(log.entries) { entry in
+                                Text(entry.message)
+                            }
+                        } else {
+                            let pattern = filterText.lowercased()
+                            ForEach(log.entries.filter { $0.message.lowercased().contains(pattern) }) { entry in
+                                Text(entry.message)
                             }
                         }
                     }
-                    // .font(.system(.footnote, design: .monospaced))
-                    // .foregroundStyle(Color(.lightGray))
-                    .font(.footnote)
-                    .foregroundStyle(Color(.lightGray))
-                    .onChange(of: log.entries.count) {
-                        if !settings.reversedLog {
-                            withAnimation {
-                                proxy.scrollTo(log.entries.last!.id, anchor: .bottom)
-                            }
-                        } else {
-                            withAnimation {
-                                proxy.scrollTo(log.entries[0].id, anchor: .top)
-                            }
+                }
+                // .font(.system(.footnote, design: .monospaced))
+                // .foregroundStyle(Color(.lightGray))
+                .font(.footnote)
+                .foregroundStyle(Color(.lightGray))
+                .scrollPosition($scrollPosition)
+                .onChange(of: log.entries.count) {
+                    guard !log.entries.isEmpty else { return }
+                    if !settings.reversedLog {
+                        withAnimation {
+                            scrollPosition.scrollTo(id: log.entries.last!.id, anchor: .bottom)
+                        }
+                    } else {
+                        withAnimation {
+                            scrollPosition.scrollTo(id: log.entries.first!.id, anchor: .top)
                         }
                     }
-                    .onChange(of: log.entries[0].id) {
-                        if !settings.reversedLog {
-                            withAnimation {
-                                proxy.scrollTo(log.entries.last!.id, anchor: .bottom)
-                            }
-                        } else {
-                            withAnimation {
-                                proxy.scrollTo(log.entries[0].id, anchor: .top)
-                            }
+                }
+                .onChange(of: settings.reversedLog) {
+                    guard !log.entries.isEmpty else { return }
+                    if !settings.reversedLog {
+                        withAnimation {
+                            scrollPosition.scrollTo(id: log.entries.last!.id, anchor: .bottom)
+                        }
+                    } else {
+                        withAnimation {
+                            scrollPosition.scrollTo(id: log.entries.first!.id, anchor: .top)
                         }
                     }
                 }
