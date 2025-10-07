@@ -53,7 +53,8 @@ struct ShellView: View, LoggingView {
                         ) { result in
                             switch result {
                             case .success(let file):
-                                if !file.startAccessingSecurityScopedResource() { return }
+                                guard file.startAccessingSecurityScopedResource() else { return }
+                                defer { file.stopAccessingSecurityScopedResource() }
                                 libreviewCSV = file.path
                                 let fileManager = FileManager.default
                                 if var csvData = fileManager.contents(atPath: libreviewCSV) {
@@ -90,7 +91,6 @@ struct ShellView: View, LoggingView {
                                         log("TabularData: error: \(error.localizedDescription)")
                                     }
                                 }
-                                file.stopAccessingSecurityScopedResource()
                             case .failure(let error):
                                 log("\(error.localizedDescription)")
                             }
@@ -117,7 +117,8 @@ struct ShellView: View, LoggingView {
                         ) { result in
                             switch result {
                             case .success(let directory):
-                                if !directory.startAccessingSecurityScopedResource() { return }
+                                guard directory.startAccessingSecurityScopedResource() else { return }
+                                defer { directory.stopAccessingSecurityScopedResource() }
                                 tridentContainer = directory.path
                                 let fileManager = FileManager.default
                                 let containerDirs = try! fileManager.contentsOfDirectory(atPath: tridentContainer)
@@ -225,8 +226,6 @@ struct ShellView: View, LoggingView {
                                     }
 
                                 }
-
-                                directory.stopAccessingSecurityScopedResource()
 
 
                             case .failure(let error):
