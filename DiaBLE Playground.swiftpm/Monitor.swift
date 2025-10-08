@@ -162,8 +162,11 @@ struct Monitor: View, LoggingView {
                                             .foregroundStyle(app.device.battery > 10 ? .green : .red)
                                         }
                                         if app.device.rssi != 0 {
-                                            Text("RSSI: ").foregroundStyle(Color(.lightGray)) +
-                                            Text("\(app.device.rssi) dB")
+                                            HStack(spacing: 0) {
+                                                Text("RSSI: ")
+                                                    .foregroundStyle(Color(.lightGray))
+                                                Text("\(app.device.rssi) dB")
+                                            }
                                         }
                                     }
                                 }
