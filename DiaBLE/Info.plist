@@ -14,7 +14,7 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSMinimumSystemVersion</key>
-	<string>15.1</string>
+	<string>26.0</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>DiaBLE creates events to be displayed in Apple Watch complications.</string>
 	<key>UIBackgroundModes</key>
