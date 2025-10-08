@@ -299,10 +299,13 @@ struct OnlineView: View, LoggingView {
                             List {
                                 ForEach(app.main.libreLinkUp?.history ?? [LibreLinkUpGlucose]()) { libreLinkUpGlucose in
                                     let glucose = libreLinkUpGlucose.glucose
-                                    (Text("\(!settings.libreLinkUpScrapingLogbook ? String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)]) + " " : "")\(glucose.date.shortDateTime)**  \(glucose.value, specifier: "%3d") **") + Text(libreLinkUpGlucose.trendArrow?.symbol ?? "").font(.title3))
-                                        .foregroundStyle(libreLinkUpGlucose.color.color)
-                                        .padding(.vertical, 1)
-                                        .fixedSize(horizontal: false, vertical: true)
+                                    HStack(spacing: 0) {
+                                        Text("\(!settings.libreLinkUpScrapingLogbook ? String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)]) + " " : "")\(glucose.date.shortDateTime)**  \(glucose.value, specifier: "%3d") **")
+                                        Text(libreLinkUpGlucose.trendArrow?.symbol ?? "").font(.title3)
+                                    }
+                                    .foregroundStyle(libreLinkUpGlucose.color.color)
+                                    .padding(.vertical, 1)
+                                    .fixedSize(horizontal: false, vertical: true)
                                 }
                                 .frame(maxWidth: .infinity, alignment: .topLeading)
                             }
@@ -317,10 +320,13 @@ struct OnlineView: View, LoggingView {
                                 List {
                                     ForEach(app.main.libreLinkUp?.logbookHistory ?? [LibreLinkUpGlucose]()) { libreLinkUpGlucose in
                                         let glucose = libreLinkUpGlucose.glucose
-                                        (Text("\(glucose.date.shortDateTime)**  \(glucose.value, specifier: "%3d") **") + Text(libreLinkUpGlucose.trendArrow!.symbol).font(.title3))
-                                            .foregroundStyle(libreLinkUpGlucose.color.color)
-                                            .padding(.vertical, 1)
-                                            .fixedSize(horizontal: false, vertical: true)
+                                        HStack(spacing: 0) {
+                                            Text("\(glucose.date.shortDateTime)**  \(glucose.value, specifier: "%3d") **")
+                                            Text(libreLinkUpGlucose.trendArrow!.symbol).font(.title3)
+                                        }
+                                        .foregroundStyle(libreLinkUpGlucose.color.color)
+                                        .padding(.vertical, 1)
+                                        .fixedSize(horizontal: false, vertical: true)
                                     }
                                     .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
