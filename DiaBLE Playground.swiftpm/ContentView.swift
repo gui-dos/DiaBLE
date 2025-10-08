@@ -13,43 +13,29 @@ struct ContentView: View {
 
         TabView(selection: $settings.selectedTab) {
 
-            // TODO: iOS 18 new Tabs
+            Tab("Monitor", systemImage: "gauge", value: .monitor) {
+                Monitor()
+            }
 
-            Monitor()
-                .tabItem {
-                    Label("Monitor", systemImage: "gauge")
-                }
-                .tag(TabTitle.monitor)
+            Tab("Online", systemImage: "globe", value: .online) {
+                OnlineView()
+            }
 
-            OnlineView()
-                .tabItem {
-                    Label("Online", systemImage: "globe")
-                }
-                .tag(TabTitle.online)
+            Tab("Console", systemImage: "terminal", value: .console) {
+                ConsoleTab()
+            }
 
-            ConsoleTab()
-                .tabItem {
-                    Label("Console", systemImage: "terminal")
-                }
-                .tag(TabTitle.console)
+            Tab("Settings", systemImage: "gear", value: .settings) {
+                SettingsView()
+            }
 
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gear")
-                }
-                .tag(TabTitle.settings)
+            Tab("Data", systemImage: "tray.full.fill", value: .data) {
+                DataView()
+            }
 
-            DataView()
-                .tabItem {
-                    Label("Data", systemImage: "tray.full.fill")
-                }
-                .tag(TabTitle.data)
-
-            Plan()
-                .tabItem {
-                    Label("Plan", systemImage: "map")
-                }
-                .tag(TabTitle.plan)
+            Tab("Plan", systemImage: "map", value: .plan) {
+                Plan()
+            }
 
         }
         .toolbarRole(.navigationStack)
