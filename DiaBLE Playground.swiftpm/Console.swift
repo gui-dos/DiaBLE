@@ -172,7 +172,7 @@ struct Console: View {
 
                 } label: {
                     VStack(spacing: 0) {
-                        Image(systemName: "wrench.and.screwdriver")
+                        Image(systemName: "wrench.and.screwdriver").font(.subheadline)
                         Text("Tools").font(.footnote)
                     }
                 }
