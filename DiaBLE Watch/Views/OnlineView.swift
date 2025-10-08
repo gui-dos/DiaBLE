@@ -299,7 +299,7 @@ struct OnlineView: View, LoggingView {
                             List {
                                 ForEach(app.main.libreLinkUp?.history ?? [LibreLinkUpGlucose]()) { libreLinkUpGlucose in
                                     let glucose = libreLinkUpGlucose.glucose
-                                    HStack(spacing: 0) {
+                                    HStack(alignment: .bottom, spacing: 0) {
                                         Text("\(!settings.libreLinkUpScrapingLogbook ? String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)]) + " " : "")\(glucose.date.shortDateTime)  **\(glucose.value, specifier: "%3d")** ")
                                         Text(libreLinkUpGlucose.trendArrow?.symbol ?? "").font(.title3)
                                     }
@@ -320,7 +320,7 @@ struct OnlineView: View, LoggingView {
                                 List {
                                     ForEach(app.main.libreLinkUp?.logbookHistory ?? [LibreLinkUpGlucose]()) { libreLinkUpGlucose in
                                         let glucose = libreLinkUpGlucose.glucose
-                                        HStack(spacing: 0) {
+                                        HStack(alignment: .bottom, spacing: 0) {
                                             Text("\(glucose.date.shortDateTime)  **\(glucose.value, specifier: "%3d")** ")
                                             Text(libreLinkUpGlucose.trendArrow!.symbol).font(.title3)
                                         }
