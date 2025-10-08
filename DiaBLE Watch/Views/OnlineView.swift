@@ -189,7 +189,7 @@ struct OnlineView: View, LoggingView {
 
                         List {
                             ForEach(history.nightscoutValues) { glucose in
-                                (Text("\(String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)])) \(glucose.date.shortDateTime)**  \(glucose.value, specifier: "%3d")**"))
+                                (Text("\(String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)])) \(glucose.date.shortDateTime)  **\(glucose.value, specifier: "%3d")**"))
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                             .frame(maxWidth: .infinity, alignment: .topLeading)
@@ -300,7 +300,7 @@ struct OnlineView: View, LoggingView {
                                 ForEach(app.main.libreLinkUp?.history ?? [LibreLinkUpGlucose]()) { libreLinkUpGlucose in
                                     let glucose = libreLinkUpGlucose.glucose
                                     HStack(spacing: 0) {
-                                        Text("\(!settings.libreLinkUpScrapingLogbook ? String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)]) + " " : "")\(glucose.date.shortDateTime)**  \(glucose.value, specifier: "%3d") **")
+                                        Text("\(!settings.libreLinkUpScrapingLogbook ? String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)]) + " " : "")\(glucose.date.shortDateTime)  **\(glucose.value, specifier: "%3d")** ")
                                         Text(libreLinkUpGlucose.trendArrow?.symbol ?? "").font(.title3)
                                     }
                                     .foregroundStyle(libreLinkUpGlucose.color.color)
@@ -321,7 +321,7 @@ struct OnlineView: View, LoggingView {
                                     ForEach(app.main.libreLinkUp?.logbookHistory ?? [LibreLinkUpGlucose]()) { libreLinkUpGlucose in
                                         let glucose = libreLinkUpGlucose.glucose
                                         HStack(spacing: 0) {
-                                            Text("\(glucose.date.shortDateTime)**  \(glucose.value, specifier: "%3d") **")
+                                            Text("\(glucose.date.shortDateTime)  **\(glucose.value, specifier: "%3d")** ")
                                             Text(libreLinkUpGlucose.trendArrow!.symbol).font(.title3)
                                         }
                                         .foregroundStyle(libreLinkUpGlucose.color.color)
