@@ -194,8 +194,9 @@ struct OnlineView: View, LoggingView {
 
                         List {
                             ForEach(history.nightscoutValues) { glucose in
-                                (Text("\(String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)])) \(glucose.date.shortDateTime)  **\(glucose.value, specifier: "%3d")**"))
-                                    .fixedSize(horizontal: false, vertical: true).listRowInsets(EdgeInsets())
+                                Text("\(String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)])) \(glucose.date.shortDateTime)  **\(glucose.value, specifier: "%3d")**")
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .listRowInsets(EdgeInsets())
                             }
                             .frame(maxWidth: .infinity, alignment: .topLeading)
                         }
@@ -246,7 +247,8 @@ struct OnlineView: View, LoggingView {
                                             Text(libreLinkUpGlucose.trendArrow?.symbol ?? "").font(.subheadline)
                                         }
                                         .foregroundStyle(libreLinkUpGlucose.color.color)
-                                        .fixedSize(horizontal: false, vertical: true).listRowInsets(EdgeInsets())
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .listRowInsets(EdgeInsets())
                                     }
                                     .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
