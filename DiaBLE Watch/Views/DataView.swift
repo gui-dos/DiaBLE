@@ -66,7 +66,7 @@ struct DataView: View, LoggingView {
                                 Text("Trend").bold()
                                 List {
                                     ForEach(history.factoryTrend) { glucose in
-                                        Text("\(glucose.id) \(glucose.date.shortDateTime) \(glucose.value > -1 ? " **\(glucose.value, specifier: "%3d")**" : "  … ")")
+                                        Text("\(glucose.id) \(glucose.date.shortDateTime)  **\(glucose.value > -1 ? "\(glucose.value, specifier: "%3d")" : "  … ")**")
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                     }
                                 }
@@ -84,7 +84,7 @@ struct DataView: View, LoggingView {
                                 Text("Raw trend").bold()
                                 List {
                                     ForEach(history.rawTrend) { glucose in
-                                        Text("\(glucose.id) \(glucose.date.shortDateTime) \(glucose.value > -1 ? " **\(glucose.value, specifier: "%3d")**" : "  … ")")
+                                        Text("\(glucose.id) \(glucose.date.shortDateTime)  **\(glucose.value > -1 ? "\(glucose.value, specifier: "%3d")" : "  … ")**")
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                     }
                                 }
@@ -147,7 +147,7 @@ struct DataView: View, LoggingView {
                             Text("OOP history").bold()
                             List {
                                 ForEach(history.values) { glucose in
-                                    Text("\(glucose.id) \(glucose.date.shortDateTime) \(glucose.value > -1 ? " **\(glucose.value, specifier: "%3d")**" : "  … ")")
+                                    Text("\(glucose.id) \(glucose.date.shortDateTime)  **\(glucose.value > -1 ? "\(glucose.value, specifier: "%3d")" : "  … ")**")
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }
@@ -161,7 +161,7 @@ struct DataView: View, LoggingView {
                             Text("History").bold()
                             List {
                                 ForEach(history.factoryValues) { glucose in
-                                    Text("\(glucose.id) \(glucose.date.shortDateTime) \(glucose.value > -1 ? " **\(glucose.value, specifier: "%3d")**" : "  … ")")
+                                    Text("\(glucose.id) \(glucose.date.shortDateTime)  **\(glucose.value > -1 ? "\(glucose.value, specifier: "%3d")" : "  … ")**")
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                 }
                             }.frame(maxWidth: .infinity, alignment: .topLeading)
@@ -176,7 +176,7 @@ struct DataView: View, LoggingView {
                         Text("Raw history").bold()
                         List {
                             ForEach(history.rawValues) { glucose in
-                                Text("\(glucose.id) \(glucose.date.shortDateTime) \(glucose.value > -1 ? " **\(glucose.value, specifier: "%3d")**" : "  … ")")
+                                Text("\(glucose.id) \(glucose.date.shortDateTime)  **\(glucose.value > -1 ? "\(glucose.value, specifier: "%3d")" : "  … ")**")
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }
                         }
