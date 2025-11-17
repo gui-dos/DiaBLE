@@ -634,7 +634,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     buffer += data
                 } else {
                     debugLog("'\(readCommand.code.hex) \(readCommand.parameters.hex) \(readCommand.description)' command output (\(data.count) bytes): 0x\(data.hex)")
-                    buffer += data.suffix(data.count - 8)    // skip leading 0xA5 dummy bytes
+                    buffer += data.suffix(data.count > 8 ? data.count - 8 : data.count)    // skip leading 0xA5 dummy bytes
                 }
                 remaining -= requested
 
