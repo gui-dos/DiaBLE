@@ -546,7 +546,15 @@ extension String {
         log("\(type): security version: \(securityVersion) (0x\(securityVersion.hex)), localization: \(localization) (0x\(localization.hex)), generation: \(generation) (0x\(generation.hex))")
 
         self.generation = Int(generation)  // 1: Libre 3+
-        region = SensorRegion(rawValue: Int(localization)) ?? .unknown
+
+        region = SensorRegion(rawValue: Int(localization & 0xFF)) ?? .unknown
+        let subregion = UInt8((localization & 0xFF00) >> 8)
+        if subregion != 0 {
+            type = .libreSelect
+            if subregion == 0xC0 {
+                log("\(type): subregion: France (0x\(subregion.hex))")
+            }
+        }
 
         let wearDuration = patchInfo[6...7]
         maxLife = Int(UInt16(wearDuration))
@@ -565,7 +573,8 @@ extension String {
         log("\(type): specific state: \(State(rawValue: sensorState)!.description.lowercased()) (0x\(sensorState.hex)), state: \(state.description.lowercased()) ")
 
         let serialNumber = Data(patchInfo[15...23])
-        serial = (productType == 9 ? "9" : "") + serialNumber.string  // prepend `9` family to a Lingo serial
+        // prepend `9` family to a Lingo serial and `4` to a Libre Select serial
+        serial = (productType == 9 ? "9" : type == .libreSelect ? "4" : "") + serialNumber.string
         log("\(type): serial number: \(serial) (0x\(serialNumber.hex))")
 
     }
