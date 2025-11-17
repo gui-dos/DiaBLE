@@ -18,8 +18,9 @@ extension SensorType {
         case 0x7F:       .libre2     // newer non-Gen2 European Libre 2(+) Mid 2025
         default:
             if patchInfo.count == 24 {
+                patchInfo[12] == 4 && patchInfo[3] == 0xC0 ? .libreSelect : // French LibreSelect
                 patchInfo[12] == 4 ? .libre3 :
-                patchInfo[12] == 9 ? .lingo :  // TODO: .libreSelect
+                patchInfo[12] == 9 ? .lingo :
                     .unknown
             } else {
                 .unknown
@@ -72,7 +73,7 @@ extension SensorType {
     // Libre 2  RU: 2B 0A 39 08 (Gen2)
 
     var isAPlus: Bool {
-        patchInfo.count == 24 && generation == 1 ||
+        patchInfo.count == 24 && generation == 1 && patchInfo[3] != 0xC0 ||
         patchInfo.count > 0 && (
             patchInfo[0] == 0xC6 || patchInfo[0] == 0x7F && patchInfo[2] & 0x0F > 0x0 ||
             patchInfo[0] == 0x2C ||
