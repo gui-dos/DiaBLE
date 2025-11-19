@@ -18,7 +18,7 @@ extension SensorType {
         case 0x7F:       .libre2     // newer non-Gen2 European Libre 2(+) Mid 2025
         default:
             if patchInfo.count == 24 {
-                patchInfo[12] == 4 && patchInfo[3] == 0xC0 ? .libreSelect : // French LibreSelect
+                patchInfo[12] == 4 && patchInfo[3] == 0xC0 ? .libreSelect : // French Libre Select
                 patchInfo[12] == 4 ? .libre3 :
                 patchInfo[12] == 9 ? .lingo :
                     .unknown
@@ -105,7 +105,9 @@ extension SensorType {
     func parseFRAM() {
         updateCRCReport()
         guard crcReport.contains("OK") else {
-            state = .unknown
+            if state != .notActivated {
+                state = .unknown
+            }
             return
         }
 

@@ -548,6 +548,7 @@ extension String {
 
         region = SensorRegion(rawValue: Int(localization & 0xFF)) ?? .unknown
         let subregion = UInt8((localization & 0xFF00) >> 8)
+        // TODO
         if subregion != 0 {
             type = .libreSelect
             if subregion == 0xC0 {

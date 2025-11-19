@@ -36,7 +36,6 @@ enum SensorFamily: Int, CustomStringConvertible {
     case libreX     = 5 // TODO
     case libreSense = 7
     case lingo      = 9
-    // TODO: libreSelect
 
     var description: String {
         switch self {
