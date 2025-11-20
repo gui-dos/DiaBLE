@@ -515,6 +515,11 @@ extension String {
     //      int8_t arg;
     //      int32_t from;
     //  }
+    //
+    // PATCH_CONTROL_INDEX_RECORD_TYPE = 1
+    // PATCH_CONTROL_INDEX_RECORD_ORDER = 2
+    // PATCH_CONTROL_INDEX_LOW_VALUE = 3
+    // PATCH_CONTROL_INDEX_HIGH_VALUE = 5
 
     var receiverId: UInt32 = 0    // fnv32Hash of LibreView ID string
 
