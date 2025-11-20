@@ -509,12 +509,20 @@ extension String {
         case shutdownPatch(Data)  // type 5
     }
 
-    // TODO
+    // TODO:
+    //
     //  struct RequestData {
     //      int8_t kind[2];
     //      int8_t arg;
     //      int32_t from;
     //  }
+    //
+    // PATCH_OPCODE_START_BACKFILL_GREATER_OR_EQUAL = 1
+    // PATCH_OPCODE_START_BACKFILL_WITHIN_RANGE = 2
+    // PATCH_OPCODE_ABORT_BACKFILL = 3
+    // PATCH_OPCODE_SEND_EVENT = 4
+    // PATCH_OPCODE_SHUTDOWN = 5
+    // PATCH_OPCODE_GET_FACTORY_DATA = 6
     //
     // PATCH_CONTROL_INDEX_RECORD_TYPE = 1
     // PATCH_CONTROL_INDEX_RECORD_ORDER = 2
