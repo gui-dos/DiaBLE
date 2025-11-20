@@ -33,9 +33,9 @@ enum SensorFamily: Int, CustomStringConvertible {
     case librePro   = 1
     case libre2     = 3
     case libre3     = 4
-    case libreX     = 5 // TODO
+    case libreX     = 5 // ADC_PRODUCT_TYPE_GLUCOSE_KETONE (com.adc.dcm.gksensor.GKSDCM)
     case libreSense = 7
-    case lingo      = 9
+    case lingo      = 9 // ADC_PRODUCT_TYPE_GLUCOSE_WELLNESS
 
     var description: String {
         switch self {
