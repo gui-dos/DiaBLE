@@ -855,7 +855,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
         // Libre 3:
         // getting 28 bytes from A1: dummy `a5` + `00` + 24-byte PatchInfo + CRC
         // getting 0xC1 error from A0, A1 20-22, A8, A9, C8, C9  (A0 and A8 activate a sensor)
-        // getting 64 0xA5 bytes from A2-A7, AB-C7, CA-DF
+        // getting 64 0xA5 bytes from A2-A7, AB-C7, CA-DF (NO_RESPONSE_DUMMY_BYTES)
         // getting 22 bytes from AA: 44 4f 43 34 32 37 31 35 2d 31 30 31 11 26 20 12 09 00 80 67 73 e0
         //                          (leading `DOC42715-101` and final CRC)
         // getting 17 bytes from AB with latest firmware, i.e. a5 00 ff 1f 00 00 00 00 00 00 1e 02 04 01 04 40 c0
