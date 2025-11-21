@@ -904,6 +904,11 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 }
             }
 
+            // TODO: A9
+            // OEMGetEventLogSuccessResponse(byte flags, byte[] record1, byte[] record2, byte[] record3, byte[] appCrc16) (Medtronic MiniMed Mobile)
+            // flags record1 record2 record3 appCrc16
+            // 0     1...7   8...14  15...21 22...23
+
             for cmd in commands {
                 log("NFC: sending \(sensor.type) '\(cmd.description)' command: code: 0x\(cmd.code.hex), parameters: \(cmd.parameters.count == 0 ? "[]" : "0x\(cmd.parameters.hex)")")
                 do {
