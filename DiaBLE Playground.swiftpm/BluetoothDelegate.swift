@@ -764,6 +764,9 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             case .manufacturer:
                 app.device.manufacturer = data.string
 
+            case .bloodPressureMeasurement:
+                parseBloodPressure(data: data, device: app.device)
+
             default:
                 break
             }
@@ -810,4 +813,57 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             }
         }
     }
+
+
+    func parseBloodPressure(data: Data, device: Device) {
+        var index = 0
+
+        let flags = data[index]
+        index += 1
+
+        let timestampPresent = flags & 1 << 1 != 0
+        let pulseRatePresent = flags & 1 << 2 != 0
+
+        let systolic = Int(data[index]) + Int(data[index + 1]) << 8
+        index += 2
+
+        let diastolic = Int(data[index]) + Int(data[index + 1]) << 8
+        index += 2
+
+        // Mean Arterial Pressure
+        let map = Int(data[index]) + Int(data[index + 1]) << 8
+        index += 2
+
+        var timestamp: Date?
+        if timestampPresent {
+            let year = Int(data[index]) + Int(data[index + 1]) << 8
+            let month = data[index + 2]
+            let day = data[index + 3]
+            let hour = data[index + 4]
+            let minute = data[index + 5]
+            let second = data[index + 6]
+            index += 7
+
+            let calendar = Calendar.current
+            timestamp = calendar.date(from: DateComponents(year: Int(year), month: Int(month), day: Int(day), hour: Int(hour), minute: Int(minute), second: Int(second)))
+        }
+
+        var pulseRate: Int?
+        if pulseRatePresent {
+            pulseRate = Int(data[index]) + Int(data[index + 1]) << 8
+            index += 2
+        }
+
+        var msg = "blood pressure: systolic: \(systolic), diastolic: \(diastolic), mean arterial pressure: \(map)"
+
+        if let timestamp {
+            msg.append(", timestamp: \(timestamp)")
+        }
+        if let pulseRate {
+            msg.append(", pulse rate: \(pulseRate)")
+        }
+
+        log("Bluetooth: \(device.name): \(msg)")
+    }
+
 }
