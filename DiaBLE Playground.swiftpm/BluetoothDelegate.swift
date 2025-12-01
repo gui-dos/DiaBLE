@@ -424,7 +424,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
 
             } else if let uuid = BLE.UUID(rawValue: uuid) {
-                if uuid == .batteryLevel {
+                if uuid == .batteryLevel || uuid == .bloodPressureMeasurement {
                     app.device.peripheral?.setNotifyValue(true, for: characteristic)
                 }
 
@@ -439,11 +439,11 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 //    msg += " (\(uuid))"
 
             } else {
-                if characteristic.properties.contains(.notify) {
+                if characteristic.properties.contains(.notify) || characteristic.properties.contains(.indicate) {
                     peripheral.setNotifyValue(true, for: characteristic)
                     msg += "; enabling notifications"
                 }
-                if characteristic.properties.contains(.read) {
+                if characteristic.properties.contains(.read) || characteristic.properties.contains(.indicate) {
                     peripheral.readValue(for: characteristic)
                     msg += "; reading it"
                 }
