@@ -36,6 +36,10 @@ struct BLE {
         case alert          = "1811"
         case heartRate      = "180D"
 
+        case bloodPressure  = "1810"
+        case bloodPressureMeasurement = "2A35"
+        case bloodPressureFeature     = "2A49"
+
         // Apple
         case nearby         = "9FA480E0-4967-4542-9390-D343DC5D04AE"
         case nearby1        = "AF0BADB1-5B99-43CD-917A-A77BC549E3CC"
@@ -66,6 +70,9 @@ struct BLE {
             case .immediateAlert: "immediate alert"
             case .alert:          "alert notification"
             case .heartRate:      "heart rate"
+            case .bloodPressure:  "blood pressure"
+            case .bloodPressureMeasurement: "blood pressure measurement"
+            case .bloodPressureFeature:     "blood pressure feature"
             case .nearby:         "nearby"
             case .nearby1:        "nearby"
             case .continuity:     "continuity"
@@ -82,7 +89,8 @@ struct BLE {
     static let companies = try! JSONDecoder().decode(Array<BLE.Company>.self, from: Data(contentsOf: Bundle.main.url(forResource: "company_ids", withExtension: "json")!))
 }
 
-extension CBPeripheralState: @retroactive CustomStringConvertible { 
+
+extension CBPeripheralState: @retroactive CustomStringConvertible {
     public var description: String {
         switch self {
         case .connected:     "connected"
