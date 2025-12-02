@@ -136,4 +136,26 @@ class HealthKit: Logging {
         }
         store?.execute(query)
     }
+
+
+    func writeBloodPressure(systolic: Int, diastolic: Int, timestamp: Date) async {
+        let bloodPressureType = HKCorrelationType.correlationType(forIdentifier: .bloodPressure)!
+        let systolicType = HKQuantityType.quantityType(forIdentifier: .bloodPressureSystolic)!
+        let diastolicType = HKQuantityType.quantityType(forIdentifier: .bloodPressureDiastolic)!
+        let mmHg = HKUnit.millimeterOfMercury()
+
+        let systolicQuantity = HKQuantity(unit: mmHg, doubleValue: Double(systolic))
+        let diastolicQuantity = HKQuantity(unit: mmHg, doubleValue: Double(diastolic))
+
+        let systolicSample = HKQuantitySample(type: systolicType, quantity: systolicQuantity, start: timestamp, end: timestamp)
+        let diastolicSample = HKQuantitySample(type: diastolicType, quantity: diastolicQuantity, start: timestamp, end: timestamp)
+        let bloodPressureSample = HKCorrelation(type: bloodPressureType, start: timestamp, end: timestamp, objects: Set([systolicSample, diastolicSample]))
+
+        do {
+            try await store?.save(bloodPressureSample)
+        } catch {
+            log("HealthKit: error while saving blood pressure: \(error.localizedDescription)")
+        }
+    }
+
 }
