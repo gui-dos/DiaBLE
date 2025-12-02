@@ -10,19 +10,25 @@ class HealthKit: Logging {
         case glucose
         case insulin
         case carbs
+        case systolic
+        case diastolic
 
         var description: String {
             switch self {
-            case .glucose: "glucose"
-            case .insulin: "insulin"
-            case .carbs:   "carbs"
+            case .glucose:   "glucose"
+            case .insulin:   "insulin"
+            case .carbs:     "carbs"
+            case .systolic:  "systolic"
+            case .diastolic: "diastolic"
             }
         }
         var quantityType: HKQuantityType {
             switch self {
-            case .glucose: HKQuantityType(.bloodGlucose)
-            case .insulin: HKQuantityType(.insulinDelivery)
-            case .carbs:   HKQuantityType(.dietaryCarbohydrates)
+            case .glucose:   HKQuantityType(.bloodGlucose)
+            case .insulin:   HKQuantityType(.insulinDelivery)
+            case .carbs:     HKQuantityType(.dietaryCarbohydrates)
+            case .systolic:  HKQuantityType(.bloodPressureSystolic)
+            case .diastolic: HKQuantityType(.bloodPressureDiastolic)
             }
         }
     }
