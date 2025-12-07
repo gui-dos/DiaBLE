@@ -240,21 +240,30 @@ class LibreLinkUp: Logging {
 
                         let data = json["data"] as? [String: Any]
 
-                        if status == 2 || status == 429 || status == 911 {
+                        if status == 2 || status == 911 {
                             // {"status":2,"error":{"message":"notAuthenticated"}}
-                            // {"status":429,"data":{"code":60,"data":{"failures":3,"interval":60,"lockout":300},"message":"locked"}}
+                            // {"status":2,"error":{"message":"incorrect username/password"}}, status: 200
                             // {"status":911} when logging in at a stranger regional server
-                            if let storefront = await Storefront.current {
-                                let countryCode = storefront.countryCode
-                                if countryCode == "RUS" || countryCode == "CHN" {
-                                    redirected = true
-                                    settings.libreLinkUpRegion = ["RUS": "ru", "CHN": "cn"][countryCode]!
-                                    debugLog("LibreLinkUp: Storefront country code: \(countryCode), redirecting to \(self.regionalSiteURL)/\(self.loginEndpoint)")
-                                    request.url = URL(string: "\(regionalSiteURL)/\(loginEndpoint)")!
-                                    continue loop
-                                    // TODO: test
+                            let error = data?["error"] as? [String: Any]
+                            let message = error?["message"] as? String ?? ""
+                            if !message.hasSuffix("incorrect") {
+                                // TODO: test foreign accounts
+                                if let storefront = await Storefront.current {
+                                    let countryCode = storefront.countryCode
+                                    if countryCode == "RUS" || countryCode == "CHN" {
+                                        redirected = true
+                                        settings.libreLinkUpRegion = ["RUS": "ru", "CHN": "cn"][countryCode]!
+                                        debugLog("LibreLinkUp: Storefront country code: \(countryCode), redirecting to \(regionalSiteURL)/\(loginEndpoint)")
+                                        request.url = URL(string: "\(regionalSiteURL)/\(loginEndpoint)")!
+                                        continue loop
+                                    }
                                 }
                             }
+                            throw LibreLinkUpError.notAuthenticated
+                        }
+
+                        if status == 429 {
+                            // {"status":429,"data":{"code":60,"data":{"failures":3,"interval":60,"lockout":300},"message":"locked"}}
                             if let data, let message = data["message"] as? String {
                                 if message == "locked" {
                                     if let data = data["data"] as? [String: Any],
@@ -749,7 +758,7 @@ class LibreLinkUp: Logging {
                         try await login()
                     } catch {
                         response = error.localizedDescription
-                        log("LibreLinkUp: error: \(response)")
+                        log("LibreLinkUp: error while logging: \(response)")
                     }
                 }
                 if !(settings.libreLinkUpUserId.isEmpty ||
