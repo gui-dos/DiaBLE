@@ -1,4 +1,5 @@
 import Foundation
+import StoreKit
 
 
 class LibreLink {
@@ -243,6 +244,17 @@ class LibreLinkUp: Logging {
                             // {"status":2,"error":{"message":"notAuthenticated"}}
                             // {"status":429,"data":{"code":60,"data":{"failures":3,"interval":60,"lockout":300},"message":"locked"}}
                             // {"status":911} when logging in at a stranger regional server
+                            if let storefront = await Storefront.current {
+                                let countryCode = storefront.countryCode
+                                if countryCode == "RUS" || countryCode == "CHN" {
+                                    redirected = true
+                                    settings.libreLinkUpRegion = ["RUS": "ru", "CHN": "cn"][countryCode]!
+                                    debugLog("LibreLinkUp: Storefront country code: \(countryCode), redirecting to \(self.regionalSiteURL)/\(self.loginEndpoint)")
+                                    request.url = URL(string: "\(regionalSiteURL)/\(loginEndpoint)")!
+                                    continue loop
+                                    // TODO: test
+                                }
+                            }
                             if let data, let message = data["message"] as? String {
                                 if message == "locked" {
                                     if let data = data["data"] as? [String: Any],
@@ -312,7 +324,7 @@ class LibreLinkUp: Logging {
                            let region = data?["region"] as? String {
                             redirected = redirect
                             settings.libreLinkUpRegion = region
-                            log("LibreLinkUp: redirecting to \(regionalSiteURL)/\(loginEndpoint) ")
+                            log("LibreLinkUp: redirecting to \(regionalSiteURL)/\(loginEndpoint)")
                             request.url = URL(string: "\(regionalSiteURL)/\(loginEndpoint)")!
                             continue loop
                         }
@@ -334,7 +346,7 @@ class LibreLinkUp: Logging {
                             if !country.isEmpty {
                                 // default "de" and "fr" regional servers
                                 let defaultRegion = regions.contains(country.lowercased()) ? country.lowercased() : settings.libreLinkUpRegion
-                                var request = URLRequest(url: URL(string: "\(siteURL)/\(configEndpoint)/country?country=\(country)")!)
+                                var request = URLRequest(url: URL(string: "\(regionalSiteURL)/\(configEndpoint)/country?country=\(country)")!)
                                 for (header, value) in headers {
                                     request.setValue(value, forHTTPHeaderField: header)
                                 }
