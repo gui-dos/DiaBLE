@@ -246,7 +246,7 @@ class LibreLinkUp: Logging {
                             // {"status":911} when logging in at a stranger regional server
                             let error = data?["error"] as? [String: Any]
                             let message = error?["message"] as? String ?? ""
-                            if !message.hasSuffix("incorrect") {
+                            if !message.hasPrefix("incorrect") {
                                 // TODO: test foreign accounts
                                 if let storefront = await Storefront.current {
                                     let countryCode = storefront.countryCode
@@ -758,7 +758,7 @@ class LibreLinkUp: Logging {
                         try await login()
                     } catch {
                         response = error.localizedDescription
-                        log("LibreLinkUp: error while logging: \(response)")
+                        log("LibreLinkUp: error while logging in: \(response)")
                     }
                 }
                 if !(settings.libreLinkUpUserId.isEmpty ||
