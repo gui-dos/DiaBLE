@@ -250,9 +250,9 @@ class LibreLinkUp: Logging {
                                 // TODO: test foreign accounts
                                 if let storefront = await Storefront.current {
                                     let countryCode = storefront.countryCode
-                                    if countryCode == "RUS" || countryCode == "CHN" {
+                                    if let region = ["RUS": "ru", "CHN": "cn"][countryCode] {
                                         redirected = true
-                                        settings.libreLinkUpRegion = ["RUS": "ru", "CHN": "cn"][countryCode]!
+                                        settings.libreLinkUpRegion = region
                                         debugLog("LibreLinkUp: Storefront country code: \(countryCode), redirecting to \(regionalSiteURL)/\(loginEndpoint)")
                                         request.url = URL(string: "\(regionalSiteURL)/\(loginEndpoint)")!
                                         continue loop
