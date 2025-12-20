@@ -211,12 +211,12 @@ import CoreBluetooth
 
 
             // TODO: Dexcom ONE/G7 J-PAKE
-            // https://github.com/Mbed-TLS/mbedtls/blob/development/tf-psa-crypto/drivers/builtin/include/mbedtls/ecjpake.h
+            // https://en.wikipedia.org/wiki/Password_Authenticated_Key_Exchange_by_Juggling
+            // https://github.com/Mbed-TLS/TF-PSA-Crypto/blob/development/drivers/builtin/include/mbedtls/private/ecjpake.h
             // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/dex/java/tk/glucodata/DexGattCallback.java
             // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/dexcom/
             // https://github.com/NightscoutFoundation/xDrip/commit/7ee3473 ("Add keks library")
             // https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/Calc.java
-            // https://github.com/particle-iot/iOSBLEExample/blob/main/iOSBLEExample/ParticleBLECode/ECJPake.swift
 
             case .exchangePakePayload:
                 // TODO
@@ -517,7 +517,15 @@ import CoreBluetooth
             log("\(tx.name): J-PAKE exchange: received packet # \(index), partial buffer size: \(tx.buffer.count)")
             if tx.buffer.count == 160 {
                 log("\(tx.name): 160-byte J-PAKE payload: \(tx.buffer.hex)")
-                // TODO
+
+                // TODO: instantiate ECJPakePayload
+
+                // let publicKeyData    = tx.buffer.subdata(in: 0 ..< 64)    // X1 X||Y
+                // let ephemeralKeyData = tx.buffer.subdata(in: 64 ..< 128)  // X2 X||Y
+
+                // Schnorr signature
+                // let signatureData    = tx.buffer.subdata(in: 128 ..< 160)  // r || s
+
                 tx.buffer = Data()
             }
 
@@ -731,7 +739,7 @@ class DexcomSecurity {
 
     // class ECJPakePayload {
     //     let publicKey: ECPoint
-    //     let epherealKey: ECPoint
+    //     let epherealKey: ECPoint // ephemeral
     //     let schnorrSignature: BigInt
     // }
 
