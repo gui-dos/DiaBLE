@@ -442,13 +442,14 @@ import CoreBluetooth
 
             case .transmitterVersionExtended:
                 // TODO: i.e. 52 00 c0d70d00 5406 02010404 ff 0c00 (15 bytes)
+                //            52 00 406f1400 880e 00010a04 ff 1100 (15-day G7)
                 let sessionLength = TimeInterval(UInt32(data[2...5]))
-                maxLife = Int(UInt32(data[2...5]) / 60)  // inlcuding 12h grace period
+                maxLife = Int(UInt32(data[2...5]) / 60)  // including 12h grace period
                 let warmupLength = TimeInterval(UInt16(data[6...7]))
                 let algorithmVersion = UInt32(data[8...11])
                 let hardwareVersion = Int(data[12])
                 let maxLifetimeDays = UInt16(data[13...14])
-                log("\(tx.name): extended transmission version: response code: \(txResponseCode.decamelized), session length: \(sessionLength.formattedInterval), warmup length: \(warmupLength.formattedInterval), algorithm version: 0x\(algorithmVersion.hex), hardware version: \(hardwareVersion), max lifetime days: \(maxLifetimeDays)")
+                log("\(tx.name): extended transmission version: response code: \(txResponseCode.decamelized), session length: \(sessionLength.formattedInterval), warmup length: \(warmupLength.formattedInterval), algorithm version: 0x\(algorithmVersion.hex), hardware version: 0x\(hardwareVersion.hex), max lifetime days: \(maxLifetimeDays)")
 
 
             case .encryptionInfo:
