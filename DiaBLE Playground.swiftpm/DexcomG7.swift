@@ -449,7 +449,7 @@ import CoreBluetooth
                 let algorithmVersion = UInt32(data[8...11])
                 let hardwareVersion = Int(data[12])
                 let maxLifetimeDays = UInt16(data[13...14])
-                log("\(tx.name): extended transmission version: response code: \(txResponseCode.decamelized), session length: \(sessionLength.formattedInterval), warmup length: \(warmupLength.formattedInterval), algorithm version: 0x\(algorithmVersion.hex), hardware version: 0x\(hardwareVersion.hex), max lifetime days: \(maxLifetimeDays)")
+                log("\(tx.name): extended transmitter version: response code: \(txResponseCode.decamelized), session length: \(sessionLength.formattedInterval), warmup length: \(warmupLength.formattedInterval), algorithm version: 0x\(algorithmVersion.hex), hardware version: 0x\(hardwareVersion.hex), max lifetime days: \(maxLifetimeDays)")
 
 
             case .encryptionInfo:
