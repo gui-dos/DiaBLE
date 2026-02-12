@@ -749,8 +749,10 @@ extension String {
                         send(securityCommand: .security_0D)
                         // TODO:
                         // Natives.processbar(5, null, null) (CRYPTO_EXTENSION_GENERATE_EPHEMERAL)
-                        let ephemeralKey = Data((0 ..< 65 ).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })  // TEST random ephemeral
-                        debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending random 65-byte ephemeral key 0x\(ephemeralKey.hex)")
+                        // let ephemeralKey = Data((0 ..< 65 ).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })  // TEST random ephemeral
+                        // debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending random 65-byte ephemeral key 0x\(ephemeralKey.hex)")
+                        let ephemeralKey = initECDH()
+                        debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending generated 65-byte P-256 x9.63 ephemeral key 0x\(ephemeralKey.hex)")
                         write(ephemeralKey, for: .certificateData)
                         debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0E (CMD_EPHEMERAL_LOAD_DONE)")
                         send(securityCommand: .ephemeralLoadDone)
