@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 
 
 // https://insulinclub.de/index.php?thread/33795-free-three-ein-xposed-lsposed-modul-f%C3%BCr-libre-3-aktueller-wert-am-sperrbildschir/&postID=655055#post655055
@@ -302,12 +303,12 @@ extension String {
         var cryptoLib: Any
         var securityContext: BCSecurityContext
         var patchEphemeral: Data
-        var r1: Data
-        var r2: Data
-        var nonce1: Data
-        var kEnc: Data
-        var ivEnc: Data
-        var exportedkAuth: Data
+        var r1: Data     // 16 bytes  ---+
+        var r2: Data     // 16 bytes  ---+
+        var nonce1: Data // 7 bytes      +-- from decrypted kAuth
+        var kEnc: Data   // 16 bytes  ---+
+        var ivEnc: Data  // 8 bytes   ---+
+        var exportedkAuth: Data //  149 bytes
         var securityLibInitialized: Bool
         var isPreAuthorized: Bool
         var initParam: InitParam
@@ -539,6 +540,9 @@ extension String {
     var lastSecurityEvent: SecurityEvent = .unknown
     var expectedStreamSize = 0
 
+    // CGMSensor and BCSecurityContext members:
+    var ephemeralPrivateKey: P256.KeyAgreement.PrivateKey = .init()
+    var patchEphemeral: Data = Data()  // 65-byte uncompressed P-256
     var outCryptoSequence: UInt16 = 0
 
     var currentLifeCount: Int = 0
@@ -761,6 +765,9 @@ extension String {
                 case .ephemeralLoadDone:
                     if settings.userLevel < .test { // not eavesdropping on Trident
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch ephemeral: \(payload.hex)")
+                        if payload.count == 65 {
+                            patchEphemeral = payload
+                        }
                         send(securityCommand: .readChallenge)
                         // TODO
                     }
@@ -776,7 +783,7 @@ extension String {
                     let r1 = payload.prefix(16)
                     let nonce1 = payload.suffix(7)
                     let r2 = Data((0 ..< 16).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
-                    debugLog("\(type): r1: \(r1.hex), r2: \(r2.hex), nonce1: \(nonce1.hex)")
+                    debugLog("\(type): r1: \(r1.hex), generated random r2: \(r2.hex), nonce1: \(nonce1.hex)")
 
                     // TODO:
                     // let response = process2(command: 7, nonce1, Data(r1 + r2 + blePIN)) // CRYPTO_EXTENSION_ENCRYPT

@@ -12,11 +12,23 @@ extension Libre3 {
     // TODO
     public func initECDH() -> Data {
         // Generate ephemeral P-256 key pair
-        let ephemeralPrivateKey = P256.KeyAgreement.PrivateKey()
+        ephemeralPrivateKey = P256.KeyAgreement.PrivateKey()
         // Export uncompressed x9.63 public key (04 || X || Y)
         let ephemeralPublicKeyBytes = ephemeralPrivateKey.publicKey.x963Representation
         log("TEST: generated P-256 ECDH ephemeral private key: \(ephemeralPrivateKey.rawRepresentation.hex) (size: \(ephemeralPrivateKey.rawRepresentation.count) bytes), exported x9.63 public key: \(ephemeralPublicKeyBytes.hex) (size: \(ephemeralPublicKeyBytes.count) bytes)")
         return ephemeralPublicKeyBytes
+    }
+
+    public func deriveSymmetricKey() -> SymmetricKey {
+        let sensorPublicKey = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
+        let sharedSecret = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorPublicKey)
+        let salt = Data()  // TODO: build from nonces
+        let info = "FreeStyle".data(using: .utf8)!
+        let aesKey = sharedSecret.hkdfDerivedSymmetricKey(using: SHA256.self,
+                                                          salt: salt,
+                                                          sharedInfo: info,
+                                                          outputByteCount: 16)
+        return aesKey
     }
 
 
