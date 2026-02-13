@@ -1116,7 +1116,7 @@
 			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.8.3;
+				minimumVersion = 1.9.0;
 			};
 		};
 		C5BF97832BE6780F00ED6622 /* XCRemoteSwiftPackageReference "realm-swift" */ = {

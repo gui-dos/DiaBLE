@@ -747,8 +747,8 @@ extension String {
                 switch currentSecurityCommand {
 
                 case .sendCertificate:
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate: \(payload.hex)")
                     if settings.userLevel < .test { // not eavesdropping on Trident
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate: \(payload.hex)")
                         debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0D (CMD_KEY_AGREEMENT)")
                         send(securityCommand: .security_0D)
                         // TODO:
@@ -763,11 +763,11 @@ extension String {
                     }
 
                 case .ephemeralLoadDone:
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch ephemeral: \(payload.hex)")
+                    if payload.count == 65 {
+                        patchEphemeral = payload
+                    }
                     if settings.userLevel < .test { // not eavesdropping on Trident
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch ephemeral: \(payload.hex)")
-                        if payload.count == 65 {
-                            patchEphemeral = payload
-                        }
                         send(securityCommand: .readChallenge)
                         // TODO
                     }
