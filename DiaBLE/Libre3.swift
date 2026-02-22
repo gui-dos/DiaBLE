@@ -287,7 +287,7 @@ extension String {
         var key: Data    = Data(count: 16)
         var iv_enc: Data = Data(count: 8)
         var nonce: Data  = Data(count: 13)
-        var outCryptoSequence: UInt16 = 0
+        var outCryptoSequence: UInt16 = 1
 
         // when en/decrypting initialize:
         // nonce[0...1]: outCryptoSequence / final seq id
@@ -544,7 +544,7 @@ extension String {
     // CGMSensor and BCSecurityContext members:
     var ephemeralPrivateKey: P256.KeyAgreement.PrivateKey = .init()
     var patchEphemeral: Data = Data()  // 65-byte uncompressed P-256
-    var outCryptoSequence: UInt16 = 0
+    var outCryptoSequence: UInt16 = 1
 
     var currentLifeCount: Int = 0
     var lastHistoricLifeCount: Int = 0
@@ -778,8 +778,8 @@ extension String {
                     // getting: df4bd2f783178e3ab918183e5fed2b2b c201 0000 e703a7
                     //                                        increasing
 
-                    outCryptoSequence = UInt16(payload[16...17])
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): security challenge: \(payload.hex) (crypto sequence #: \(outCryptoSequence.hex))")
+                    let seqId = UInt16(payload[16...17])
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): security challenge: \(payload.hex) (seq id: \(seqId.hex))")
 
                     let r1 = payload.prefix(16)
                     let nonce1 = payload.suffix(7)
@@ -802,8 +802,8 @@ extension String {
                 case .challengeLoadDone:
                     let first = payload.subdata(in:  0 ..< 60)
                     let nonce = payload.subdata(in: 60 ..< 67)
-                    outCryptoSequence = UInt16(payload[60 ... 61])
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): encrypted KAuth: \(first.hex), nonce: \(nonce.hex) (crypto sequence #: \(outCryptoSequence.hex))")
+                    let seqId = UInt16(payload[60 ... 61])
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): encrypted KAuth: \(first.hex), nonce: \(nonce.hex) (seq id: \(seqId.hex))")
                     // TODO:
                     // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/Libre3GattCallback.java
                     // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/bcrypt/bcrypt.cpp
