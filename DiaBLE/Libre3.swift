@@ -289,10 +289,11 @@ extension String {
         var nonce: Data  = Data(count: 13)
         var outCryptoSequence: UInt16 = 0
 
-        // when decrypting initialize:
-        // nonce[0...1]: outCryptoSequence
+        // when en/decrypting initialize:
+        // nonce[0...1]: outCryptoSequence / final seq id
         // nonce[2...4]: packetDesciptors(packetType)
         // nonce[5...12]: iv_enc
+        //
         // taglen = 4
     }
 
@@ -676,8 +677,8 @@ extension String {
                 buffer += data
                 if buffer.count == 35 {
                     let payload = buffer.prefix(33)
-                    let id = UInt16(buffer.suffix(2))
-                    log("\(type) \(transmitter!.peripheral!.name!): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), id: \(id.hex)")
+                    let seqId = UInt16(buffer.suffix(2))
+                    log("\(type) \(transmitter!.peripheral!.name!): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), seq id: \(seqId.hex)")
                     buffer = Data()
                     if settings.selectedService == .libreLinkUp {
                         Task { @MainActor in
@@ -696,14 +697,14 @@ extension String {
                 buffer += data
             }
             let payload = data.prefix(18)
-            let id = UInt16(data.suffix(2))
-            log("\(type) \(transmitter!.peripheral!.name!): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), id: \(id.hex)")
+            let seqId = UInt16(data.suffix(2))
+            log("\(type) \(transmitter!.peripheral!.name!): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), seq id: \(seqId.hex)")
 
         case .patchStatus:
             if buffer.count == 0 {
                 let payload = data.prefix(16)
-                let id = UInt16(data.suffix(2))
-                log("\(type) \(transmitter!.peripheral!.name!): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), id: \(id.hex)")
+                let seqId = UInt16(data.suffix(2))
+                log("\(type) \(transmitter!.peripheral!.name!): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), seq id: \(seqId.hex)")
             }
             // TODO
 
