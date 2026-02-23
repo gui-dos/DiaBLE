@@ -799,11 +799,16 @@ extension String {
 
                     if settings.userLevel < .test { // not eavesdropping on Trident
 
+                        if blePIN.isEmpty && !settings.activeSensorBlePIN.isEmpty {
+                            blePIN = settings.activeSensorBlePIN
+                            debugLog("(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): restore saved active sensor's BLE PIN: \(blePIN.hex)")
+                        }
+
                         if !blePIN.isEmpty && !kEnc.isEmpty {
 
                             let challengeResponse = r1 + r2 + blePIN
                             let encryptedResponse = aesEncrypt(data: challengeResponse, nonce: nonce1)!
-                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing challenge response: \(encryptedResponse.hex) (bytes: \(encryptedResponse.count)) (plain: \(challengeResponse.hex)) (bytes: \(challengeResponse.count))")
+                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing encrypted challenge response: \(encryptedResponse.hex) (bytes: \(encryptedResponse.count)), plain: \(challengeResponse.hex) (bytes: \(challengeResponse.count))")
                             write(encryptedResponse)
 
                         } else {
@@ -915,6 +920,7 @@ extension String {
 
             transmitter?.macAddress = activationResponse.bdAddress
             blePIN = activationResponse.BLE_Pin
+            settings.activeSensorBlePIN = blePIN
             activationTime = activationResponse.activationTime
             lastReadingDate = Date()
             age = Int(Date().timeIntervalSince(Date(timeIntervalSince1970: Double(activationTime)))) / 60
