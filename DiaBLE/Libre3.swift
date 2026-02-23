@@ -306,9 +306,9 @@ extension String {
         var patchEphemeral: Data
         var r1: Data     // 16 bytes  ---+
         var r2: Data     // 16 bytes  ---+
-        var nonce1: Data // 7 bytes      +-- from decrypted kAuth
+        var nonce1: Data //  7 bytes     +-- from decrypted kAuth
         var kEnc: Data   // 16 bytes  ---+
-        var ivEnc: Data  // 8 bytes   ---+
+        var ivEnc: Data  //  8 bytes  ---+
         var exportedkAuth: Data //  149 bytes
         var securityLibInitialized: Bool
         var isPreAuthorized: Bool
@@ -541,10 +541,14 @@ extension String {
     var lastSecurityEvent: SecurityEvent = .unknown
     var expectedStreamSize = 0
 
-    // CGMSensor and BCSecurityContext members:
+    var patchCertificate: Data = Data()  // 140 bytes
     var ephemeralPrivateKey: P256.KeyAgreement.PrivateKey = .init()
     var patchEphemeral: Data = Data()  // 65-byte uncompressed P-256
+
+    // CGMSensor and BCSecurityContext members:
     var outCryptoSequence: UInt16 = 1
+    var kEnc: Data = Data()  // 16-byte AES symmetric key
+    var ivEnc: Data = Data() // 8 bytes
 
     var currentLifeCount: Int = 0
     var lastHistoricLifeCount: Int = 0
@@ -749,6 +753,7 @@ extension String {
 
                 case .sendCertificate:
                     log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate: \(payload.hex)")
+                    patchCertificate = payload
                     if settings.userLevel < .test { // not eavesdropping on Trident
                         debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0D (CMD_KEY_AGREEMENT)")
                         send(securityCommand: .security_0D)
@@ -790,8 +795,13 @@ extension String {
                     // let response = process2(command: 7, nonce1, Data(r1 + r2 + blePIN)) // CRYPTO_EXTENSION_ENCRYPT
 
                     if settings.userLevel < .test { // not eavesdropping on Trident
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: writing 40-zero challenge response")
 
+                        let challengeResponse = r1 + r2 + blePIN
+                        let encryptedResponse = aesEncrypt(data: challengeResponse, nonce: nonce1)!
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing challenge response: encryptedResponse (plain: \(challengeResponse.hex))")
+                        write(encryptedResponse)
+
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: writing 40-zero challenge response")
                         let challengeData = Data(count: 40)
                         write(challengeData)
                         // writing .challengeLoadDone makes the Libre 3 disconnect

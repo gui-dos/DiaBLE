@@ -32,6 +32,42 @@ extension Libre3 {
     }
 
 
+    public func aesEncrypt(data: Data, nonce: Data) -> Data? {
+        let aes = try! AES(key: Array(kEnc),
+                           blockMode: CCM(iv: Array(nonce),
+                                          tagLength: 4,
+                                          messageLength: data.count - 4,
+                                          additionalAuthenticatedData: Array(Data())),
+                           padding: .noPadding)
+        let encrypted = try! aes.encrypt(Array(data))
+        return Data(encrypted)
+    }
+
+
+    public func aesDecrypt(data: Data, nonce: Data) -> Data? {
+        let aes = try! AES(key: Array(kEnc),
+                           blockMode: CCM(iv: Array(nonce),
+                                          tagLength: 4,
+                                          messageLength: data.count - 4,
+                                          additionalAuthenticatedData: Array(Data())),
+                           padding: .noPadding)
+        let decrypted = try! aes.encrypt(Array(data))
+        return Data(decrypted)
+    }
+
+
+    public func encryptPacket(data: Data, type: PacketType, ivEnc: Data, sequenceId: UInt16) -> Data? {
+        let nonce = sequenceId.data + Libre3.packetDescriptors[Int(type.rawValue)] + ivEnc
+        return aesEncrypt(data: data, nonce: nonce)
+    }
+
+
+    public func decryptPacket(data: Data, type: PacketType, ivEnc: Data) -> Data? {
+        let nonce = data.suffix(2) + Libre3.packetDescriptors[Int(type.rawValue)] + ivEnc
+        return aesDecrypt(data: data, nonce: nonce)
+    }
+
+
     static func testAESCCM() {
         // func testAESCCMTestCase1Decrypt()
         let key: Array<UInt8> = [0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f]
