@@ -291,10 +291,10 @@ extension String {
 
         // when en/decrypting initialize:
         // nonce[0...1]: outCryptoSequence / final seq id
-        // nonce[2...4]: packetDesciptors(packetType)
+        // nonce[2...4]: packetDescriptors(packetType)
         // nonce[5...12]: iv_enc
         //
-        // taglen = 4
+        // tagLength = 4
     }
 
 

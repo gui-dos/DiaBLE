@@ -19,7 +19,7 @@ extension Libre3 {
         return ephemeralPublicKeyBytes
     }
 
-    public func deriveSymmetricKey() -> SymmetricKey {
+    public func deriveSymmetricKey() -> Data {
         let sensorPublicKey = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
         let sharedSecret = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorPublicKey)
         let salt = Data()  // TODO: build from nonces
@@ -28,7 +28,7 @@ extension Libre3 {
                                                           salt: salt,
                                                           sharedInfo: info,
                                                           outputByteCount: 16)
-        return aesKey
+        return aesKey.withUnsafeBytes { Data($0) }
     }
 
 
