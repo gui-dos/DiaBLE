@@ -719,7 +719,6 @@ extension String {
             if data.count == 2 {
                 expectedStreamSize = Int(data[1] + data[1] / 20 + 1)
                 log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): expected response size: \(expectedStreamSize) bytes (payload: \(data[1]) bytes)")
-                // TEST: when eavesdropping on Trident:
                 if data[1] == 23 {
                     currentSecurityCommand = .readChallenge
                 } else if data[1] == 67 {  // encrypted KAuth
@@ -772,6 +771,10 @@ extension String {
                     log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch ephemeral: \(payload.hex)")
                     if payload.count == 65 {
                         patchEphemeral = payload
+                        if settings.userLevel < .test { // not eavesdropping on Trident
+                            kEnc = deriveSymmetricKey()
+                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: derived symmetric key: \(kEnc.hex)")
+                        }
                     }
                     if settings.userLevel < .test { // not eavesdropping on Trident
                         send(securityCommand: .readChallenge)
@@ -797,17 +800,23 @@ extension String {
                     if settings.userLevel < .test { // not eavesdropping on Trident
 
                         if !blePIN.isEmpty && !kEnc.isEmpty {
+
                             let challengeResponse = r1 + r2 + blePIN
                             let encryptedResponse = aesEncrypt(data: challengeResponse, nonce: nonce1)!
-                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing challenge response: encryptedResponse (plain: \(challengeResponse.hex))")
+                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing challenge response: \(encryptedResponse.hex) (bytes: \(encryptedResponse.count)) (plain: \(challengeResponse.hex)) (bytes: \(challengeResponse.count))")
                             write(encryptedResponse)
+
                         } else {
-                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): BLE PIN unknown, need NFC scan first.")
+
+                            if blePIN.isEmpty {
+                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): BLE PIN unknown, need NFC scan first.")
+                            }
+
+                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: writing 40-zero challenge response")
+                            let challengeData = Data(count: 40)
+                            write(challengeData)
                         }
 
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: writing 40-zero challenge response")
-                        let challengeData = Data(count: 40)
-                        write(challengeData)
                         // writing .challengeLoadDone makes the Libre 3 disconnect
                         send(securityCommand: .challengeLoadDone)
                     }
