@@ -796,10 +796,14 @@ extension String {
 
                     if settings.userLevel < .test { // not eavesdropping on Trident
 
-                        let challengeResponse = r1 + r2 + blePIN
-                        let encryptedResponse = aesEncrypt(data: challengeResponse, nonce: nonce1)!
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing challenge response: encryptedResponse (plain: \(challengeResponse.hex))")
-                        write(encryptedResponse)
+                        if !blePIN.isEmpty && !kEnc.isEmpty {
+                            let challengeResponse = r1 + r2 + blePIN
+                            let encryptedResponse = aesEncrypt(data: challengeResponse, nonce: nonce1)!
+                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing challenge response: encryptedResponse (plain: \(challengeResponse.hex))")
+                            write(encryptedResponse)
+                        } else {
+                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): BLE PIN unknown, need NFC scan first.")
+                        }
 
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: writing 40-zero challenge response")
                         let challengeData = Data(count: 40)
