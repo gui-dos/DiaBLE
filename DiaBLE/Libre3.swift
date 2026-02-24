@@ -807,6 +807,8 @@ extension String {
                         if !blePIN.isEmpty && !kEnc.isEmpty {
 
                             let challengeResponse = r1 + r2 + blePIN
+                            // TODO: a 13-byte nounce needed?
+                            // let nonce = nonce1 + Data(count: 6)
                             let encryptedResponse = aesEncrypt(data: challengeResponse, nonce: nonce1)!
                             log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing encrypted challenge response: \(encryptedResponse.hex) (\(encryptedResponse.count) bytes), plain: \(challengeResponse.hex) (\(challengeResponse.count) bytes)")
                             write(encryptedResponse)

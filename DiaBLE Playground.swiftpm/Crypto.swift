@@ -51,7 +51,7 @@ extension Libre3 {
                                           messageLength: data.count - 4,
                                           additionalAuthenticatedData: Array(Data())),
                            padding: .noPadding)
-        let decrypted = try! aes.encrypt(Array(data))
+        let decrypted = try! aes.decrypt(Array(data))
         return Data(decrypted)
     }
 
