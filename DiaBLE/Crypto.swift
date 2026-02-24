@@ -36,7 +36,7 @@ extension Libre3 {
         let aes = try! AES(key: Array(kEnc),
                            blockMode: CCM(iv: Array(nonce),
                                           tagLength: 4,
-                                          messageLength: data.count - 4,
+                                          messageLength: data.count,
                                           additionalAuthenticatedData: Array(Data())),
                            padding: .noPadding)
         let encrypted = try! aes.encrypt(Array(data))
