@@ -284,7 +284,7 @@ extension String {
 
     struct BCSecurityContext {
         let packetDescriptorArray: [[UInt8]] = packetDescriptors
-        var key: Data    = Data(count: 16)
+        var key: Data    = Data(count: 16)  // kEnc
         var iv_enc: Data = Data(count: 8)
         var nonce: Data  = Data(count: 13)
         var outCryptoSequence: UInt16 = 1
@@ -808,7 +808,7 @@ extension String {
 
                             let challengeResponse = r1 + r2 + blePIN
                             let encryptedResponse = aesEncrypt(data: challengeResponse, nonce: nonce1)!
-                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing encrypted challenge response: \(encryptedResponse.hex) (bytes: \(encryptedResponse.count)), plain: \(challengeResponse.hex) (bytes: \(challengeResponse.count))")
+                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing encrypted challenge response: \(encryptedResponse.hex) (\(encryptedResponse.count) bytes), plain: \(challengeResponse.hex) (\(challengeResponse.count) bytes)")
                             write(encryptedResponse)
 
                         } else {
