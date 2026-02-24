@@ -549,6 +549,10 @@ extension String {
     var outCryptoSequence: UInt16 = 1
     var kEnc: Data = Data()  // 16-byte AES symmetric key
     var ivEnc: Data = Data() // 8 bytes
+    // Challenge nonces stored during the security handshake
+    var r1: Data = Data()     // 16 bytes from sensor challenge
+    var r2: Data = Data()     // 16 bytes generated locally
+    var nonce1: Data = Data() //  7 bytes from sensor challenge
 
     var currentLifeCount: Int = 0
     var lastHistoricLifeCount: Int = 0
@@ -789,9 +793,10 @@ extension String {
                     let seqId = UInt16(payload[16...17])
                     log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): security challenge: \(payload.hex) (seq id: \(seqId.hex))")
 
-                    let r1 = payload.prefix(16)
-                    let nonce1 = payload.suffix(7)
-                    let r2 = Data((0 ..< 16).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
+                    // Store as instance vars to be verified later when decrypting KAuth
+                    r1     = Data(payload.prefix(16))
+                    nonce1 = Data(payload.suffix(7))
+                    r2     = Data((0 ..< 16).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
                     debugLog("\(type): r1: \(r1.hex), generated random r2: \(r2.hex), nonce1: \(nonce1.hex)")
 
                     // TODO:

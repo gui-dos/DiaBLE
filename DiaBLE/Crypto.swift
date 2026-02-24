@@ -4,6 +4,7 @@ import CommonCrypto  // AES 128 CCM
 import CryptoSwift
 
 
+// https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/bcrypt/bcrypt.cpp
 // https://github.com/LoopKit/OmniBLE/blob/dev/OmniBLE/Bluetooth/EnDecrypt/EnDecrypt.swift
 
 
