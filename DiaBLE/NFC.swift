@@ -351,7 +351,9 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 debugLog("NFC: IC serial number: \(tag.icSerialNumber.hex)")
 
                 if let sensor = sensor as? Libre3 {
-                    sensor.parsePatchInfo()
+                    if sensor.patchInfo.count == 24 {
+                        sensor.parsePatchInfo()
+                    }
                 } else {
                     sensor.firmware = tag.identifier[2].hex
                     log("NFC: firmware version: \(sensor.firmware)")
