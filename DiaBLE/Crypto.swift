@@ -23,8 +23,9 @@ extension Libre3 {
     public func deriveSymmetricKey() -> Data {
         let sensorPublicKey = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
         let sharedSecret = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorPublicKey)
-        let salt = Data()  // TODO: build from nonces
-        let info = "FreeStyle".data(using: .utf8)!
+        // TODO:
+        let salt = Data()
+        let info = "".data(using: .utf8)!
         let aesKey = sharedSecret.hkdfDerivedSymmetricKey(using: SHA256.self,
                                                           salt: salt,
                                                           sharedInfo: info,
