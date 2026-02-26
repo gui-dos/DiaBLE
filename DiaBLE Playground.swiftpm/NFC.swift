@@ -60,6 +60,10 @@ extension Sensor {
     var readRawCommand: NFCCommand      { NFCCommand(code: 0xA3, parameters: backdoor, description: "read raw") }
     var unlockCommand: NFCCommand       { NFCCommand(code: 0xA4, parameters: backdoor, description: "unlock") }
 
+    // Libre 3 / Libre Select
+    var switchReceiverCommand: NFCCommand { NFCCommand(code: 0xA8, description: "switch receiver") }
+    var getEventLog: NFCCommand           { NFCCommand(code: 0xA9, description: "get event log") }
+
     // Libre 2 / Pro
     // SEE: custom commands C0-C4 in TI RF430FRL15xH Firmware User's Guide
     var readBlockCommand: NFCCommand    { NFCCommand(code: 0xB0, description: "B0 read block") }
@@ -75,7 +79,7 @@ extension Sensor {
     /// Usual 1252 blocks limit:
     /// block 04e3 => error 0x11 (.blockAlreadyLocked)
     /// block 04e4 => error 0x10 (.blockNotAvailable)
-    var lockBlockCommand: NFCCommand   { NFCCommand(code: 0xB2, description: "B2 lock block") }
+    var lockBlockCommand: NFCCommand    { NFCCommand(code: 0xB2, description: "B2 lock block") }
 
 
     enum Subcommand: UInt8, CustomStringConvertible {
@@ -295,7 +299,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                 let uid = tag.identifier.hex
                 log("NFC: IC identifier: \(uid)")
 
-                // Libre 3: extract the 24-byte patchInfo trimming the leading 0xA5 dummy bytes + 0x00 and verifying the final CRC16
+                // Libre 3: extract the 24-byte patchInfo trimming the leading 0xA5 dummy bytes and the 0x00 flag and verifying the final CRC16
                 if patchInfo.count >= 28 && patchInfo[0] == 0xA5 {
                     let crc = UInt16(patchInfo.suffix(2))
                     let info = Data(patchInfo[patchInfo.count - 26 ... patchInfo.count - 3])

@@ -899,30 +899,32 @@ extension String {
         // let output = "A5002BC7291932189F36B26CD01E306209F0".bytes  // TEST
 
         let output = Data(output.drop(while: { $0 == 0xA5 }))
+        let flag = output[0]
+        let response = Data(output.dropFirst())
 
-        if output[0] == 0x01 && output.count == 2 {
-            log("NFC: \(type) activation error: 0x\(output.hex)")
-            // getting 0x01b0 on an expired sensor
-            // getting 0x01b1 on a sensor activated by the reader
-            // getting error 0xc2 when altering crc16
-            // getting error 0xc1 when omitting crc16
+        if flag == 0x01 && response.count == 1 {
+            log("NFC: \(type) activation response: error code 0x\(response.hex)")
+            // getting 0xb0 / 0xb2 on an expired sensor
+            // getting 0xb1 on a sensor activated by the reader
+            // getting NFC error 0xc2 when altering crc16
+            // getting NFC error 0xc1 when omitting crc16
         }
 
-        if output[0] == 0x00 && output.count == 17 {
+        if flag == 0x00 && response.count == 16 {
 
-            // i.e. 002BC7291932189F36B26CD01E306209F0 ->
+            // i.e. 2BC7291932189F36B26CD01E306209F0 ->
             // BD_Addr = 2B C7 29 19 32 18 (18:32:19:29:C7:2B)
             // BLE_Key(BLE_Pin) = 9F36B26C
             // A_UTC = 1647320784 (0xD01E3062)
             // APP_CRC16 = 09 F0
 
             let activationResponse = ActivationResponse(
-                bdAddress: Data(output[1 ..< 7].reversed()),
-                BLE_Pin:   output.subdata(in: 7 ..< 11),
-                activationTime: UInt32(output.subdata(in: 11 ..< 15))
+                bdAddress: Data(response[0 ..< 6].reversed()),
+                BLE_Pin:   response.subdata(in: 6 ..< 10),
+                activationTime: UInt32(response.subdata(in: 10 ..< 14))
             )
-            let crc = UInt16(output[15 ... 16])
-            let computedCrc = output[1 ... 14].crc16
+            let crc = UInt16(response[14 ... 15])
+            let computedCrc = response[0 ... 13].crc16
             log("NFC: \(type) activation response: \(activationResponse), BLE address: \(activationResponse.bdAddress.hexAddress), BLE PIN: \(activationResponse.BLE_Pin.hex), activation time: \(Date(timeIntervalSince1970: Double(activationResponse.activationTime))), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
 
             transmitter?.macAddress = activationResponse.bdAddress

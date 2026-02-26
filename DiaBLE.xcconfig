@@ -3,7 +3,7 @@ PRODUCT_BUNDLE_IDENTIFIER = com.$(DEVELOPMENT_TEAM).DiaBLE
 WATCHKIT_COMPANION_APP_BUNDLE_IDENTIFIER = com.$(DEVELOPMENT_TEAM).DiaBLE
 APP_GROUP_ID = group.com.$(DEVELOPMENT_TEAM).DiaBLE
 
-// Comment out all the following lines in DiaBLEOverride.xcconfig
+// Comment out all the following lines in DiaBLEOverride.xcconfig:
 MARKETING_VERSION = 0.0.1
-CURRENT_PROJECT_VERSION = 174
+CURRENT_PROJECT_VERSION = 175
 #include? "DiaBLEOverride.xcconfig"
