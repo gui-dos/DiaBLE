@@ -27,7 +27,11 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 main.errorStatus("Bluetooth on but stopped")
             } else {
                 log("Bluetooth: state: powered on")
-                if !(settings.preferredDevicePattern.matches("abbott") || settings.preferredDevicePattern.matches("dexcom")) {
+                if settings.preferredDevicePattern.matches("band"),
+                   let peripheral = manager.retrieveConnectedPeripherals(withServices: [CBUUID(string: BLE.UUID.heartRate.rawValue)]).first {
+                    log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
+                    centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: BLE.UUID.heartRate.rawValue)]], rssi: 0)
+                } else if !(settings.preferredDevicePattern.matches("abbott") || settings.preferredDevicePattern.matches("dexcom")) {
                     main.status("Scanning...")
                     log("Bluetooth: scanning...")
                     manager.scanForPeripherals(withServices: nil, options: nil)
