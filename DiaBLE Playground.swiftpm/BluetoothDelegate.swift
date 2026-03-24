@@ -768,6 +768,9 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             case .manufacturer:
                 app.device.manufacturer = data.string
 
+            case .heartRateMeasurement:
+                parseHeartRate(data: data, device: app.device)
+
             case .bloodPressureMeasurement:
                 parseBloodPressure(data: data, device: app.device)
 
@@ -816,6 +819,71 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 app.transmitter.buffer = Data()
             }
         }
+    }
+
+
+    func parseHeartRate(data: Data, device: Device) {
+        guard data.count > 0 else { return }
+
+        var index = 0
+        let flags = data[index]
+        index += 1
+
+        // Bit 0: Heart Rate Value Format (0: UInt8, 1: UInt16)
+        let hrValueFormat = flags & 1 << 0 != 0
+
+        // Bit 1: Sensor Contact Status support
+        let sensorContactSupported = flags & 1 << 1 != 0
+
+        // Bit 2: Sensor Contact Status
+        let sensorInContact = flags & 1 << 2 != 0
+
+        // Bit 3: Energy Expended Status support
+        let energyExpendedSupported = flags & 1 << 3 != 0
+
+        // Bit 4: RR-Interval presence
+        let rrIntervalPresent = flags & 1 << 4 != 0
+
+        var heartRate: Int
+        if hrValueFormat {
+            heartRate = Int(data[index]) + Int(data[index + 1]) << 8
+            index += 2
+        } else {
+            heartRate = Int(data[index])
+            index += 1
+        }
+
+        var energyExpended: Int?
+        if energyExpendedSupported {
+            energyExpended = Int(data[index]) + Int(data[index + 1]) << 8
+            index += 2
+        }
+
+        // Time intervals between heartbeats
+        var rrIntervals: [Int] = []
+        if rrIntervalPresent {
+            while index < data.count - 1 {
+                let rrInterval = Int(data[index]) + Int(data[index + 1]) << 8
+                rrIntervals.append(rrInterval)
+                index += 2
+            }
+        }
+
+        var msg = "heart rate: \(heartRate) BPM"
+
+        if sensorContactSupported {
+            msg.append(", sensor in contact: \(sensorInContact ? "yes" : "no")")
+        }
+
+        if let energyExpended {
+            msg.append(", energy expended: \(energyExpended) kJ")
+        }
+
+        if !rrIntervals.isEmpty {
+            msg.append(", RR-intervals: \(rrIntervals.map(String.init).joined(separator: ", "))")
+        }
+
+        log("Bluetooth: \(device.name): \(msg)")
     }
 
 

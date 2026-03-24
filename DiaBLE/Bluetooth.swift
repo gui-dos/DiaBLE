@@ -31,7 +31,6 @@ struct BLE {
         case configuration  = "2902"
         case dfu            = "FE59"
 
-        // Mi Band
         case immediateAlert = "1802"
         case alert          = "1811"
 
@@ -48,6 +47,13 @@ struct BLE {
 
         case continuity     = "D0611E78-BBB4-4591-A5F8-487910AE4366"
         case continuity1    = "8667556C-9A37-4C91-84ED-54EE27D90049"
+
+        // Mi Band
+        // kCBAdvDataServiceData: FE95 = {length = 11, bytes = 0x1359ff59359d69c9c33404}
+        // service FE95: 0050, 005E, 005F
+        // service FDAB: 0001, 0002, 0003
+        // https://codeberg.org/Freeyourgadget/Gadgetbridge/src/branch/master/app/src/main/java/nodomain/freeyourgadget/gadgetbridge/service/devices/xiaomi/XiaomiUuids.java
+
 
 
         var description: String {
