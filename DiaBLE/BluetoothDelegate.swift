@@ -407,7 +407,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
 
             } else if let uuid = BLE.UUID(rawValue: uuid) {
-                if uuid == .batteryLevel || uuid == .bloodPressureMeasurement {
+                if uuid == .batteryLevel || uuid == .heartRateMeasurement || uuid == .bloodPressureMeasurement {
                     app.device.peripheral?.setNotifyValue(true, for: characteristic)
                 }
 

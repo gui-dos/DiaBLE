@@ -34,7 +34,9 @@ struct BLE {
         // Mi Band
         case immediateAlert = "1802"
         case alert          = "1811"
+
         case heartRate      = "180D"
+        case heartRateMeasurement = "2A37"
 
         case bloodPressure  = "1810"
         case bloodPressureMeasurement = "2A35"
@@ -70,6 +72,7 @@ struct BLE {
             case .immediateAlert: "immediate alert"
             case .alert:          "alert notification"
             case .heartRate:      "heart rate"
+            case .heartRateMeasurement: "heart rate measurement"
             case .bloodPressure:  "blood pressure"
             case .bloodPressureMeasurement: "blood pressure measurement"
             case .bloodPressureFeature:     "blood pressure feature"
