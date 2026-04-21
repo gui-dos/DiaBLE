@@ -206,6 +206,9 @@ class LibreLinkUp: Logging {
     func login() async throws -> (Any, URLResponse) {
 
         // TODO: curl "https://librelinkup.libreview.io/login?app=llu&appVersion=5.0.0.1077&installationId=GUID"
+        //
+        // curl -X POST -H "X-User-Agent: llu;5.0.0.1077;iOS;26.5" "https://lluapi-c-it.libreview.io/v1/login"
+        // {"code":4,"errors":[{"error":"isRequired","key":"email"},{"error":"isRequired","key":"password"},{"error":"isRequired","key":"consents"},{"error":"isRequired","key":"X-Installation-ID"}]}
 
         var request = URLRequest(url: URL(string: "\(siteURL)/\(loginEndpoint)")!)
         let credentials = [
