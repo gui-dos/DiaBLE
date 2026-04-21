@@ -168,7 +168,7 @@ class LibreLinkUp: Logging {
     let measurementsEndpoint = "lsl/api/measurements"
 
     // TODO: curl -H "X-User-Agent: llu;5.0.0.1077;iOS;26.5" "https://lluapi.libreview.io/v1/config?country=IT"
-    
+
     let regions = ["ae", "ap", "au", "ca", "cn", "de", "eu", "eu2", "fr", "jp", "la", "ru", "us"]  // eu2: GB and IE
 
     var regionalSiteURL: String {
@@ -204,6 +204,9 @@ class LibreLinkUp: Logging {
 
     @discardableResult
     func login() async throws -> (Any, URLResponse) {
+
+        // TODO: curl "https://librelinkup.libreview.io/login?app=llu&appVersion=5.0.0.1077&installationId=GUID"
+
         var request = URLRequest(url: URL(string: "\(siteURL)/\(loginEndpoint)")!)
         let credentials = [
             "email": settings.libreLinkUpEmail,

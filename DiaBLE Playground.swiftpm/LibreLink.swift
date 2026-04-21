@@ -204,6 +204,9 @@ class LibreLinkUp: Logging {
 
     @discardableResult
     func login() async throws -> (Any, URLResponse) {
+
+        // TODO: curl "https://librelinkup.libreview.io/login?app=llu&appVersion=5.0.0.1077&installationId=GUID"
+
         var request = URLRequest(url: URL(string: "\(siteURL)/\(loginEndpoint)")!)
         let credentials = [
             "email": settings.libreLinkUpEmail,
