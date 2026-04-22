@@ -205,7 +205,7 @@ import Foundation
     }
 
     var libreLinkUpInstallationId: String = UserDefaults.standard.string(forKey: "libreLinkUpInstallationId")! {
-        didSet { UserDefaults.standard.set(self.libreLinkUpPatientId, forKey: "libreLinkUpInstallationId") }
+        didSet { UserDefaults.standard.set(self.libreLinkUpInstallationId, forKey: "libreLinkUpInstallationId") }
     }
 
     var libreLinkUpCountry: String = UserDefaults.standard.string(forKey: "libreLinkUpCountry")! {
