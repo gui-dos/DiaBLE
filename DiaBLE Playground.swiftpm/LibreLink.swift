@@ -205,22 +205,6 @@ class LibreLinkUp: Logging {
 
         // TODO:
         // curl "https://librelinkup.libreview.io/login?app=llu&appVersion=5.0.0.1077&installationId=GUID"
-        //
-        // curl -X POST -H "X-User-Agent: llu;5.0.0.1077;iOS;26.5" "https://lluapi-c-it.libreview.io/v1/login"
-        // {"code":4,"errors":[{"error":"isRequired","key":"email"},{"error":"isRequired","key":"password"},{"error":"isRequired","key":"consents"},{"error":"isRequired","key":"X-Installation-ID"}]}
-        //
-        //  {
-        //      "email": "xxx@yyy.com",
-        //      "password": "ZZZZZZZZ",
-        //      "consents": [{
-        //          "id": "toullu",
-        //          "action": "accept"
-        //      }, {
-        //          "id": "pp",
-        //          "action": "accept"
-        //      }]
-        //  }
-
 
         // TODO: LLU 5 APIs
         if let storefront = await Storefront.current {
@@ -229,9 +213,53 @@ class LibreLinkUp: Logging {
                 var request = URLRequest(url: URL(string: "https://lluapi.libreview.io/v1/config?country=\(country)")!)
                 request.setValue("llu;5.0.0.1077;iOS;26.5", forHTTPHeaderField: "X-User-Agent")
                 debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), headers: \(request.allHTTPHeaderFields!)")
-                let (data, response) = try await URLSession.shared.data(for: request)
+                var (data, response) = try await URLSession.shared.data(for: request)
                 debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
 
+                // TODO: curl -X POST -H "X-User-Agent: llu;5.0.0.1077;iOS;26.5" "https://lluapi-c-it.libreview.io/v1/login"
+                // {"code":4,"errors":[{"error":"isRequired","key":"email"},{"error":"isRequired","key":"password"},{"error":"isRequired","key":"consents"},{"error":"isRequired","key":"X-Installation-ID"}]}
+                //
+                //  {
+                //      "email": "xxx@yyy.com",
+                //      "password": "ZZZZZZZZ",
+                //      "consents": [{
+                //          "id": "toullu",
+                //          "action": "accept"
+                //      }, {
+                //          "id": "pp",
+                //          "action": "accept"
+                //      }]
+                //  }
+
+                request = URLRequest(url: URL(string: "https://lluapi-c-\(country.lowercased()).libreview.io/v1/login")!)
+                let credentials = [
+                    "email": settings.libreLinkUpEmail,
+                    "password": settings.libreLinkUpPassword
+                ]
+                // TODO: consents,X-Installation-ID
+                request.httpMethod = "POST"
+                let headers = [
+                    "X-User-Agent": "llu;5.0.0.1077;iOS;26.5",
+                    "User-Agent": "Mozilla/5.0",
+                    "Content-Type": "application/json",
+                    // "product": "llu.ios",
+                    // "version": "4.17.0",
+                    // "Accept-Encoding": "gzip, deflate, br",
+                    "Connection": "keep-alive",
+                    // "Pragma": "no-cache",
+                    // "Cache-Control": "no-cache",
+                ]
+                for (header, value) in headers {
+                    request.setValue(value, forHTTPHeaderField: header)
+                }
+                let jsonData = try? JSONSerialization.data(withJSONObject: credentials)
+                request.httpBody = jsonData
+                debugLog("LibreLinkUp: posting to \(request.url!.absoluteString) \(jsonData!.string), headers: \(headers)")
+                (data, response) = try await URLSession.shared.data(for: request)
+                if let response = response as? HTTPURLResponse {
+                    let status = response.statusCode
+                    debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \(status)")
+                }
             }
         }
 
