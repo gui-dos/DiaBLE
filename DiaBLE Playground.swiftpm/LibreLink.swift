@@ -167,8 +167,6 @@ class LibreLinkUp: Logging {
     let connectionsEndpoint = "llu/connections"
     let measurementsEndpoint = "lsl/api/measurements"
 
-    // TODO: curl -H "X-User-Agent: llu;5.0.0.1077;iOS;26.5" "https://lluapi.libreview.io/v1/config?country=IT"
-
     let regions = ["ae", "ap", "au", "ca", "cn", "de", "eu", "eu2", "fr", "jp", "la", "ru", "us"]  // eu2: GB and IE
 
     var regionalSiteURL: String {
@@ -222,6 +220,20 @@ class LibreLinkUp: Logging {
         //          "action": "accept"
         //      }]
         //  }
+
+
+        // TODO: LLU 5 APIs
+        if let storefront = await Storefront.current {
+            let countryCode = storefront.countryCode
+            if let country = countryCodeMap[countryCode] {
+                var request = URLRequest(url: URL(string: "https://lluapi.libreview.io/v1/config?country=\(country)")!)
+                request.setValue("llu;5.0.0.1077;iOS;26.5", forHTTPHeaderField: "X-User-Agent")
+                debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), headers: \(request.allHTTPHeaderFields!)")
+                let (data, response) = try await URLSession.shared.data(for: request)
+                debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
+
+            }
+        }
 
         var request = URLRequest(url: URL(string: "\(siteURL)/\(loginEndpoint)")!)
         let credentials = [
