@@ -833,6 +833,60 @@ class LibreLinkUp: Logging {
         return response
     }
 
+
+    let countryCodeMap: [String: String] = [
+        "ARE": "AE",
+        "ARG": "AR",
+        "AUT": "AT",
+        "AUS": "AU",
+        "BEL": "BE",
+        "BHR": "BH",
+        "BRA": "BR",
+        "CAN": "CA",
+        "CHE": "CH",
+        "CHL": "CL",
+        "CHN": "CN",
+        "COL": "CO",
+        "CZE": "CZ",
+        "DEU": "DE",
+        "DNK": "DK",
+        "EGY": "EG",
+        "ESP": "ES",
+        "FIN": "FI",
+        "FRA": "FR",
+        "GBR": "GB",
+        "GRC": "GR",
+        "HKG": "HK",
+        "HRV": "HR",
+        "IRL": "IE",
+        "ISR": "IL",
+        "IND": "IN",
+        "ITA": "IT",
+        "JOR": "JO",
+        "JPN": "JP",
+        "KWT": "KW",
+        "LBN": "LB",
+        "LUX": "LU",
+        "MEX": "MX",
+        "NLD": "NL",
+        "NOR": "NO",
+        "NZL": "NZ",
+        "OMN": "OM",
+        "POL": "PL",
+        "PRT": "PT",
+        "QAT": "QA",
+        "RUS": "RU",
+        "SAU": "SA",
+        "SWE": "SE",
+        "SGP": "SG",
+        "SVN": "SI",
+        "SVK": "SK",
+        "TUR": "TR",
+        "TWN": "TW",
+        "USA": "US",
+        "ZAF": "ZA"
+    ]
+
 }
 
 
