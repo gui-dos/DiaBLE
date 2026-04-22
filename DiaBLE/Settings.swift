@@ -39,6 +39,7 @@ import Foundation
         "libreLinkUpPassword": "",
         "libreLinkUpUserId": "",
         "libreLinkUpPatientId": "",
+        "libreLinkUpInstallationId": "",
         "libreLinkUpCountry": "",
         "libreLinkUpRegion": "eu",
         "libreLinkUpToken": "",
@@ -196,6 +197,10 @@ import Foundation
 
     var libreLinkUpPatientId: String = UserDefaults.standard.string(forKey: "libreLinkUpPatientId")! {
         didSet { UserDefaults.standard.set(self.libreLinkUpPatientId, forKey: "libreLinkUpPatientId") }
+    }
+
+    var libreLinkUpInstallationId: String = UserDefaults.standard.string(forKey: "libreLinkUpInstallationId")! {
+        didSet { UserDefaults.standard.set(self.libreLinkUpPatientId, forKey: "libreLinkUpInstallationId") }
     }
 
     var libreLinkUpCountry: String = UserDefaults.standard.string(forKey: "libreLinkUpCountry")! {
