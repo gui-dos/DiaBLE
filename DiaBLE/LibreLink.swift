@@ -248,6 +248,14 @@ class LibreLinkUp: Logging {
                 if let response = response as? HTTPURLResponse {
                     let status = response.statusCode
                     debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \(status)")
+                    if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        if let tokenType = json["token_type"] as? String,
+                           let accessToken = json["access_token"] as? String,
+                           let dateOfBirth = json["dateOfBirth"] as? String,
+                           let country = json["country"] as? String {
+                            log("LibreLinkUp: token type: \(tokenType), access token: \(accessToken), date of birth: \(dateOfBirth), country: \(country)")
+                        }
+                    }
                 }
             }
         }
