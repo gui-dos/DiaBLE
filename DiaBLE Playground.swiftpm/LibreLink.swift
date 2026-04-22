@@ -232,11 +232,15 @@ class LibreLinkUp: Logging {
                 //  }
 
                 request = URLRequest(url: URL(string: "https://lluapi-c-\(country.lowercased()).libreview.io/v1/login")!)
-                let credentials = [
+                let credentials: [String : Any] = [
                     "email": settings.libreLinkUpEmail,
-                    "password": settings.libreLinkUpPassword
+                    "password": settings.libreLinkUpPassword,
+                    "consents": [
+                        ["id": "toullu", "action": "accept"],
+                        ["id": "pp", "action": "accept"]
+                    ]
                 ]
-                // TODO: consents,X-Installation-ID
+                // TODO: X-Installation-ID
                 request.httpMethod = "POST"
                 let headers = [
                     "X-User-Agent": "llu;5.0.0.1077;iOS;26.5",
@@ -246,8 +250,8 @@ class LibreLinkUp: Logging {
                     // "version": "4.17.0",
                     // "Accept-Encoding": "gzip, deflate, br",
                     "Connection": "keep-alive",
-                    // "Pragma": "no-cache",
-                    // "Cache-Control": "no-cache",
+                    "Pragma": "no-cache",
+                    "Cache-Control": "no-cache",
                 ]
                 for (header, value) in headers {
                     request.setValue(value, forHTTPHeaderField: header)
