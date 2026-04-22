@@ -216,21 +216,6 @@ class LibreLinkUp: Logging {
                 var (data, response) = try await URLSession.shared.data(for: request)
                 debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
 
-                // TODO: curl -X POST -H "X-User-Agent: llu;5.0.0.1077;iOS;26.5" "https://lluapi-c-it.libreview.io/v1/login"
-                // {"code":4,"errors":[{"error":"isRequired","key":"email"},{"error":"isRequired","key":"password"},{"error":"isRequired","key":"consents"},{"error":"isRequired","key":"X-Installation-ID"}]}
-                //
-                //  {
-                //      "email": "xxx@yyy.com",
-                //      "password": "ZZZZZZZZ",
-                //      "consents": [{
-                //          "id": "toullu",
-                //          "action": "accept"
-                //      }, {
-                //          "id": "pp",
-                //          "action": "accept"
-                //      }]
-                //  }
-
                 request = URLRequest(url: URL(string: "https://lluapi-c-\(country.lowercased()).libreview.io/v1/login")!)
                 let credentials: [String : Any] = [
                     "email": settings.libreLinkUpEmail,
@@ -240,9 +225,9 @@ class LibreLinkUp: Logging {
                         ["id": "pp", "action": "accept"]
                     ]
                 ]
-                // TODO: X-Installation-ID
                 request.httpMethod = "POST"
                 let headers = [
+                    "X-Installation-ID": "0057f7f5-41ee-4416-b4bc-18a841dfba0c", // TEST
                     "X-User-Agent": "llu;5.0.0.1077;iOS;26.5",
                     "User-Agent": "Mozilla/5.0",
                     "Content-Type": "application/json",
