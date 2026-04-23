@@ -15,11 +15,12 @@ struct WebView: UIViewRepresentable {
         webView.navigationDelegate = delegate
         webView.uiDelegate = delegate
         (delegate as? Nightscout)?.webView = webView
+        (delegate as? LibreLinkUp)?.webView = webView
         return webView
     }
 
     func updateUIView(_ view: WKWebView, context: Context) {
-        var url = "https://" + site
+        var url = site.hasPrefix("https://") ? site : "https://" + site
         if !endpoint.isEmpty {
             url += ("/" + endpoint)
         }
