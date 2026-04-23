@@ -361,7 +361,7 @@ struct OnlineView: View, LoggingView {
                             }
 
                             WebView(site: "https://librelinkup.libreview.io/login",
-                                    query: "app=llu&appVersion=5.0.0.1077&installationId=" + settings.libreLinkUpInstallationId + "&osType=iOS&osVersion=26.5&locale=en-US&" + settings.libreLinkUpCountry,
+                                    query: "app=llu&appVersion=5.0.0.1077&installationId=" + settings.libreLinkUpInstallationId + "&osType=iOS&osVersion=26.5&locale=en-US&country=" + settings.libreLinkUpCountry,
                                     delegate: app.main.libreLinkUp)
                             .frame(height: proxy.size.height * 0.60)
 
