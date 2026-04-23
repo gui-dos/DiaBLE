@@ -253,7 +253,7 @@ class LibreLinkUp: Logging {
                            let accessToken = json["access_token"] as? String,
                            let dateOfBirth = json["dateOfBirth"] as? String,
                            let country = json["country"] as? String {
-                            log("LibreLinkUp: token type: \(tokenType), access token: \(accessToken), date of birth: \(dateOfBirth), country: \(country)")
+                            log("LibreLinkUp: token type: \(tokenType), access token: \(accessToken) (JWT payload: \(decodeJWT(accessToken) ?? ["": "TODO"])), date of birth: \(dateOfBirth), country: \(country)")
                         }
                     }
                 }
@@ -338,11 +338,6 @@ class LibreLinkUp: Logging {
                         }
 
                         // TODO: {"status":4,"error":{"message":"couldNotLoadPatient"}}, status: 200 with wrong regional servers
-
-                        // https://github.com/poml88/FLwatch/blob/a4fdf7b/SharedPhoneWatch/LibreLinkUp.swift#L249
-                        // let mockupData = """
-                        // {"status":4,"data":{"step":{"type":"tou","componentName":"AcceptDocument","props":{"reaccept":true,"titleKey":"Common.termsOfUse","type":"tou"}},"user":{"accountType":"pat","country":"DE","uiLanguage":"de-DE"},"authTicket":{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJjMTFhMmNlLTY1MmYtMTFlZi1hOGY5LWU2NTlhODBiNTU2OSIsImZpcnN0TmFtZSI6IkxpYnJlICIsImxhc3ROYW1lIjoiV3Jpc3QiLCJjb3VudHJ5IjoiREUiLCJyZWdpb24iOiJkZSIsInJvbGUiOiJwYXRpZW50IiwiZW1haWwiOiJsaWJyZXdpZGdldEBjbWRsaW5lLm5ldCIsImMiOjEsInMiOiJsbHUuaW9zIiwiZXhwIjoxNzI3MzQyNTE4fQ._-kekmE1JEmpmdUUhpKTyqg15xwGXLSo3vh9wbTLVn8","expires":1727342518,"duration":3600000}}}
-                        // """.data(using: .utf8)!
 
                         if status == 4 {
                             if let data,
