@@ -223,6 +223,17 @@ class LibreLinkUp: NSObject, Logging {
                 debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), headers: \(request.allHTTPHeaderFields!)")
                 var (data, response) = try await URLSession.shared.data(for: request)
                 debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
+                do {
+                    if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let base = json["base"] as? [String: Any],
+                       let supportedCountries = base["supportedCountries"] as? [String: String] {
+                        // RU and CN excluded
+                        debugLog("LibreLinkUp: \(supportedCountries.count) supported countries: \(supportedCountries.sorted(by: <))")
+                    }
+                } catch {
+                    log("LibreLinkUp: error while decoding response: \(error.localizedDescription)")
+                    throw LibreLinkUpError.jsonDecoding
+                }
 
                 request = URLRequest(url: URL(string: "https://lluapi-c-\(country.lowercased()).libreview.io/v1/login")!)
                 let credentials: [String : Any] = [
