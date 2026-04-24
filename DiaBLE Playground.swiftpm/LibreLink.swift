@@ -255,12 +255,10 @@ class LibreLinkUp: NSObject, Logging {
                     "X-User-Agent": "llu;5.0.0.1077;iOS;26.5",
                     "User-Agent": "Mozilla/5.0",
                     "Content-Type": "application/json",
-                    // "product": "llu.ios",
-                    // "version": "4.17.0",
-                    // "Accept-Encoding": "gzip, deflate, br",
+                    "Accept-Encoding": "gzip, deflate, br, zstd",
                     "Connection": "keep-alive",
                     "Pragma": "no-cache",
-                    "Cache-Control": "no-cache",
+                    "Cache-Control": "no-cache"
                 ]
                 for (header, value) in headers {
                     request.setValue(value, forHTTPHeaderField: header)
@@ -277,13 +275,75 @@ class LibreLinkUp: NSObject, Logging {
                            let accessToken = json["access_token"] as? String,
                            let dateOfBirth = json["dateOfBirth"] as? String,
                            let country = json["country"] as? String {
-                            log("LibreLinkUp: token type: \(tokenType), access token: \(accessToken) (JWT payload: \(decodeJWT(accessToken) ?? ["": "TODO"])), date of birth: \(dateOfBirth), country: \(country)")
+                            let jwtPayload = decodeJWT(accessToken)
+                            log("LibreLinkUp: token type: \(tokenType), access token: \(accessToken) (JWT payload: \(jwtPayload ?? ["": "TODO"])), date of birth: \(dateOfBirth), country: \(country)")
+                            let id = jwtPayload?["id"] as? String ?? ""
+                            let iid = jwtPayload?["iid"] as? String ?? ""
+                            debugLog("LibreLinkUp: JWT payload: user id: \(id), installation id: \(iid)")
 
                             // TODO: https://lluapi-c-{country}.libreview.io/
                             // GET  /v1/caregivers/{userId}/connections?include=latest-reading
                             // PUT  /v1/caregivers/{userId}/device-details
                             // GET  /v1/caregivers/{userId}/connections/patients/{patientId}/graph
                             // GET  /v1/caregivers/{userId}/invitations
+
+                            let userId = id // settings.libreLinkUpUserId
+                            let requestURL = "https://lluapi-c-\(country.lowercased()).libreview.io/v1/caregivers/\(userId)/connections?include=latest-reading"
+
+                            if true { // TODO: settings.libreLinkUpFollowing {
+                                log("LibreLinkUp: getting connections for follower user id: \(userId)")
+                                var request = URLRequest(url: URL(string: requestURL)!)
+                                let headers = [
+                                    "x-installation-id": iid, // settings.libreLinkUpInstallationId,
+                                    "x-user-agent": "llu;5.0.0.1077;iOS;26.5",
+                                    // TODO: "x-lluapi-v": "5.0.0.1077",
+                                    // TODO: "x-lluapi-id": "1777036952@866674b9-18b7-4a6f-8ce3-77112e43aea1", // {ms_timestamp}@{installation_uuid}
+                                    // TODO: "x-lluapi-sv": "1",
+                                    "Accept": "application/json",
+                                    "User-Agent": "Mozilla/5.0",
+                                    "Content-Type": "application/json",
+                                    "Accept-Encoding": "gzip, deflate, br",
+                                    "Connection": "keep-alive",
+                                    "Pragma": "no-cache",
+                                    "Cache-Control": "no-cache"
+                                ]
+                                var authenticatedHeaders = headers
+                                authenticatedHeaders["Authorization"] = "Bearer \(accessToken)"
+                                // authenticatedHeaders["Authorization"] = "Bearer \(settings.libreLinkUpToken)"
+                                // authenticatedHeaders["Account-Id"] = settings.libreLinkUpUserId.SHA256
+                                for (header, value) in authenticatedHeaders {
+                                    request.setValue(value, forHTTPHeaderField: header)
+                                }
+                                debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
+                                let (data, response) = try await URLSession.shared.data(for: request)
+                                debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
+
+                                // TODO:
+                                // {"code":35}, status: 500
+
+                                // https://www.perplexity.ai/computer/a/llu-v5-investigation-report-jgxtdKsOS5.9.aqmVmgzYw?fbclid=IwY2xjawRWpvFleHRuA2FlbQIxMABzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEekNxHZnyCFAo8ncJQ8VZ29bDyfe7pZA7VrTAJBbk_e3wtlhHXaTwVA-Otj6I_aem_T5C-lDh1o2k-2LDz7yz-6Q
+
+                                // code  status description
+                                // ------------------------
+                                // 35    500    x-lluapi-sv header absent — server rejects data request
+                                // 34    501    Server-side error after device-details PUT (session state issue)
+                                // 5     400    Wrong regional endpoint (unsupported country in API region)
+                                // 3     400    Invalid request (missing required headers)
+
+                                if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                                   let data = json["data"] as? String,
+                                   let signature = json["signature"] as? String {
+                                    debugLog("LibreLinkUp: base64-encoded AES-256-GCM ciphertext: \(data), base64-encoded RSA-PSS signature: \(signature)")
+
+                                    // if data.count > 0 {
+                                    //     let connection = data[0]
+                                    //     let patientId = connection["patientId"] as! String
+                                    //     log("LibreLinkUp: first patient Id: \(patientId)")
+                                    //     settings.libreLinkUpPatientId = patientId
+                                    // }
+
+                                }
+                            }
                         }
                     }
                 }
@@ -423,14 +483,14 @@ class LibreLinkUp: NSObject, Logging {
 
                         if let data,
                            let user = data["user"] as? [String: Any],
-                           let id = user["id"] as? String,
+                           let userId = user["id"] as? String,
                            let country = user["country"] as? String,
                            let authTicketDict = data["authTicket"] as? [String: Any],
                            let authTicketData = try? JSONSerialization.data(withJSONObject: authTicketDict),
                            let authTicket = try? JSONDecoder().decode(AuthTicket.self, from: authTicketData) {
-                            log("LibreLinkUp: user id: \(id), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires))) (JWT payload: \(decodeJWT(authTicket.token) ?? ["": "TODO"]))")
-                            settings.libreLinkUpUserId = id
-                            settings.libreLinkUpPatientId = id  // avoid scraping patientId when following ourselves
+                            log("LibreLinkUp: user id: \(userId), country: \(country), authTicket: \(authTicket), expires on \(Date(timeIntervalSince1970: Double(authTicket.expires))) (JWT payload: \(decodeJWT(authTicket.token) ?? ["": "TODO"]))")
+                            settings.libreLinkUpUserId = userId
+                            settings.libreLinkUpPatientId = userId  // avoid scraping patientId when following ourselves
                             settings.libreLinkUpCountry = country
                             settings.libreLinkUpToken = authTicket.token
                             settings.libreLinkUpTokenExpirationDate = Date(timeIntervalSince1970: Double(authTicket.expires))
@@ -472,7 +532,7 @@ class LibreLinkUp: NSObject, Logging {
                             }
 
                             if settings.libreLinkUpFollowing {
-                                log("LibreLinkUp: getting connections for follower user id: \(id)")
+                                log("LibreLinkUp: getting connections for follower user id: \(userId)")
                                 var request = URLRequest(url: URL(string: "\(regionalSiteURL)/\(connectionsEndpoint)")!)
                                 var authenticatedHeaders = headers
                                 authenticatedHeaders["Authorization"] = "Bearer \(settings.libreLinkUpToken)"
