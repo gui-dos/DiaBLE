@@ -226,9 +226,12 @@ class LibreLinkUp: NSObject, Logging {
                 do {
                     if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                        let base = json["base"] as? [String: Any],
-                       let supportedCountries = base["supportedCountries"] as? [String: String] {
-                        // RU and CN excluded
-                        debugLog("LibreLinkUp: \(supportedCountries.count) supported countries: \(supportedCountries.sorted(by: <))")
+                       // RU and CN excluded
+                       let supportedCountries = base["supportedCountries"] as? [String: String],
+                       // EU both e.g.
+                       let segmentWorkspace = base["segmentWorkspace"] as? String,
+                       let segmentRegion = base["segmentRegion"] as? String {
+                        debugLog("LibreLinkUp: \(supportedCountries.count) supported countries: \(supportedCountries.sorted(by: <)), segment workspace: \(segmentWorkspace), region: \(segmentRegion)")
                     }
                 } catch {
                     log("LibreLinkUp: error while decoding response: \(error.localizedDescription)")
