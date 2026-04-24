@@ -296,9 +296,9 @@ class LibreLinkUp: NSObject, Logging {
                                 let headers = [
                                     "x-installation-id": iid, // settings.libreLinkUpInstallationId,
                                     "x-user-agent": "llu;5.0.0.1077;iOS;26.5",
-                                    // TODO: "x-lluapi-v": "5.0.0.1077",
-                                    // TODO: "x-lluapi-id": "1777036952@866674b9-18b7-4a6f-8ce3-77112e43aea1", // {ms_timestamp}@{installation_uuid}
-                                    // TODO: "x-lluapi-sv": "1",
+                                    "x-lluapi-v": "5.0.0.1077",
+                                    "x-lluapi-id": "9999999999@\(iid)", // {ms_timestamp}@{installation_uuid}
+                                    "x-lluapi-sv": "1",
                                     "Accept": "application/json",
                                     "User-Agent": "Mozilla/5.0",
                                     "Content-Type": "application/json",
