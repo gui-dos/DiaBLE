@@ -278,6 +278,12 @@ class LibreLinkUp: NSObject, Logging {
                            let dateOfBirth = json["dateOfBirth"] as? String,
                            let country = json["country"] as? String {
                             log("LibreLinkUp: token type: \(tokenType), access token: \(accessToken) (JWT payload: \(decodeJWT(accessToken) ?? ["": "TODO"])), date of birth: \(dateOfBirth), country: \(country)")
+
+                            // TODO: https://lluapi-c-{country}.libreview.io/
+                            // GET  /v1/caregivers/{userId}/connections?include=latest-reading
+                            // PUT  /v1/caregivers/{userId}/device-details
+                            // GET  /v1/caregivers/{userId}/connections/patients/{patientId}/graph
+                            // GET  /v1/caregivers/{userId}/invitations
                         }
                     }
                 }
