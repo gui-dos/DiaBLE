@@ -349,11 +349,11 @@ class LibreLinkUp: NSObject, Logging {
                             requestURL = "https://lluapi-c-\(country.lowercased()).libreview.io/v1/caregivers/\(userId)/connections/patients/\(patientId)/graph"
                             var request = URLRequest(url: URL(string: requestURL)!)
                             let headers = [
-                                // "x-installation-id": iid, // settings.libreLinkUpInstallationId,
+                                "x-installation-id": iid, // settings.libreLinkUpInstallationId,
                                 "x-user-agent": "llu;5.0.0.1077;iOS;26.5",
-                                // "x-lluapi-v": "5.0.0.1077",
-                                // "x-lluapi-id": "9999999999@\(iid)", // {ms_timestamp}@{installation_uuid}
-                                // "x-lluapi-sv": "1",
+                                "x-lluapi-v": "5.0.0.1077",
+                                "x-lluapi-id": "9999999999@\(iid)", // {ms_timestamp}@{installation_uuid}
+                                "x-lluapi-sv": "1",
                                 "Accept": "application/json",
                                 "User-Agent": "Mozilla/5.0",
                                 "Content-Type": "application/json",
@@ -375,6 +375,11 @@ class LibreLinkUp: NSObject, Logging {
                                 let status = (response as! HTTPURLResponse).statusCode
                                 debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \(status)")
                                 // TODO: {"status":911}: server maintenance
+                                if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                                   let data = json["data"] as? String,
+                                   let signature = json["signature"] as? String {
+                                    debugLog("LibreLinkUp: base64-encoded AES-256-GCM ciphertext: \(data), base64-encoded RSA-PSS signature: \(signature)")
+                                }
                             } catch {
                                 log("LibreLinkUp: server error: \(error.localizedDescription)")
                                 throw LibreLinkUpError.noConnection
