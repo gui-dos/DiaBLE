@@ -211,13 +211,11 @@ class LibreLinkUp: NSObject, Logging {
     @discardableResult
     func login() async throws -> (Any, URLResponse) {
 
-        // TODO:
-        // curl "https://librelinkup.libreview.io/login?app=llu&appVersion=5.0.0.1077&installationId=GUID"
+        // LLU 5 APIs:
 
-        // TODO: LLU 5 APIs
         if let storefront = await Storefront.current {
             let countryCode = storefront.countryCode
-            if let country = countryCodeMap[countryCode] {
+            if let country = countryISOCodes[countryCode] {
                 var request = URLRequest(url: URL(string: "https://lluapi.libreview.io/v1/config?country=\(country)")!)
                 request.setValue("llu;5.0.0.1077;iOS;26.5", forHTTPHeaderField: "X-User-Agent")
                 debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), headers: \(request.allHTTPHeaderFields!)")
@@ -288,7 +286,7 @@ class LibreLinkUp: NSObject, Logging {
                             // GET  /v1/caregivers/{userId}/invitations
 
                             let userId = id // settings.libreLinkUpUserId
-                            let requestURL = "https://lluapi-c-\(country.lowercased()).libreview.io/v1/caregivers/\(userId)/connections?include=latest-reading"
+                            var requestURL = "https://lluapi-c-\(country.lowercased()).libreview.io/v1/caregivers/\(userId)/connections?include=latest-reading"
 
                             if true { // TODO: settings.libreLinkUpFollowing {
                                 log("LibreLinkUp: getting connections for follower user id: \(userId)")
@@ -325,6 +323,7 @@ class LibreLinkUp: NSObject, Logging {
 
                                 // code  status description
                                 // ------------------------
+                                // 36    500
                                 // 35    500    x-lluapi-sv header absent — server rejects data request
                                 // 34    501    Server-side error after device-details PUT (session state issue)
                                 // 5     400    Wrong regional endpoint (unsupported country in API region)
@@ -343,6 +342,42 @@ class LibreLinkUp: NSObject, Logging {
                                     // }
 
                                 }
+                            }
+
+                            let patientId = settings.libreLinkUpPatientId.isEmpty ? userId : settings.libreLinkUpPatientId
+                            // TODO: "accounts" instead of "patients" when "app" is "libre1" (Trident?)
+                            requestURL = "https://lluapi-c-\(country.lowercased()).libreview.io/v1/caregivers/\(userId)/connections/patients/\(patientId)/graph"
+                            var request = URLRequest(url: URL(string: requestURL)!)
+                            let headers = [
+                                // "x-installation-id": iid, // settings.libreLinkUpInstallationId,
+                                "x-user-agent": "llu;5.0.0.1077;iOS;26.5",
+                                // "x-lluapi-v": "5.0.0.1077",
+                                // "x-lluapi-id": "9999999999@\(iid)", // {ms_timestamp}@{installation_uuid}
+                                // "x-lluapi-sv": "1",
+                                "Accept": "application/json",
+                                "User-Agent": "Mozilla/5.0",
+                                "Content-Type": "application/json",
+                                "Accept-Encoding": "gzip, deflate, br",
+                                "Connection": "keep-alive",
+                                "Pragma": "no-cache",
+                                "Cache-Control": "no-cache"
+                            ]
+                            var authenticatedHeaders = headers
+                            authenticatedHeaders["Authorization"] = "Bearer \(accessToken)"
+                            // authenticatedHeaders["Authorization"] = "Bearer \(settings.libreLinkUpToken)"
+                            // authenticatedHeaders["Account-Id"] = settings.libreLinkUpUserId.SHA256
+                            for (header, value) in authenticatedHeaders {
+                                request.setValue(value, forHTTPHeaderField: header)
+                            }
+                            debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
+                            do {
+                                let (data, response) = try await URLSession.shared.data(for: request)
+                                let status = (response as! HTTPURLResponse).statusCode
+                                debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \(status)")
+                                // TODO: {"status":911}: server maintenance
+                            } catch {
+                                log("LibreLinkUp: server error: \(error.localizedDescription)")
+                                throw LibreLinkUpError.noConnection
                             }
                         }
                     }
@@ -956,7 +991,7 @@ class LibreLinkUp: NSObject, Logging {
     }
 
 
-    let countryCodeMap: [String: String] = [
+    let countryISOCodes: [String: String] = [
         "ARE": "AE",
         "ARG": "AR",
         "AUT": "AT",

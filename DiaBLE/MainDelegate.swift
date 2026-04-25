@@ -96,6 +96,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
 
             settings.lastOnlineDate = .distantPast
             libreLinkUp = LibreLinkUp(main: self)
+            // settings.libreLinkUpUserId = "" // enforce re-login for testing
             if settings.selectedService == .libreLinkUp {
                 await libreLinkUp?.reload(enforcing: true)
             }
