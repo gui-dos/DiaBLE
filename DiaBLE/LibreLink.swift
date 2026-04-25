@@ -268,6 +268,28 @@ class LibreLinkUp: NSObject, Logging {
                 if let response = response as? HTTPURLResponse {
                     let status = response.statusCode
                     debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \(status)")
+
+                    // https://www.perplexity.ai/computer/a/llu-v5-investigation-report-jgxtdKsOS5.9.aqmVmgzYw?fbclid=IwY2xjawRWpvFleHRuA2FlbQIxMABzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEekNxHZnyCFAo8ncJQ8VZ29bDyfe7pZA7VrTAJBbk_e3wtlhHXaTwVA-Otj6I_aem_T5C-lDh1o2k-2LDz7yz-6Q
+
+                    // code  status description
+                    // ------------------------
+                    // 36    500
+                    // 35    500    x-lluapi-sv header absent — server rejects data request
+                    // 34    501    Server-side error after device-details PUT (session state issue)
+                    // 5     400    Wrong regional endpoint (unsupported country in API region)
+                    // 3     400    Invalid request (missing required headers)
+
+                    if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let code = json["code"] as? Int {
+                        if code == 35 || code == 36 {
+                            debugLog("LibreLinkUp: server error code \(code): x-lluapi-* headers incorrect or absent")
+                        }
+                        // {"code":5,"errors":[{"error":"unsupported country in API region","unsupported country":"IT"}]}, status: 400
+                        if let errors = json["errors"] as? [[String: Any]] {
+                            debugLog("LibreLinkUp: server error code \(code): \(errors)")
+                        }
+                    }
+
                     if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
                         if let tokenType = json["token_type"] as? String,
                            let accessToken = json["access_token"] as? String,
@@ -315,19 +337,6 @@ class LibreLinkUp: NSObject, Logging {
                                 debugLog("LibreLinkUp: URL request: \(request.url!.absoluteString), authenticated headers: \(request.allHTTPHeaderFields!)")
                                 let (data, response) = try await URLSession.shared.data(for: request)
                                 debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \((response as! HTTPURLResponse).statusCode)")
-
-                                // TODO:
-                                // {"code":35}, status: 500
-
-                                // https://www.perplexity.ai/computer/a/llu-v5-investigation-report-jgxtdKsOS5.9.aqmVmgzYw?fbclid=IwY2xjawRWpvFleHRuA2FlbQIxMABzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEekNxHZnyCFAo8ncJQ8VZ29bDyfe7pZA7VrTAJBbk_e3wtlhHXaTwVA-Otj6I_aem_T5C-lDh1o2k-2LDz7yz-6Q
-
-                                // code  status description
-                                // ------------------------
-                                // 36    500
-                                // 35    500    x-lluapi-sv header absent — server rejects data request
-                                // 34    501    Server-side error after device-details PUT (session state issue)
-                                // 5     400    Wrong regional endpoint (unsupported country in API region)
-                                // 3     400    Invalid request (missing required headers)
 
                                 if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                                    let data = json["data"] as? String,
