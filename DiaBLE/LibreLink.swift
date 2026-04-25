@@ -295,7 +295,7 @@ class LibreLinkUp: NSObject, Logging {
                                     "x-installation-id": iid, // settings.libreLinkUpInstallationId,
                                     "x-user-agent": "llu;5.0.0.1077;iOS;26.5",
                                     "x-lluapi-v": "5.0.0.1077",
-                                    "x-lluapi-id": "9999999999@\(iid)", // {ms_timestamp}@{installation_uuid}
+                                    "x-lluapi-id": String(Int(Date().timeIntervalSince1970)) + "@" + iid,
                                     "x-lluapi-sv": "1",
                                     "Accept": "application/json",
                                     "User-Agent": "Mozilla/5.0",
@@ -353,7 +353,7 @@ class LibreLinkUp: NSObject, Logging {
                                 "x-installation-id": iid, // settings.libreLinkUpInstallationId,
                                 "x-user-agent": "llu;5.0.0.1077;iOS;26.5",
                                 "x-lluapi-v": "5.0.0.1077",
-                                "x-lluapi-id": "9999999999@\(iid)", // {ms_timestamp}@{installation_uuid}
+                                "x-lluapi-id": String(Int(Date().timeIntervalSince1970)) + "@" + iid,
                                 "x-lluapi-sv": "1",
                                 "Accept": "application/json",
                                 "User-Agent": "Mozilla/5.0",
