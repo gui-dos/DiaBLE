@@ -90,7 +90,7 @@ extension UInt64 {
 
 extension String {
     var base64: String? { self.data(using: .utf8)?.base64EncodedString() }
-    var base64Data: Data? { Data(base64Encoded: self) }
+    var base64data: Data? { Data(base64Encoded: self) }
     var SHA1: String { self.data(using: .ascii)!.SHA1 }
     var SHA256: String { self.data(using: .ascii)!.SHA256 }
 
