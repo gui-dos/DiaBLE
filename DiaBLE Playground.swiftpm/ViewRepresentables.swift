@@ -3,7 +3,7 @@ import SwiftUI
 import WebKit
 
 
-struct WebView: UIViewRepresentable {
+struct WebViewRepresentable: UIViewRepresentable {
 
     var site: String
     var endpoint: String = ""

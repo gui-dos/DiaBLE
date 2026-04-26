@@ -183,7 +183,7 @@ struct OnlineView: View, LoggingView {
 
                         @Bindable var app = app
 
-                        WebView(site: settings.nightscoutSite, query: "token=\(settings.nightscoutToken)", delegate: app.main.nightscout )
+                        WebViewRepresentable(site: settings.nightscoutSite, query: "token=\(settings.nightscoutToken)", delegate: app.main.nightscout )
                             .frame(height: proxy.size.height * 0.60)
                             .alert("JavaScript", isPresented: $app.showingJSConfirmAlert) {
                                 Button("OK") { log("JavaScript alert: selected OK") }
@@ -361,7 +361,7 @@ struct OnlineView: View, LoggingView {
                             }
 
                             if settings.userLevel >= .test {
-                                WebView(site: "https://librelinkup.libreview.io",
+                                WebViewRepresentable(site: "https://librelinkup.libreview.io",
                                         endpoint: "login",
                                         query: "app=llu&appVersion=5.0.0.1077&installationId=" + settings.libreLinkUpInstallationId + "&osType=iOS&osVersion=26.5&locale=en-US&country=" + settings.libreLinkUpCountry,
                                         delegate: app.main.libreLinkUp)
