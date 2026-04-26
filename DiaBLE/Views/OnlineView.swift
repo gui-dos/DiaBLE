@@ -362,16 +362,13 @@ struct OnlineView: View, LoggingView {
                             }
 
                             if settings.userLevel >= .test {
-                                if #available(iOS 26.0, *) {
-                                    WebView(url: URL(string: "https://librelinkup.libreview.io/login?app=llu&appVersion=5.0.0.1077&installationId=" + settings.libreLinkUpInstallationId + "&osType=iOS&osVersion=26.5&locale=en-US&country=" + settings.libreLinkUpCountry)!)
-                                        .frame(height: proxy.size.height * 0.60)
-                                } else {
-                                    WebViewRepresentable(site: "https://librelinkup.libreview.io",
-                                                         endpoint: "login",
-                                                         query: "app=llu&appVersion=5.0.0.1077&installationId=" + settings.libreLinkUpInstallationId + "&osType=iOS&osVersion=26.5&locale=en-US&country=" + settings.libreLinkUpCountry,
-                                                         delegate: app.main.libreLinkUp)
+                                WebView(url: URL(string: "https://librelinkup.libreview.io/login?app=llu&appVersion=5.0.0.1077&installationId=" + settings.libreLinkUpInstallationId + "&osType=iOS&osVersion=26.5&locale=en-US&country=" + settings.libreLinkUpCountry)!)
                                     .frame(height: proxy.size.height * 0.60)
-                                }
+                                // WebViewRepresentable(site: "https://librelinkup.libreview.io",
+                                //                      endpoint: "login",
+                                //                      query: "app=llu&appVersion=5.0.0.1077&installationId=" + settings.libreLinkUpInstallationId + "&osType=iOS&osVersion=26.5&locale=en-US&country=" + settings.libreLinkUpCountry,
+                                //                      delegate: app.main.libreLinkUp)
+                                .frame(height: proxy.size.height * 0.60)
                             }
 
                         }
