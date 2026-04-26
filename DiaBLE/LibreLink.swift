@@ -341,8 +341,8 @@ class LibreLinkUp: NSObject, Logging {
                                 if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                                    let data = json["data"] as? String,
                                    let signature = json["signature"] as? String {
-                                    let dataFields = data.components(separatedBy: ".").map { $0.base64data?.hex ?? "" }
-                                    debugLog("LibreLinkUp: base64-decoded nonce, AES-256-GCM ciphertext, tag: \(dataFields), base64-decoded RSA-PSS signature (\(signature.base64data?.count ?? 0) bytes): \(signature.base64data?.hex ?? "")")
+                                    let dataFields = data.components(separatedBy: ".").map { $0.base64Data?.hex ?? "" }
+                                    debugLog("LibreLinkUp: base64-decoded nonce, AES-256-GCM ciphertext, tag: \(dataFields), base64-decoded RSA-PSS signature (\(signature.base64Data?.count ?? 0) bytes): \(signature.base64Data?.hex ?? "")")
 
                                     // if data.count > 0 {
                                     //     let connection = data[0]
@@ -388,8 +388,8 @@ class LibreLinkUp: NSObject, Logging {
                                 if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
                                    let data = json["data"] as? String,
                                    let signature = json["signature"] as? String {
-                                    let dataFields = data.components(separatedBy: ".").map { $0.base64data?.hex ?? "" }
-                                    debugLog("LibreLinkUp: base64-decoded nonce, AES-256-GCM ciphertext, tag: \(dataFields), base64-decoded RSA-PSS signature (\(signature.base64data?.count ?? 0) bytes): \(signature.base64data?.hex ?? "")")
+                                    let dataFields = data.components(separatedBy: ".").map { $0.base64Data?.hex ?? "" }
+                                    debugLog("LibreLinkUp: base64-decoded nonce, AES-256-GCM ciphertext, tag: \(dataFields), base64-decoded RSA-PSS signature (\(signature.base64Data?.count ?? 0) bytes): \(signature.base64Data?.hex ?? "")")
                                 }
                             } catch {
                                 log("LibreLinkUp: server error: \(error.localizedDescription)")
@@ -1114,6 +1114,7 @@ extension LibreLinkUp: WKNavigationDelegate, WKUIDelegate {
         log("LibreLinkUp: create veb view for action: \(navigationAction)")
         //        if navigationAction.targetFrame == nil {
         webView.load(navigationAction.request)
+
         //        }
         return nil
     }
