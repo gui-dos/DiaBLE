@@ -160,7 +160,7 @@ struct LibreViewPercentiles: Codable {
 }
 
 
-class LibreLinkUp: NSObject, Logging {
+class LibreLinkUp: Logging {
 
 #if !os(watchOS)
     nonisolated lazy var webPage: WebPage = MainActor.assumeIsolated { WebPage(navigationDecider: self, dialogPresenter: self) }

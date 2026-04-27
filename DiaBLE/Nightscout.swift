@@ -18,7 +18,7 @@ enum NightscoutError: LocalizedError {
 }
 
 
-class Nightscout: NSObject, Logging {
+class Nightscout: Logging {
 
     var main: MainDelegate!
 
