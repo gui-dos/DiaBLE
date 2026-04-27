@@ -163,7 +163,7 @@ struct LibreViewPercentiles: Codable {
 class LibreLinkUp: NSObject, Logging {
 
 #if !os(watchOS)
-    var webView: WKWebView?
+    nonisolated lazy var webPage: WebPage = MainActor.assumeIsolated { WebPage(navigationDecider: self, dialogPresenter: self) }
 #endif
 
 
@@ -305,6 +305,7 @@ class LibreLinkUp: NSObject, Logging {
                             // GET  /v1/caregivers/{userId}/connections?include=latest-reading
                             // PUT  /v1/caregivers/{userId}/device-details
                             // GET  /v1/caregivers/{userId}/connections/patients/{patientId}/graph
+                            // GET  /v1/caregivers/{userId}/connections/patients/{patientId}/logbook
                             // GET  /v1/caregivers/{userId}/invitations
 
                             let userId = id // settings.libreLinkUpUserId
@@ -1094,44 +1095,33 @@ func decodeJWT(_ jwt: String) -> [String: Any]? {
 #if !os(watchOS)
 
 
-extension LibreLinkUp: WKNavigationDelegate, WKUIDelegate {
+extension LibreLinkUp: WebPage.NavigationDeciding {
 
-    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
-        debugLog("LibreLinkUp: decide policy for action \(navigationAction): allow")
-        return(.allow)
+    func decidePolicy(for action: WebPage.NavigationAction, preferences: inout WebPage.NavigationPreferences) async -> WKNavigationActionPolicy {
+        debugLog("LibreLinkUp: decide policy for navigation action: allow")
+        return .allow
     }
 
-    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse) async -> WKNavigationResponsePolicy {
-        debugLog("LibreLinkUp: decide policy for response \(navigationResponse): allow")
-        return(.allow)
+    func decidePolicy(for response: WebPage.NavigationResponse) async -> WKNavigationResponsePolicy {
+        debugLog("LibreLinkUp: decide policy for navigation response: allow")
+        return .allow
     }
+}
 
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        log("LibreLinkUp: webView did fail: \(error.localizedDescription)")
-    }
 
-    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        log("LibreLinkUp: create veb view for action: \(navigationAction)")
-        //        if navigationAction.targetFrame == nil {
-        webView.load(navigationAction.request)
-        //        }
-        return nil
-    }
+extension LibreLinkUp: WebPage.DialogPresenting {
 
-    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-        log("LibreLinkUp: JavaScript alert panel message: \(message)")
+    func handleJavaScriptAlert(message: String, initiatedBy frame: WebPage.FrameInfo) async {
+        log("LibreLinkUp: JavaScript alert message: \(message)")
         app.jsConfirmAlertMessage = message
         app.showingJSConfirmAlert = true
-        // TODO: block web page updates
-        completionHandler()
     }
 
-    func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
-        log("LibreLinkUp: TODO: JavaScript confirm panel message: \(message)")
+    func handleJavaScriptConfirm(message: String, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptConfirmResult {
+        log("LibreLinkUp: TODO: JavaScript confirm message: \(message)")
         app.jsConfirmAlertMessage = message
         app.showingJSConfirmAlert = true
-        // TODO: block web page updates
-        completionHandler(true)
+        return .ok
     }
 }
 

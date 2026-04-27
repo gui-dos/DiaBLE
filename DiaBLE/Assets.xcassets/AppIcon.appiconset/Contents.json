@@ -59,8 +59,7 @@
     },
     {
       "filename" : "Icon-Watch.png",
-      "idiom" : "universal",
-      "platform" : "watchos",
+      "idiom" : "watch",
       "size" : "1024x1024"
     }
   ],

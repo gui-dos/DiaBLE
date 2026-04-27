@@ -23,7 +23,7 @@ class Nightscout: NSObject, Logging {
     var main: MainDelegate!
 
 #if !os(watchOS)
-    var webView: WKWebView?
+    nonisolated lazy var webPage: WebPage = MainActor.assumeIsolated { WebPage(navigationDecider: self, dialogPresenter: self) }
 #endif
 
 
@@ -229,44 +229,33 @@ class Nightscout: NSObject, Logging {
 
 #if !os(watchOS)
 
-extension Nightscout: WKNavigationDelegate, WKUIDelegate {
+extension Nightscout: WebPage.NavigationDeciding {
 
-    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
-        debugLog("Nightscout: decide policy for action \(navigationAction): allow")
-        return(.allow)
+    func decidePolicy(for action: WebPage.NavigationAction, preferences: inout WebPage.NavigationPreferences) async -> WKNavigationActionPolicy {
+        debugLog("Nightscout: decide policy for navigation action: allow")
+        return .allow
     }
 
-    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse) async -> WKNavigationResponsePolicy {
-        debugLog("Nightscout: decide policy for response \(navigationResponse): allow")
-        return(.allow)
+    func decidePolicy(for response: WebPage.NavigationResponse) async -> WKNavigationResponsePolicy {
+        debugLog("Nightscout: decide policy for navigation response: allow")
+        return .allow
     }
+}
 
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        log("Nightscout: webView did fail: \(error.localizedDescription)")
-    }
 
-    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        log("Nightscout: create veb view for action: \(navigationAction)")
-        //        if navigationAction.targetFrame == nil {
-        webView.load(navigationAction.request)
-        //        }
-        return nil
-    }
+extension Nightscout: WebPage.DialogPresenting {
 
-    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
-        log("Nightscout: JavaScript alert panel message: \(message)")
+    func handleJavaScriptAlert(message: String, initiatedBy frame: WebPage.FrameInfo) async {
+        log("Nightscout: JavaScript alert message: \(message)")
         app.jsConfirmAlertMessage = message
         app.showingJSConfirmAlert = true
-        // TODO: block web page updates
-        completionHandler()
     }
 
-    func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
-        log("Nightscout: TODO: JavaScript confirm panel message: \(message)")
+    func handleJavaScriptConfirm(message: String, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptConfirmResult {
+        log("Nightscout: TODO: JavaScript confirm message: \(message)")
         app.jsConfirmAlertMessage = message
         app.showingJSConfirmAlert = true
-        // TODO: block web page updates
-        completionHandler(true)
+        return .ok
     }
 }
 

@@ -1,37 +1,5 @@
 import Foundation
 import SwiftUI
-import WebKit
-
-
-struct WebViewRepresentable: UIViewRepresentable {
-
-    var site: String
-    var endpoint: String = ""
-    var query: String = ""
-    var delegate: (WKNavigationDelegate & WKUIDelegate)!
-
-    func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView(frame: .zero)
-        webView.navigationDelegate = delegate
-        webView.uiDelegate = delegate
-        (delegate as? Nightscout)?.webView = webView
-        (delegate as? LibreLinkUp)?.webView = webView
-        return webView
-    }
-
-    func updateUIView(_ view: WKWebView, context: Context) {
-        var url = site.hasPrefix("https://") ? site : "https://" + site
-        if !endpoint.isEmpty {
-            url += ("/" + endpoint)
-        }
-        if !query.isEmpty {
-            url += ("?" + query)
-        }
-        if let url = URL(string: url) {
-            view.load(URLRequest(url: url))
-        }
-    }
-}
 
 
 // https://createwithplay.com
