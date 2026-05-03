@@ -59,13 +59,13 @@ extension Libre3 {
 
 
     public func encryptPacket(data: Data, type: PacketType, ivEnc: Data, sequenceId: UInt16) -> Data? {
-        let nonce = sequenceId.data + Libre3.packetDescriptors[Int(type.rawValue)] + ivEnc
+        let nonce = sequenceId.data + Data(Libre3.packetDescriptors[Int(type.rawValue)]) + ivEnc
         return aesEncrypt(data: data, nonce: nonce)
     }
 
 
     public func decryptPacket(data: Data, type: PacketType, ivEnc: Data) -> Data? {
-        let nonce = data.suffix(2) + Libre3.packetDescriptors[Int(type.rawValue)] + ivEnc
+        let nonce = data.suffix(2) + Data(Libre3.packetDescriptors[Int(type.rawValue)]) + ivEnc
         return aesDecrypt(data: data, nonce: nonce)
     }
 

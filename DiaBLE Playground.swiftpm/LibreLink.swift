@@ -17,6 +17,8 @@ class LibreLink {
     // .libre2: "FreeStyle Libre 2 – XX"   - https://apps.apple.com/xx/app/freestyle-libre-2-xx/idxxxxxxxxxx
     // .libre3: "FreeStyle Libre 3 - XX"   - https://apps.apple.com/xx/app/freestyle-libre-3-xx/idxxxxxxxxxx
     // .libreX: "Libre by Abbott"          - https://apps.apple.com/xx/app/libre-by-abbott/idxxxxxxxxxx
+    //
+    // https://decrypt.day/app/idXXXXXXXXXX
 
     public static let appStoreIds: [String: [UInt64: SensorFamily]] = [
         "ae": [1303805538: .libre1],
