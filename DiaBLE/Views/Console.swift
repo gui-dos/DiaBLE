@@ -427,7 +427,7 @@ struct ConsoleSidebar: View, LoggingView {
             } label: {
                 VStack {
                     Image(systemName: ["doc.plaintext", "ladybug", "testtube.2", "wand.and.stars"][settings.userLevel.rawValue]).resizable().frame(width: 24, height: 24).offset(y: 2)
-                    Text(["Basic", "Devel", "Test  ", "Hack"][settings.userLevel.rawValue]).font(.caption).offset(y: -4)
+                    Text(["Basic", "Devel", "Test  ", "Hack "][settings.userLevel.rawValue]).font(.caption).offset(y: -4)
                 }
             }
             .background(settings.userLevel != .basic ? Color.accentColor : .clear)
