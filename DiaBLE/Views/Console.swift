@@ -25,11 +25,9 @@ struct Console: View {
     @State private var showingRePairConfirmationDialog = false
     @State private var showingActivateConfirmationDialog = false
     @State private var showingUnlockConfirmationDialog = false
-
-    #if DEBUG
+    // hack user level
     @State private var showingResetConfirmationDialog = false
     @State private var showingProlongConfirmationDialog = false
-    #endif
 
     @State private var showingFilterField = false
     @State private var filterText = ""
@@ -131,29 +129,29 @@ struct Console: View {
                             Label("Dump Memory", systemImage: "cpu")
                         }
 
-                        #if DEBUG
-                        Button {
-                            if app.main.nfc.isAvailable {
-                                settings.logging = true
-                                showingResetConfirmationDialog = true
-                            } else {
-                                showingNFCAlert = true
+                        if settings.userLevel == .hack {
+                            Button {
+                                if app.main.nfc.isAvailable {
+                                    settings.logging = true
+                                    showingResetConfirmationDialog = true
+                                } else {
+                                    showingNFCAlert = true
+                                }
+                            } label: {
+                                Label("Reset", systemImage: "00.circle")
                             }
-                        } label: {
-                            Label("Reset", systemImage: "00.circle")
-                        }
 
-                        Button {
-                            if app.main.nfc.isAvailable {
-                                settings.logging = true
-                                showingProlongConfirmationDialog = true
-                            } else {
-                                showingNFCAlert = true
+                            Button {
+                                if app.main.nfc.isAvailable {
+                                    settings.logging = true
+                                    showingProlongConfirmationDialog = true
+                                } else {
+                                    showingNFCAlert = true
+                                }
+                            } label: {
+                                Label("Prolong", systemImage: "infinity.circle")
                             }
-                        } label: {
-                            Label("Prolong", systemImage: "infinity.circle")
                         }
-                        #endif // DEBUG
 
                     } label: {
                         Label("Hacks", systemImage: "wand.and.stars")
@@ -197,18 +195,20 @@ struct Console: View {
                 app.main.nfc.taskRequest = .unlock
             }
         }
-        #if DEBUG
         .confirmationDialog("Resetting the sensor will clear its measurements memory and put it in an inactivated state.", isPresented: $showingResetConfirmationDialog, titleVisibility: .visible) {
-            Button("Reset", role: .destructive) {
-                app.main.nfc.taskRequest = .reset
+            if settings.userLevel == .hack {
+                Button("Reset", role: .destructive) {
+                    app.main.nfc.taskRequest = .reset
+                }
             }
         }
         .confirmationDialog("Prolonging the sensor will overwrite its maximum life to 0xFFFF minutes (≈ 45.5 days)", isPresented: $showingProlongConfirmationDialog, titleVisibility: .visible) {
-            Button("Prolong", role: .destructive) {
-                app.main.nfc.taskRequest = .prolong
+            if settings.userLevel == .hack {
+                Button("Prolong", role: .destructive) {
+                    app.main.nfc.taskRequest = .prolong
+                }
             }
         }
-        #endif // DEBUG
 
     }
 }
@@ -426,8 +426,8 @@ struct ConsoleSidebar: View, LoggingView {
                 settings.userLevel = UserLevel(rawValue: (settings.userLevel.rawValue + 1) % UserLevel.allCases.count)!
             } label: {
                 VStack {
-                    Image(systemName: ["doc.plaintext", "ladybug", "testtube.2"][settings.userLevel.rawValue]).resizable().frame(width: 24, height: 24).offset(y: 2)
-                    Text(["Basic", "Devel", "Test  "][settings.userLevel.rawValue]).font(.caption).offset(y: -4)
+                    Image(systemName: ["doc.plaintext", "ladybug", "testtube.2", "wand.and.stars"][settings.userLevel.rawValue]).resizable().frame(width: 24, height: 24).offset(y: 2)
+                    Text(["Basic", "Devel", "Test  ", "Hack"][settings.userLevel.rawValue]).font(.caption).offset(y: -4)
                 }
             }
             .background(settings.userLevel != .basic ? Color.accentColor : .clear)

@@ -367,7 +367,7 @@ struct OnlineView: View, LoggingView {
                                     .textSelection(.enabled)
                             }
 
-                            if settings.userLevel >= .test, let libreLinkUp = app.main.libreLinkUp {
+                            if settings.userLevel == .hack, let libreLinkUp = app.main.libreLinkUp {
                                 WebView(libreLinkUp.webPage)
                                     .frame(height: proxy.size.height * 0.60)
                                     .onAppear {

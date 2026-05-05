@@ -200,7 +200,7 @@ struct Console: View, LoggingView {
                 } label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 5).fill(settings.userLevel != .basic ? .blue : .clear)
-                        Image(systemName: ["doc.plaintext", "ladybug", "testtube.2"][settings.userLevel.rawValue]).resizable().frame(width: 22, height: 22)
+                        Image(systemName: ["doc.plaintext", "ladybug", "testtube.2", "wand.and.stars"][settings.userLevel.rawValue]).resizable().frame(width: 22, height: 22)
                             .foregroundStyle(settings.userLevel != .basic ? .black : .blue)
                     }
                     .frame(width: 24, height: 24)
