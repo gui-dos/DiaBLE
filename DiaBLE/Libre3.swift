@@ -543,6 +543,7 @@ extension String {
 
     var patchCertificate: Data = Data()  // 140 bytes
     var ephemeralPrivateKey: P256.KeyAgreement.PrivateKey = .init()
+    var ephemeralPublicKey: Data = Data() // 65-byte uncompressed P-256 returned by initECDH()
     var patchEphemeral: Data = Data()  // 65-byte uncompressed P-256
 
     // CGMSensor and BCSecurityContext members:
@@ -558,6 +559,7 @@ extension String {
     var lastHistoricLifeCount: Int = 0
     var lastHistoricReadingDate: Date = .distantPast
 
+    var securityVersion: Int = 0
 
     func parsePatchInfo() {
 
@@ -566,6 +568,7 @@ extension String {
         log("\(type): product type: \(ProductType(rawValue: productType)?.description ?? "unknown") (0x\(productType.hex))")
 
         let securityVersion = UInt16(patchInfo[0...1])
+        self.securityVersion = Int(securityVersion)
         let localization    = UInt16(patchInfo[2...3])
         let generation      = UInt16(patchInfo[4...5])
         log("\(type): security version: \(securityVersion) (0x\(securityVersion.hex)), localization: \(localization) (0x\(localization.hex)), generation: \(generation) (0x\(generation.hex))")
@@ -632,13 +635,33 @@ extension String {
 
 
     func write(_ data: Data, for uuid: UUID = .challengeData) {
-        let packets = (data.count - 1) / 18 + 1
-        for i in 0 ... packets - 1 {
-            let offset = i * 18
-            let id = Data([UInt8(offset & 0xFF), UInt8(offset >> 8)])
-            let packet = id + data[offset ... min(offset + 17, data.count - 1)]
+        let packetCount = (data.count - 1) / 18 + 1
+        for i in 0 ..< packetCount {
+            let offset = UInt16(i * 18)
+            let packet = offset.data + data[offset ... min(offset + 17, UInt16(data.count - 1))]
             debugLog("Bluetooth: writing packet \(packet.hexBytes) to \(transmitter!.peripheral!.name ?? "unnamed Libre 3")'s \(uuid.description) characteristic")
             transmitter!.write(packet, for: uuid.rawValue, .withResponse)
+        }
+    }
+
+
+    struct PatchCertificate {
+        let header: Data                // 11 bytes: lead 01 + 8-byte sensorUid + 2 trailing bytes
+        let patchStaticPublicKey: Data  // 65 bytes uncompressed P-256 public key
+        let signature: Data             // 64 bytes P-256 ECDSA signature of the previous 76 bytes
+
+        init(data: Data, signingPublicKey: Data) {
+            header = data.subdata(in: 0 ..< 11)
+            patchStaticPublicKey = data.subdata(in: 11 ..< 76)
+            signature = data.subdata(in: 76 ..< 140)
+        }
+
+        // [FSOpenSSL verifyECDSA:rawData:rsSignature:]
+        func verifyECDSA(with signingPublicKey: Data) throws -> Bool {
+            let publicKey = try P256.Signing.PublicKey(x963Representation: signingPublicKey)
+            let ecdsaSignature = try P256.Signing.ECDSASignature(rawRepresentation: signature)
+            let signedPayload = header + patchStaticPublicKey
+            return publicKey.isValidSignature(ecdsaSignature, for: signedPayload)
         }
     }
 
@@ -756,19 +779,29 @@ extension String {
 
                 case .sendCertificate:
                     log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate: \(payload.hex)")
-                    patchCertificate = payload
-                    if settings.userLevel < .test { // not eavesdropping on Trident
-                        debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0D (CMD_KEY_AGREEMENT)")
-                        send(securityCommand: .security_0D)
-                        // TODO:
-                        // Natives.processbar(5, null, null) (CRYPTO_EXTENSION_GENERATE_EPHEMERAL)
-                        // let ephemeralKey = Data((0 ..< 65 ).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })  // TEST random ephemeral
-                        // debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending random 65-byte ephemeral key 0x\(ephemeralKey.hex)")
-                        let ephemeralKey = initECDH()
-                        debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending generated 65-byte P-256 x9.63 ephemeral key 0x\(ephemeralKey.hex)")
-                        write(ephemeralKey, for: .certificateData)
-                        debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0E (CMD_EPHEMERAL_LOAD_DONE)")
-                        send(securityCommand: .ephemeralLoadDone)
+                    if payload.count == 140 {
+                        let certificate = PatchCertificate(data: payload, signingPublicKey: patchSigningKeys[securityVersion].bytes)
+                        let sensorId = certificate.header.subdata(in: 1 ..< 9)
+                        debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed patch certificate, header: \(certificate.header.hex) (sensor id: \(sensorId.hex), current sensor uid: \(settings.currentSensorUid.hex)), patch static public key: \(certificate.patchStaticPublicKey.hex), signature: \(certificate.signature.hex)")
+                        if (try? certificate.verifyECDSA(with: patchSigningKeys[securityVersion].bytes)) == true {
+                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate ECDSA signature verified")
+                        } else {
+                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate ECDSA signature not verified")
+                        }
+                        patchCertificate = payload
+                        if settings.userLevel < .test { // not eavesdropping on Trident
+                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0D (CMD_KEY_AGREEMENT)")
+                            send(securityCommand: .security_0D)
+                            // TODO:
+                            // Natives.processbar(5, null, null) (CRYPTO_EXTENSION_GENERATE_EPHEMERAL)
+                            // let ephemeralKey = Data((0 ..< 65 ).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })  // TEST random ephemeral
+                            // debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending random 65-byte ephemeral key 0x\(ephemeralKey.hex)")
+                            ephemeralPublicKey = initECDH()
+                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending generated 65-byte P-256 x9.63 ephemeral key 0x\(ephemeralPublicKey.hex)")
+                            write(ephemeralPublicKey, for: .certificateData)
+                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0E (CMD_EPHEMERAL_LOAD_DONE)")
+                            send(securityCommand: .ephemeralLoadDone)
+                        }
                     }
 
                 case .ephemeralLoadDone:
@@ -940,8 +973,8 @@ extension String {
     func pair() {
         send(securityCommand: .security_01)
         send(securityCommand: .security_02)
-        let certificate = "03 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 00 01 5F 14 9F E1 01 00 00 00 00 00 00 00 00 04 E2 36 95 4F FD 06 A2 25 22 57 FA A7 17 6A D9 0A 69 02 E6 1D DA FF 40 FB 36 B8 FB 52 AA 09 2C 33 A8 02 32 63 2E 94 AF A8 28 86 AE 75 CE F9 22 CD 88 85 CE 8C DA B5 3D AB 2A 4F 23 9B CB 17 C2 6C DE 74 9E A1 6F 75 89 76 04 98 9F DC B3 F0 C7 BC 1D A5 E6 54 1D C3 CE C6 3E 72 0C D9 B3 6A 7B 59 3C FC C5 65 D6 7F 1E E1 84 64 B9 B9 7C CF 06 BE D0 40 C7 BB D5 D2 2F 35 DF DB 44 58 AC 7C 46 15".bytes
-        write(certificate, for: .certificateData)
+        let appCertificate = appCertificates[securityVersion].bytes
+        write(appCertificate, for: .certificateData)
         send(securityCommand: .certificateLoadDone)
         // TODO
         if settings.userLevel == .test {
@@ -1082,6 +1115,8 @@ extension String {
 
     // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/ECDHCrypto.java
 
+    // indexed by the sensor security version, currently 1
+
     let appCertificates = [
         "03 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 00 01 5f 14 9f e1 01 00 00 00 00 00 00 00 00 04 27 51 fd 1e f4 2b 14 5a 52 c5 93 ae 6b 5a 75 58 8a 9f 7e af 1c 0f 99 85 f9 93 d5 8f 14 7b b8 41 68 42 24 49 96 37 92 dc 43 f3 84 47 ef eb bb eb 4a 53 b3 25 5c 0b e0 fe 1f 23 58 44 a3 d3 29 9e ba 97 b8 e6 c3 17 09 39 f2 77 8f 64 86 6f 06 6d eb 91 5d d6 62 9e ee 47 30 a1 e1 4c ab 75 c1 8c 4f ec 53 f8 85 4c 87 64 3a 76 4f 40 87 ae c0 39 4c 21 0c 18 86 5a 8f f4 5a dc 37 27 f4 8b 53 a7",
         "03 03 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 00 01 61 89 76 55 01 00 00 00 00 00 00 00 00 04 82 42 be 33 f1 a3 30 88 01 12 fa 62 cc 48 42 a4 3d 12 04 92 2a d2 01 d8 77 5b b2 26 f6 11 f7 5b 0e f3 d5 bc 6c c4 31 7c aa 45 75 84 ab 00 3f 17 12 33 60 89 d3 a4 f2 98 38 ed 0d c6 66 de ae a2 d6 5a 00 df ff 5d 7b ca e2 16 55 e3 02 e3 45 8e 77 4d aa aa ca 87 af 75 f1 b8 78 84 b1 8d 4c e8 75 d0 d1 08 c9 03 a8 34 47 1a 4f f6 74 b2 d3 0b cb a0 62 37 30 14 b7 78 6e 44 37 b1 77 ae c3 c8"
@@ -1092,7 +1127,7 @@ extension String {
         "1D 85 8F 06 02 00 00 00 01 00 00 01 00 00 00 00 00 96 95 77 4B 9A 04 53 51 FB 16 0B EC 5F 49 DB DF 0D C0 CE 52 FB 56 5F 84 E6 13 B8 19 AE D3 DF 91 9C E3 0A 3D D4 C0 12 EA EA 70 C8 CC E2 89 58 40 00 00 00 01 9B C7 79 12 3D 86 60 B3 7E 99 B4 BF 10 C1 C4 2C 11 35 B3 02 5B C9 B2 EF 00 00 00 20 E3 A1 FB 17 80 A1 63 80 2A A0 FE B1 F2 00 AC 26 9A 42 B2 29 03 8C A6 E1 4D 40 EF BC 6B 7B 6A E8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 CE C6 67 E6 C0 9D 20 F5 C0 33 D0 61 B5 FC A1 8B 39 92 06 8B"
     ]
 
-    let patchSingningKeys = [
+    let patchSigningKeys = [
         "04 B6 9D 17 34 F5 E4 25 BC C0 57 6A D1 F7 27 C1 31 1C 90 B6 EA 98 6F 00 6E 7E 9F 90 96 F6 A8 28 4F 12 BF 7D DF E1 54 A3 F1 D4 5A 0F 27 34 EC AB CA 6B 9E B5 6E E4 EC CA 87 85 3A D8 53 B6 A6 41 80",
         "04 A2 D8 47 89 90 94 5F 70 A9 57 0A DE 07 B1 55 BC 90 4D 2D 38 06 47 58 7B 12 39 17 01 30 9B D1 0B 59 90 C4 C4 7C 47 F1 F0 80 46 CB 6F 2D E0 74 8D 1F A7 F7 37 90 EC 9D 8D D6 37 21 27 78 52 88 38"
     ]
@@ -1123,11 +1158,11 @@ extension String {
 
         let PUBLIC_KEY_TYPE_UNCOMPRESSED: UInt8 = 0x04
         let CRYPTO_PUBLIC_KEY_SIZE: Int = 64
-        let patchSigningKey: Data
-        let securityVersion: Int
+        var patchSigningKey: Data
+        var securityVersion: Int
         let max_key_index: Int = 2
-        let app_private_key: Data
-        let app_certificate: Data
+        var app_private_key: Data
+        var app_certificate: Data
     }
 
 
