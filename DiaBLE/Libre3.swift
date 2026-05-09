@@ -2,8 +2,6 @@ import Foundation
 import CryptoKit
 
 
-// https://github.com/gui-dos/DiaBLE/wiki/AI#libre-3-skb-reverse-engineering-plan
-
 // https://insulinclub.de/index.php?thread/33795-free-three-ein-xposed-lsposed-modul-f%C3%BCr-libre-3-aktueller-wert-am-sperrbildschir/&postID=655055#post655055
 
 extension String {

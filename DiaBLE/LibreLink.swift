@@ -271,8 +271,6 @@ class LibreLinkUp: Logging {
                     let status = response.statusCode
                     debugLog("LibreLinkUp: response data: \(data.string.trimmingCharacters(in: .newlines)), status: \(status)")
 
-                    // https://www.perplexity.ai/computer/a/llu-v5-investigation-report-jgxtdKsOS5.9.aqmVmgzYw?fbclid=IwY2xjawRWpvFleHRuA2FlbQIxMABzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEekNxHZnyCFAo8ncJQ8VZ29bDyfe7pZA7VrTAJBbk_e3wtlhHXaTwVA-Otj6I_aem_T5C-lDh1o2k-2LDz7yz-6Q
-
                     // code  status description
                     // ------------------------
                     // 36    500
