@@ -559,7 +559,7 @@ extension String {
     var lastHistoricLifeCount: Int = 0
     var lastHistoricReadingDate: Date = .distantPast
 
-    var securityVersion: Int = 0
+    var securityVersion: Int = 1
 
     func parsePatchInfo() {
 
