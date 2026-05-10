@@ -448,10 +448,11 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 }
                 app.sensor = sensor
                 sensor.state = .active
-                sensor.uid = (app.device as! Abbott).sensorUid
-                // TODO
-                settings.currentSensorUid = sensor.uid
-
+                if serviceUUID != Libre3.UUID.data.rawValue {
+                    sensor.uid = (app.device as! Abbott).sensorUid
+                    // TODO
+                    settings.currentSensorUid = sensor.uid
+                }
                 if settings.activeSensorSerial == app.device.serial {
                     if !app.device.serial.isEmpty && !settings.currentPatchInfo.isEmpty {
                         (sensor as! Libre).patchInfo = settings.currentPatchInfo
