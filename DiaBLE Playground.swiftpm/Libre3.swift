@@ -1112,7 +1112,7 @@ extension String {
         static let L3_SEC_ERROR_LIB_ERROR: Int = 906
     }
 
-    // App certficates are ndexed by the sensor security version (currently 1)
+    // App certficates are indexed by the sensor security version (currently 1)
     //
     //  Claude:
     //
@@ -1120,7 +1120,7 @@ extension String {
     //  20–23: issuanceTimestamp: big-endian Unix seconds: V0: 0x5F149FE1 = 2020-07-19 19:32:49 UTC
     //                                                     V1: 0x61897655 = 2021-11-08 19:11:17 UTC
     //     24: receiverId flag: 0x01: set
-    //  25–32: receiverId: all zeros for a generic account / pre-pairing
+    //  25–32: receiverId: all zeros for a generic account / pre-pairing (CERT_SERIAL_NUMBER_LENGTH = 8)
     //  33–97: appStaticPublicKey: 65-byte uncompressed P-256
     // 98–161: ECDSA signature: 64 bytes, raw r ‖ s signed with the `patchSigningKeys[v]` private counterpart
 
@@ -1130,7 +1130,7 @@ extension String {
         "03 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 00 01 5F 14 9F E1 01 00 00 00 00 00 00 00 00 04 E2 36 95 4F FD 06 A2 25 22 57 FA A7 17 6A D9 0A 69 02 E6 1D DA FF 40 FB 36 B8 FB 52 AA 09 2C 33 A8 02 32 63 2E 94 AF A8 28 86 AE 75 CE F9 22 CD 88 85 CE 8C DA B5 3D AB 2A 4F 23 9B CB 17 C2 6C DE 74 9E A1 6F 75 89 76 04 98 9F DC B3 F0 C7 BC 1D A5 E6 54 1D C3 CE C6 3E 72 0C D9 B3 6A 7B 59 3C FC C5 65 D6 7F 1E E1 84 64 B9 B9 7C CF 06 BE D0 40 C7 BB D5 D2 2F 35 DF DB 44 58 AC 7C 46 15"
     ]
 
-    // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/ECDHCrypto.java
+    // https://github.org/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/ECDHCrypto.java
 
     let androidAppCertificates = [
         "03 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 00 01 5f 14 9f e1 01 00 00 00 00 00 00 00 00 04 27 51 fd 1e f4 2b 14 5a 52 c5 93 ae 6b 5a 75 58 8a 9f 7e af 1c 0f 99 85 f9 93 d5 8f 14 7b b8 41 68 42 24 49 96 37 92 dc 43 f3 84 47 ef eb bb eb 4a 53 b3 25 5c 0b e0 fe 1f 23 58 44 a3 d3 29 9e ba 97 b8 e6 c3 17 09 39 f2 77 8f 64 86 6f 06 6d eb 91 5d d6 62 9e ee 47 30 a1 e1 4c ab 75 c1 8c 4f ec 53 f8 85 4c 87 64 3a 76 4f 40 87 ae c0 39 4c 21 0c 18 86 5a 8f f4 5a dc 37 27 f4 8b 53 a7",
