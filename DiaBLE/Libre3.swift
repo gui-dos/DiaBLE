@@ -568,11 +568,11 @@ extension String {
         log("\(type): product type: \(ProductType(rawValue: productType)?.description ?? "unknown") (0x\(productType.hex))")
 
         let securityVersion = UInt16(patchInfo[0...1])
-        self.securityVersion = Int(securityVersion)
         let localization    = UInt16(patchInfo[2...3])
         let generation      = UInt16(patchInfo[4...5])
         log("\(type): security version: \(securityVersion) (0x\(securityVersion.hex)), localization: \(localization) (0x\(localization.hex)), generation: \(generation) (0x\(generation.hex))")
 
+        self.securityVersion = Int(securityVersion)
         self.generation = Int(generation)  // 1: Libre 3+
 
         region = SensorRegion(rawValue: Int(localization & 0xFF)) ?? .unknown
@@ -1112,10 +1112,21 @@ extension String {
         static let L3_SEC_ERROR_LIB_ERROR: Int = 906
     }
 
-    // indexed by the sensor security version, currently 1
+    // App certficates are ndexed by the sensor security version (currently 1)
+    //
+    //  Claude:
+    //
+    //  18–19: keyUsage / curve marker: 0x00 0x01: likely "ECDSA P-256, app role"
+    //  20–23: issuanceTimestamp: big-endian Unix seconds: V0: 0x5F149FE1 = 2020-07-19 19:32:49 UTC
+    //                                                     V1: 0x61897655 = 2021-11-08 19:11:17 UTC
+    //     24: receiverId flag: 0x01: set
+    //  25–32: receiverId: all zeros for a generic account / pre-pairing
+    //  33–97: appStaticPublicKey: 65-byte uncompressed P-256
+    // 98–161: ECDSA signature: 64 bytes, raw r ‖ s signed with the `patchSigningKeys[v]` private counterpart
 
     let appCertificates = [
-        "", // TODO
+        // TODO: actual iOS app certificate, not a duplicate of security version 1
+        "03 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 00 01 5F 14 9F E1 01 00 00 00 00 00 00 00 00 04 E2 36 95 4F FD 06 A2 25 22 57 FA A7 17 6A D9 0A 69 02 E6 1D DA FF 40 FB 36 B8 FB 52 AA 09 2C 33 A8 02 32 63 2E 94 AF A8 28 86 AE 75 CE F9 22 CD 88 85 CE 8C DA B5 3D AB 2A 4F 23 9B CB 17 C2 6C DE 74 9E A1 6F 75 89 76 04 98 9F DC B3 F0 C7 BC 1D A5 E6 54 1D C3 CE C6 3E 72 0C D9 B3 6A 7B 59 3C FC C5 65 D6 7F 1E E1 84 64 B9 B9 7C CF 06 BE D0 40 C7 BB D5 D2 2F 35 DF DB 44 58 AC 7C 46 15",
         "03 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 00 01 5F 14 9F E1 01 00 00 00 00 00 00 00 00 04 E2 36 95 4F FD 06 A2 25 22 57 FA A7 17 6A D9 0A 69 02 E6 1D DA FF 40 FB 36 B8 FB 52 AA 09 2C 33 A8 02 32 63 2E 94 AF A8 28 86 AE 75 CE F9 22 CD 88 85 CE 8C DA B5 3D AB 2A 4F 23 9B CB 17 C2 6C DE 74 9E A1 6F 75 89 76 04 98 9F DC B3 F0 C7 BC 1D A5 E6 54 1D C3 CE C6 3E 72 0C D9 B3 6A 7B 59 3C FC C5 65 D6 7F 1E E1 84 64 B9 B9 7C CF 06 BE D0 40 C7 BB D5 D2 2F 35 DF DB 44 58 AC 7C 46 15"
     ]
 
