@@ -449,25 +449,25 @@ extension String {
 
     enum SecurityCommand: UInt8, CustomStringConvertible {
 
-        case security_01         = 0x01
-        case security_02         = 0x02
+        case startECDH           = 0x01
+        case loadCertificate     = 0x02
         case certificateLoadDone = 0x03
         case challengeLoadDone   = 0x08
         case sendCertificate     = 0x09
-        case security_0D         = 0x0D
+        case keyAgreement        = 0x0D
         case ephemeralLoadDone   = 0x0E
         case readChallenge       = 0x11
 
         var description: String {
             switch self {
-            case .security_01:         "security 0x01 command"
-            case .security_02:         "security 0x02 command"
+            case .startECDH:           "start ECDH"
+            case .loadCertificate:     "load certificate"
             case .certificateLoadDone: "certificate load done"
             case .challengeLoadDone:   "challenge load done"
-            case .sendCertificate:     "sendCertificate"
-            case .security_0D:         "security 0x0D command"
+            case .sendCertificate:     "send certificate"
+            case .keyAgreement:        "key agreement"
             case .ephemeralLoadDone:   "ephemeral load done"
-            case .readChallenge:       "read security challenge"
+            case .readChallenge:       "read challenge"
             }
         }
     }
@@ -791,7 +791,7 @@ extension String {
                         patchCertificate = payload
                         if settings.userLevel < .test { // not eavesdropping on Trident
                             debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0D (CMD_KEY_AGREEMENT)")
-                            send(securityCommand: .security_0D)
+                            send(securityCommand: .keyAgreement)
                             // TODO:
                             // Natives.processbar(5, null, null) (CRYPTO_EXTENSION_GENERATE_EPHEMERAL)
                             // let ephemeralKey = Data((0 ..< 65 ).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })  // TEST random ephemeral
@@ -971,8 +971,8 @@ extension String {
 
 
     func pair() {
-        send(securityCommand: .security_01)
-        send(securityCommand: .security_02)
+        send(securityCommand: .startECDH)
+        send(securityCommand: .loadCertificate)
         let appCertificate = appCertificates[securityVersion].bytes
         write(appCertificate, for: .certificateData)
         send(securityCommand: .certificateLoadDone)
