@@ -809,6 +809,8 @@ extension String {
                         patchEphemeral = payload
                         if settings.userLevel < .test { // not eavesdropping on Trident
                             Task { @MainActor in
+                                kEnc = deriveSymmetricKey()
+                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: derived symmetric key: \(kEnc.hex)")
                                 do {
                                     // Claude: TODO
                                     if !Libre3.sharedKeyEndpoint.isEmpty {
@@ -818,10 +820,7 @@ extension String {
                                             appPrivateStatic: appPrivateKeys[securityVersion].bytes,
                                             appPrivateEphemeral: ephemeralPrivateKey.rawRepresentation
                                         )
-                                    } else {
-                                        kEnc = deriveSymmetricKey()
                                     }
-                                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: derived symmetric key: \(kEnc.hex)")
                                 } catch {
                                     self.log("\(self.type) \(self.transmitter!.peripheral!.name ?? "(unnamed)"): ERROR deriving shared key: \(error.localizedDescription)")
                                 }
