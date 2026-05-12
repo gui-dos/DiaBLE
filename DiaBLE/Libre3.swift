@@ -1342,7 +1342,7 @@ extension Libre3 {
         sensorEphemeral:     Data,
         appPrivateStatic:    Data,
         appPrivateEphemeral: Data, // P256.KeyAgreement.PrivateKey
-        timeout:             TimeInterval = 2
+        // timeout:             TimeInterval = 2
     ) async throws -> Data {
 
         let payload: [String: String] = [
