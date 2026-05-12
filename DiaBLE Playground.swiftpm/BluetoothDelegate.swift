@@ -610,7 +610,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             msg += ", error type \(errorCode!.rawValue): \(error.localizedDescription)"
         }
 
-        if let errorCode, errorCode == .peerRemovedPairingInformation {  // i.e. BluCon
+        if let errorCode, errorCode == .peerRemovedPairingInformation {
             main.errorStatus("Failed to connect: \(error!.localizedDescription)")
         } else {
             msg += "; retrying..."
