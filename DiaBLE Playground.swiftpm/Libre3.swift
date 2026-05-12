@@ -821,16 +821,17 @@ extension String {
                                             appPrivateEphemeral: ephemeralPrivateKey.rawRepresentation
                                         )
                                     }
+                                    if settings.userLevel < .test { // not eavesdropping on Trident
+                                        send(securityCommand: .readChallenge)
+                                        // TODO
+                                    }
                                 } catch {
                                     self.log("\(self.type) \(self.transmitter!.peripheral!.name ?? "(unnamed)"): ERROR deriving shared key: \(error.localizedDescription)")
                                 }
                             }
                         }
                     }
-                    if settings.userLevel < .test { // not eavesdropping on Trident
-                        send(securityCommand: .readChallenge)
-                        // TODO
-                    }
+
 
                 case .readChallenge:
 
@@ -1341,7 +1342,7 @@ extension Libre3 {
         sensorEphemeral:     Data,
         appPrivateStatic:    Data,
         appPrivateEphemeral: Data, // P256.KeyAgreement.PrivateKey
-        timeout:             TimeInterval = 2
+        // timeout:             TimeInterval = 2
     ) async throws -> Data {
 
         let payload: [String: String] = [
@@ -1353,18 +1354,20 @@ extension Libre3 {
 
         var request = URLRequest(url: URL(string: Libre3.sharedKeyEndpoint)!)
         request.httpMethod = "POST"
-        request.timeoutInterval = timeout
+        // request.timeoutInterval = timeout
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: payload)
-        debugLog("Libre 3: posting to \(request.url!.absoluteString) JSON payload:\(request.httpBody!)")
+        debugLog("Libre 3: posting to \(request.url!.absoluteString) JSON payload:\(request.httpBody!.string)")
         let (body, response) = try await URLSession(configuration: .ephemeral)
-                                            .data(for: request)
+            .data(for: request)
+        debugLog("Libre 3: shared key response body: \(body.string.trimmingCharacters(in: .newlines))")
+
         if let http = response as? HTTPURLResponse, http.statusCode != 200 {
             throw SharedKeyError.httpStatus(http.statusCode,
                                             body: String(data: body, encoding: .utf8))
         }
         let hexString = String(data: body, encoding: .utf8)?
-                            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let key = hexString.bytes
         if key.count < 16 {
             throw SharedKeyError.malformedResponse(hexString)
