@@ -102,7 +102,7 @@ import CoreBluetooth
             buffer.append(data)
             log("\(name): partial buffer size: \(buffer.count)")
 
-            var framBlocks = 43
+            let framBlocks = 43
 
             if buffer.count >= 363 {  // 18 + framBlocks * 8 + 1
                 log("\(name): data size: \(Int(buffer[1]) << 8 + Int(buffer[2]))")
@@ -126,20 +126,6 @@ import CoreBluetooth
                     settings.activeSensorSerial = sensor!.serial
                     log("\(name): patch info: \((sensor! as! Libre).patchInfo.hex), sensor type: \(sensor!.type.rawValue), serial number: \(sensor!.serial)")
 
-                    if sensor != nil && sensor!.type == .libreProH {
-                        let libreProSensor = LibrePro(transmitter: self)
-                        // FIXME: buffer[3...4] doesn't match the real sensor age in body[2...3]
-                        libreProSensor.age = sensor!.age
-                        libreProSensor.uid = sensor!.uid
-                        libreProSensor.patchInfo = (sensor! as! LibrePro).patchInfo
-                        libreProSensor.lastReadingDate = sensor!.lastReadingDate
-                        sensor = libreProSensor
-                        app.sensor = sensor
-
-                        // TODO: manage the 21 partial historic blocks (28 measurements)
-                        framBlocks = 43 // 22
-
-                    }
                 } else {
                     // https://github.com/dabear/LibreOOPAlgorithm/blob/master/app/src/main/java/com/hg4/oopalgorithm/oopalgorithm/AlgorithmRunner.java
                     (sensor! as! Libre).patchInfo = Data([0xDF, 0x00, 0x00, 0x01, 0x01, 0x02])

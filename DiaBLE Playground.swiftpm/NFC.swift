@@ -330,8 +330,6 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                             sensor = Libre2Gen2(main: main)
                         case .libre2:
                             sensor = Libre2(main: main)
-                        case .libreProH:
-                            sensor = LibrePro(main: main)
                         default:
                             sensor = Libre(main: main)
                         }
@@ -482,7 +480,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                         }
                     }
 
-                    var (start, data) = try await sensor.securityGeneration < 2 ?
+                    let (start, data) = try await sensor.securityGeneration < 2 ?
                     read(fromBlock: 0, count: blocks) : readBlocks(from: 0, count: blocks)
 
                     log(data.hexDump(header: "NFC: did read \(data.count / 8) FRAM blocks:", startBlock: start))
@@ -493,11 +491,6 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                         app.lastReadingDate = lastReadingDate
                     }
                     sensor.lastReadingDate = lastReadingDate
-
-                    // if settings.userLevel >= .test { sensor = LibrePro.test(main: main); data = sensor.fram }   // TEST
-                    if sensor.type == .libreProH {
-                        data = try await (sensor as! LibrePro).scanHistory(nfc: self, fram: data)
-                    }
 
                     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
                     session.invalidate()
