@@ -45,18 +45,10 @@ extension NFC {
                     (address, data) = try await readRaw(0xF860, 244 * 8)
                     log(data.hexDump(header: "FRAM:", address: address))
                 }
-                if sensor.type == .libreProH {
-                    (address, data) = try await readRaw(0xFFA8, 40)
-                    log(data.hexDump(header: "Patch table for A0-A4 ?? E0-E2 commands:", address: address))
-                    (address, data) = try await readRaw(0xD8E0, 22 * 8)
-                    log(data.hexDump(header: "FRAM (first 22 blocks):", address: address))
-                    (address, data) = try await readRaw(0xD998, 24 * 8)
-                    log(data.hexDump(header: "FRAM history (first 24 blocks):", address: address))
-                }
             } catch {}
 
             do {
-                let (start, data) = try await read(fromBlock: 0, count: 43 + (sensor.type == .libre1 || sensor.type == .libreProH ? 201 : 0))
+                let (start, data) = try await read(fromBlock: 0, count: 43 + (sensor.type == .libre1 ? 201 : 0))
                 log(data.hexDump(header: "ISO 15693 FRAM blocks:", startBlock: start))
                 sensor.fram = Data(data)
                 if sensor.encryptedFram.count > 0 && sensor.fram.count >= 344 {
@@ -105,7 +97,7 @@ extension NFC {
 
         case .reset:
 
-            if sensor.type != .libre1 && sensor.type != .libreProH {
+            if sensor.type != .libre1 {
                 log("E0 reset command not supported by \(sensor.type)")
                 throw NFCError.commandNotSupported
             }
@@ -144,54 +136,6 @@ extension NFC {
                     let (start, data) = try await read(fromBlock: 0, count: 43)
                     log(data.hexDump(header: "NFC: did reset FRAM:", startBlock: start))
                     sensor.fram = Data(data)
-                } catch {
-
-                    // TODO: manage errors and verify integrity
-
-                }
-
-
-            case .libreProH:
-
-                // TODO: use Libre Pro E0 instead of simply overwriting the FRAM with fresh values
-
-                do {
-                    try await send(sensor.unlockCommand)
-
-                    // header
-                    try await write(fromBlock: 0x00, Data([0x6A, 0xBC, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00]))
-                    try await write(fromBlock: 0x01, Data([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]))
-                    try await write(fromBlock: 0x02, Data([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]))
-                    try await write(fromBlock: 0x03, Data([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]))
-                    try await write(fromBlock: 0x04, Data([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]))
-
-                    // footer
-                    try await write(fromBlock: 0x05, Data([0x99, 0xDD, 0x10, 0x00, 0x14, 0x08, 0xC0, 0x4E]))
-                    try await write(fromBlock: 0x06, Data([0x14, 0x03, 0x96, 0x80, 0x5A, 0x00, 0xED, 0xA6]))
-                    try await write(fromBlock: 0x07, Data([0x12, 0x56, 0xDA, 0xA0, 0x04, 0x0C, 0xD8, 0x66]))
-                    try await write(fromBlock: 0x08, Data([0x29, 0x02, 0xC8, 0x18, 0x00, 0x00, 0x00, 0x00]))
-
-                    // age, trend and history indexes
-                    try await write(fromBlock: 0x09, Data([0xBD, 0xD1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]))
-                    // trend
-                    for b in 0x0A ... 0x15 {
-                        try await write(fromBlock: b, Data([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]))
-                    }
-
-                    // duplicated in activation
-                    var readCommand = sensor.readBlockCommand
-                    readCommand.parameters = "DF 04".bytes
-                    var output = try await send(readCommand)
-                    debugLog("NFC: 'B0 read 0x04DF' command output: \(output.hex)")
-                    var writeCommand = sensor.writeBlockCommand
-                    writeCommand.parameters = "DF 04 20 00 DF 88 00 00 00 00".bytes
-                    output = try await send(writeCommand)
-                    debugLog("NFC: 'B1 write' command output: \(output.hex)")
-                    output = try await send(readCommand)
-                    debugLog("NFC: 'B0 read 0x04DF' command output: \(output.hex)")
-
-                    try await send(sensor.lockCommand)
-
                 } catch {
 
                     // TODO: manage errors and verify integrity
@@ -270,21 +214,6 @@ extension NFC {
             }
 
             do {
-
-                if sensor.type == .libreProH {
-                    var readCommand = sensor.readBlockCommand
-                    readCommand.parameters = "DF 04".bytes
-                    var output = try await send(readCommand)
-                    debugLog("NFC: 'B0 read 0x04DF' command output: \(output.hex)")
-                    try await send(sensor.unlockCommand)
-                    var writeCommand = sensor.writeBlockCommand
-                    writeCommand.parameters = "DF 04 20 00 DF 88 00 00 00 00".bytes
-                    output = try await send(writeCommand)
-                    debugLog("NFC: 'B1 write' command output: \(output.hex)")
-                    try await send(sensor.lockCommand)
-                    output = try await send(readCommand)
-                    debugLog("NFC: 'B0 read 0x04DF' command output: \(output.hex)")
-                }
 
                 let output = try await send(sensor.activationCommand)
                 log("NFC: after trying to activate received \(output.hex) for the patch info \(sensor.patchInfo.hex)")

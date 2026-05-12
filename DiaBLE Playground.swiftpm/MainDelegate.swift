@@ -117,7 +117,6 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
             // features currently in beta testing
             if settings.userLevel >= .test {
                 // Libre3.testAESCCM()
-                // app.sensor = LibrePro.test(main: self)
             }
         }
 
