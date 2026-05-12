@@ -222,33 +222,12 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                 app.device.serial = settings.activeTransmitterSerial
             }
 
-        } else if name!.lowercased().hasPrefix("blu") {
-            app.transmitter = BluCon(peripheral: peripheral, main: main)
-            app.device = app.transmitter
-
-        } else if name!.prefix(6) == "Bubble" {
-            app.transmitter = Bubble(peripheral: peripheral, main: main)
-            app.device = app.transmitter
-            app.device.name = name!  // include "Mini"
-
-        } else if name!.matches("miaomiao") {
-            app.transmitter = MiaoMiao(peripheral: peripheral, main: main)
-            app.device = app.transmitter
-
             // } else if name.matches("custom") {
             //    custom = Custom(peripheral: peripheral, main: main)
             //    app.device = custom
             //    app.device.name = peripheral.name!
             //    app.transmitter = custom.transmitter
             //    app.transmitter.name = "bridge"
-
-        } else if name!.prefix(13) == "Mi Smart Band" {
-            app.device = Device(peripheral: peripheral, main: main)
-            app.device.name = name!
-            if manufacturerData!.count >= 8 {
-                app.device.macAddress = Data(manufacturerData!.suffix(6))
-                log("Bluetooth: \(name!) MAC address: \(app.device.macAddress.hex.uppercased())")
-            }
 
         } else {
             app.device = Device(peripheral: peripheral, main: main)
@@ -399,7 +378,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             } else if uuid == Libre3.UUID.patchStatus.rawValue {
                 msg += "; avoid enabling notifications because of 'Encryption is insufficient' error"
 
-            } else if uuid == Abbott.dataReadCharacteristicUUID || uuid == BluCon.dataReadCharacteristicUUID || uuid == Bubble.dataReadCharacteristicUUID || uuid == MiaoMiao.dataReadCharacteristicUUID {
+            } else if uuid == Abbott.dataReadCharacteristicUUID {
                 app.device.readCharacteristic = characteristic
                 msg += " (data read)"
 
@@ -409,7 +388,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
                     msg += "; enabling notifications"
                 }
 
-            } else if uuid == Abbott.dataWriteCharacteristicUUID || uuid == BluCon.dataWriteCharacteristicUUID || uuid == Bubble.dataWriteCharacteristicUUID || uuid == MiaoMiao.dataWriteCharacteristicUUID {
+            } else if uuid == Abbott.dataWriteCharacteristicUUID {
                 msg += " (data write)"
                 app.device.writeCharacteristic = characteristic
 
@@ -535,21 +514,6 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             }
         }
 
-        if app.device.type == .transmitter(.bubble) && serviceUUID == Bubble.dataServiceUUID {
-            let readCommand = app.transmitter.readCommand(interval: settings.readingInterval)
-            app.device.write(readCommand)
-            log("Bubble: writing start reading command 0x\(Data(readCommand).hex)")
-            // app.device.write([0x00, 0x01, 0x05])
-            // log("Bubble: writing reset and send data every 5 minutes command 0x000105")
-        }
-
-        if app.device.type == .transmitter(.miaomiao) && serviceUUID == MiaoMiao.dataServiceUUID {
-            let readCommand = app.device.readCommand(interval: settings.readingInterval)
-            app.device.write(readCommand)
-            log("\(app.device.name): writing start reading command 0x\(Data(readCommand).hex)")
-            // app.device.write([0xD3, 0x01]); log("MiaoMiao: writing start new sensor command D301")
-        }
-
         if app.device.type == .transmitter(.dexcom) && serviceUUID == Dexcom.dataServiceUUID {
             var sensor: Sensor! = app.sensor
             if sensor == nil || sensor.type != .dexcomG6 || sensor.type != .dexcomONE || sensor.type != .dexcomG7 || sensor.type != .dexcomONEPlus {
@@ -661,7 +625,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
     public func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         let name = peripheral.name ?? "an unnamed peripheral"
         var characteristicString = characteristic.uuid.uuidString
-        if [Abbott.dataWriteCharacteristicUUID, BluCon.dataWriteCharacteristicUUID, Bubble.dataWriteCharacteristicUUID, MiaoMiao.dataWriteCharacteristicUUID].contains(characteristicString) {
+        if [Abbott.dataWriteCharacteristicUUID].contains(characteristicString) {
             characteristicString = "data write"
         }
         if let characteristicDescription = Libre3.UUID(rawValue: characteristicString)?.description {
@@ -685,8 +649,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
     public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         let name = peripheral.name ?? "an unnamed peripheral"
         var characteristicString = characteristic.uuid.uuidString
-
-        if [Abbott.dataReadCharacteristicUUID, BluCon.dataReadCharacteristicUUID, Bubble.dataReadCharacteristicUUID, MiaoMiao.dataReadCharacteristicUUID].contains(characteristicString) {
+        if [Abbott.dataReadCharacteristicUUID].contains(characteristicString) {
             characteristicString = "data read"
         }
         if let characteristicDescription = Libre3.UUID(rawValue: characteristicString)?.description {
@@ -724,7 +687,8 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
     public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         let name = peripheral.name ?? "an unnamed peripheral"
         var characteristicString = characteristic.uuid.uuidString
-        if [Abbott.dataReadCharacteristicUUID, BluCon.dataReadCharacteristicUUID, Bubble.dataReadCharacteristicUUID, MiaoMiao.dataReadCharacteristicUUID].contains(characteristicString) {
+
+        if [Abbott.dataReadCharacteristicUUID].contains(characteristicString) {
             characteristicString = "data read"
         }
         if let characteristicDescription = Libre3.UUID(rawValue: characteristicString)?.description {
@@ -797,16 +761,6 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             if app.device.type == .transmitter(.abbott) {
                 if app.transmitter.buffer.count == 46 {
                     main.didParseSensor(app.transmitter.sensor!)
-                    app.transmitter.buffer = Data()
-                }
-
-            } else if app.device.type == .transmitter(.blu) || app.device.type == .transmitter(.bubble) || app.device.type == .transmitter(.miaomiao) {
-                var headerLength = 0
-                if app.device.type == .transmitter(.miaomiao) && characteristic.uuid.uuidString == MiaoMiao.dataReadCharacteristicUUID {
-                    headerLength = 18 + 1
-                }
-                if let sensor = app.transmitter.sensor as? Libre, sensor.fram.count > 0, app.transmitter.buffer.count >= (sensor.fram.count + headerLength) {
-                    main.parseSensorData(sensor)
                     app.transmitter.buffer = Data()
                 }
 
