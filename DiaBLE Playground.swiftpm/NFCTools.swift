@@ -214,9 +214,6 @@ extension NFC {
             }
 
             do {
-                if settings.userLevel > .basic {
-                    await sensor.testOOPActivation()
-                }
 
                 let output = try await send(sensor.activationCommand)
                 log("NFC: after trying to activate received \(output.hex) for the patch info \(sensor.patchInfo.hex)")

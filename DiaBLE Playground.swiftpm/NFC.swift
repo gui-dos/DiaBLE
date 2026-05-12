@@ -451,30 +451,8 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     if sensor.type == .libre2Gen2 {
                         // TODO: use Libre2Gen2.communicateWithPatch(nfc: self)
                         gen2Attribute = try await send(sensor.nfcCommand(.readAttribute))
-
-                        // FIXME: OOP nfcAuth endpoint still offline
-
                         securityChallenge = try await send(sensor.nfcCommand(.readChallenge))
                         log("NFC: Gen2 security challenge: \(securityChallenge.hex)")
-
-                        do {
-
-                            // FIXME: "404 Not Found"
-                            _ = try await main.post(OOPServer.gen2.nfcAuthEndpoint!, ["patchUid": sensor.uid.hex, "authData": securityChallenge.hex])
-
-                            let oopResponse = try await main.post(OOPServer.gen2.nfcDataEndpoint!, ["patchUid": sensor.uid.hex, "authData": securityChallenge.hex]) as! OOPGen2Response
-                            authContext = oopResponse.p1
-                            let authenticatedCommand = oopResponse.data.bytes
-                            log("OOP: context: \(authContext), authenticated `A1 1F get session info` command: \(authenticatedCommand.hex)")
-                            var getSessionInfoCommand = sensor.nfcCommand(.getSessionInfo)
-                            getSessionInfoCommand.parameters = authenticatedCommand.suffix(authenticatedCommand.count - 3)
-                            sessionInfo = try! await send(getSessionInfoCommand)
-                            // TODO: drop leading 0xA5s?
-                            // sessionInfo = sessionInfo.suffix(sessionInfo.count - 8)
-                            log("NFC: session info = \(sessionInfo.hex)")
-                        } catch {
-                            log("NFC: OOP error: \(error.localizedDescription)")
-                        }
                     }
 
                     let (start, data) = try await sensor.securityGeneration < 2 ?
@@ -491,15 +469,6 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
                     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
                     session.invalidate()
-
-                    // FIXME: doesn't accept encrypted content
-                    if sensor.securityGeneration == 2 {
-                        do {
-                            _ = try await main.post(OOPServer.gen2.nfcDataAlgorithmEndpoint!, ["p1": authContext, "authData": sessionInfo.hex, "content": data.hex, "patchUid": sensor.uid.hex, "patchInfo": sensor.patchInfo.hex])
-                        } catch {
-                            log("NFC: OOP error: \(error.localizedDescription)")
-                        }
-                    }
 
                     sensor.fram = Data(data)
 
