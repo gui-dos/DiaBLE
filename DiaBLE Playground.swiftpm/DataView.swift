@@ -121,20 +121,6 @@ struct DataView: View, LoggingView {
                                 }
                                 .foregroundStyle(.orange)
                             }
-
-                            if history.calibratedValues.count > 0 {
-                                VStack(spacing: 4) {
-                                    Text("Calibrated history").bold()
-                                    ScrollView {
-                                        ForEach(history.calibratedValues) { glucose in
-                                            Text("\(glucose.id) \(glucose.date.shortDateTime)  **\(glucose.value > -1 ? "\(glucose.value, specifier: "%3d")" : "  … ")**")
-                                        }
-                                    }
-                                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                                }
-                                .foregroundStyle(.purple)
-                            }
-
                         }
 
                         VStack {
@@ -150,19 +136,6 @@ struct DataView: View, LoggingView {
                                     .frame(maxWidth: .infinity, alignment: .topLeading)
                                 }
                                 .foregroundStyle(.yellow)
-                            }
-
-                            if history.calibratedTrend.count > 0 {
-                                VStack(spacing: 4) {
-                                    Text("Calibrated trend").bold()
-                                    ScrollView {
-                                        ForEach(history.calibratedTrend) { glucose in
-                                            Text("\(glucose.id) \(glucose.date.shortDateTime)  **\(glucose.value > -1 ? "\(glucose.value, specifier: "%3d")" : "  … ")**")
-                                        }
-                                    }
-                                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                                }
-                                .foregroundStyle(.purple)
                             }
 
                         }

@@ -54,16 +54,9 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         app = AppState()
 
         bluetoothDelegate = BluetoothDelegate()
-
-        // FIXME: Playground: 'State restoration of CBCentralManager is only allowed
-        // for applications that have specified the "bluetooth-central" background mode'
-
-        // centralManager = CBCentralManager(delegate: bluetoothDelegate,
-        //                                   queue: nil,
-        //                                   options: [CBCentralManagerOptionRestoreIdentifierKey: "DiaBLE"])
-
         centralManager = CBCentralManager(delegate: bluetoothDelegate,
-                                          queue: nil)
+                                          queue: nil,
+                                          options: [CBCentralManagerOptionRestoreIdentifierKey: "DiaBLE"])
 
         nfc = NFC()
         healthKit = HealthKit()
@@ -118,6 +111,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
             if settings.userLevel >= .test {
                 // Libre3.testAESCCM()
             }
+
         }
 
     }
@@ -218,7 +212,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                     log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                     bluetoothDelegate.centralManager(centralManager, didDiscover: peripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)]], rssi: 0)
                 } else {
-                    log("Bluetooth: scanning for Libre/Dexcom...")
+                    log("Bluetooth: scanning for a Libre/Dexcom...")
                     status("Scanning for a Libre/Dexcom...")
                     centralManager.scanForPeripherals(withServices: nil, options: nil)
                 }
@@ -326,8 +320,6 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
 
         Task {
 
-            await applyOOP(sensor: sensor)
-
             didParseSensor(sensor)
 
         }
@@ -335,54 +327,13 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
     }
 
 
-    func applyCalibration(sensor: Sensor?) {
-
-        if let sensor = sensor, sensor.history.count > 0, settings.calibrating {
-
-            if app.calibration != .empty {
-
-                var calibratedTrend = sensor.trend
-                for i in 0 ..< calibratedTrend.count {
-                    calibratedTrend[i].calibration = app.calibration
-                }
-
-                var calibratedHistory = sensor.history
-                for i in 0 ..< calibratedHistory.count {
-                    calibratedHistory[i].calibration = app.calibration
-                }
-
-                self.history.calibratedTrend = calibratedTrend
-                self.history.calibratedValues = calibratedHistory
-                if calibratedTrend.count > 0 {
-                    app.currentGlucose = calibratedTrend[0].value
-                }
-                return
-            }
-
-        } else {
-            history.calibratedTrend = []
-            history.calibratedValues = []
-        }
-
-    }
-
-
     func didParseSensor(_ sensor: Sensor?) {
 
-        applyCalibration(sensor: sensor)
-
-        guard let sensor = sensor else {
+        guard let sensor else {
             return
         }
 
-        if settings.usingOOP {
-            app.currentGlucose = app.oopGlucose
-            if history.values.count > 0 && history.values[0].value > 0 {
-                if history.factoryTrend.count == 0 || (history.factoryTrend.count > 0 && history.factoryTrend[0].id < history.values[0].id) {
-                    app.currentGlucose = history.factoryValues[0].value
-                }
-            }
-        } else if history.calibratedTrend.count == 0 && history.factoryTrend.count > 0 {
+        if history.factoryTrend.count > 0 {
             app.currentGlucose = history.factoryTrend[0].value
         }
 
@@ -488,7 +439,6 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                     }
                 }
             }
-
         }
     }
 }
