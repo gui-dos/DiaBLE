@@ -22,6 +22,7 @@ struct DiaBLEApp: App {
         }
         .onChange(of: scenePhase) {
             if scenePhase == .active {
+                #if !os(watchOS)
                 UIApplication.shared.isIdleTimerDisabled = main.settings.caffeinated
                 #endif
             }
