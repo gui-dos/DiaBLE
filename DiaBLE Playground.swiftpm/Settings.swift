@@ -69,11 +69,6 @@ import Foundation
 
         "backfillMinutes": 0,
 
-        "calibrating": false,
-        "calibration": try! JSONEncoder().encode(Calibration()),
-        "usingOOP": false,
-        "oopCalibration": try! JSONEncoder().encode(Calibration()),
-
         "currentSensorUid": Data(),
         "currentPatchInfo": Data()
     ]
@@ -81,7 +76,7 @@ import Foundation
 
     var preferredTransmitter: TransmitterType = TransmitterType(rawValue: UserDefaults.standard.string(forKey: "preferredTransmitter")!) ?? .none {
         willSet(type) {
-            if type == .dexcom {
+            if type == .dexcom  {
                 readingInterval = 5
             } else if type == .abbott {
                 readingInterval = 1
@@ -282,24 +277,6 @@ import Foundation
 
     var activeSensorBlePIN: Data = UserDefaults.standard.data(forKey: "activeSensorBlePIN")! {
         didSet { UserDefaults.standard.set(self.activeSensorBlePIN, forKey: "activeSensorBlePIN") }
-    }
-
-    var calibrating: Bool = UserDefaults.standard.bool(forKey: "calibrating") {
-        didSet { UserDefaults.standard.set(self.calibrating, forKey: "calibrating") }
-    }
-
-    var calibration: Calibration = try! JSONDecoder().decode(Calibration.self, from: UserDefaults.standard.data(forKey: "calibration")!) {
-        didSet { UserDefaults.standard.set(try! JSONEncoder().encode(self.calibration), forKey: "calibration") }
-    }
-
-    var oopServer: OOPServer = OOPServer.default
-
-    var usingOOP: Bool = UserDefaults.standard.bool(forKey: "usingOOP") {
-        didSet { UserDefaults.standard.set(self.usingOOP, forKey: "usingOOP") }
-    }
-
-    var oopCalibration: Calibration = try! JSONDecoder().decode(Calibration.self, from: UserDefaults.standard.data(forKey: "oopCalibration")!) {
-        didSet { UserDefaults.standard.set(try! JSONEncoder().encode(self.oopCalibration), forKey: "oopCalibration") }
     }
 
     var activeTransmitterIdentifier: String = UserDefaults.standard.string(forKey: "activeTransmitterIdentifier")! {
