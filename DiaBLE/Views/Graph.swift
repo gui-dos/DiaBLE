@@ -116,7 +116,7 @@ struct Graph: View {
                 }
             }
 
-            // Frame and historic OOP values
+            // Frame and historical values
             GeometryReader { geometry in
                 Path { path in
                     let width  = geometry.size.width - 60

@@ -162,7 +162,6 @@ class Abbott: Transmitter {
                     main.history.factoryValues = factoryHistory
                     log("BLE merged history: \(factoryHistory.map(\.value))".replacingOccurrences(of: "-1", with: "… "))
 
-                    // Slide the OOP history
                     // TODO: apply the following also after a NFC scan
                     let historyDelay = 2
                     if (wearTimeMinutes - historyDelay) % 15 == 0 || wearTimeMinutes - sensor!.history[1].id > 16 {

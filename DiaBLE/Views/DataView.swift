@@ -65,7 +65,7 @@ struct DataView: View, LoggingView {
 
                             if history.values.count > 0 {
                                 VStack(spacing: 4) {
-                                    Text("OOP history").bold()
+                                    Text("History").bold()
                                     ScrollView {
                                         ForEach(history.values) { glucose in
                                             Text("\(glucose.id) \(glucose.date.shortDateTime)  **\(glucose.value > -1 ? "\(glucose.value, specifier: "%3d")" : "  … ")**")
@@ -78,7 +78,7 @@ struct DataView: View, LoggingView {
 
                             if history.factoryValues.count > 0 {
                                 VStack(spacing: 4) {
-                                    Text("History").bold()
+                                    Text("Factory history").bold()
                                     ScrollView {
                                         ForEach(history.factoryValues) { glucose in
                                             Text("\(glucose.id) \(glucose.date.shortDateTime)  **\(glucose.value > -1 ? "\(glucose.value, specifier: "%3d")" : "  … ")**")
