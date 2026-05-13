@@ -23,6 +23,7 @@ struct DiaBLEApp: App {
         .onChange(of: scenePhase) {
             if scenePhase == .active {
                 UIApplication.shared.isIdleTimerDisabled = main.settings.caffeinated
+                #endif
             }
             if scenePhase == .background {
                 if main.settings.userLevel >= .devel {
@@ -140,7 +141,6 @@ enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
 
     var currentGlucose: Int = 0
     var lastReadingDate: Date = Date.distantPast
-    var oopGlucose: Int = 0
     var glycemicAlarm: GlycemicAlarm = .unknown
     var trendArrow: TrendArrow = .unknown
     var trendDelta: Int = 0
@@ -152,14 +152,7 @@ enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
 
     var status: String = "Welcome to DiaBLE!"
 
-    var calibration: Calibration = Calibration() {
-        didSet(value) {
-            main?.applyCalibration(sensor: sensor)
-        }
-    }
-    var editingCalibration = false
-
-    var showingJSConfirmAlert = false
+    var showingJSConfirmAlert: Bool = false
     var jsConfirmAlertMessage: String = ""
     var jsAlertReturn: String = ""
 }
@@ -214,15 +207,13 @@ struct LogEntry: Identifiable {
 
 
 @Observable class History {
-    var values:        [Glucose] = []
-    var rawValues:     [Glucose] = []
-    var rawTrend:      [Glucose] = []
-    var factoryValues: [Glucose] = []
-    var factoryTrend:  [Glucose] = []
-    var calibratedValues: [Glucose] = []
-    var calibratedTrend:  [Glucose] = []
-    var storedValues:     [Glucose] = []
-    var nightscoutValues: [Glucose] = []
+   var values:        [Glucose] = []
+   var rawValues:     [Glucose] = []
+   var rawTrend:      [Glucose] = []
+   var factoryValues: [Glucose] = []
+   var factoryTrend:  [Glucose] = []
+   var storedValues:     [Glucose] = []
+   var nightscoutValues: [Glucose] = []
 }
 
 
@@ -250,7 +241,6 @@ extension AppState {
         app.currentGlucose = 234
         app.trendDelta = -12
         app.trendDeltaMinutes = 6
-        app.oopGlucose = 234
         app.glycemicAlarm = .highGlucose
         app.trendArrow = .falling
         app.deviceState = "Connected"
@@ -277,19 +267,11 @@ extension History {
         let factoryValues = factoryArray.enumerated().map { Glucose($0.1, id: 5000 - $0.1 * 15, date: Date() - Double($0.1) * 15 * 60) }
         history.factoryValues = factoryValues
 
-        let calibratedArray = factoryArray.map { $0 + 5 - Int.random(in: 0...10) }
-
-        let calibratedValues = calibratedArray.enumerated().map { Glucose($0.1, id: 5000 - $0.0 * 15, date: Date() - Double($0.1) * 15 * 60) }
-        history.calibratedValues = calibratedValues
-
         let rawTrend = [241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 241, 242, 243, 244, 245].enumerated().map { Glucose($0.1, id: 5000 - $0.0, date: Date() - Double($0.1) * 60) }
         history.rawTrend = rawTrend
 
         let factoryTrend = [231, 232, 233, 234, 235, 236, 237, 238, 239, 230, 231, 232, 233, 234, 235].enumerated().map { Glucose($0.1, id: 5000 - $0.0, date: Date() - Double($0.1) * 60) }
         history.factoryTrend = factoryTrend
-
-        let calibratedTrend = [231, 232, 233, 234, 235, 236, 237, 238, 239, 230, 231, 232, 233, 234, 235].enumerated().map { Glucose($0.1, id: 5000 - $0.0, date: Date() - Double($0.1) * 60) }
-        history.calibratedTrend = calibratedTrend
 
         let storedValues = [231, 252, 253, 254, 245, 196, 177, 128, 149, 150, 101, 122, 133, 144, 155, 166, 177, 178, 149, 140, 141, 142, 143, 144, 155, 166, 177, 178, 169, 150, 141, 132].enumerated().map { Glucose($0.1, id: $0.0, date: Date() - Double($0.1) * 15 * 60, source: "SourceApp com.example.sourceapp") }
         history.storedValues = storedValues
