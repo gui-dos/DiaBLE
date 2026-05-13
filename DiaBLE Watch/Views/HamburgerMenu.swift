@@ -3,31 +3,6 @@ import SwiftUI
 
 struct HamburgerMenu: View {
 
-    let credits = [
-        "@bubbledevteam": "https://github.com/bubbledevteam",
-        "@captainbeeheart": "https://github.com/captainbeeheart",
-        "@cryptax": "https://github.com/cryptax",
-        "CryptoSwift": "https://github.com/krzyzanowskim/CryptoSwift",
-        "@dabear": "https://github.com/dabear",
-        "@DecentWoodpecker67": "https://github.com/DecentWoodpecker67",
-        "FLwatch": "https://github.com/poml88/FLwatch",
-        "Glucosy": "https://github.com/TopScrech/Glucosy-Libre",
-        "@ivalkou": "https://github.com/ivalkou",
-        "Jaap Korthals Altes": "https://github.com/j-kaltes",
-        "@keencave": "https://github.com/keencave",
-        "LibreMonitor": "https://github.com/UPetersen/LibreMonitor/tree/Swift4",
-        "Loop": "https://github.com/LoopKit",
-        "Marek Macner": "https://github.com/MarekM60",
-        "@monder": "https://github.com/monder",
-        "Nightguard": "https://github.com/nightscout/nightguard",
-        "Nightscout LibreLink Up Uploader": "https://github.com/timoschlueter/nightscout-librelink-up",
-        "@travisgoodspeed": "https://github.com/travisgoodspeed",
-        "WoofWoof": "https://github.com/gshaviv/ninety-two",
-        "xDrip": "https://github.com/Faifly/xDrip",
-        "xDrip+": "https://github.com/NightscoutFoundation/xDrip",
-        "xDrip4iO5": "https://github.com/JohanDegraeve/xdripswift"
-    ]
-
     var body: some View {
 
         NavigationStack {
@@ -151,21 +126,6 @@ struct HamburgerMenu: View {
                             .foregroundStyle(.blue)
                     }
 
-                    VStack {
-                        Text("Credits:")
-                        ScrollView {
-                            ForEach(credits.sorted(by: <), id: \.key) { name, url in
-                                VStack {
-                                    Text(name)
-                                    Link((url), destination: URL(string: url)!)
-                                        .foregroundStyle(.blue)
-                                }
-                                .font(.footnote)
-                                .padding(.vertical, 6)
-                            }
-                        }
-                    }
-
                 }
                 .foregroundStyle(.white)
 
@@ -181,10 +141,4 @@ struct HamburgerMenu: View {
         .edgesIgnoringSafeArea([.bottom])
 
     }
-}
-
-
-
-#Preview {
-    HamburgerMenu()
 }
