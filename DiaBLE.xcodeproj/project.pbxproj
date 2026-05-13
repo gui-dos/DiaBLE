@@ -11,7 +11,6 @@
 		C52AF6672BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C52AF6662BC672C2001FA438 /* PrivacyInfo.xcprivacy */; };
 		C52AF6682BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C52AF6662BC672C2001FA438 /* PrivacyInfo.xcprivacy */; };
 		C52AF6692BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C52AF6662BC672C2001FA438 /* PrivacyInfo.xcprivacy */; };
-		C535AEB82AB343AE00AB61AD /* Realm.swift in Sources */ = {isa = PBXBuildFile; fileRef = C535AEB72AB343AE00AB61AD /* Realm.swift */; };
 		C55D12B229ACAE8F0050F567 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C55D12B129ACAE8F0050F567 /* CryptoSwift */; };
 		C55D12B429ACB5E00050F567 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55D12B329ACB5E00050F567 /* Crypto.swift */; };
 		C55D12B529ACB5E00050F567 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55D12B329ACB5E00050F567 /* Crypto.swift */; };
@@ -46,7 +45,6 @@
 		C5B7CE322AEE498F00227392 /* Dexcom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7CE312AEE498F00227392 /* Dexcom.swift */; };
 		C5B7CE332AEE498F00227392 /* Dexcom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7CE312AEE498F00227392 /* Dexcom.swift */; };
 		C5BE8E5B29916D3600604237 /* DiaBLE Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C59960DF2981E381005999C2 /* DiaBLE Watch.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		C5BF97852BE6780F00ED6622 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C5BF97842BE6780F00ED6622 /* RealmSwift */; };
 		C5DB4E4E2B168E08005AD792 /* Libre.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DB4E4D2B168E08005AD792 /* Libre.swift */; };
 		C5DB4E4F2B168E08005AD792 /* Libre.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DB4E4D2B168E08005AD792 /* Libre.swift */; };
 		C5E015E02989B0EA00F6EDF9 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C5E015DF2989B0EA00F6EDF9 /* README.md */; };
@@ -105,7 +103,6 @@
 		C5E400A029825F580021C6B7 /* company_ids.json in Resources */ = {isa = PBXBuildFile; fileRef = C5E4009E29825F580021C6B7 /* company_ids.json */; };
 		C5E429FB2C4F0F280067AD57 /* DexcomG7.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E429FA2C4F0F280067AD57 /* DexcomG7.swift */; };
 		C5E429FC2C4F0F280067AD57 /* DexcomG7.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E429FA2C4F0F280067AD57 /* DexcomG7.swift */; };
-		C5EF10742BE67C5C0021A413 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = C5BF97842BE6780F00ED6622 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -154,7 +151,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				C5EF10742BE67C5C0021A413 /* RealmSwift in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -166,7 +162,6 @@
 		49DE8D3429AFFB3000BB7CF4 /* DiaBLEOverride.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DiaBLEOverride.xcconfig; sourceTree = "<group>"; };
 		C50B9AD22AA7396500FF1EA3 /* ConsoleTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleTools.swift; sourceTree = "<group>"; };
 		C52AF6662BC672C2001FA438 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		C535AEB72AB343AE00AB61AD /* Realm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Realm.swift; sourceTree = "<group>"; };
 		C53F77C529894478004F275A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C55D12B329ACB5E00050F567 /* Crypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
 		C56869692B30469000B11687 /* NFCTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NFCTools.swift; sourceTree = "<group>"; };
@@ -259,7 +254,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C5BF97852BE6780F00ED6622 /* RealmSwift in Frameworks */,
 				C55D12B229ACAE8F0050F567 /* CryptoSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -360,7 +354,6 @@
 				C5E4008C29825ED00021C6B7 /* Health.swift */,
 				C5E4008F29825EED0021C6B7 /* NFC.swift */,
 				C56869692B30469000B11687 /* NFCTools.swift */,
-				C535AEB72AB343AE00AB61AD /* Realm.swift */,
 				C50B9AD22AA7396500FF1EA3 /* ConsoleTools.swift */,
 				C5E4009529825F120021C6B7 /* LibreLink.swift */,
 				C5E4009829825F1C0021C6B7 /* Nightscout.swift */,
@@ -470,7 +463,6 @@
 			name = DiaBLE;
 			packageProductDependencies = (
 				C55D12B129ACAE8F0050F567 /* CryptoSwift */,
-				C5BF97842BE6780F00ED6622 /* RealmSwift */,
 			);
 			productName = DiaBLE;
 			productReference = C5AAA6152981CF7000CA3EC1 /* DiaBLE.app */;
@@ -508,7 +500,6 @@
 			mainGroup = C5AAA60C2981CF7000CA3EC1;
 			packageReferences = (
 				C55D12B029ACAE8F0050F567 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
-				C5BF97832BE6780F00ED6622 /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			productRefGroup = C5AAA6162981CF7000CA3EC1 /* Products */;
 			projectDirPath = "";
@@ -645,7 +636,6 @@
 				C5E4006029825C930021C6B7 /* Monitor.swift in Sources */,
 				C5E4008529825E990021C6B7 /* Libre3.swift in Sources */,
 				C5DB4E4E2B168E08005AD792 /* Libre.swift in Sources */,
-				C535AEB82AB343AE00AB61AD /* Realm.swift in Sources */,
 				C5E4006329825C930021C6B7 /* HamburgerMenu.swift in Sources */,
 				C5E429FB2C4F0F280067AD57 /* DexcomG7.swift in Sources */,
 				C5E4007429825E050021C6B7 /* MainDelegate.swift in Sources */,
@@ -1119,14 +1109,6 @@
 				minimumVersion = 1.9.0;
 			};
 		};
-		C5BF97832BE6780F00ED6622 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/realm-swift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 20.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1139,11 +1121,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C55D12B029ACAE8F0050F567 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
 			productName = CryptoSwift;
-		};
-		C5BF97842BE6780F00ED6622 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C5BF97832BE6780F00ED6622 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
