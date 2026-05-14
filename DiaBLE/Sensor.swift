@@ -95,7 +95,7 @@ enum SensorState: UInt8, CustomStringConvertible {
 }
 
 
-@Observable class Sensor: Logging {
+@Observable public class Sensor: Logging {
 
     var type: SensorType = .unknown
     var family: SensorFamily = .unknown

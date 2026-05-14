@@ -30,7 +30,7 @@ extension SensorType {
 }
 
 
-@Observable class Libre: Sensor {
+@Observable public class Libre: Sensor {
 
     var patchInfo: PatchInfo = Data() {
         willSet(info) {

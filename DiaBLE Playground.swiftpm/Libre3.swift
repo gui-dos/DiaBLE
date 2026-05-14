@@ -11,7 +11,7 @@ extension String {
 }
 
 
-@Observable class Libre3: Libre {
+@Observable public class Libre3: Libre {
 
 
     enum State: UInt8, CustomStringConvertible {
@@ -259,7 +259,7 @@ extension String {
     }
 
 
-    enum PacketType: UInt8 {
+    public enum PacketType: UInt8 {
         case controlCommand   = 0
         case controlResponse  = 1
         case patchStatus      = 2
@@ -808,15 +808,30 @@ extension String {
                     if payload.count == 65 {
                         patchEphemeral = payload
                         if settings.userLevel < .test { // not eavesdropping on Trident
-                            kEnc = deriveSymmetricKey()
-                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: derived symmetric key: \(kEnc.hex)")
-                            if settings.userLevel < .test
-                            { // not eavesdropping on Trident
-                                send(securityCommand: .readChallenge)
-                                // TODO
+                            Task { @MainActor in
+                                kEnc = deriveSymmetricKey()
+                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: derived symmetric key: \(kEnc.hex)")
+                                do {
+                                    // Claude: TODO
+                                    if !Libre3.sharedKeyEndpoint.isEmpty {
+                                        kEnc = try await getSharedKey(
+                                            sensorStatic: patchCertificate!.patchStaticPublicKey,
+                                            sensorEphemeral: patchEphemeral,
+                                            appPrivateStatic: appPrivateKeys[securityVersion].bytes,
+                                            appPrivateEphemeral: ephemeralPrivateKey.rawRepresentation
+                                        )
+                                    }
+                                    if settings.userLevel < .test { // not eavesdropping on Trident
+                                        send(securityCommand: .readChallenge)
+                                        // TODO
+                                    }
+                                } catch {
+                                    self.log("\(self.type) \(self.transmitter!.peripheral!.name ?? "(unnamed)"): ERROR deriving shared key: \(error.localizedDescription)")
+                                }
                             }
                         }
                     }
+
 
 
                 case .readChallenge:
