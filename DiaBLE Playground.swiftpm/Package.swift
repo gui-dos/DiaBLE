@@ -48,7 +48,8 @@ let package = Package(
         .executableTarget(
             name: "AppModule",
             dependencies: [
-                .product(name: "CryptoSwift", package: "cryptoswift")
+                .product(name: "CryptoSwift", package: "cryptoswift"),
+                .product(name: "LibreCRKit", package: "librecrkit")
             ],
             path: ".",
             resources: [

@@ -40,7 +40,8 @@ extension Libre3 {
 
         if let http = response as? HTTPURLResponse, http.statusCode != 200 {
             throw SharedKeyError.httpStatus(http.statusCode,
-                                            body: String(data: body, encoding: .utf8))
+                                            body: String(data: body, encoding: .utf8),
+                                            headers: http.allHeaderFields as! [String: String])
         }
         let hexString = String(data: body, encoding: .utf8)?
             .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
@@ -52,13 +53,13 @@ extension Libre3 {
     }
 
     public enum SharedKeyError: Error, LocalizedError {
-        case httpStatus(Int, body: String?)
+        case httpStatus(Int, body: String?, headers: [String: String])
         case malformedResponse(String)
 
         public var errorDescription: String? {
             switch self {
-            case .httpStatus(let code, let body):
-                return "Shared-key server returned HTTP \(code). Body: \(body ?? "<empty>")"
+            case .httpStatus(let code, let body, let headers):
+                return "Shared-key server returned HTTP status \(code), body: \(body ?? "<empty>"), headers: \(headers)"
             case .malformedResponse(let s):
                 return "Shared-key response is not valid hex or is too short: \(s)"
             }
