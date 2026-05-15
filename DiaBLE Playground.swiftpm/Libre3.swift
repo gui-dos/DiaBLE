@@ -1321,6 +1321,6 @@ extension String {
 }
 
 
-@Observable class LibreInstinct: Libre3 {
+@Observable class Instinct: Libre3 {
 
 }
