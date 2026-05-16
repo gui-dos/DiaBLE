@@ -54,9 +54,17 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         app = AppState()
 
         bluetoothDelegate = BluetoothDelegate()
+
+        // FIXME: Playground: 'State restoration of CBCentralManager is only allowed
+        // for applications that have specified the "bluetooth-central" background mode'
+
+        // centralManager = CBCentralManager(delegate: bluetoothDelegate,
+        //                                   queue: nil,
+        //                                   options: [CBCentralManagerOptionRestoreIdentifierKey: "DiaBLE"])
+        //
+
         centralManager = CBCentralManager(delegate: bluetoothDelegate,
-                                          queue: nil,
-                                          options: [CBCentralManagerOptionRestoreIdentifierKey: "DiaBLE"])
+                                          queue: nil)
 
         nfc = NFC()
         healthKit = HealthKit()
