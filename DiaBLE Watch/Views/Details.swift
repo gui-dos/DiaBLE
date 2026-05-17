@@ -195,7 +195,41 @@ struct Details: View, LoggingView {
 
                         @Bindable var settings = settings
 
-                        if app.sensor?.type != .libre3 && app.sensor?.type != .lingo && app.sensor?.type != .libreSelect {
+                        if app.sensor?.type == .libre3 || app.sensor?.type == .lingo || app.sensor?.type == .libreSelect || app.sensor?.type == .instinct {
+
+                            HStack {
+                                Text("Receiver ID")
+                                Spacer(minLength: 64)
+                                TextField("Receiver ID", value: $settings.activeSensorReceiverId,
+                                          formatter: NumberFormatter()).multilineTextAlignment(.trailing).foregroundStyle(.blue)
+                            }
+
+                            HStack {
+                                Text("BLE PIN")
+                                Spacer(minLength: 32)
+                                TextField("BLE PIN", value: $settings.activeSensorBlePIN, formatter: HexDataFormatter())
+                                    .multilineTextAlignment(.trailing)
+                                    .foregroundStyle(.blue)
+                            }
+
+                            // TODO
+                            // Text("While in **Test** mode, switch to **Dev** mode and press **RePair** before the sensor disconnects within 30 seconds (also from **Console/Tools** menu): **\(readingCountdown)s**")
+
+                            Button {
+                                // TODO
+                                settings.logging = true
+                                settings.selectedTab = .console
+                                app.main.rescan()
+                            } label: {
+                                Label {
+                                    Text("RePair")
+                                } icon: {
+                                    Image("Bluetooth").renderingMode(.template).resizable().frame(width: 32, height: 32)
+                                }
+                                .foregroundStyle(.blue)
+                            }
+
+                        } else {
 
                             HStack {
                                 Text("Patch Info")
