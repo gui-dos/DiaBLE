@@ -55,11 +55,16 @@ import Foundation
 
         "activeSensorSerial": "",
         "activeSensorAddress": Data(),
+        "activeSensorMaxLife": 0,
+
+        // Libre 2
         "activeSensorInitialPatchInfo": Data(),
         "activeSensorStreamingUnlockCode": 42,
         "activeSensorStreamingUnlockCount": 0,
-        "activeSensorMaxLife": 0,
         "activeSensorCalibrationInfo": try! JSONEncoder().encode(CalibrationInfo()),
+
+        // Libre 3
+        "activeSensorReceiverId": 0,
         "activeSensorBlePIN": Data(),
 
         // Dexcom
@@ -255,6 +260,10 @@ import Foundation
         didSet { UserDefaults.standard.set(self.activeSensorAddress, forKey: "activeSensorAddress") }
     }
 
+    var activeSensorMaxLife: Int = UserDefaults.standard.integer(forKey: "activeSensorMaxLife") {
+        didSet { UserDefaults.standard.set(self.activeSensorMaxLife, forKey: "activeSensorMaxLife") }
+    }
+
     var activeSensorInitialPatchInfo: PatchInfo = UserDefaults.standard.data(forKey: "activeSensorInitialPatchInfo")! {
         didSet { UserDefaults.standard.set(self.activeSensorInitialPatchInfo, forKey: "activeSensorInitialPatchInfo") }
     }
@@ -267,12 +276,12 @@ import Foundation
         didSet { UserDefaults.standard.set(self.activeSensorStreamingUnlockCount, forKey: "activeSensorStreamingUnlockCount") }
     }
 
-    var activeSensorMaxLife: Int = UserDefaults.standard.integer(forKey: "activeSensorMaxLife") {
-        didSet { UserDefaults.standard.set(self.activeSensorMaxLife, forKey: "activeSensorMaxLife") }
-    }
-
     var activeSensorCalibrationInfo: CalibrationInfo = try! JSONDecoder().decode(CalibrationInfo.self, from: UserDefaults.standard.data(forKey: "activeSensorCalibrationInfo")!) {
         didSet { UserDefaults.standard.set(try! JSONEncoder().encode(self.activeSensorCalibrationInfo), forKey: "activeSensorCalibrationInfo") }
+    }
+
+    var activeSensorReceiverId: Int = UserDefaults.standard.integer(forKey: "activeSensorReceiverId") {
+        didSet { UserDefaults.standard.set(self.activeSensorReceiverId, forKey: "activeSensorReceiverId") }
     }
 
     var activeSensorBlePIN: Data = UserDefaults.standard.data(forKey: "activeSensorBlePIN")! {
