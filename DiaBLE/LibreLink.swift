@@ -761,6 +761,7 @@ class LibreLinkUp: Logging {
                                 }
                                 let receiverId = settings.libreLinkUpPatientId.fnv32Hash
                                 (sensor as! Libre3).receiverId = receiverId
+                                settings.activeSensorReceiverId = Int(receiverId)
                                 log("LibreLinkUp: LibreView receiver ID: \(receiverId)")
                             }
                             await main.status("\(sensor.type)  +  LLU")

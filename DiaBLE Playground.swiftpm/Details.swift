@@ -196,7 +196,24 @@ struct Details: View, LoggingView {
 
                         @Bindable var settings = settings
 
-                        if app.sensor?.type != .libre3 && app.sensor?.type != .lingo && app.sensor?.type != .libreSelect {
+                        if app.sensor?.type == .libre3 || app.sensor?.type == .lingo || app.sensor?.type == .libreSelect || app.sensor?.type == .instinct {
+
+                            HStack {
+                                Text("Receiver ID")
+                                TextField("Receiver ID", value: $settings.activeSensorReceiverId, formatter: NumberFormatter()).keyboardType(.numbersAndPunctuation).multilineTextAlignment(.trailing).foregroundStyle(.blue)
+                            }
+
+                            HStack {
+                                Text("BLE PIN")
+                                TextField("BLE PIN", value: $settings.activeSensorBlePIN, formatter: HexDataFormatter())
+                                    .multilineTextAlignment(.trailing)
+                                    .foregroundStyle(.blue)
+                            }
+
+                            Text("While in **Test** mode, switch to **Dev** mode and press **RePair** before the sensor disconnects within 30 seconds (also from **Console/Tools** menu): **\(readingCountdown)s**")
+
+
+                        } else {
 
                             HStack {
                                 Text("Patch Info")
