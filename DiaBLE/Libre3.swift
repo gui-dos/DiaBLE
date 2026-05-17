@@ -502,12 +502,13 @@ extension String {
         /// - 010101 9B48 0000 requests clinical data from lifeCount 18587 (0x489B)
         case backfill(Data)       // type 2
 
-        /// - 040100 0000 0000
+        /// - 040100 0000 0000 requests event log from index 01
         case eventLog(Data)       // type 3
 
         /// - 060000 0000 0000
         case factoryData(Data)    // type 4
 
+        /// - 050000 0000 0000
         case shutdownPatch(Data)  // type 5
     }
 
