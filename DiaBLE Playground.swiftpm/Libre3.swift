@@ -75,12 +75,14 @@ extension String {
         case others = 1
         case sensor = 4    // Libre 3's product family
         case lingo  = 9
+        case instinct = 10 // Medtronic-branded Libre 3+ (firmware 1.4, gen=1)
 
         var description: String {
             switch self {
-            case .others: "others"  // OTHERS
-            case .sensor: "sensor"  // SENSOR
-            case .lingo:  "Lingo"
+            case .others:   "others"  // OTHERS
+            case .sensor:   "sensor"  // SENSOR
+            case .lingo:    "Lingo"
+            case .instinct: "Instinct"
             }
         }
     }
@@ -574,7 +576,7 @@ extension String {
         log("\(type): security version: \(securityVersion) (0x\(securityVersion.hex)), localization: \(localization) (0x\(localization.hex)), generation: \(generation) (0x\(generation.hex))")
 
         self.securityVersion = Int(securityVersion)
-        self.generation = Int(generation)  // 1: Libre 3+
+        self.generation = Int(generation)  // 1: Libre 3+, Instinct
 
         region = SensorRegion(rawValue: Int(localization & 0xFF)) ?? .unknown
         let subregion = UInt8((localization & 0xFF00) >> 8)
