@@ -21,6 +21,27 @@ extension Libre3 {
     }
 
     public func deriveSymmetricKey() -> Data {
+
+        // Claude: TODO:
+        //
+        // Step 1: load the four P-256 keys this Phase 5 KDF mixes.
+        //   Two of ours (static + ephemeral private), two of the sensor's
+        //   (static + ephemeral public).
+        //
+        // Step 2: Z_s = ECDH(app_static_priv, sensor_static_pub)  → 32-B x-coord
+        //
+        // Step 3: Z_e = ECDH(app_eph_priv, sensor_eph_pub)        → 32-B x-coord
+        //
+        // Step 4: IKM = Z_s ‖ Z_e (64 B) → HKDF-SHA256, info="kAuth",
+        //         empty salt, 16-B output (i.e. kAuth used as Phase 5/6 CCM key).
+        //         ikm = Zs + Ze
+        //         kEnc = HKDF<SHA256>.deriveKey(
+        //             inputKeyMaterial: SymmetricKey(data: ikm),
+        //             salt:             Data(),
+        //             info:             Data("kAuth".utf8),
+        //             outputByteCount:  16
+        //         ).withUnsafeBytes { Data($0) }
+
         let sensorPublicKey = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
         let sharedSecret = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorPublicKey)
         // TODO:
