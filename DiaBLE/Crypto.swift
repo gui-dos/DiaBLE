@@ -23,35 +23,20 @@ extension Libre3 {
     public func deriveSymmetricKey() -> Data {
 
         // Claude: TODO:
-        //
-        // Step 1: load the four P-256 keys this Phase 5 KDF mixes.
-        //   Two of ours (static + ephemeral private), two of the sensor's
-        //   (static + ephemeral public).
-        //
-        // Step 2: Z_s = ECDH(app_static_priv, sensor_static_pub)  → 32-B x-coord
-        //
-        // Step 3: Z_e = ECDH(app_eph_priv, sensor_eph_pub)        → 32-B x-coord
-        //
-        // Step 4: IKM = Z_s ‖ Z_e (64 B) → HKDF-SHA256, info="kAuth",
-        //         empty salt, 16-B output (i.e. kAuth used as Phase 5/6 CCM key).
-        //         ikm = Zs + Ze
-        //         kEnc = HKDF<SHA256>.deriveKey(
-        //             inputKeyMaterial: SymmetricKey(data: ikm),
-        //             salt:             Data(),
-        //             info:             Data("kAuth".utf8),
-        //             outputByteCount:  16
-        //         ).withUnsafeBytes { Data($0) }
 
-        let sensorPublicKey = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
-        let sharedSecret = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorPublicKey)
-        // TODO:
-        let salt = Data()
-        let info = "".data(using: .utf8)!
-        let aesKey = sharedSecret.hkdfDerivedSymmetricKey(using: SHA256.self,
-                                                          salt: salt,
-                                                          sharedInfo: info,
-                                                          outputByteCount: 16)
-        return aesKey.withUnsafeBytes { Data($0) }
+        let sensorStaticPub = try! P256.KeyAgreement.PublicKey(x963Representation: patchCertificate!.patchStaticPublicKey)
+        let sensorEphPub    = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
+        let Zs = try! appStaticPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
+            .withUnsafeBytes { Data($0) }
+        let Ze = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorEphPub)
+            .withUnsafeBytes { Data($0) }
+        let ikm = Zs + Ze
+        return HKDF<SHA256>.deriveKey(
+            inputKeyMaterial: SymmetricKey(data: ikm),
+            salt:             Data(),
+            info:             Data("".utf8), // TODO: from kAuth
+            outputByteCount:  16
+        ).withUnsafeBytes { Data($0) }
     }
 
 
@@ -88,22 +73,6 @@ extension Libre3 {
     public func decryptPacket(data: Data, type: PacketType, ivEnc: Data) -> Data? {
         let nonce = data.suffix(2) + Data(Libre3.packetDescriptors[Int(type.rawValue)]) + ivEnc
         return aesDecrypt(data: data, nonce: nonce)
-    }
-
-
-    static func testAESCCM() {
-        // func testAESCCMTestCase1Decrypt()
-        let key: Array<UInt8> = [0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f]
-        let nonce: Array<UInt8> = [0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16]
-        let aad: Array<UInt8> = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07]
-        let ciphertext: Array<UInt8> = [0x71, 0x62, 0x01, 0x5b, 0x4d, 0xac, 0x25, 0x5d]
-        let expected: Array<UInt8> = [0x20, 0x21, 0x22, 0x23]
-
-        let aes = try! AES(key: key, blockMode: CCM(iv: nonce, tagLength: 4, messageLength: ciphertext.count - 4, additionalAuthenticatedData: aad), padding: .noPadding)
-        let decrypted = try! aes.decrypt(ciphertext)
-
-        print("TEST: ciphertext: \(ciphertext), decrypted: \(decrypted), expected: \(expected)")
-
     }
 
 }
