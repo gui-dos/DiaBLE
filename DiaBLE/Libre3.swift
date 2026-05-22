@@ -551,7 +551,7 @@ extension String {
     var ephemeralPublicKey: Data = Data() // 65-byte uncompressed P-256 returned by initECDH()
 
     var appStaticPrivateKey: P256.KeyAgreement.PrivateKey = .init()  // used when trying a new ECDH session
-    var exportedKAuth: Data = Data() // 149-byte persistent SKB wrapped exported blob, include encoded appStaticPublicKey
+    var exportedKAuth: Data = Data() // 149-byte persistent SKB wrapped exported blob, includes encoded appStaticPrivateKey
 
     // CGMSensor and BCSecurityContext members:
     var outCryptoSequence: UInt16 = 1
