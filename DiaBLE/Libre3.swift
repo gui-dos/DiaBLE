@@ -792,16 +792,12 @@ extension String {
                             debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate ECDSA signature not verified")
                         }
                         if settings.userLevel < .test { // not eavesdropping on Trident
-                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0D (CMD_KEY_AGREEMENT)")
+                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): sending security command 'key agreement' 0x0D")
                             send(securityCommand: .keyAgreement)
-                            // TODO:
-                            // Natives.processbar(5, null, null) (CRYPTO_EXTENSION_GENERATE_EPHEMERAL)
-                            // let ephemeralKey = Data((0 ..< 65 ).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })  // TEST random ephemeral
-                            // debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending random 65-byte ephemeral key 0x\(ephemeralKey.hex)")
                             ephemeralPublicKey = initECDH()
-                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending generated 65-byte P-256 x9.63 ephemeral key 0x\(ephemeralPublicKey.hex)")
+                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): sending generated 65-byte P-256 x9.63 ephemeral key 0x\(ephemeralPublicKey.hex)")
                             write(ephemeralPublicKey, for: .certificateData)
-                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: sending security command 0x0E (CMD_EPHEMERAL_LOAD_DONE)")
+                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): sending security command 'ephemereal load done' 0x0E")
                             send(securityCommand: .ephemeralLoadDone)
                         }
                     }
@@ -851,9 +847,6 @@ extension String {
                     r2     = Data((0 ..< 16).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
                     debugLog("\(type): r1: \(r1.hex), generated random r2: \(r2.hex), nonce1: \(nonce1.hex)")
 
-                    // TODO:
-                    // let response = process2(command: 7, nonce1, Data(r1 + r2 + blePIN)) // CRYPTO_EXTENSION_ENCRYPT
-
                     if settings.userLevel < .test { // not eavesdropping on Trident
 
                         if blePIN.isEmpty && !settings.activeSensorBlePIN.isEmpty {
@@ -864,16 +857,14 @@ extension String {
                         if !blePIN.isEmpty && !kEnc.isEmpty {
 
                             let challengeResponse = r1 + r2 + blePIN
-                            // TODO: a 13-byte nounce needed?
-                            // let nonce = nonce1 + Data(count: 6)
                             let encryptedResponse = aesEncrypt(data: challengeResponse, nonce: nonce1)!
-                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing encrypted challenge response: \(encryptedResponse.hex) (\(encryptedResponse.count) bytes), plain: \(challengeResponse.hex) (\(challengeResponse.count) bytes)")
+                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing encrypted challenge response: \(encryptedResponse.hex) (\(encryptedResponse.count) bytes), plain (r1 + r2 + BLE PIN): \(challengeResponse.hex) (\(challengeResponse.count) bytes)")
                             write(encryptedResponse)
 
                         } else {
 
                             if blePIN.isEmpty {
-                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): BLE PIN unknown, need NFC scan first.")
+                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): BLE PIN unknown, need a NFC scan first.")
                             }
 
                             log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: writing 40-zero challenge response")
