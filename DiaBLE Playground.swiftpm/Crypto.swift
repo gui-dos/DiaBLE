@@ -26,11 +26,21 @@ extension Libre3 {
 
         let sensorStaticPub = try! P256.KeyAgreement.PublicKey(x963Representation: patchCertificate!.patchStaticPublicKey)
         let sensorEphPub    = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
+
+        // LibreCRKit first-pairing:
+        //
+        ///// ECDH(phone_eph_priv, sensor_static_pub).
+        // public let sharedEphStatic: Data
+        ///// ECDH(phone_eph_priv, sensor_eph_pub).
+        // public let sharedEphEph: Data
+        // let Zs = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
+
         let Zs = try! appStaticPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
             .withUnsafeBytes { Data($0) }
         let Ze = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorEphPub)
             .withUnsafeBytes { Data($0) }
-        let ikm = Zs + Ze
+        // let ikm = Zs + Ze
+        let ikm = Ze + Zs
         return HKDF<SHA256>.deriveKey(
             inputKeyMaterial: SymmetricKey(data: ikm),
             salt:             Data(),

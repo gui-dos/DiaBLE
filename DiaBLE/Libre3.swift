@@ -882,10 +882,10 @@ extension String {
 
 
                 case .challengeLoadDone:
-                    let first = payload.subdata(in:  0 ..< 60)
+                    let encryptedKAuth = payload.subdata(in:  0 ..< 60)
                     let nonce = payload.subdata(in: 60 ..< 67)
                     let seqId = UInt16(payload[60 ... 61])
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): encrypted KAuth: \(first.hex), nonce: \(nonce.hex) (seq id: \(seqId.hex))")
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): encrypted KAuth: \(encryptedKAuth.hex), nonce: \(nonce.hex) (seq id: \(seqId.hex))")
                     // TODO:
                     // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/Libre3GattCallback.java
                     // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/bcrypt/bcrypt.cpp
@@ -1151,7 +1151,7 @@ extension String {
         "03 03 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 00 01 61 89 76 55 01 00 00 00 00 00 00 00 00 04 82 42 be 33 f1 a3 30 88 01 12 fa 62 cc 48 42 a4 3d 12 04 92 2a d2 01 d8 77 5b b2 26 f6 11 f7 5b 0e f3 d5 bc 6c c4 31 7c aa 45 75 84 ab 00 3f 17 12 33 60 89 d3 a4 f2 98 38 ed 0d c6 66 de ae a2 d6 5a 00 df ff 5d 7b ca e2 16 55 e3 02 e3 45 8e 77 4d aa aa ca 87 af 75 f1 b8 78 84 b1 8d 4c e8 75 d0 d1 08 c9 03 a8 34 47 1a 4f f6 74 b2 d3 0b cb a0 62 37 30 14 b7 78 6e 44 37 b1 77 ae c3 c8"
     ]
 
-    /// 165-byte WhiteCryption blob wrapping the app private key
+    /// 165-byte whiteCryption SKB blob wrapping the app private key
     let appPrivateKeys = [
         "43 F2 C5 3D 02 00 00 00 01 00 00 01 00 00 00 00 00 96 95 77 4B 9A 04 53 51 FB 16 0B EC 5F 49 DB DF 57 45 48 50 67 78 6C DE 13 08 83 D8 3D F6 96 81 4E A4 1E A7 D2 F8 D2 30 84 76 B4 9A 01 2C 4E BB 00 00 00 01 7D 4D 61 51 06 81 BF 22 31 67 6B 90 3B 17 ED 53 98 0D 98 FE 68 2E E4 4B 00 00 00 20 5B 7B 96 AA E3 FF 22 2D 4D 37 1E 7A A6 2C FA A0 9B F8 42 1C C1 DA 7B 7B 0D F9 34 33 CC 49 FB 0E 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 96 9E DB 28 BF 6F C0 FF 76 0A F0 95 92 1D 9F 1E 3B 16 77 B5",
         "1D 85 8F 06 02 00 00 00 01 00 00 01 00 00 00 00 00 96 95 77 4B 9A 04 53 51 FB 16 0B EC 5F 49 DB DF 0D C0 CE 52 FB 56 5F 84 E6 13 B8 19 AE D3 DF 91 9C E3 0A 3D D4 C0 12 EA EA 70 C8 CC E2 89 58 40 00 00 00 01 9B C7 79 12 3D 86 60 B3 7E 99 B4 BF 10 C1 C4 2C 11 35 B3 02 5B C9 B2 EF 00 00 00 20 E3 A1 FB 17 80 A1 63 80 2A A0 FE B1 F2 00 AC 26 9A 42 B2 29 03 8C A6 E1 4D 40 EF BC 6B 7B 6A E8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 CE C6 67 E6 C0 9D 20 F5 C0 33 D0 61 B5 FC A1 8B 39 92 06 8B"
