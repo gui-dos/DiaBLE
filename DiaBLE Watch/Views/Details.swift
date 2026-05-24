@@ -213,7 +213,7 @@ struct Details: View, LoggingView {
                             }
 
                             // TODO
-                            // Text("While in **Test** mode, switch to **Devel** mode and press **RePair** (also from the **Console Tools** menu) before the sensor disconnects (you need to scan it only once) **\((readingCountdown < 0 ? 0 : readingCountdown) - 30 > 0 ? ": \(readingCountdown - 30) s" : "").**")
+                            // Text("While in **Test** mode, switch to **Devel** mode and press **RePair** (also from the **Console Tools** menu) before the sensor disconnects (you need to scan it only once)**\((readingCountdown < 0 ? 0 : readingCountdown) - 30 > 0 ? ": \(readingCountdown - 30) s" : "").**")
 
                             Button {
                                 // TODO

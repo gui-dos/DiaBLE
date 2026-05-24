@@ -290,59 +290,13 @@
 				AndroidShim/Libre3SecurityFrameBuffer.swift,
 				AndroidShim/Libre3SecurityProtocol.swift,
 				AndroidShim/Libre3TestVectors.swift,
-				"libre3-auth-ios-sample-app-main/.gitignore",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/AndroidServerClient.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Assets.xcassets",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/ContentView.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Hex.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Info.plist",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/libre3AndroidServerApp.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3BLEClient.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3BLEUUIDs.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3KAuthStore.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3NFC.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3PacketCrypto.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3PatchCertificate.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3Payloads.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3ResearchMaterial.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3SecurityFrameBuffer.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3SecurityProtocol.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3TestVectors.swift",
-				"libre3-auth-ios-sample-app-main/LICENSE",
-				"libre3-auth-ios-sample-app-main/README.md",
 			);
 			target = C59960DE2981E381005999C2 /* DiaBLE Watch */;
-		};
-		C5939DFF2FC3662B00AC13B9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"libre3-auth-ios-sample-app-main/.gitignore",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/AndroidServerClient.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Assets.xcassets",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/ContentView.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Hex.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Info.plist",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/libre3AndroidServerApp.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3BLEClient.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3BLEUUIDs.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3KAuthStore.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3NFC.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3PacketCrypto.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3PatchCertificate.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3Payloads.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3ResearchMaterial.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3SecurityFrameBuffer.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3SecurityProtocol.swift",
-				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3TestVectors.swift",
-				"libre3-auth-ios-sample-app-main/LICENSE",
-				"libre3-auth-ios-sample-app-main/README.md",
-			);
-			target = C5AAA6142981CF7000CA3EC1 /* DiaBLE */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		C5F5D6362FB5C56C00C40F4E /* Libre3 */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C5939DFF2FC3662B00AC13B9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, C54EB2302FC2E46C006D894A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Libre3; sourceTree = "<group>"; };
+		C5F5D6362FB5C56C00C40F4E /* Libre3 */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C54EB2302FC2E46C006D894A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Libre3; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
