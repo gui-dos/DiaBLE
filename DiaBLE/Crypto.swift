@@ -27,7 +27,7 @@ extension Libre3 {
         let sensorStaticPub = try! P256.KeyAgreement.PublicKey(x963Representation: patchCertificate!.patchStaticPublicKey)
         let sensorEphPub    = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
 
-        // LibreCRKit first-pairing:
+        // LibreCRKit 3DH-style first-pairing:
         //
         ///// ECDH(phone_eph_priv, sensor_static_pub).
         // public let sharedEphStatic: Data

@@ -889,7 +889,7 @@ extension String {
                     // TODO:
                     // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/Libre3GattCallback.java
                     // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/bcrypt/bcrypt.cpp
-                    // let decr = process2(8, nonce, first)     // CRYPTO_EXTENSION_DECRYPT
+                    // let decr = process2(8, nonce, encryptedKAuth)     // CRYPTO_EXTENSION_DECRYPT
                     // let r2    = decr.subdata(in:  0 ..< 16)
                     // let r1    = decr.subdata(in: 16 ..< 32)
                     // let kEnc  = decr.subdata(in: 32 ..< 48)
