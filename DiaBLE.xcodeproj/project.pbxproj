@@ -120,6 +120,13 @@
 			remoteGlobalIDString = C581D5832B0E699C002A4633;
 			remoteInfo = DiaBLEWidgetExtension;
 		};
+		C5A86E002FC2EA6300EF6289 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C5A86DA82FC2E9E300EF6289 /* libre3AndroidServer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7B3335852FB346700048457B;
+			remoteInfo = libre3AndroidServer;
+		};
 		C5BE8E5C29916D3600604237 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C5AAA60D2981CF7000CA3EC1 /* Project object */;
@@ -194,6 +201,7 @@
 		C5916E5629827EB10051AC06 /* MainDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainDelegate.swift; sourceTree = "<group>"; };
 		C59960DF2981E381005999C2 /* DiaBLE Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DiaBLE Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5A14842298985E000A0E510 /* DiaBLE Watch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "DiaBLE Watch.entitlements"; path = "../DiaBLE Watch/DiaBLE Watch.entitlements"; sourceTree = "<group>"; };
+		C5A86DA82FC2E9E300EF6289 /* libre3AndroidServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libre3AndroidServer.xcodeproj; sourceTree = "<group>"; };
 		C5AA38A32C25687F00CBB0F3 /* Lingo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lingo.swift; sourceTree = "<group>"; };
 		C5AAA6152981CF7000CA3EC1 /* DiaBLE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DiaBLE.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5AAA6182981CF7000CA3EC1 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
@@ -375,6 +383,14 @@
 				C5A14842298985E000A0E510 /* DiaBLE Watch.entitlements */,
 			);
 			path = "DiaBLE Watch";
+			sourceTree = "<group>";
+		};
+		C5A86DAD2FC2E9E300EF6289 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C5A86E012FC2EA6300EF6289 /* libre3AndroidServer.app */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		C5AAA60C2981CF7000CA3EC1 = {
@@ -590,6 +606,10 @@
 					ProductGroup = C54EB20A2FC2E46B006D894A /* Products */;
 					ProjectRef = C54EB2062FC2E46B006D894A /* libre3AndroidServer.xcodeproj */;
 				},
+				{
+					ProductGroup = C5A86DAD2FC2E9E300EF6289 /* Products */;
+					ProjectRef = C5A86DA82FC2E9E300EF6289 /* libre3AndroidServer.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -606,6 +626,13 @@
 			fileType = wrapper.application;
 			path = libre3AndroidServer.app;
 			remoteRef = C54EB2322FC2E46C006D894A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C5A86E012FC2EA6300EF6289 /* libre3AndroidServer.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = libre3AndroidServer.app;
+			remoteRef = C5A86E002FC2EA6300EF6289 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
