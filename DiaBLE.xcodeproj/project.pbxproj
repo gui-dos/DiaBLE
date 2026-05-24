@@ -155,6 +155,13 @@
 			remoteGlobalIDString = 7B3335852FB346700048457B;
 			remoteInfo = libre3AndroidServer;
 		};
+		C5E039C82FC371F000C038DF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C5E0399D2FC371EF00C038DF /* libre3AndroidServer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7B3335852FB346700048457B;
+			remoteInfo = libre3AndroidServer;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -237,6 +244,7 @@
 		C5DED87529899B8A00164AEF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C5E015DF2989B0EA00F6EDF9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		C5E015E52989B10500F6EDF9 /* LICENSE.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
+		C5E0399D2FC371EF00C038DF /* libre3AndroidServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libre3AndroidServer.xcodeproj; sourceTree = "<group>"; };
 		C5E165042ACBE5E600970835 /* HamburgerMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HamburgerMenu.swift; sourceTree = "<group>"; };
 		C5E4004429825C710021C6B7 /* alarm_high.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alarm_high.mp3; sourceTree = "<group>"; };
 		C5E4004529825C710021C6B7 /* alarm_low.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = alarm_low.mp3; sourceTree = "<group>"; };
@@ -280,6 +288,26 @@
 				AndroidShim/AndroidShimContentView.swift,
 				AndroidShim/AndroidShimLibre3NFC.swift,
 				AndroidShim/Hex.swift,
+				"AndroidShim/libre3-auth-ios-sample-app-main/.gitignore",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/AndroidServerClient.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Assets.xcassets",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/ContentView.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Hex.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Info.plist",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/libre3AndroidServerApp.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3BLEClient.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3BLEUUIDs.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3KAuthStore.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3NFC.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3PacketCrypto.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3PatchCertificate.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3Payloads.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3ResearchMaterial.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3SecurityFrameBuffer.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3SecurityProtocol.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3TestVectors.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/LICENSE",
+				"AndroidShim/libre3-auth-ios-sample-app-main/README.md",
 				AndroidShim/Libre3BLEClient.swift,
 				AndroidShim/Libre3BLEUUIDs.swift,
 				AndroidShim/Libre3KAuthStore.swift,
@@ -293,10 +321,36 @@
 			);
 			target = C59960DE2981E381005999C2 /* DiaBLE Watch */;
 		};
+		C5E039C62FC371F000C038DF /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"AndroidShim/libre3-auth-ios-sample-app-main/.gitignore",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/AndroidServerClient.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Assets.xcassets",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/ContentView.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Hex.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Info.plist",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/libre3AndroidServerApp.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3BLEClient.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3BLEUUIDs.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3KAuthStore.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3NFC.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3PacketCrypto.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3PatchCertificate.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3Payloads.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3ResearchMaterial.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3SecurityFrameBuffer.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3SecurityProtocol.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3TestVectors.swift",
+				"AndroidShim/libre3-auth-ios-sample-app-main/LICENSE",
+				"AndroidShim/libre3-auth-ios-sample-app-main/README.md",
+			);
+			target = C5AAA6142981CF7000CA3EC1 /* DiaBLE */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		C5F5D6362FB5C56C00C40F4E /* Libre3 */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C54EB2302FC2E46C006D894A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Libre3; sourceTree = "<group>"; };
+		C5F5D6362FB5C56C00C40F4E /* Libre3 */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C5E039C62FC371F000C038DF /* PBXFileSystemSynchronizedBuildFileExceptionSet */, C54EB2302FC2E46C006D894A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Libre3; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -483,6 +537,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		C5E039A12FC371EF00C038DF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C5E039C92FC371F000C038DF /* libre3AndroidServer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		C5E4004329825C710021C6B7 /* Media */ = {
 			isa = PBXGroup;
 			children = (
@@ -627,6 +689,10 @@
 					ProjectRef = C5939DD62FC3662A00AC13B9 /* libre3AndroidServer.xcodeproj */;
 				},
 				{
+					ProductGroup = C5E039A12FC371EF00C038DF /* Products */;
+					ProjectRef = C5E0399D2FC371EF00C038DF /* libre3AndroidServer.xcodeproj */;
+				},
+				{
 					ProductGroup = C54EB20A2FC2E46B006D894A /* Products */;
 					ProjectRef = C54EB2062FC2E46B006D894A /* libre3AndroidServer.xcodeproj */;
 				},
@@ -682,6 +748,13 @@
 			fileType = wrapper.application;
 			path = libre3AndroidServer.app;
 			remoteRef = C5C031482FC2F11B00E3270C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C5E039C92FC371F000C038DF /* libre3AndroidServer.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = libre3AndroidServer.app;
+			remoteRef = C5E039C82FC371F000C038DF /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
