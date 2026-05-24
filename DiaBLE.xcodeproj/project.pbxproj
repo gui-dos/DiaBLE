@@ -113,6 +113,13 @@
 			remoteGlobalIDString = 7B3335852FB346700048457B;
 			remoteInfo = libre3AndroidServer;
 		};
+		C567E6802FC30EFB00A12115 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C567E6282FC30ED100A12115 /* libre3AndroidServer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7B3335852FB346700048457B;
+			remoteInfo = libre3AndroidServer;
+		};
 		C581D5952B0E699D002A4633 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C5AAA60D2981CF7000CA3EC1 /* Project object */;
@@ -186,6 +193,7 @@
 		C53F77C529894478004F275A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C54EB2062FC2E46B006D894A /* libre3AndroidServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libre3AndroidServer.xcodeproj; sourceTree = "<group>"; };
 		C55D12B329ACB5E00050F567 /* Crypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
+		C567E6282FC30ED100A12115 /* libre3AndroidServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libre3AndroidServer.xcodeproj; sourceTree = "<group>"; };
 		C56869692B30469000B11687 /* NFCTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NFCTools.swift; sourceTree = "<group>"; };
 		C581D5842B0E699C002A4633 /* DiaBLEWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DiaBLEWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C581D5852B0E699C002A4633 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -265,6 +273,7 @@
 				"libre3-auth-ios-sample-app-main/libre3AndroidServer/ContentView.swift",
 				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Info.plist",
 				"libre3-auth-ios-sample-app-main/libre3AndroidServer/libre3AndroidServerApp.swift",
+				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3NFC.swift",
 				"libre3-auth-ios-sample-app-main/LICENSE",
 				"libre3-auth-ios-sample-app-main/README.md",
 			);
@@ -273,7 +282,8 @@
 		C54EB2302FC2E46C006D894A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AndroidShimContentView.swift,
+				AndroidShim/AndroidShimContentView.swift,
+				AndroidShim/AndroidShimLibre3NFC.swift,
 				"libre3-auth-ios-sample-app-main/.gitignore",
 				"libre3-auth-ios-sample-app-main/libre3AndroidServer/AndroidServerClient.swift",
 				"libre3-auth-ios-sample-app-main/libre3AndroidServer/Assets.xcassets",
@@ -336,6 +346,14 @@
 			isa = PBXGroup;
 			children = (
 				C54EB2332FC2E46C006D894A /* libre3AndroidServer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C567E62E2FC30ED100A12115 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C567E6812FC30EFB00A12115 /* libre3AndroidServer.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -607,6 +625,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = C567E62E2FC30ED100A12115 /* Products */;
+					ProjectRef = C567E6282FC30ED100A12115 /* libre3AndroidServer.xcodeproj */;
+				},
+				{
 					ProductGroup = C54EB20A2FC2E46B006D894A /* Products */;
 					ProjectRef = C54EB2062FC2E46B006D894A /* libre3AndroidServer.xcodeproj */;
 				},
@@ -634,6 +656,13 @@
 			fileType = wrapper.application;
 			path = libre3AndroidServer.app;
 			remoteRef = C54EB2322FC2E46C006D894A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C567E6812FC30EFB00A12115 /* libre3AndroidServer.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = libre3AndroidServer.app;
+			remoteRef = C567E6802FC30EFB00A12115 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		C5A86E012FC2EA6300EF6289 /* libre3AndroidServer.app */ = {
