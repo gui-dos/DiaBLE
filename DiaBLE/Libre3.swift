@@ -208,7 +208,7 @@ extension String {
         //     uint16_t readingMgDl;
         //     uint16_t historicMgDl;
         //     int getHistoricLifeCount() const {
-        //         return round((lifeCount-19.0)/5.0)*5; //  - 17-minute latency?
+        //         return round((lifeCount-19.0)/5.0)*5; // correct: - 17-minute latency (HISTORIC_POINT_LATENCY = 17)
         //     };
         // }
         //

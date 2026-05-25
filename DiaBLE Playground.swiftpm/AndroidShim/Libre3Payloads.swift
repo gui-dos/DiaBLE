@@ -181,7 +181,8 @@ enum Libre3Payloads {
         static let byteCount = 14
 
         var estimatedHistoricLifeCount: UInt16 {
-            let value = (Double(lifeCount) - 19.0) / 5.0
+            // let value = (Double(lifeCount) - 19.0) / 5.0
+            let value = (Double(lifeCount) - 17.0) / 5.0 // HISTORIC_POINT_LATENCY = 17
             return UInt16(value.rounded() * 5.0)
         }
 

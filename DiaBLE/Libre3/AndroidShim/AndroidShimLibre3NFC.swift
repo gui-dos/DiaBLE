@@ -336,7 +336,7 @@ extension Libre3NFC: NFCTagReaderSessionDelegate {
             responseRaw = try await tag.customCommand(
                 requestFlags: .highDataRate,
                 // customCommandCode: 0xA8,
-                customCommandCode: 0xA0,
+                customCommandCode: 0xA0, // in DiaBLE we always keep the current BLE PIN
                 customRequestParameters: payload
             )
         } catch {
