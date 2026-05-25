@@ -20,6 +20,12 @@ extension Libre3 {
         return ephemeralPublicKeyBytes
     }
 
+    /// TODO: the actual method needed to be implement should be
+    /// `deriveKAuthFromPatchEphemeral()`, a quite hairy task
+    /// for the first pairing because of Trident's SKB use of WBAES
+    /// (White-Box AES), which converts the standard AES algorithm into
+    /// a network of precomputed T-tables (lookup tables).
+    /// https://github.com/gui-dos/DiaBLE/commit/5c3cec7#commitcomment-184791786
     public func deriveSymmetricKey() -> Data {
 
         // Claude: TODO:

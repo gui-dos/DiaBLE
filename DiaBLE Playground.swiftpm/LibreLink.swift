@@ -761,6 +761,7 @@ class LibreLinkUp: Logging {
                                 }
                                 let receiverId = settings.libreLinkUpPatientId.fnv32Hash
                                 (sensor as! Libre3).receiverId = receiverId
+                                settings.activeSensorReceiverId = Int(receiverId)
                                 log("LibreLinkUp: LibreView receiver ID: \(receiverId)")
                             }
                             await main.status("\(sensor.type)  +  LLU")
@@ -980,8 +981,8 @@ class LibreLinkUp: Logging {
                             }
                             if let sensor = app.sensor as? Libre3, main.history.factoryValues.count > 0 {
                                 sensor.currentLifeCount = lastMeasurement.id
-                                sensor.lastHistoricLifeCount = main.history.factoryValues[0].id
-                                sensor.lastHistoricReadingDate = main.history.factoryValues[0].date
+                                sensor.lastHistoricalLifeCount = main.history.factoryValues[0].id
+                                sensor.lastHistoricalReadingDate = main.history.factoryValues[0].date
                             }
                             // keep only the latest 22 minutes considering the 17-minute latency of the historic values update
                             trend = trend.filter { lastMeasurement.id - $0.id < 22 }

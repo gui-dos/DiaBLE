@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 
 @MainActor
-final class AppModel: ObservableObject {
+final class AndroidShimAppModel: ObservableObject {
     private enum DefaultsKey {
         static let serverURL = "serverURL"
         static let libreViewPatientId = "libreViewPatientId"
@@ -83,7 +83,7 @@ final class AppModel: ObservableObject {
 }
 
 struct AndroidShimContentView: View {
-    @StateObject private var model = AppModel()
+    @StateObject private var model = AndroidShimAppModel()
 
     var body: some View {
         TabView {
