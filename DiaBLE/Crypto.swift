@@ -20,7 +20,7 @@ extension Libre3 {
         return ephemeralPublicKeyBytes
     }
 
-    /// TODO: the actual method needed to be implement should be
+    /// TODO: the actual method needed to be implemented should be
     /// `deriveKAuthFromPatchEphemeral()`, a quite hairy task
     /// for the first pairing because of Trident's SKB use of WBAES
     /// (White-Box AES), which converts the standard AES algorithm into
