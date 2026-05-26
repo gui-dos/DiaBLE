@@ -35,7 +35,12 @@ import Foundation
 ///
 /// Sessions on the server hold the per-connection SKB engine state.
 /// Allocate one session per BLE connection; tear down on disconnect.
-actor AndroidServerClient {
+// actor AndroidServerClient {
+@MainActor
+final class AndroidServerClient: @preconcurrency Logging {  // DiaBLE ihterconnection
+
+    var main: MainDelegate!
+    
     struct Configuration {
         /// e.g. `http://mac-mini.local:8080` or `http://192.168.1.42:8080`.
         var baseURL: URL

@@ -2,7 +2,10 @@ import Combine
 import SwiftUI
 
 @MainActor
-final class AndroidShimAppModel: ObservableObject {
+final class AndroidShimAppModel: ObservableObject, @MainActor Logging {
+
+    var main: MainDelegate!  // DiaBLE interconnection
+
     private enum DefaultsKey {
         static let serverURL = "serverURL"
         static let libreViewPatientId = "libreViewPatientId"
@@ -29,6 +32,23 @@ final class AndroidShimAppModel: ObservableObject {
     @Published var selfTestSummary: String = ""
 
     private var cancellables: Set<AnyCancellable> = []
+
+    // DiaBLE interconnection
+
+    init(main: MainDelegate!) {
+        self.nfc = main.shimNFC!
+        let server = main.shimServer!
+        self.server = server
+        self.ble = main.shimBLE!
+
+        // Forward child ObservableObject changes up to SwiftUI.
+        nfc.objectWillChange.sink { [weak self] in
+            self?.objectWillChange.send()
+        }.store(in: &cancellables)
+        ble.objectWillChange.sink { [weak self] in
+            self?.objectWillChange.send()
+        }.store(in: &cancellables)
+    }
 
     init() {
         let server = AndroidServerClient()
@@ -82,8 +102,26 @@ final class AndroidShimAppModel: ObservableObject {
     }
 }
 
-struct AndroidShimContentView: View {
-    @StateObject private var model = AndroidShimAppModel()
+
+struct AndroidShimContentView: View, LoggingView {
+
+    @Environment(AppState.self) var app
+    @Environment(Settings.self) var settings
+
+    var body: some View {
+        ShimInnerView(nfc: app.main.shimNFC!, ble: app.main.shimBLE!)
+    }
+}
+
+private struct ShimInnerView: View {
+
+    @Environment(AppState.self) var app
+    @Environment(Settings.self) var settings
+    @ObservedObject var nfc: Libre3NFC
+    @ObservedObject var ble: Libre3BLEClient
+
+    // @StateObject private var model = AndroidShimAppModel()
+    var model: AndroidShimAppModel { app.main.shimAppModel! }
 
     var body: some View {
         TabView {
@@ -100,6 +138,9 @@ struct AndroidShimContentView: View {
     private var setupTab: some View {
         NavigationStack {
             Form {
+
+                @ObservedObject var model: AndroidShimAppModel = model
+
                 Section("Android crypto server") {
                     TextField("Base URL (e.g. http://192.168.1.42:8080)",
                               text: $model.serverURL)

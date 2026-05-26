@@ -49,7 +49,10 @@ private struct PendingOffsetWrite {
 /// NFC takeover response (see `Libre3NFC`). Without an NFC tap first,
 /// the handshake fails at the challenge step.
 @MainActor
-final class Libre3BLEClient: NSObject, ObservableObject {
+final class Libre3BLEClient: NSObject, ObservableObject, @MainActor Logging {
+
+    var main: MainDelegate!  // DiaBLE interconnection
+
     enum ConnectionState: String {
         case idle = "Idle"
         case waitingForBluetooth = "Waiting for Bluetooth"
@@ -264,6 +267,7 @@ final class Libre3BLEClient: NSObject, ObservableObject {
     private var sentR2: Data?
 
     init(server: AndroidServerClient,
+         main: MainDelegate? = nil,  // DiaBLE interconnection
          appCertificate: Data? = nil,
          appPrivateKey: Data? = nil,
          kAuthStore: Libre3KAuthStore? = nil) {
@@ -833,6 +837,7 @@ final class Libre3BLEClient: NSObject, ObservableObject {
         if logs.count > 500 {
             logs.removeLast(logs.count - 500)
         }
+        main?.log("Shim/BLE: \(message)")  // DiaBLE main.log()
     }
 
     private static func bluetoothStateName(_ state: CBManagerState) -> String {

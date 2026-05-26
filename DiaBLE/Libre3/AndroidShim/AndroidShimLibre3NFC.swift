@@ -56,7 +56,10 @@ import Foundation
 /// Signing & Capabilities. Without the entitlement, `NFCTagReaderSession`
 /// won't begin.
 @MainActor
-final class Libre3NFC: NSObject, ObservableObject {
+final class Libre3NFC: NSObject, ObservableObject, @MainActor Logging {
+
+    var main: MainDelegate!  // DiaBLE interconnection
+
     struct TakeoverResult {
         /// 6-byte BLE peripheral address (MAC), already byte-reversed to the
         /// human-readable order.
@@ -218,6 +221,7 @@ final class Libre3NFC: NSObject, ObservableObject {
     private func log(_ message: String) {
         lastLog = message
         NSLog("Libre3NFC: %@", message)
+        main?.log("Shim/NFC: \(message)")  // DiaBLE main.log()
     }
 
     private func finish(success: TakeoverResult) {
