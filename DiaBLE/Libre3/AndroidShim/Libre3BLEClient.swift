@@ -275,6 +275,7 @@ final class Libre3BLEClient: NSObject, ObservableObject {
         self.appPrivateKey  = appPrivateKey  ?? Libre3ResearchMaterial.appPrivateKeyV1Full
         self.kAuthStore     = kAuthStore     ?? .keychain
         super.init()
+        // FIXME: substitutes itself to main BluetoothDelegate
         central = CBCentralManager(delegate: self, queue: nil)
         log("BLE client initialized (appCert=\(self.appCertificate.count) B, appPriv=\(self.appPrivateKey.count) B)")
     }

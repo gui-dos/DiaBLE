@@ -1,7 +1,7 @@
 import Foundation
 import CryptoKit     // P-256 ECDH
-import CommonCrypto  // AES 128 CCM
-import CryptoSwift
+import CommonCrypto
+import CryptoSwift   // AES 128 CCM
 
 
 // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/bcrypt/bcrypt.cpp
