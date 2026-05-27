@@ -109,7 +109,7 @@ struct AndroidShimContentView: View, LoggingView {
     @Environment(Settings.self) var settings
 
     var body: some View {
-        ShimInnerView(nfc: app.main.shimNFC!, ble: app.main.shimBLE!)
+        ShimInnerView(nfc: app.main.shimNFC!, ble: app.main.shimBLE!, model: app.main.shimAppModel!)
     }
 }
 
@@ -119,9 +119,7 @@ private struct ShimInnerView: View {
     @Environment(Settings.self) var settings
     @ObservedObject var nfc: Libre3NFC
     @ObservedObject var ble: Libre3BLEClient
-
-    // @StateObject private var model = AndroidShimAppModel()
-    var model: AndroidShimAppModel { app.main.shimAppModel! }
+    @ObservedObject var model: AndroidShimAppModel
 
     var body: some View {
         TabView {
@@ -138,9 +136,6 @@ private struct ShimInnerView: View {
     private var setupTab: some View {
         NavigationStack {
             Form {
-
-                @ObservedObject var model: AndroidShimAppModel = model
-
                 Section("Android crypto server") {
                     TextField("Base URL (e.g. http://192.168.1.42:8080)",
                               text: $model.serverURL)

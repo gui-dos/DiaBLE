@@ -37,7 +37,7 @@ import Foundation
 /// Allocate one session per BLE connection; tear down on disconnect.
 // actor AndroidServerClient {
 @MainActor
-final class AndroidServerClient: @preconcurrency Logging {  // DiaBLE ihterconnection
+final class AndroidServerClient: @MainActor Logging {  // DiaBLE ihterconnection
 
     var main: MainDelegate!
     
