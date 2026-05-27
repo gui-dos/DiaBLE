@@ -9,6 +9,7 @@ final class AndroidShimAppModel: ObservableObject, @MainActor Logging {
     private enum DefaultsKey {
         static let serverURL = "serverURL"
         static let libreViewPatientId = "libreViewPatientId"
+        static let libreViewReceiverId = "libreViewReceiverId"
     }
 
     let server: AndroidServerClient
@@ -24,6 +25,12 @@ final class AndroidShimAppModel: ObservableObject, @MainActor Logging {
     @Published var libreViewPatientId: String = UserDefaults.standard.string(forKey: DefaultsKey.libreViewPatientId) ?? "" {
         didSet {
             UserDefaults.standard.set(libreViewPatientId, forKey: DefaultsKey.libreViewPatientId)
+            UserDefaults.standard.set(libreViewPatientId.fnv32Hash, forKey: DefaultsKey.libreViewReceiverId)
+        }
+    }
+    @Published var libreViewReceiverId: Int = UserDefaults.standard.integer(forKey: DefaultsKey.libreViewReceiverId) {
+        didSet {
+            UserDefaults.standard.set(libreViewReceiverId, forKey: DefaultsKey.libreViewReceiverId)
         }
     }
     @Published var serverStatus: String = "Not contacted yet"
@@ -84,13 +91,13 @@ final class AndroidShimAppModel: ObservableObject, @MainActor Logging {
         let results = Libre3TestVectors.runAll()
         let pass = results.filter(\.didPass).count
         selfTestSummary = "\(pass)/\(results.count) passed\n" +
-            results.map(\.summary).joined(separator: "\n")
+        results.map(\.summary).joined(separator: "\n")
     }
 
     func performTakeover() {
         Task {
             do {
-                let receiverId = Libre3NFC.fnv32(libreViewPatientId)
+                let receiverId = libreViewReceiverId != 0 ? UInt32(libreViewReceiverId) : libreViewPatientId.fnv32Hash
                 let result = try await nfc.performTakeover(receiverId: receiverId)
                 lastNFCResult = result
                 lastNFCError = nil
@@ -121,6 +128,8 @@ private struct ShimInnerView: View {
     @ObservedObject var ble: Libre3BLEClient
     @ObservedObject var model: AndroidShimAppModel
 
+    @State private var receiverId: Int = 0
+
     var body: some View {
         TabView {
             setupTab.tabItem { Label("Setup", systemImage: "gearshape") }
@@ -136,12 +145,13 @@ private struct ShimInnerView: View {
     private var setupTab: some View {
         NavigationStack {
             Form {
+                @Bindable var settings = settings
                 Section("Android crypto server") {
                     TextField("Base URL (e.g. http://192.168.1.42:8080)",
                               text: $model.serverURL)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                        .keyboardType(.URL)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .keyboardType(.URL)
                     TextField("Bearer token (optional)", text: $model.bearerToken)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
@@ -155,9 +165,41 @@ private struct ShimInnerView: View {
                     TextField("Patient UUID", text: $model.libreViewPatientId)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
+                        .foregroundStyle(.blue)
+                        .onChange(of: model.libreViewPatientId) {
+                            let trimmed = model.libreViewPatientId.trimmingCharacters(in: .whitespacesAndNewlines)
+                            guard UUID(uuidString: trimmed) != nil else { return }
+                            let normalized = trimmed.lowercased()
+                            if model.libreViewPatientId != normalized {
+                                model.libreViewPatientId = normalized
+                            }
+                            let hash = normalized.fnv32Hash
+                            receiverId = Int(hash)
+                            model.libreViewReceiverId = Int(hash)
+                            settings.activeSensorReceiverId = Int(hash)
+                        }
+                    let trimmedUUID = model.libreViewPatientId.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !trimmedUUID.isEmpty && UUID(uuidString: trimmedUUID) == nil {
+                        Text("Enter a valid 36-character UUID")
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+                    LabeledContent("Receiver ID:") {
+                        TextField("Receiver ID", value: $receiverId, formatter: NumberFormatter())
+                            .keyboardType(.numbersAndPunctuation)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .foregroundStyle(.blue)
+                            .onChange(of: receiverId) {
+                                settings.activeSensorReceiverId = receiverId
+                            }
+                    }
                     Text("Used to compute the FNV-32 receiverId baked into the takeover NFC payload. Must match the account that originally activated the sensor.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                }
+                .onAppear {
+                    receiverId = settings.activeSensorReceiverId
                 }
 
                 Section("Self-tests (offline)") {
@@ -183,7 +225,10 @@ private struct ShimInnerView: View {
                     } label: {
                         Label("Tap to take over sensor", systemImage: "wave.3.right")
                     }
-                    .disabled(model.libreViewPatientId.isEmpty || model.nfc.isScanning)
+                    //                    .disabled(
+                    //                        (UUID(uuidString: model.libreViewPatientId.trimmingCharacters(in: .whitespacesAndNewlines)) == nil && model.libreViewReceiverId == 0)
+                    //                        || model.nfc.isScanning
+                    //                    )
 
                     if model.nfc.isScanning {
                         ProgressView("Scanning...")
@@ -200,8 +245,8 @@ private struct ShimInnerView: View {
                         LabeledContent("BLE address", value: r.bdAddressString)
                         LabeledContent("BLE PIN", value: r.blePIN.compactHexString)
                         LabeledContent("Activated",
-                            value: Date(timeIntervalSince1970: TimeInterval(r.activationTime))
-                                .formatted())
+                                       value: Date(timeIntervalSince1970: TimeInterval(r.activationTime))
+                            .formatted())
                         DisclosureGroup("patchInfo (24 B)") {
                             Text(r.patchInfo.compactHexString)
                                 .font(.system(.caption, design: .monospaced))
@@ -237,8 +282,8 @@ private struct ShimInnerView: View {
                 }
 
                 Section("Scan") {
-                        Button("Start") { model.ble.startScan() }
-                        Button("Stop") { model.ble.stopScan() }
+                    Button("Start") { model.ble.startScan() }
+                    Button("Stop") { model.ble.stopScan() }
                     if filteredBLEPeripherals.isEmpty {
                         Text("No matching peripherals yet.").foregroundStyle(.secondary)
                     } else {
@@ -297,7 +342,7 @@ private struct ShimInnerView: View {
                     Section("Current") {
                         LabeledContent("mg/dL", value: "\(g.uncappedCurrentMgDl)")
                         LabeledContent("Rate of change",
-                            value: String(format: "%.2f mg/dL/min", g.rateOfChangePerMinute))
+                                       value: String(format: "%.2f mg/dL/min", g.rateOfChangePerMinute))
                         LabeledContent("Projected", value: "\(g.projectedGlucose) mg/dL")
                         LabeledContent("Life count", value: "\(g.lifeCount)")
                         if let when = model.ble.latestGlucoseReceivedAt {
@@ -330,10 +375,10 @@ private struct ShimInnerView: View {
                             if let firstDate = model.ble.date(forLifeCount: first.lifeCount),
                                let lastDate = model.ble.date(forLifeCount: last.lifeCount) {
                                 LabeledContent("Range",
-                                    value: "\(firstDate.formatted(date: .omitted, time: .shortened)) – \(lastDate.formatted(date: .omitted, time: .shortened))")
+                                               value: "\(firstDate.formatted(date: .omitted, time: .shortened)) – \(lastDate.formatted(date: .omitted, time: .shortened))")
                             }
                             LabeledContent("Range (lifeCount)",
-                                value: "\(first.lifeCount) – \(last.lifeCount)")
+                                           value: "\(first.lifeCount) – \(last.lifeCount)")
                         }
                         if let when = model.ble.latestHistoryReceivedAt {
                             LabeledContent("Last received", value: when.formatted())
@@ -384,3 +429,4 @@ private struct ShimInnerView: View {
 #Preview {
     AndroidShimContentView()
 }
+
