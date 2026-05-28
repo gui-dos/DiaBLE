@@ -74,7 +74,7 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
         // shimNFC = Libre3NFC()
         // shimServer = AndroidServerClient()
         // shimBLE = Libre3BLEClient(server: shimServer!)
-        shimSession = try! Libre3SessionContext(kEnc: Data(), ivEnc: Data())
+        shimSession = try? Libre3SessionContext(kEnc: Data(), ivEnc: Data())
 
         super.init()
 
