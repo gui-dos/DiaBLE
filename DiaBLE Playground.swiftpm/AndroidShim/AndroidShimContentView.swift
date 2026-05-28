@@ -219,6 +219,19 @@ private struct ShimInnerView: View {
     private var nfcTab: some View {
         NavigationStack {
             Form {
+                @Bindable var settings = settings
+                LabeledContent("Current BLE PIN:") {
+                    TextField("BLE PIN", value: $settings.activeSensorBlePIN, formatter: HexDataFormatter())
+                        .autocorrectionDisabled()
+                        .foregroundStyle(.blue)
+                }
+                .onChange(of: settings.activeSensorBlePIN) {
+                    // TODO
+                }
+
+                // TODO: a first option to activate a sensor (0xA0) instead of
+                // taking it over (0xA8)
+
                 Section("Takeover") {
                     Button {
                         model.performTakeover()
