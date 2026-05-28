@@ -375,13 +375,15 @@ final class Libre3SessionContext: Logging {
     func decryptIncoming(wire: Data, kind: Int) throws -> Data {
         let parts = try Libre3PacketCrypto.splitIncomingFromCharacteristic(wire)
         debugLog("Shim/session: decrypting incoming packet: kind: \(kind) (\(Libre3.PacketType(rawValue: UInt8(kind))!)), sequential id: \(parts.sequence), ciphertext+tag: \(parts.ciphertextAndTag.hex) (\(parts.ciphertextAndTag.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
-        return try Libre3PacketCrypto.decrypt(
+        let decrypted = try Libre3PacketCrypto.decrypt(
             ciphertextAndTag: parts.ciphertextAndTag,
             sequence: parts.sequence,
             kind: kind,
             kEnc: kEnc,
             ivEnc: ivEnc
         )
+        debugLog("Shim/session: decrypted \(Libre3.PacketType(rawValue: UInt8(kind))!): \(decrypted.hex) (\(decrypted.count) bytes)")
+        return decrypted
     }
 
     func decryptOneMinute(wire: Data) throws -> Libre3Payloads.OneMinute {

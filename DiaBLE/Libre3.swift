@@ -771,8 +771,8 @@ extension String {
                 if let shimSession = main.shimSession {
                     kEnc = shimSession.kEnc
                     ivEnc = shimSession.ivEnc
-                    debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypting patch status: \(buffer.hex) (\(buffer.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
-                    if let patchStatus = decryptPacket(data: buffer, type: .patchStatus, ivEnc: ivEnc) {
+                    debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypting patch status: \(data.hex) (\(data.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                    if let patchStatus = decryptPacket(data: data, type: .patchStatus, ivEnc: ivEnc) {
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted patch status: \(patchStatus.hex)")
                     } else {
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting patch status")
