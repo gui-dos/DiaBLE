@@ -733,7 +733,8 @@ extension String {
                     if let shimSession = main.shimSession {
                         kEnc = shimSession.kEnc
                         ivEnc = shimSession.ivEnc
-                        if let oneMinuteReading = decryptPacket(data: data, type: .currentGlucose, ivEnc: ivEnc) {
+                        debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypting one-minute reading: \(buffer.hex) (\(buffer.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                        if let oneMinuteReading = decryptPacket(data: buffer, type: .currentGlucose, ivEnc: ivEnc) {
                             log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted 1-minute reading: \(oneMinuteReading.hex)")
                         } else {
                             log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting 1-minute reading")
@@ -770,7 +771,8 @@ extension String {
                 if let shimSession = main.shimSession {
                     kEnc = shimSession.kEnc
                     ivEnc = shimSession.ivEnc
-                    if let patchStatus = decryptPacket(data: data, type: .patchStatus, ivEnc: ivEnc) {
+                    debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypting patch status: \(buffer.hex) (\(buffer.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                    if let patchStatus = decryptPacket(data: buffer, type: .patchStatus, ivEnc: ivEnc) {
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted patch status: \(patchStatus.hex)")
                     } else {
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting patch status")

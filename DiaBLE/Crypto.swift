@@ -98,7 +98,7 @@ extension Libre3 {
 
     public func decryptPacket(data: Data, type: PacketType, ivEnc: Data) -> Data? {
         let nonce = data.suffix(2) + Data(Libre3.packetDescriptors[Int(type.rawValue)]) + ivEnc
-        return aesDecrypt(data: data, nonce: nonce)
+        return aesDecrypt(data: data.dropLast(2), nonce: nonce)
     }
 
 }
