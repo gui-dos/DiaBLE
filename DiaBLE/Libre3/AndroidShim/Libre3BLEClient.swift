@@ -284,7 +284,6 @@ final class Libre3BLEClient: NSObject, ObservableObject, @MainActor Logging {
         self.appPrivateKey  = appPrivateKey  ?? Libre3ResearchMaterial.appPrivateKeyV1Full
         self.kAuthStore     = kAuthStore     ?? .keychain
         super.init()
-        // FIXME: substitutes itself to main BluetoothDelegate
         central = CBCentralManager(delegate: self, queue: nil)
         log("BLE client initialized (appCert=\(self.appCertificate.count) B, appPriv=\(self.appPrivateKey.count) B)")
     }
@@ -648,6 +647,7 @@ final class Libre3BLEClient: NSObject, ObservableObject, @MainActor Logging {
                 )
                 log("Challenge round-trip verified. kEnc=\(unpacked.kEnc.compactHexString) ivEnc=\(unpacked.ivEnc.compactHexString)")
                 let session = try Libre3SessionContext(kEnc: unpacked.kEnc, ivEnc: unpacked.ivEnc)
+                session.main = self.main  // DiaBLE interconnection
                 self.session = session
 
                 handshakeStage = .exportingKAuth

@@ -308,7 +308,11 @@ enum Libre3PacketCrypto {
 ///
 /// `outCryptoSequence` starts at **1**, not 0, and is post-incremented
 /// after each outgoing encrypt (per `bcrypt.cpp:79-92`).
-final class Libre3SessionContext {
+final class Libre3SessionContext: Logging {
+
+    // DiaBLE interconnection
+    var main: MainDelegate!
+
     let kEnc: Data
     let ivEnc: Data
     private(set) var outCryptoSequence: UInt16 = 1
@@ -370,6 +374,7 @@ final class Libre3SessionContext {
 
     func decryptIncoming(wire: Data, kind: Int) throws -> Data {
         let parts = try Libre3PacketCrypto.splitIncomingFromCharacteristic(wire)
+        debugLog("Shim/session: decrypting incoming packet: kind: \(kind) (\(Libre3.PacketType(rawValue: UInt8(kind))!)), sequential id: \(parts.sequence), ciphertext+tag: \(parts.ciphertextAndTag.hex) (\(parts.ciphertextAndTag.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
         return try Libre3PacketCrypto.decrypt(
             ciphertextAndTag: parts.ciphertextAndTag,
             sequence: parts.sequence,

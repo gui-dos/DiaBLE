@@ -270,6 +270,19 @@ extension String {
         case backfillClinical = 5
         case eventLog         = 6
         case factoryData      = 7
+
+        var description: String {
+            switch self {
+            case .controlCommand:   "control command"
+            case .controlResponse:  "control response"
+            case .patchStatus:      "patch status"
+            case .currentGlucose:   "current glucose"
+            case .backfillHistoric: "backfill historical"
+            case .backfillClinical: "backfill clinical"
+            case .eventLog:         "event log"
+            case .factoryData:      "factory data"
+            }
+        }
     }
 
     static let packetDescriptors: [[UInt8]] = [
