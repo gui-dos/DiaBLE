@@ -292,7 +292,7 @@ extension String {
         var outCryptoSequence: UInt16 = 1
 
         // when en/decrypting initialize:
-        // nonce[0...1]: outCryptoSequence / final seq id
+        // nonce[0...1]: outCryptoSequence / final sequential id
         // nonce[2...4]: packetDescriptors(packetType)
         // nonce[5...12]: iv_enc
         //
@@ -716,7 +716,7 @@ extension String {
                 if buffer.count == 35 {
                     let payload = buffer.prefix(33)
                     let seqId = UInt16(buffer.suffix(2))
-                    log("\(type) \(transmitter!.peripheral!.name!): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), seq id: \(seqId.hex)")
+                    log("\(type) \(transmitter!.peripheral!.name!): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
                     buffer = Data()
                     if settings.selectedService == .libreLinkUp {
                         Task { @MainActor in
@@ -736,15 +736,26 @@ extension String {
             }
             let payload = data.prefix(18)
             let seqId = UInt16(data.suffix(2))
-            log("\(type) \(transmitter!.peripheral!.name!): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), seq id: \(seqId.hex)")
+            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
 
         case .patchStatus:
             if buffer.count == 0 {
                 let payload = data.prefix(16)
                 let seqId = UInt16(data.suffix(2))
-                log("\(type) \(transmitter!.peripheral!.name!): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), seq id: \(seqId.hex)")
+                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
+                #if !os(watchOS)
+                if let shimSession = main.shimSession {
+                    kEnc = shimSession.kEnc
+                    ivEnc = shimSession.ivEnc
+                    if let patchStatus = decryptPacket(data: data, type: .patchStatus, ivEnc: ivEnc) {
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted patch status: \(patchStatus.hex)")
+                    } else {
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting patch status")
+                    }
+                }
+                #endif
+                // TODO
             }
-            // TODO
 
 
         case .securityCommands:
@@ -843,7 +854,7 @@ extension String {
                     //                                        increasing
 
                     let seqId = UInt16(payload[16...17])
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): security challenge: \(payload.hex) (seq id: \(seqId.hex))")
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): security challenge: \(payload.hex) (sequential id: \(seqId.hex))")
 
                     // Store as instance vars to be verified later when decrypting KAuth
                     r1     = Data(payload.prefix(16))
@@ -885,7 +896,7 @@ extension String {
                     let encryptedKAuth = payload.subdata(in:  0 ..< 60)
                     let nonce = payload.subdata(in: 60 ..< 67)
                     let seqId = UInt16(payload[60 ... 61])
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): encrypted KAuth: \(encryptedKAuth.hex), nonce: \(nonce.hex) (seq id: \(seqId.hex))")
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): encrypted KAuth: \(encryptedKAuth.hex), nonce: \(nonce.hex) (sequential id: \(seqId.hex))")
                     // TODO:
                     // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/Libre3GattCallback.java
                     // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/bcrypt/bcrypt.cpp
@@ -1326,3 +1337,5 @@ extension String {
 @Observable class Instinct: Libre3 {
 
 }
+
+

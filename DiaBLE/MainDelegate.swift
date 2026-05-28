@@ -46,6 +46,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
     var shimServer: AndroidServerClient?
     var shimBLE:    Libre3BLEClient?
     var shimAppModel: AndroidShimAppModel?
+    var shimSession: Libre3SessionContext?
 
 
     override init() {
@@ -69,7 +70,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         shimNFC = Libre3NFC()
         shimServer = AndroidServerClient()
         shimBLE = Libre3BLEClient(server: shimServer!)
-
+        shimSession = try! Libre3SessionContext(kEnc: Data(), ivEnc: Data())
         super.init()
 
         let welcomeMessage = "Welcome to DiaBLE!\n\nTip: switch from [Basic] to [Test] mode to eavesdrop on incoming BLE data running side-by-side with Trident and other apps.\n\nHint: better [Stop] me to avoid excessive logging during normal use.\n\nWarning: edit out your sensitive personal data after [Copy]ing and before pasting into your reports."
@@ -86,6 +87,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         shimBLE?.main    = self
          if shimServer != nil {
              shimAppModel = AndroidShimAppModel(main: self)
+             // shimBLE!.session = shimSession
          }
 
         UNUserNotificationCenter.current().delegate = self
