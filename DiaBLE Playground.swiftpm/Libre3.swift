@@ -735,7 +735,10 @@ extension String {
                         ivEnc = shimSession.ivEnc
                         debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypting one-minute reading: \(buffer.hex) (\(buffer.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
                         if let oneMinuteReading = decryptPacket(data: buffer, type: .currentGlucose, ivEnc: ivEnc) {
-                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted 1-minute reading: \(oneMinuteReading.hex)")
+                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted 1-minute reading: \(oneMinuteReading.hex) (\(oneMinuteReading.count) bytes")
+                            if oneMinuteReading.count == 29 {
+                                parseCurrentReading(oneMinuteReading)
+                            }
                         } else {
                             log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting 1-minute reading")
                         }
@@ -952,7 +955,24 @@ extension String {
 
 
     func parseCurrentReading(_ data: Data) {  // -> GlucoseData
+        let lifeCount = UInt16(data[0...1])
+        let readingMgDl = UInt16(data[2...3])
+        let rateOfChange = Double(Int16(bitPattern: UInt16(data[4...5]))) / 100.0
+        // let esaDuration = data.subdata(in: 6 ..< 8)
+        // let projectedGlucose = data.subdata(in: 8 ..< 10)
+        // let historicalLifeCount = data.subdata(in: 10 ..< 12)
+        // let historicalReading = data.subdata(in: 12 ..< 14)
+        // TODO:
+        // let bitfields = data[14]
+        // let trend = bitfields >> 5
+        // let rest = bitfields & 0x1F
+        // let uncappedCurrentMgDl = data.subdata(in: 15 ..< 17)
+        // let uncappedHistoricMgDl = data.subdata(in: 17 ..< 19)
+        // let temperature = data.subdata(in: 19 ..< 21)
+        // let fastData = data.subdata(in: 21 ..< 30)
+
         // TODO
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed current reading: life count: \(lifeCount) (0x\(data[0...1].hex)), glucose: \(readingMgDl) mg/dL (0x\(data[2...3].hex)), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex))")
     }
 
 
