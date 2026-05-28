@@ -717,6 +717,17 @@ extension String {
                     let payload = buffer.prefix(33)
                     let seqId = UInt16(buffer.suffix(2))
                     log("\(type) \(transmitter!.peripheral!.name!): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
+                    if let shimSession = main.shimSession {
+                        kEnc = shimSession.kEnc
+                        ivEnc = shimSession.ivEnc
+                        if let oneMinuteReading = decryptPacket(data: data, type: .currentGlucose, ivEnc: ivEnc) {
+                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted 1-minute reading: \(oneMinuteReading.hex)")
+                        } else {
+                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting 1-minute reading")
+                        }
+                    } else {
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): DEBUG: no active shim session, cannot decrypt 1-minute reading")
+                    }
                     buffer = Data()
                     if settings.selectedService == .libreLinkUp {
                         Task { @MainActor in
@@ -743,7 +754,6 @@ extension String {
                 let payload = data.prefix(16)
                 let seqId = UInt16(data.suffix(2))
                 log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
-                #if !os(watchOS)
                 if let shimSession = main.shimSession {
                     kEnc = shimSession.kEnc
                     ivEnc = shimSession.ivEnc
@@ -752,9 +762,9 @@ extension String {
                     } else {
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting patch status")
                     }
+                } else {
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): DEBUG: no active shim session, cannot decrypt patch status")
                 }
-                #endif
-                // TODO
             }
 
 
