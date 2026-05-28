@@ -57,26 +57,36 @@ extension Libre3 {
 
 
     public func aesEncrypt(data: Data, nonce: Data) -> Data? {
-        let aes = try! AES(key: Array(kEnc),
-                           blockMode: CCM(iv: Array(nonce),
-                                          tagLength: 4,
-                                          messageLength: data.count,
-                                          additionalAuthenticatedData: Array(Data())),
-                           padding: .noPadding)
-        let encrypted = try! aes.encrypt(Array(data))
-        return Data(encrypted)
+        do {
+            let aes = try AES(key: Array(kEnc),
+                              blockMode: CCM(iv: Array(nonce),
+                                             tagLength: 4,
+                                             messageLength: data.count,
+                                             additionalAuthenticatedData: Array(Data())),
+                              padding: .noPadding)
+            let encrypted = try aes.encrypt(Array(data))
+            return Data(encrypted)
+        } catch {
+            debugLog("AES encryption error: \(error)")
+            return nil
+        }
     }
 
 
     public func aesDecrypt(data: Data, nonce: Data) -> Data? {
-        let aes = try! AES(key: Array(kEnc),
-                           blockMode: CCM(iv: Array(nonce),
-                                          tagLength: 4,
-                                          messageLength: data.count - 4,
-                                          additionalAuthenticatedData: Array(Data())),
-                           padding: .noPadding)
-        let decrypted = try! aes.decrypt(Array(data))
-        return Data(decrypted)
+        do {
+            let aes = try AES(key: Array(kEnc),
+                              blockMode: CCM(iv: Array(nonce),
+                                             tagLength: 4,
+                                             messageLength: data.count - 4,
+                                             additionalAuthenticatedData: Array(Data())),
+                              padding: .noPadding)
+            let decrypted = try aes.decrypt(Array(data))
+            return Data(decrypted)
+        } catch {
+            debugLog("AES decryption error: \(error)")
+            return nil
+        }
     }
 
 
