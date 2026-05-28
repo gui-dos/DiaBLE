@@ -238,12 +238,13 @@ final class Libre3BLEClient: NSObject, ObservableObject, @MainActor Logging {
     private let server: AndroidServerClient
     private let skb: ServerBackedSKB
 
-    // DiaBLE Interconnection
-    @Published private(set) var session: Libre3SessionContext?
-
-//    private var session: Libre3SessionContext? {
-//        didSet { hasSession = (session != nil) }
-//    }
+    private var session: Libre3SessionContext? {
+        didSet {
+            hasSession = (session != nil)
+            // DiaBLE interconnection:
+            main.shimSession = session
+        }
+    }
 
     private var central: CBCentralManager!
     private var discoveredPeripherals: [UUID: CBPeripheral] = [:]

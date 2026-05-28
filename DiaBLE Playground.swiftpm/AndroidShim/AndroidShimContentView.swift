@@ -40,8 +40,7 @@ final class AndroidShimAppModel: ObservableObject, @MainActor Logging {
 
     private var cancellables: Set<AnyCancellable> = []
 
-    // DiaBLE interconnection
-
+    /// DiaBLE interconnection:
     init(main: MainDelegate!) {
         self.nfc = main.shimNFC!
         let server = main.shimServer!
@@ -152,6 +151,7 @@ private struct ShimInnerView: View {
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .keyboardType(.URL)
+                    .foregroundStyle(.blue)
                     TextField("Bearer token (optional)", text: $model.bearerToken)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
