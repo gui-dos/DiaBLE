@@ -101,6 +101,12 @@ final class AndroidShimAppModel: ObservableObject, @MainActor Logging {
                 lastNFCResult = result
                 lastNFCError = nil
                 ble.takeover = result
+                // DiaBLE interconnection:
+                // TODO: instantiate a sensor also from the shim
+                if main?.app.sensor == nil {
+                    main?.app.sensor = Libre3()
+                }
+                main?.app.sensor?.activationTime = result.activationTime
             } catch {
                 lastNFCError = error.localizedDescription
             }
@@ -156,6 +162,7 @@ private struct ShimInnerView: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                     Button("Apply and ping /health") { model.applyServerConfig() }
+                        .buttonStyle(.borderedProminent)
                     Text(model.serverStatus)
                         .font(.caption)
                         .foregroundStyle(.secondary)

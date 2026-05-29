@@ -67,7 +67,7 @@ extension Libre3 {
             let encrypted = try aes.encrypt(Array(data))
             return Data(encrypted)
         } catch {
-            debugLog("AES encryption error: \(error)")
+            debugLog("Crypto: AES CCM encryption error: \(error)")
             return nil
         }
     }
@@ -84,7 +84,7 @@ extension Libre3 {
             let decrypted = try aes.decrypt(Array(data))
             return Data(decrypted)
         } catch {
-            debugLog("AES decryption error: \(error)")
+            debugLog("Crypto: AES CCM decryption error: \(error)")
             return nil
         }
     }

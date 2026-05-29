@@ -270,7 +270,7 @@ extension String {
         case backfillClinical = 5
         case eventLog         = 6
         case factoryData      = 7
-        
+
         var description: String {
             switch self {
             case .controlCommand:   "control command"
@@ -697,10 +697,10 @@ extension String {
                 // TODO: manage enqueued id
                 if buffer.count % 20 == 0 {
                     if suffix == "0100" {
-                        log("\(type) \(transmitter!.peripheral!.name!): received \(buffer.count/20) packets of historical data")
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(buffer.count/20) packets of historical data")
                         // TODO
                     } else if suffix == "0200" {
-                        log("\(type) \(transmitter!.peripheral!.name!): received \(buffer.count/20) packets of clinical data")
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(buffer.count/20) packets of clinical data")
                         // TODO
                     }
                 } else {
@@ -712,7 +712,7 @@ extension String {
                     // when reactivating a sensor received 20 * 10 + 17 bytes
                     // otherwise receiving 20 * 11 + 12 bytes with the latest firmwares
                     if buffer.count == 217 || buffer.count == 232 {
-                        log("\(type) \(transmitter!.peripheral!.name!): received \(packets.count) packets of factory data (\(buffer.count) bytes), payload: \(Data(packets.joined()).hexBytes)")
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(packets.count) packets of factory data (\(buffer.count) bytes), payload: \(Data(packets.joined()).hexBytes)")
                     }
                 }
                 buffer = Data()
@@ -729,7 +729,7 @@ extension String {
                 if buffer.count == 35 {
                     let payload = buffer.prefix(33)
                     let seqId = UInt16(buffer.suffix(2))
-                    log("\(type) \(transmitter!.peripheral!.name!): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
                     if let shimSession = main.shimSession {
                         kEnc = shimSession.kEnc
                         ivEnc = shimSession.ivEnc
@@ -737,7 +737,7 @@ extension String {
                         if let oneMinuteReading = decryptPacket(data: buffer, type: .currentGlucose, ivEnc: ivEnc) {
                             log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted 1-minute reading: \(oneMinuteReading.hex) (\(oneMinuteReading.count) bytes")
                             if oneMinuteReading.count == 29 {
-                                parseCurrentReading(oneMinuteReading)
+                                parseCurrentReading(data: oneMinuteReading)
                             }
                         } else {
                             log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting 1-minute reading")
@@ -954,8 +954,12 @@ extension String {
     }
 
 
-    func parseCurrentReading(_ data: Data) {  // -> GlucoseData
+    func parseCurrentReading(data: Data) {  // -> GlucoseData
+
+        let activationTime = app.sensor.activationTime // TODO: shim interconnection
+
         let lifeCount = UInt16(data[0...1])
+        let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let readingMgDl = UInt16(data[2...3])
         let rateOfChange = Double(Int16(bitPattern: UInt16(data[4...5]))) / 100.0
         // let esaDuration = data.subdata(in: 6 ..< 8)
@@ -963,16 +967,17 @@ extension String {
         // let historicalLifeCount = data.subdata(in: 10 ..< 12)
         // let historicalReading = data.subdata(in: 12 ..< 14)
         // TODO:
-        // let bitfields = data[14]
-        // let trend = bitfields >> 5
-        // let rest = bitfields & 0x1F
+        let bitfields = data[14]
+        let trend = bitfields & 0x07 // last 3 bits
+        let trendArrow = TrendArrow(rawValue: Int(trend))!
+        // let rest = bitfields >> 3 // upper 5 bits
         // let uncappedCurrentMgDl = data.subdata(in: 15 ..< 17)
         // let uncappedHistoricMgDl = data.subdata(in: 17 ..< 19)
         // let temperature = data.subdata(in: 19 ..< 21)
         // let fastData = data.subdata(in: 21 ..< 30)
 
         // TODO
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed current reading: life count: \(lifeCount) (0x\(data[0...1].hex)), glucose: \(readingMgDl) mg/dL (0x\(data[2...3].hex)), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex))")
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute reading: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), glucose: \(readingMgDl) mg/dL (0x\(data[2...3].hex)), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex))")
     }
 
 
@@ -1382,5 +1387,3 @@ extension String {
 @Observable class Instinct: Libre3 {
 
 }
-
-
