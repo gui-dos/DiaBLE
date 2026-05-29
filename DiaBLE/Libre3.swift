@@ -237,7 +237,7 @@ extension String {
         //   000D: eventData 4013 (?)
         //   21: index 33
         //   04: patchState 4
-        //   FC2C: currentLlifeCount 11516 (0x2CFC)
+        //   FC2C: currentLifeCount 11516 (0x2CFC)
         //   16: stackDisconnectReason 22
         //   03: appDisconnectReason 3
     }
@@ -777,6 +777,9 @@ extension String {
                     debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypting patch status: \(data.hex) (\(data.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
                     if let patchStatus = decryptPacket(data: data, type: .patchStatus, ivEnc: ivEnc) {
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted patch status: \(patchStatus.hex)")
+                        if patchStatus.count == 12 {
+                            parsePatchStatus(data: patchStatus)
+                        }
                     } else {
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting patch status")
                     }
@@ -953,8 +956,26 @@ extension String {
 
     }
 
+    func parsePatchStatus(data: Data) {  // TODO: -> PatchStatus
 
-    func parseCurrentReading(data: Data) {  // -> GlucoseData
+        let activationTime = app.sensor.activationTime // TODO: shim interconnection
+
+        let lifeCount = UInt16(data[0...1])
+        let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
+        let errorData = UInt16(data[2...3])
+        let eventData = UInt16(data[4...5])  // add 4000
+        let index = data[6]  // 255: none
+        let patchState = Libre3.State(rawValue: data[7])!
+        let currentLifeCount = UInt16(data[8...9])
+        let currentDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(currentLifeCount) * 60))
+        let stackDisconnectReason = data[10]  // enum
+        let appDisconnectReason = data[11]  // enum
+
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed patch status: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), error data: \(errorData) (0x\(data[2...3].hex)), event data: \(eventData) (0x\(data[4...5].hex)), index: \(index) (0x\(data[6].hex)), patch state: \(patchState) (0x\(data[7].hex)), current life count: \(currentLifeCount) (0x\(data[8...9].hex)), current date: \(currentDate.local), stack disconnect reason: \(stackDisconnectReason) (0x\(data[10].hex)), app disconnect reason: \(appDisconnectReason) (0x\(data[11].hex))")
+
+    }
+
+    func parseCurrentReading(data: Data) {  // TODO: -> GlucoseData
 
         let activationTime = app.sensor.activationTime // TODO: shim interconnection
 
@@ -974,7 +995,7 @@ extension String {
         let rest = bitfields >> 3 // upper 5 bits
         let uncappedCurrentMgDl = UInt16(data[15...16])
         let uncappedHistoricMgDl = UInt16(data[17...18])
-        let temperature = UInt16(data[19...20]) / 100
+        let temperature = Double(UInt16(data[19...20])) / 100.0
         let fastData = data.subdata(in: 21 ..< 29)
 
         // TODO
