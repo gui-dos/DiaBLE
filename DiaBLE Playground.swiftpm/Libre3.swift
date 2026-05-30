@@ -187,13 +187,7 @@ extension String {
         let uncappedHistoricReadingMgDl: Int
         let dqError: Int
         let temperature: Int
-        let rawData: Data
-
-        // B43E7E091F4071140000B600B500 (14 bytes):
-        //   B43E: lifeCount 16052 (0x3EB4)
-        //   7E091F4071140000: rawData
-        //   B600: readingMgDl 182
-        //   B500: historicMgDl 181
+        let rawData: Data  // first 6 bytes coming from filament
     }
 
 
@@ -1026,13 +1020,26 @@ extension String {
         // Bit 15 set: non-displayable data-quality status
     }
 
+
     func parseClinicalPackets(data: [Data]) {  // TODO: -> [FastData]
+        let activationTime = app.sensor.activationTime // TODO: shim interconnection
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) backfill clinical data packets: \(data.map { $0.hex })")
+        for data in data {
+            let lifeCount = UInt16(data[0...1])
+            let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
+            let rawData = data[2...9]  // first 6 bytes coming from filament
+            let readingMgDl = UInt16(data[10...11])
+            let historicMgDl = UInt16(data[12...13])
+            // TODO: compute 17-minute historical delay
+            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data from filament: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex))")
+        }
     }
+
 
     func parseEventLogPackets(data: [Data]) {  // TODO: -> [EventLog]
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): (\(data.count) event log data  packets: \(data.map { $0.hex })")
     }
+
 
     func parseFactoryDataPackets(data: Data) {  // TODO: -> Factory Data
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): factory data: \(data.hex) (\(data.count) bytes)")
