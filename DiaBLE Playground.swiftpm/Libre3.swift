@@ -148,20 +148,6 @@ extension String {
         let uncappedHistoricMgDl: Int
         let temperature: Int
         let fastData: Data
-
-        // 062DEE00FCFF0000945CF12CF0000BEE00F000010C530E72482F130000 (29 bytes):
-        //   062D: lifeCount 11526 (0x2D06)
-        //   EE00: readingMgDl 238
-        //   FCFF: rateOfChange -4 (2**16 - 0xFFFC)
-        //   0000: esaDuration
-        //   945C: projectedGlucose 23700 (0x5C94)
-        //   F12C: historicalLifeCount 11505 (0x2CF1)
-        //   F000: historicalReading 240
-        //   0B: 00001 011 (bitfields 3: trend, 5: rest)
-        //   EE00: uncappedCurrentMgDl 238
-        //   F000: uncappedHistoricMgDl 240
-        //   010C: temperature 3073 (0x0C01)
-        //   530E72482F130000: fastData
     }
 
 
@@ -202,16 +188,6 @@ extension String {
         let temperature: Int
         let rawData: Data
 
-        // struct fastData {
-        //     uint16_t lifeCount;
-        //     uint8_t rawData[8];
-        //     uint16_t readingMgDl;
-        //     uint16_t historicMgDl;
-        //     int getHistoricLifeCount() const {
-        //         return round((lifeCount-19.0)/5.0)*5; // correct: - 17-minute latency (HISTORIC_POINT_LATENCY = 17)
-        //     };
-        // }
-        //
         // B43E7E091F4071140000B600B500 (14 bytes):
         //   B43E: lifeCount 16052 (0x3EB4)
         //   7E091F4071140000: rawData
@@ -230,16 +206,6 @@ extension String {
         let currentLifeCount: Int
         let stackDisconnectReason: UInt8
         let appDisconnectReason: UInt8
-
-        // FC2C00000D002104FC2C1603 (12 bytes):
-        //   FC2C: lifeCount 11516 (0x2CFC)
-        //   0000: errorData
-        //   000D: eventData 4013 (?)
-        //   21: index 33
-        //   04: patchState 4
-        //   FC2C: currentLifeCount 11516 (0x2CFC)
-        //   16: stackDisconnectReason 22
-        //   03: appDisconnectReason 3
     }
 
 
@@ -303,13 +269,6 @@ extension String {
         var iv_enc: Data = Data(count: 8)
         var nonce: Data  = Data(count: 13)
         var outCryptoSequence: UInt16 = 1
-
-        // when en/decrypting initialize:
-        // nonce[0...1]: outCryptoSequence / final sequential id
-        // nonce[2...4]: packetDescriptors(packetType)
-        // nonce[5...12]: iv_enc
-        //
-        // tagLength = 4
     }
 
 
@@ -529,12 +488,6 @@ extension String {
 
     // TODO:
     //
-    //  struct RequestData {
-    //      int8_t kind[2];
-    //      int8_t arg;
-    //      int32_t from;
-    //  }
-    //
     // PATCH_OPCODE_START_BACKFILL_GREATER_OR_EQUAL = 1
     // PATCH_OPCODE_START_BACKFILL_WITHIN_RANGE = 2
     // PATCH_OPCODE_ABORT_BACKFILL = 3
@@ -719,8 +672,7 @@ extension String {
                 currentControlCommand = nil
             }
 
-            // The Libre 3 sends every minute 35 bytes as two packets of 15 + 20 bytes
-            // The final Int16 is a sequential id
+
         case .oneMinuteReading:
             if buffer.count == 0 {
                 buffer = Data(data)
@@ -881,9 +833,6 @@ extension String {
 
                 case .readChallenge:
 
-                    // getting: df4bd2f783178e3ab918183e5fed2b2b c201 0000 e703a7
-                    //                                        increasing
-
                     let seqId = UInt16(payload[16...17])
                     log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): security challenge: \(payload.hex) (sequential id: \(seqId.hex))")
 
@@ -963,8 +912,8 @@ extension String {
         let lifeCount = UInt16(data[0...1])
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let errorData = UInt16(data[2...3])
-        let eventData = UInt16(data[4...5])  // add 4000
-        let index = data[6]  // 255: none
+        let eventData = UInt16(data[4...5])  // TODO: add 4000
+        let index = data[6]
         let patchState = Libre3.State(rawValue: data[7])!
         let currentLifeCount = UInt16(data[8...9])
         let currentDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(currentLifeCount) * 60))
@@ -1027,8 +976,6 @@ extension String {
 
     func parseActivation(output: Data) {
 
-        // let output = "A5002BC7291932189F36B26CD01E306209F0".bytes  // TEST
-
         let output = Data(output.drop(while: { $0 == 0xA5 }))
         let flag = output[0]
         let response = Data(output.dropFirst())
@@ -1042,12 +989,6 @@ extension String {
         }
 
         if flag == 0x00 && response.count == 16 {
-
-            // i.e. 2BC7291932189F36B26CD01E306209F0 ->
-            // BD_Addr = 2B C7 29 19 32 18 (18:32:19:29:C7:2B)
-            // BLE_Key(BLE_Pin) = 9F36B26C
-            // A_UTC = 1647320784 (0xD01E3062)
-            // APP_CRC16 = 09 F0
 
             let activationResponse = ActivationResponse(
                 bdAddress: Data(response[0 ..< 6].reversed()),
@@ -1283,63 +1224,6 @@ extension String {
     }
 
 
-    // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/Libre3GattCallback.java
-
-    // Juggluco wrappers to Trident's process1() and process2() in liblibre3extension.so (processint() and processbar())
-    //
-    // public native boolean initECDH(byte[] bArr, int i):
-    //     public boolean initECDH(byte[] exportedKAuth, int level) {
-    //         if(level >= max_keys)
-    //             return true;
-    //         securityVersion = level;
-    //         int resp1 = Natives.processint(1, null, null);
-    //         byte[] privatekey= LIBRE3_APP_PRIVATE_KEYS[level];
-    //         int resp2 = Natives.processint(2, privatekey, exportedKAuth);
-    //         return true;
-    //   }
-    //
-    // byte[] getAppCertificate() {
-    //        return LIBRE3_APP_CERTIFICATES_B[securityVersion];
-    //  }
-    //
-    // setPatchCertificate(byte[] bArr):
-    //     Natives.processint(4, input, null);
-    //
-    // generateEphemeralKeys():
-    //     var evikeys = Natives.processbar(5, null, null);
-    //
-    // boolean generateKAuth(byte[] bArr):
-    //     var bool = Natives.processint(6, patchEphemeral, null);
-    //     var uit = new byte[evikeys.length + 1];
-    //     arraycopy(evikeys, 0, uit, 1, evikeys.length);
-    //     uit[0] = (byte)0x4;
-    //     return uit;
-    //
-    // encrypt challenge response:
-    //     arraycopy(rdtData, 0, r1, 0, 16);
-    //     arraycopy(rdtData, 16, nonce1, 0, 7);
-    //     (new SecureRandom()).nextBytes(r2)
-    //     byte[] uit = new byte[36];
-    //     arraycopy(r1, 0, uit, 0, 16);
-    //     arraycopy(r2, 0, uit, 16, 16);
-    //     byte[] pin = Natives.getpin(sensorptr);
-    //     arraycopy(pin, 0, uit, 32, 4);
-    //     var encrypted = Natives.processbar(7, nonce1, uit);
-    //
-    // decrypt 67-byte encrypted KAuth:
-    //     arraycopy(rdtData, 0, first, 0, 60);
-    //     arraycopy(rdtData, 60, nonce, 0, 7);
-    //     byte[] decr = Natives.processbar(8, nonce, first);
-    //     var backr2 = copyOfRange(decr, 0, 16);
-    //     var backr1 = copyOfRange(decr, 16, 32);
-    //     var kEnc = copyOfRange(decr, 32, 48);
-    //     var ivEnc = copyOfRange(decr, 48, 56);
-    //
-    // byte[] exportAuthorizationKey():
-    //     byte[] AuthKey = Natives.processbar(9, null, null);  // 149 bytes
-    //     cryptptr = initcrypt(cryptptr, kEnc, ivEnc);
-
-
     // Frida-> crypto_lib.getAppCertificate()     => 162 bytes
     // Frida-> crypto_lib.generateEphemeralKeys() => 65 bytes
 
@@ -1360,18 +1244,6 @@ extension String {
         // Frida-> var buffer = Java.array('byte', new Array(256).fill(0))
         // Frida-> p = crypto_lib.process1(11, Array.from("/data/data/com.freestylelibre3.app.it/files/diagnotics.elog", c => c.charCodeAt(0)), buffer)
     }
-
-
-    // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/libre3/loadlibs.cpp
-
-    func process1(command: Int, _ d1: Data?, _ d2: Data?) -> Int {
-        return 0
-    }
-
-    func process2(command: Int, _ d1: Data?, _ d2: Data?) -> Data {
-        return Data()
-    }
-
 
 }
 
