@@ -141,17 +141,21 @@ final class Libre3NFC: NSObject, ObservableObject, @MainActor Logging {
     private var session: NFCTagReaderSession?
     private var continuation: CheckedContinuation<TakeoverResult, Error>?
     private var receiverId: UInt32 = 0
+    private var nfcActivationCommand: UInt8 = 0xA0
 
-    /// Performs the takeover NFC tap.
+    /// Performs the NFC activation tap.
     ///
     /// - parameter receiverId: optional pre-computed receiver ID (FNV-32 hash
     ///   of your LibreView patient/account UUID string). If 0, the sensor
     ///   will reject the command — see `Libre3NFC.fnv32(_:)`.
-    func performTakeover(receiverId: UInt32) async throws -> TakeoverResult {
+    /// - parameter command: `0xA0` (ACTIVATE, keeps the current BLE PIN / PLE PIN unchanged)
+    ///   or `0xA8` (CMD_SWITCH_RECEIVER, assigns a new BLE PIN).
+    func performTakeover(receiverId: UInt32, command: UInt8 = 0xA0) async throws -> TakeoverResult {
         guard NFCTagReaderSession.readingAvailable else {
             throw NFCError.readingNotAvailable
         }
         self.receiverId = receiverId
+        self.nfcActivationCommand = command
         return try await withCheckedThrowingContinuation { continuation in
             self.continuation = continuation
             self.session = NFCTagReaderSession(
@@ -339,8 +343,7 @@ extension Libre3NFC: NFCTagReaderSessionDelegate {
         do {
             responseRaw = try await tag.customCommand(
                 requestFlags: .highDataRate,
-                // customCommandCode: 0xA8,
-                customCommandCode: 0xA0, // in DiaBLE we always keep the current BLE PIN
+                customCommandCode: Int(nfcActivationCommand),
                 customRequestParameters: payload
             )
         } catch {

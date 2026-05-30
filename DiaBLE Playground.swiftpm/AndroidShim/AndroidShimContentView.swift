@@ -97,7 +97,27 @@ final class AndroidShimAppModel: ObservableObject, @MainActor Logging {
         Task {
             do {
                 let receiverId = libreViewReceiverId != 0 ? UInt32(libreViewReceiverId) : libreViewPatientId.fnv32Hash
-                let result = try await nfc.performTakeover(receiverId: receiverId)
+                let result = try await nfc.performTakeover(receiverId: receiverId, command: 0xA8)
+                lastNFCResult = result
+                lastNFCError = nil
+                ble.takeover = result
+                // DiaBLE interconnection:
+                // TODO: instantiate a sensor also from the shim
+                if main?.app.sensor == nil {
+                    main?.app.sensor = Libre3()
+                }
+                main?.app.sensor?.activationTime = result.activationTime
+            } catch {
+                lastNFCError = error.localizedDescription
+            }
+        }
+    }
+
+    func performTakepart() {
+        Task {
+            do {
+                let receiverId = libreViewReceiverId != 0 ? UInt32(libreViewReceiverId) : libreViewPatientId.fnv32Hash
+                let result = try await nfc.performTakeover(receiverId: receiverId, command: 0xA0)
                 lastNFCResult = result
                 lastNFCError = nil
                 ble.takeover = result
@@ -236,8 +256,25 @@ private struct ShimInnerView: View {
                     // TODO
                 }
 
-                // TODO: a first option to activate a sensor (0xA0) instead of
-                // taking it over (0xA8)
+                Section("Take part") {
+                    Button {
+                        model.performTakepart()
+                    } label: {
+                        Label("Tap to take part in sensor", systemImage: "wave.3.right")
+                    }
+
+                    if model.nfc.isScanning {
+                        ProgressView("Scanning...")
+                    }
+                    if let err = model.lastNFCError {
+                        Text(err)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+                    Text("Sends 0xA0 instead of 0xA8 — keeps the current BLE PIN unchanged.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
 
                 Section("Takeover") {
                     Button {
