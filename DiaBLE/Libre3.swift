@@ -180,6 +180,7 @@ extension String {
     }
 
 
+    // Clinical Data
     struct FastData {
         let lifeCount: Int
         let uncappedReadingMgdl: Int
@@ -505,6 +506,8 @@ extension String {
     var blePIN: Data = Data()    // 4 bytes returned by the activation command
 
     var buffer: Data = Data()
+    var currentBufferPacketType: PacketType?
+
     var currentControlCommand:  ControlCommand?
     var currentSecurityCommand: SecurityCommand?
     var lastSecurityEvent: SecurityEvent = .unknown
@@ -645,31 +648,79 @@ extension String {
         switch UUID(rawValue: uuid) {
 
         case .patchControl:
+
             if data.count == 10 {
-                let suffix = data.suffix(2).hex
+
+                let queueId = data.suffix(2)
                 // TODO: manage enqueued id
-                if buffer.count % 20 == 0 {
-                    if suffix == "0100" {
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(buffer.count/20) packets of historical data")
-                        // TODO
-                    } else if suffix == "0200" {
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(buffer.count/20) packets of clinical data")
-                        // TODO
+                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(data.count) bytes of patch control command data: \(data.hex), command queue id: \(queueId.hex)")
+
+                if buffer.count > 0 && buffer.count % 20 == 0 {
+
+                    let uuids: [PacketType: Libre3.UUID] = [
+                        .backfillHistoric: .historicalData,
+                        .backfillClinical: .clinicalData,
+                        .eventLog:         .eventLog,
+                        .factoryData:      .factoryData
+                    ]
+
+                    let uuidDescription = uuids[currentBufferPacketType!]!.description
+
+                    if queueId == "0100".bytes && currentBufferPacketType == nil {
+                        currentBufferPacketType = .backfillHistoric
+                    } else if queueId == "0200".bytes && currentBufferPacketType == nil {
+                        currentBufferPacketType = .backfillClinical
                     }
-                } else {
+
                     var packets = [Data]()
                     for i in 0 ..< (buffer.count + 19) / 20 {
-                        packets.append(Data(buffer[i * 20 ... min(i * 20 + 17, max(buffer.count - 3, 0))]))
+                        packets.append(Data(buffer[i * 20 ... min(i * 20 + 19, buffer.count - 1)]))
                     }
-                    // TODO:
+
+                    // TODO: factory data
                     // when reactivating a sensor received 20 * 10 + 17 bytes
                     // otherwise receiving 20 * 11 + 12 bytes with the latest firmwares
                     if buffer.count == 217 || buffer.count == 232 {
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(packets.count) packets of factory data (\(buffer.count) bytes), payload: \(Data(packets.joined()).hexBytes)")
+                    } else {
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(packets.count) packets of \(uuidDescription)")
                     }
+
+                    if let shimSession = main.shimSession {
+                        kEnc = shimSession.kEnc
+                        ivEnc = shimSession.ivEnc
+
+                        var decryptedPackets = [Data]()
+                        for packet in packets {
+
+                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypting \(uuidDescription) packet: \(packet.hex) (\(packet.count) bytes), type: \(currentBufferPacketType!), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                            if let decryptedPacket = decryptPacket(data: packet, type: currentBufferPacketType!, ivEnc: ivEnc) {
+                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted \(uuidDescription) packet: \(decryptedPacket.hex)")
+                                decryptedPackets.append(decryptedPacket)
+                            } else {
+                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting \(uuidDescription)")
+                                break
+                            }
+                        }
+
+                        switch currentBufferPacketType! {
+                        case .backfillHistoric: parseHistoricalPackets(data: decryptedPackets)
+                        case .backfillClinical: parseClinicalPackets(data: decryptedPackets)
+                        case .eventLog:         parseEventLogPackets(data: decryptedPackets)
+                        case .factoryData:      parseFactoryDataPackets(data: Data(decryptedPackets.joined()))
+                        default:
+                            break
+
+                        }
+                    } else {
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): DEBUG: no active shim session, cannot decrypt \(uuidDescription)")
+                    }
+
+
+                    buffer = Data()
+                    currentBufferPacketType = nil
+                    currentControlCommand = nil
                 }
-                buffer = Data()
-                currentControlCommand = nil
             }
 
 
@@ -708,6 +759,7 @@ extension String {
                 }
             }
 
+
         case .historicalData, .clinicalData, .eventLog, .factoryData:
             if buffer.count == 0 {
                 buffer = Data(data)
@@ -716,7 +768,18 @@ extension String {
             }
             let payload = data.prefix(18)
             let seqId = UInt16(data.suffix(2))
+
+            let packetTypes: [Libre3.UUID: PacketType] = [
+                .historicalData: .backfillHistoric,
+                .clinicalData:   .backfillClinical,
+                .eventLog:       .eventLog,
+                .factoryData:    .factoryData
+            ]
+
+            currentBufferPacketType = packetTypes[UUID(rawValue: uuid)!]!
+
             log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
+
 
         case .patchStatus:
             if buffer.count == 0 {
@@ -931,6 +994,9 @@ extension String {
         let lifeCount = UInt16(data[0...1])
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let readingMgDl = UInt16(data[2...3])
+        let glucose = readingMgDl & 0x1fff
+        let condition = (readingMgDl & 0b01100_0000) >> 6
+        let dqErrorFlag = readingMgDl & 0x8000 != 0
         let rateOfChange = Double(Int16(bitPattern: UInt16(data[4...5]))) / 100.0
         let esaDuration = UInt16(data[6...7])
         let projectedGlucose = UInt16(data[8...9]) / 100
@@ -941,15 +1007,35 @@ extension String {
         let bitfields = data[14]
         let trend = bitfields & 0x07 // lower 3 bits
         let trendArrow = TrendArrow(rawValue: Int(trend))!
-        let rest = bitfields >> 3 // upper 5 bits
+        let actionableFlag = (bitfields & 0x08) !=  0
+        let statusBits = bitfields >> 4 // upper 4 bits
         let uncappedCurrentMgDl = UInt16(data[15...16])
         let uncappedHistoricMgDl = UInt16(data[17...18])
         let temperature = Double(UInt16(data[19...20])) / 100.0
         let fastData = data.subdata(in: 21 ..< 29)
 
-        // TODO
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute reading: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), glucose: \(readingMgDl) mg/dL (0x\(data[2...3].hex)), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex)), temperature: \(temperature)°C (0x\(data[19...20].hex)), historical life count: \(historicalLifeCount) (0x\(data[10...11].hex)), historical date: \(historicalDate.local), historical glucose: \(historicalReading) mg/dL (0x\(data[12...13].hex))")
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute further data: ESA (Early Signal Attenuation) duration: \(esaDuration) minutes (0x\(data[6...7].hex)), projected glucose: \(projectedGlucose) mg/dL (0x\(data[8...9].hex)), rest of bitfields: 0x\(rest.hex), uncapped current glucose: \(uncappedCurrentMgDl) mg/dL (0x\(data[15...16].hex)), uncapped historical glucose: \(uncappedHistoricMgDl) mg/dL (0x\(data[17...18].hex)), raw fast data: \(fastData.hex) (\(fastData.count) bytes)")
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute reading: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), glucose: \(glucose) mg/dL (0x\(data[2...3].hex) 0x1fff), condition: \(Libre3.Condition(rawValue: Int(condition))?.description ?? "unknown") (\(condition)), data quality error flag: \(dqErrorFlag), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex)), actionable flag: \(actionableFlag), status bits: 0x\(statusBits.hex), temperature: \(temperature)°C (0x\(data[19...20].hex)), historical life count: \(historicalLifeCount) (0x\(data[10...11].hex)), historical date: \(historicalDate.local), historical glucose: \(historicalReading) mg/dL (0x\(data[12...13].hex))")
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute further data: ESA (Early Signal Attenuation) duration: \(esaDuration) minutes (0x\(data[6...7].hex)), projected glucose: \(projectedGlucose) mg/dL (0x\(data[8...9].hex)), uncapped current glucose: \(uncappedCurrentMgDl) mg/dL (0x\(data[15...16].hex)), uncapped historical glucose: \(uncappedHistoricMgDl) mg/dL (0x\(data[17...18].hex)), raw fast data: \(fastData.hex) (\(fastData.count) bytes)")
+    }
+
+    func parseHistoricalPackets(data: [Data]) {  // TODO: -> [HistoricalData]
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): (\(data.count) backfill historical data packets: \(data.map { $0.hex })")
+        // Packed historical glucose word:
+        // Bits 0...12: historical glucose
+        // Bits 13...14: historical result range
+        // Bit 15 set: non-displayable data-quality status
+    }
+
+    func parseClinicalPackets(data: [Data]) {  // TODO: -> [FastData]
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) backfill clinical data packets: \(data.map { $0.hex })")
+    }
+
+    func parseEventLogPackets(data: [Data]) {  // TODO: -> [EventLog]
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): (\(data.count) event log data  packets: \(data.map { $0.hex })")
+    }
+
+    func parseFactoryDataPackets(data: Data) {  // TODO: -> Factory Data  // RealmDB: 148 bytes hex (final CRC)
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): factory data: \(data.hex) (\(data.count) bytes)")
     }
 
 
