@@ -412,7 +412,7 @@ extension String {
     // notify 1338  10 bytes            // ending in 01 00
     // write  1338  13 bytes            // command ending in 02 00
     // notify 1D24  20 * 11 + 12 bytes  // factory data (with latest firmwares, otherwise 10/11 varying packets)
-    //                                  // 20 * 10 + 17 bytes when reactivating (195-byte factory data)
+    //                                  // 20 * 10 + 17 bytes when reactivating
     // notify 1338  10 bytes            // ending in 02 00
     //
     // Shutdown:
@@ -655,7 +655,7 @@ extension String {
                 // TODO: manage enqueued id
                 log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(data.count) bytes of patch control command data: \(data.hex), command queue id: \(queueId.hex)")
 
-                if buffer.count > 0 && buffer.count % 20 == 0 {
+                if buffer.count > 0 {
 
                     let uuids: [PacketType: Libre3.UUID] = [
                         .backfillHistoric: .historicalData,
@@ -695,7 +695,7 @@ extension String {
 
                             debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypting \(uuidDescription) packet: \(packet.hex) (\(packet.count) bytes), type: \(currentBufferPacketType!), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
                             if let decryptedPacket = decryptPacket(data: packet, type: currentBufferPacketType!, ivEnc: ivEnc) {
-                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted \(uuidDescription) packet: \(decryptedPacket.hex)")
+                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted \(uuidDescription) packet: \(decryptedPacket.hex) (\(decryptedPacket.count) bytes)")
                                 decryptedPackets.append(decryptedPacket)
                             } else {
                                 log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting \(uuidDescription)")
@@ -1034,7 +1034,7 @@ extension String {
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): (\(data.count) event log data  packets: \(data.map { $0.hex })")
     }
 
-    func parseFactoryDataPackets(data: Data) {  // TODO: -> Factory Data  // RealmDB: 148 bytes hex (final CRC)
+    func parseFactoryDataPackets(data: Data) {  // TODO: -> Factory Data
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): factory data: \(data.hex) (\(data.count) bytes)")
     }
 
