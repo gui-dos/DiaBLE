@@ -1036,8 +1036,10 @@ extension String {
             let rawData = data[2...9]  // first 6 bytes coming from filament
             let readingMgDl = UInt16(data[10...11])
             let historicMgDl = UInt16(data[12...13])
-            // TODO: 17-minute historical delay: round((lifeCount-17.0)/5.0)*5;
-            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed backfill clinical data: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data from filament: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex))")
+            // TODO:
+            let historicalLifeCount = ((lifeCount - 17) / 5) * 5
+            let historicalDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(historicalLifeCount) * 60))
+            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed backfill clinical data: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data from filament: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex)), historical life count: \(historicalLifeCount), historical date: \(historicalDate)")
         }
     }
 

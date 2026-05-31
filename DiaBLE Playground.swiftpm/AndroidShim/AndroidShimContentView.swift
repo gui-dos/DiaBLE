@@ -282,10 +282,9 @@ private struct ShimInnerView: View {
                     } label: {
                         Label("Tap to take over sensor", systemImage: "wave.3.right")
                     }
-                    //                    .disabled(
-                    //                        (UUID(uuidString: model.libreViewPatientId.trimmingCharacters(in: .whitespacesAndNewlines)) == nil && model.libreViewReceiverId == 0)
-                    //                        || model.nfc.isScanning
-                    //                    )
+                    // .disabled(
+                    //      (UUID(uuidString: model.libreViewPatientId.trimmingCharacters(in: .whitespacesAndNewlines)) == nil && model.libreViewReceiverId == 0) || model.nfc.isScanning
+                    //  )
 
                     if model.nfc.isScanning {
                         ProgressView("Scanning...")
