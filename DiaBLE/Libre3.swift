@@ -170,13 +170,6 @@ extension String {
         let errorData: Int
         let eventData: Int
         let index: Int
-
-        // struct EventLog {
-        //     int16_t lifeCount;
-        //     int16_t errorData;
-        //     int16_t eventData;
-        //     int8_t index;  // 255: no data
-        // }
     }
 
 
@@ -989,7 +982,7 @@ extension String {
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let readingMgDl = UInt16(data[2...3])
         let glucose = readingMgDl & 0x1fff
-        let condition = (readingMgDl & 0b01100_0000) >> 6
+        let condition = Int((readingMgDl & 6000) >> 13)
         let dqErrorFlag = readingMgDl & 0x8000 != 0
         let rateOfChange = Double(Int16(bitPattern: UInt16(data[4...5]))) / 100.0
         let esaDuration = UInt16(data[6...7])
@@ -1008,16 +1001,29 @@ extension String {
         let temperature = Double(UInt16(data[19...20])) / 100.0
         let fastData = data.subdata(in: 21 ..< 29)
 
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute reading: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), glucose: \(glucose) mg/dL (0x\(data[2...3].hex) 0x1fff), condition: \(Libre3.Condition(rawValue: Int(condition))?.description ?? "unknown") (\(condition)), data quality error flag: \(dqErrorFlag), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex)), actionable flag: \(actionableFlag), status bits: 0x\(statusBits.hex), temperature: \(temperature)°C (0x\(data[19...20].hex)), historical life count: \(historicalLifeCount) (0x\(data[10...11].hex)), historical date: \(historicalDate.local), historical glucose: \(historicalReading) mg/dL (0x\(data[12...13].hex))")
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute reading: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), glucose: \(glucose) mg/dL (0x\(data[2...3].hex) 0x1fff), condition: \(Libre3.Condition(rawValue: condition)?.description ?? "unknown") (\(condition)), data quality error flag: \(dqErrorFlag), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex)), actionable flag: \(actionableFlag), status bits: 0x\(statusBits.hex), temperature: \(temperature)°C (0x\(data[19...20].hex)), historical life count: \(historicalLifeCount) (0x\(data[10...11].hex)), historical date: \(historicalDate.local), historical glucose: \(historicalReading) mg/dL (0x\(data[12...13].hex))")
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute further data: ESA (Early Signal Attenuation) duration: \(esaDuration) minutes (0x\(data[6...7].hex)), projected glucose: \(projectedGlucose) mg/dL (0x\(data[8...9].hex)), uncapped current glucose: \(uncappedCurrentMgDl) mg/dL (0x\(data[15...16].hex)), uncapped historical glucose: \(uncappedHistoricMgDl) mg/dL (0x\(data[17...18].hex)), raw fast data: \(fastData.hex) (\(fastData.count) bytes)")
     }
 
     func parseHistoricalPackets(data: [Data]) {  // TODO: -> [HistoricalData]
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): (\(data.count) backfill historical data packets: \(data.map { $0.hex })")
-        // Packed historical glucose word:
-        // Bits 0...12: historical glucose
-        // Bits 13...14: historical result range
-        // Bit 15 set: non-displayable data-quality status
+        let activationTime = app.sensor.activationTime // TODO: shim interconnection
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) backfill historical data packets: \(data.map { $0.hex })")
+        for data in data {
+            let startLifeCount = UInt16(data[0...1])
+            let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(startLifeCount) * 60))
+            var readings = [(lifeCount: UInt16, date: Date, glucose: UInt16, range: ResultRange, dqErrorFlag: Bool)]()
+            for i in 0 ... 5 {
+                let reading = UInt16(data[(i * 2) ... (i * 2 + 1)])
+                let lifeCount = startLifeCount + UInt16(i * 5)
+                let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
+                let glucose = reading & 0x1fff
+                let resultRange = ResultRange(rawValue: Int((reading & 6000) >> 13))!
+                let dqErrorFlag = reading & 0x8000 != 0
+                let entry = (lifeCount: lifeCount, date: date, glucose: glucose, range: resultRange, dqErrorFlag: dqErrorFlag)
+                readings.append(entry)
+            }
+            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed 6 backfill historical data: life count: \(startLifeCount) (0x\(data[0...1].hex)), date: \(date.local), readings: \(readings.map { "life count: \($0.lifeCount), date: \(date), glucose: \($0.glucose), range: \($0.range), quality error flag: \($0.dqErrorFlag)" })")
+        }
     }
 
 
@@ -1030,14 +1036,28 @@ extension String {
             let rawData = data[2...9]  // first 6 bytes coming from filament
             let readingMgDl = UInt16(data[10...11])
             let historicMgDl = UInt16(data[12...13])
-            // TODO: compute 17-minute historical delay
-            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data from filament: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex))")
+            // TODO: 17-minute historical delay: round((lifeCount-17.0)/5.0)*5;
+            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed backfill clinical data: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data from filament: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex))")
         }
     }
 
 
     func parseEventLogPackets(data: [Data]) {  // TODO: -> [EventLog]
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): (\(data.count) event log data  packets: \(data.map { $0.hex })")
+        let activationTime = app.sensor.activationTime // TODO: shim interconnection
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) event log packets: \(data.map { $0.hex })")
+        for data in data {
+            var events = [(lifeCount: UInt16, date: Date, errorData: UInt16, eventData: UInt16, index: UInt8)]()
+            for i in 0...1 {
+                let lifeCount = UInt16(data[(i * 7) ... (i * 7 + 1)])
+                let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
+                let errorData = UInt16(data[(i * 7 + 2) ... (i * 7 + 3)])
+                let eventData = UInt16(data[(i * 7 + 4) ... (i * 7 + 5)])
+                let index = data[i * 7 + 6]
+                let event = (lifeCount: lifeCount, date: date, errorData: errorData, eventData: eventData, index: index)
+                events.append(event)
+            }
+            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed 2 log events: \(events.map { "life count: \($0.lifeCount) (0x\(data[0...1].hex)), date: \($0.date.local), error data: \($0.errorData), event data: \($0.eventData), index: \($0.index)" })")
+        }
     }
 
 
