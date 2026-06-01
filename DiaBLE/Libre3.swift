@@ -977,8 +977,9 @@ extension String {
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let readingMgDl = UInt16(data[2...3])
         let glucose = readingMgDl & 0x1fff
-        let condition = Int((readingMgDl & 6000) >> 13)
-        let dqErrorFlag = readingMgDl & 0x8000 != 0
+        let dataQuality = (readingMgDl & 0xE000) // upper 3 bits
+        let dqErrorFlag = readingMgDl & 0x8000 != 0  // MSB
+        // TODO: TOO_HOT = 0xA000, TOO_COLD = 0xC000
         let rateOfChange = Double(Int16(bitPattern: UInt16(data[4...5]))) / 100.0
         let esaDuration = UInt16(data[6...7])
         let projectedGlucose = UInt16(data[8...9]) / 100
@@ -996,7 +997,7 @@ extension String {
         let temperature = Double(UInt16(data[19...20])) / 100.0
         let fastData = data.subdata(in: 21 ..< 29)
 
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute reading: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), glucose: \(glucose) mg/dL (0x\(data[2...3].hex) 0x1fff), condition: \(Libre3.Condition(rawValue: condition)?.description ?? "unknown") (\(condition)), data quality error flag: \(dqErrorFlag), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex)), actionable flag: \(actionableFlag), status bits: 0x\(statusBits.hex), temperature: \(temperature)°C (0x\(data[19...20].hex)), historical life count: \(historicalLifeCount) (0x\(data[10...11].hex)), historical date: \(historicalDate.local), historical glucose: \(historicalReading) mg/dL (0x\(data[12...13].hex))")
+        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute reading: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), glucose: \(glucose) mg/dL (0x\(data[2...3].hex) 0x1fff), data quality: 0x\(dataQuality.hex), data quality error flag: \(dqErrorFlag), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex)), actionable flag: \(actionableFlag), status bits: 0x\(statusBits.hex), temperature: \(temperature)°C (0x\(data[19...20].hex)), historical life count: \(historicalLifeCount) (0x\(data[10...11].hex)), historical date: \(historicalDate.local), historical glucose: \(historicalReading) mg/dL (0x\(data[12...13].hex))")
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute further data: ESA (Early Signal Attenuation) duration: \(esaDuration) minutes (0x\(data[6...7].hex)), projected glucose: \(projectedGlucose) mg/dL (0x\(data[8...9].hex)), uncapped current glucose: \(uncappedCurrentMgDl) mg/dL (0x\(data[15...16].hex)), uncapped historical glucose: \(uncappedHistoricMgDl) mg/dL (0x\(data[17...18].hex)), raw fast data: \(fastData.hex) (\(fastData.count) bytes)")
     }
 
@@ -1012,6 +1013,7 @@ extension String {
                 let lifeCount = startLifeCount + UInt16(i * 5)
                 let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
                 let glucose = reading & 0x1fff
+                // TODO: not range but data quality flags 0xE000?
                 let resultRange = ResultRange(rawValue: Int((reading & 6000) >> 13))!
                 let dqErrorFlag = reading & 0x8000 != 0
                 let entry = (lifeCount: lifeCount, date: date, glucose: glucose, range: resultRange, dqErrorFlag: dqErrorFlag)
