@@ -20,6 +20,11 @@ extension Libre3 {
         return ephemeralPublicKeyBytes
     }
 
+    // iOS Trident:
+    // +[FSOpenSSL computeECDHSharedAES128:appEphemeralKeys:patchStaticPubOctets:patchEphemeralPubOctets:]
+    // +[FSOpenSSL encryptUsingCcmAES128:key:iv:tag_len:]
+    // +[FSOpenSSL decryptUsingCcmAES128:key:iv:tag:]
+
     /// TODO: the actual method needed to be implemented should be
     /// `deriveKAuthFromPatchEphemeral()`, a quite hairy task
     /// for the first pairing because of Trident's SKB use of WBAES

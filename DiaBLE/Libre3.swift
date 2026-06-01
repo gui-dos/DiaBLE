@@ -700,7 +700,7 @@ extension String {
 
                         }
                     } else {
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): DEBUG: no active shim session, cannot decrypt \(uuidDescription)")
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): no active shim session, cannot decrypt \(uuidDescription)")
                     }
 
 
@@ -733,7 +733,7 @@ extension String {
                             log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting 1-minute reading")
                         }
                     } else {
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): DEBUG: no active shim session, cannot decrypt 1-minute reading")
+                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): no active shim session, cannot decrypt 1-minute reading")
                     }
                     buffer = Data()
                     if settings.selectedService == .libreLinkUp {
@@ -786,7 +786,7 @@ extension String {
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting patch status")
                     }
                 } else {
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): DEBUG: no active shim session, cannot decrypt patch status")
+                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): no active shim session, cannot decrypt patch status")
                 }
             }
 
@@ -859,7 +859,6 @@ extension String {
                                 kEnc = deriveSymmetricKey()
                                 log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: derived symmetric key: \(kEnc.hex)")
                                 do {
-                                    // Claude: TODO
                                     if !Libre3.sharedKeyEndpoint.isEmpty {
                                         kEnc = try await getSharedKey(
                                             sensorStatic: patchCertificate!.patchStaticPublicKey,
@@ -956,9 +955,7 @@ extension String {
     }
 
     func parsePatchStatus(data: Data) {  // TODO: -> PatchStatus
-
-        let activationTime = app.sensor.activationTime // TODO: shim interconnection
-
+        let activationTime = app.sensor.activationTime != 0 ? app.sensor.activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection
         let lifeCount = UInt16(data[0...1])
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let errorData = UInt16(data[2...3])
@@ -975,9 +972,7 @@ extension String {
     }
 
     func parseCurrentReading(data: Data) {  // TODO: -> GlucoseData
-
-        let activationTime = app.sensor.activationTime // TODO: shim interconnection
-
+        let activationTime = app.sensor.activationTime != 0 ? app.sensor.activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection
         let lifeCount = UInt16(data[0...1])
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let readingMgDl = UInt16(data[2...3])
@@ -1006,7 +1001,7 @@ extension String {
     }
 
     func parseHistoricalPackets(data: [Data]) {  // TODO: -> [HistoricalData]
-        let activationTime = app.sensor.activationTime // TODO: shim interconnection
+        let activationTime = app.sensor.activationTime != 0 ? app.sensor.activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) backfill historical data packets: \(data.map { $0.hex })")
         for data in data {
             let startLifeCount = UInt16(data[0...1])
@@ -1028,7 +1023,7 @@ extension String {
 
 
     func parseClinicalPackets(data: [Data]) {  // TODO: -> [FastData]
-        let activationTime = app.sensor.activationTime // TODO: shim interconnection
+        let activationTime = app.sensor.activationTime != 0 ? app.sensor.activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) backfill clinical data packets: \(data.map { $0.hex })")
         for data in data {
             let lifeCount = UInt16(data[0...1])
@@ -1045,8 +1040,7 @@ extension String {
 
 
     func parseEventLogPackets(data: [Data]) {  // TODO: -> [EventLog]
-        let activationTime = app.sensor.activationTime // TODO: shim interconnection
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) event log packets: \(data.map { $0.hex })")
+        let activationTime = app.sensor.activationTime != 0 ? app.sensor.activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) event log packets: \(data.map { $0.hex })")
         for data in data {
             var events = [(lifeCount: UInt16, date: Date, errorData: UInt16, eventData: UInt16, index: UInt8)]()
             for i in 0...1 {

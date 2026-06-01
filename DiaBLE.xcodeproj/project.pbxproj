@@ -134,6 +134,13 @@
 			remoteGlobalIDString = 7B3335852FB346700048457B;
 			remoteInfo = libre3AndroidServer;
 		};
+		C59971E12FCD7EFD00F9FAD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C59971602FCD752900F9FAD1 /* libre3AndroidServer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7B3335852FB346700048457B;
+			remoteInfo = libre3AndroidServer;
+		};
 		C5A86E002FC2EA6300EF6289 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C5A86DA82FC2E9E300EF6289 /* libre3AndroidServer.xcodeproj */;
@@ -237,6 +244,7 @@
 		C5916E5629827EB10051AC06 /* MainDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainDelegate.swift; sourceTree = "<group>"; };
 		C5939DD62FC3662A00AC13B9 /* libre3AndroidServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libre3AndroidServer.xcodeproj; sourceTree = "<group>"; };
 		C59960DF2981E381005999C2 /* DiaBLE Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DiaBLE Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C59971602FCD752900F9FAD1 /* libre3AndroidServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libre3AndroidServer.xcodeproj; sourceTree = "<group>"; };
 		C5A14842298985E000A0E510 /* DiaBLE Watch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "DiaBLE Watch.entitlements"; path = "../DiaBLE Watch/DiaBLE Watch.entitlements"; sourceTree = "<group>"; };
 		C5A86DA82FC2E9E300EF6289 /* libre3AndroidServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libre3AndroidServer.xcodeproj; sourceTree = "<group>"; };
 		C5AA38A32C25687F00CBB0F3 /* Lingo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lingo.swift; sourceTree = "<group>"; };
@@ -292,10 +300,6 @@
 		C54EB2302FC2E46C006D894A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				AndroidShim/AndroidServerClient.swift,
-				AndroidShim/AndroidShimContentView.swift,
-				AndroidShim/AndroidShimLibre3NFC.swift,
-				AndroidShim/Hex.swift,
 				"AndroidShim/libre3-auth-ios-sample-app-main/.gitignore",
 				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/AndroidServerClient.swift",
 				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Assets.xcassets",
@@ -316,14 +320,6 @@
 				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3TestVectors.swift",
 				"AndroidShim/libre3-auth-ios-sample-app-main/LICENSE",
 				"AndroidShim/libre3-auth-ios-sample-app-main/README.md",
-				AndroidShim/Libre3BLEClient.swift,
-				AndroidShim/Libre3BLEUUIDs.swift,
-				AndroidShim/Libre3KAuthStore.swift,
-				AndroidShim/Libre3PatchCertificate.swift,
-				AndroidShim/Libre3ResearchMaterial.swift,
-				AndroidShim/Libre3SecurityFrameBuffer.swift,
-				AndroidShim/Libre3SecurityProtocol.swift,
-				AndroidShim/Libre3TestVectors.swift,
 			);
 			target = C59960DE2981E381005999C2 /* DiaBLE Watch */;
 		};
@@ -451,6 +447,14 @@
 				C5A14842298985E000A0E510 /* DiaBLE Watch.entitlements */,
 			);
 			path = "DiaBLE Watch";
+			sourceTree = "<group>";
+		};
+		C59971742FCD752900F9FAD1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C59971E22FCD7EFD00F9FAD1 /* libre3AndroidServer.app */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		C5A86DAD2FC2E9E300EF6289 /* Products */ = {
@@ -695,6 +699,10 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = C59971742FCD752900F9FAD1 /* Products */;
+					ProjectRef = C59971602FCD752900F9FAD1 /* libre3AndroidServer.xcodeproj */;
+				},
+				{
 					ProductGroup = C567E62E2FC30ED100A12115 /* Products */;
 					ProjectRef = C567E6282FC30ED100A12115 /* libre3AndroidServer.xcodeproj */;
 				},
@@ -752,6 +760,13 @@
 			fileType = wrapper.application;
 			path = libre3AndroidServer.app;
 			remoteRef = C5939E012FC3662B00AC13B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C59971E22FCD7EFD00F9FAD1 /* libre3AndroidServer.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = libre3AndroidServer.app;
+			remoteRef = C59971E12FCD7EFD00F9FAD1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		C5A86E012FC2EA6300EF6289 /* libre3AndroidServer.app */ = {

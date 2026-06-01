@@ -44,10 +44,10 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
     var nightscout: Nightscout?
 
     // TODO:
-    // var shimNFC:    Libre3NFC?
-    // var shimServer: AndroidServerClient?
-    // var shimBLE:    Libre3BLEClient?
-    // var shimAppModel: AndroidShimAppModel?
+    var shimNFC:    Libre3NFC?
+    var shimServer: AndroidServerClient?
+    var shimBLE:    Libre3BLEClient?
+    var shimAppModel: AndroidShimAppModel?
     var shimSession: Libre3SessionContext?
 
 
@@ -71,9 +71,9 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
         healthKit = HealthKit()
 
         // TODO:
-        // shimNFC = Libre3NFC()
-        // shimServer = AndroidServerClient()
-        // shimBLE = Libre3BLEClient(server: shimServer!)
+        shimNFC = Libre3NFC()
+        shimServer = AndroidServerClient()
+        shimBLE = Libre3BLEClient(server: shimServer!)
         shimSession = try? Libre3SessionContext(kEnc: Data(), ivEnc: Data())
 
         super.init()
@@ -86,13 +86,13 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
         bluetoothDelegate.main = self
 
         // TODO:
-        // shimNFC?.main    = self
-        // shimServer?.main = self
-        // shimBLE?.main    = self
-        // if shimServer != nil {
-        //     shimAppModel = AndroidShimAppModel(main: self)
-        //     shimBLE!.session = shimSession
-        // }
+        shimNFC?.main    = self
+        shimServer?.main = self
+        shimBLE?.main    = self
+        if shimServer != nil {
+            shimAppModel = AndroidShimAppModel(main: self)
+            // shimBLE!.session = shimSession
+        }
 
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .criticalAlert]) { _, _ in }

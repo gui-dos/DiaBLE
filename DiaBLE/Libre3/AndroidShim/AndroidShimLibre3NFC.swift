@@ -1,6 +1,10 @@
 import Combine
-import CoreNFC
 import Foundation
+
+#if !os(watchOS)
+import CoreNFC
+#endif  // !os(watchOS)
+
 
 /// Core NFC takeover for an already-activated Libre 3 sensor.
 ///
@@ -138,10 +142,15 @@ final class Libre3NFC: NSObject, ObservableObject, @MainActor Logging {
     @Published private(set) var isScanning: Bool = false
     @Published private(set) var lastLog: String = ""
 
+    #if !os(watchOS)
     private var session: NFCTagReaderSession?
+    #endif  // !os(watchOS)
+
     private var continuation: CheckedContinuation<TakeoverResult, Error>?
     private var receiverId: UInt32 = 0
     private var nfcActivationCommand: UInt8 = 0xA0
+
+    #if !os(watchOS)
 
     /// Performs the NFC activation tap.
     ///
@@ -168,6 +177,9 @@ final class Libre3NFC: NSObject, ObservableObject, @MainActor Logging {
             self.session?.begin()
         }
     }
+
+    #endif  // !os(watchOS)
+
 
     // MARK: - Helpers (also used by the UI and offline tests)
     //
@@ -242,6 +254,8 @@ final class Libre3NFC: NSObject, ObservableObject, @MainActor Logging {
         cont?.resume(throwing: error)
     }
 }
+
+#if !os(watchOS)
 
 // MARK: - NFCTagReaderSessionDelegate
 
@@ -390,3 +404,5 @@ extension Libre3NFC: NFCTagReaderSessionDelegate {
         )
     }
 }
+
+#endif  // !os(watchOS)

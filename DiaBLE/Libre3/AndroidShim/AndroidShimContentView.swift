@@ -93,6 +93,9 @@ final class AndroidShimAppModel: ObservableObject, @MainActor Logging {
         results.map(\.summary).joined(separator: "\n")
     }
 
+
+    #if !os(watchOS)
+
     func performTakeover() {
         Task {
             do {
@@ -113,7 +116,7 @@ final class AndroidShimAppModel: ObservableObject, @MainActor Logging {
         }
     }
 
-    func performTakepart() {
+    func performTakePart() {
         Task {
             do {
                 let receiverId = libreViewReceiverId != 0 ? UInt32(libreViewReceiverId) : libreViewPatientId.fnv32Hash
@@ -132,8 +135,12 @@ final class AndroidShimAppModel: ObservableObject, @MainActor Logging {
             }
         }
     }
+
+    #endif  // !os(watchOS)
 }
 
+
+#if !os(watchOS)
 
 struct AndroidShimContentView: View, LoggingView {
 
@@ -258,7 +265,7 @@ private struct ShimInnerView: View {
 
                 Section("Take part") {
                     Button {
-                        model.performTakepart()
+                        model.performTakePart()
                     } label: {
                         Label("Tap to take part in sensor", systemImage: "wave.3.right")
                     }
@@ -486,3 +493,4 @@ private struct ShimInnerView: View {
     AndroidShimContentView()
 }
 
+#endif  // !os(watchOS)
