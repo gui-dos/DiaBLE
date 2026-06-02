@@ -602,7 +602,7 @@ extension String {
         for i in 0 ..< packetCount {
             let offset = UInt16(i * 18)
             let packet = offset.data + data[offset ... min(offset + 17, UInt16(data.count - 1))]
-            debugLog("Bluetooth: writing packet \(packet.hexBytes) to \(transmitter!.peripheral!.name ?? "unnamed Libre 3")'s \(uuid.description) characteristic")
+            debugLog("Bluetooth: writing packet \(packet.hexBytes) to \(typeAndName)'s \(uuid.description) characteristic")
             transmitter!.write(packet, for: uuid.rawValue, .withResponse)
         }
     }
@@ -873,7 +873,7 @@ extension String {
                                         // TODO
                                     }
                                 } catch {
-                                    self.log("\(self.type) \(self.transmitter!.peripheral!.name ?? "(unnamed)"): ERROR deriving shared key: \(error.localizedDescription)")
+                                    self.log("\(self.typeAndName): ERROR deriving shared key: \(error.localizedDescription)")
                                 }
                             }
                         }
@@ -896,7 +896,7 @@ extension String {
 
                         if blePIN.isEmpty && !settings.activeSensorBlePIN.isEmpty {
                             blePIN = settings.activeSensorBlePIN
-                            debugLog("(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): restore saved active sensor's BLE PIN: \(blePIN.hex)")
+                            debugLog("\(typeAndName): restore saved active sensor's BLE PIN: \(blePIN.hex)")
                         }
 
                         if !blePIN.isEmpty && !kEnc.isEmpty {
