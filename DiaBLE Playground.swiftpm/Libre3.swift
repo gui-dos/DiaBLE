@@ -1007,7 +1007,7 @@ extension String {
         main.app.lastReadingDate = date
         main.app.currentGlucose = glucose
         main.app.trendArrow = trendArrow
-        main.app.main.didParseSensor(self)
+        main.didParseSensor(self)
     }
 
     func parseHistoricalPackets(data: [Data]) {  // TODO: -> [HistoricalData]
