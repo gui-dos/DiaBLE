@@ -74,7 +74,7 @@ final class AndroidShimAppModel: ObservableObject, @MainActor Logging {
     func applyServerConfig() {
         Task {
             do {
-                try await server.configure(
+                try server.configure(
                     baseURLString: serverURL.trimmingCharacters(in: .whitespacesAndNewlines),
                     bearerToken: bearerToken.isEmpty ? nil : bearerToken
                 )
