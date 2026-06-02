@@ -142,6 +142,7 @@ enum SensorState: UInt8, CustomStringConvertible {
         }
     }
 
+    var typeAndName: String { "\(type) \(transmitter!.peripheral!.name ?? "(unnamed)")" }
 
 #if !os(watchOS)
     func execute(nfc: NFC, taskRequest: TaskRequest) async throws {

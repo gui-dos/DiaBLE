@@ -573,7 +573,7 @@ extension String {
 
 
     func send(securityCommand cmd: SecurityCommand) {
-        log("Bluetooth: sending to \(type) \(transmitter!.peripheral!.name ?? "(unnamed)") `\(cmd.description)` command 0x\(cmd.rawValue.hex)")
+        log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` command 0x\(cmd.rawValue.hex)")
         currentSecurityCommand = cmd
         transmitter!.write(Data([cmd.rawValue]), for: UUID.securityCommands.rawValue, .withResponse)
     }
@@ -640,7 +640,7 @@ extension String {
 
                 let queueId = data.suffix(2)
                 // TODO: manage enqueued id
-                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(data.count) bytes of patch control command data: \(data.hex), command queue id: \(queueId.hex)")
+                log("\(typeAndName): received \(data.count) bytes of patch control command data: \(data.hex), command queue id: \(queueId.hex)")
 
                 if buffer.count > 0 {
 
@@ -668,9 +668,9 @@ extension String {
                     // when reactivating a sensor received 20 * 10 + 17 bytes
                     // otherwise receiving 20 * 11 + 12 bytes with the latest firmwares
                     if buffer.count == 217 || buffer.count == 232 {
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(packets.count) packets of factory data (\(buffer.count) bytes), payload: \(Data(packets.joined()).hexBytes)")
+                        log("\(typeAndName): received \(packets.count) packets of factory data (\(buffer.count) bytes), payload: \(Data(packets.joined()).hexBytes)")
                     } else {
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(packets.count) packets of \(uuidDescription)")
+                        log("\(typeAndName): received \(packets.count) packets of \(uuidDescription)")
                     }
 
                     if let shimSession = main.shimSession {
@@ -680,12 +680,12 @@ extension String {
                         var decryptedPackets = [Data]()
                         for packet in packets {
 
-                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypting \(uuidDescription) packet: \(packet.hex) (\(packet.count) bytes), type: \(currentBufferPacketType!), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                            debugLog("\(typeAndName): decrypting \(uuidDescription) packet: \(packet.hex) (\(packet.count) bytes), type: \(currentBufferPacketType!), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
                             if let decryptedPacket = decryptPacket(data: packet, type: currentBufferPacketType!, ivEnc: ivEnc) {
-                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted \(uuidDescription) packet: \(decryptedPacket.hex) (\(decryptedPacket.count) bytes)")
+                                log("\(typeAndName): decrypted \(uuidDescription) packet: \(decryptedPacket.hex) (\(decryptedPacket.count) bytes)")
                                 decryptedPackets.append(decryptedPacket)
                             } else {
-                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting \(uuidDescription)")
+                                log("\(typeAndName): FAILED decrypting \(uuidDescription)")
                                 break
                             }
                         }
@@ -700,7 +700,7 @@ extension String {
 
                         }
                     } else {
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): no active shim session, cannot decrypt \(uuidDescription)")
+                        log("\(typeAndName): no active shim session, cannot decrypt \(uuidDescription)")
                     }
 
 
@@ -719,21 +719,21 @@ extension String {
                 if buffer.count == 35 {
                     let payload = buffer.prefix(33)
                     let seqId = UInt16(buffer.suffix(2))
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
+                    log("\(typeAndName): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
                     if let shimSession = main.shimSession {
                         kEnc = shimSession.kEnc
                         ivEnc = shimSession.ivEnc
-                        debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypting one-minute reading: \(buffer.hex) (\(buffer.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                        debugLog("\(typeAndName): decrypting one-minute reading: \(buffer.hex) (\(buffer.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
                         if let oneMinuteReading = decryptPacket(data: buffer, type: .currentGlucose, ivEnc: ivEnc) {
-                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted 1-minute reading: \(oneMinuteReading.hex) (\(oneMinuteReading.count) bytes")
+                            log("\(typeAndName): decrypted 1-minute reading: \(oneMinuteReading.hex) (\(oneMinuteReading.count) bytes")
                             if oneMinuteReading.count == 29 {
                                 parseOneMinuteReading(data: oneMinuteReading)
                             }
                         } else {
-                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting 1-minute reading")
+                            log("\(typeAndName): FAILED decrypting 1-minute reading")
                         }
                     } else {
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): no active shim session, cannot decrypt 1-minute reading")
+                        log("\(typeAndName): no active shim session, cannot decrypt 1-minute reading")
                         if settings.selectedService == .libreLinkUp {
                             Task { @MainActor in
                                 try await Task.sleep(nanoseconds: 2_000_000_000)
@@ -766,38 +766,38 @@ extension String {
 
             currentBufferPacketType = packetTypes[UUID(rawValue: uuid)!]!
 
-            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
+            log("\(typeAndName): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
 
 
         case .patchStatus:
             if buffer.count == 0 {
                 let payload = data.prefix(16)
                 let seqId = UInt16(data.suffix(2))
-                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
+                log("\(typeAndName): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
                 if let shimSession = main.shimSession {
                     kEnc = shimSession.kEnc
                     ivEnc = shimSession.ivEnc
-                    debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypting patch status: \(data.hex) (\(data.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                    debugLog("\(typeAndName): decrypting patch status: \(data.hex) (\(data.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
                     if let patchStatus = decryptPacket(data: data, type: .patchStatus, ivEnc: ivEnc) {
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted patch status: \(patchStatus.hex)")
+                        log("\(typeAndName): decrypted patch status: \(patchStatus.hex)")
                         if patchStatus.count == 12 {
                             parsePatchStatus(data: patchStatus)
                         }
                     } else {
-                        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting patch status")
+                        log("\(typeAndName): FAILED decrypting patch status")
                     }
                 } else {
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): no active shim session, cannot decrypt patch status")
+                    log("\(typeAndName): no active shim session, cannot decrypt patch status")
                 }
             }
 
 
         case .securityCommands:
             lastSecurityEvent = SecurityEvent(rawValue: data[0]) ?? .unknown
-            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): security event: \(lastSecurityEvent)\(lastSecurityEvent == .unknown ? " (" + data[0].hex + ")" : "")")
+            log("\(typeAndName): security event: \(lastSecurityEvent)\(lastSecurityEvent == .unknown ? " (" + data[0].hex + ")" : "")")
             if data.count == 2 {
                 expectedStreamSize = Int(data[1] + data[1] / 20 + 1)
-                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): expected response size: \(expectedStreamSize) bytes (payload: \(data[1]) bytes)")
+                log("\(typeAndName): expected response size: \(expectedStreamSize) bytes (payload: \(data[1]) bytes)")
                 if data[1] == 23 {
                     currentSecurityCommand = .readChallenge
                 } else if data[1] == 67 {  // encrypted KAuth
@@ -825,40 +825,40 @@ extension String {
             if buffer.count == expectedStreamSize {
 
                 let (payload, hexDump) = parsePackets(buffer)
-                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes):\n\(hexDump)")
+                log("\(typeAndName): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes):\n\(hexDump)")
 
                 switch currentSecurityCommand {
 
                 case .sendCertificate:
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate: \(payload.hex)")
+                    log("\(typeAndName): patch certificate: \(payload.hex)")
                     if payload.count == 140 {
                         patchCertificate = PatchCertificate(data: payload, signingPublicKey: patchSigningKeys[securityVersion].bytes)
                         let sensorId = patchCertificate!.header.subdata(in: 1 ..< 9)
-                        debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed patch certificate, header: \(patchCertificate!.header.hex) (sensor id: \(sensorId.hex), current sensor uid: \(settings.currentSensorUid.hex)), patch static public key: \(patchCertificate!.patchStaticPublicKey.hex), signature: \(patchCertificate!.signature.hex)")
+                        debugLog("\(typeAndName): parsed patch certificate, header: \(patchCertificate!.header.hex) (sensor id: \(sensorId.hex), current sensor uid: \(settings.currentSensorUid.hex)), patch static public key: \(patchCertificate!.patchStaticPublicKey.hex), signature: \(patchCertificate!.signature.hex)")
                         if (try? patchCertificate!.verifyECDSA(with: patchSigningKeys[securityVersion].bytes)) == true {
-                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate ECDSA signature verified")
+                            debugLog("\(typeAndName): patch certificate ECDSA signature verified")
                         } else {
-                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch certificate ECDSA signature not verified")
+                            debugLog("\(typeAndName): patch certificate ECDSA signature not verified")
                         }
                         if settings.userLevel < .test { // not eavesdropping on Trident
-                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): sending security command 'key agreement' 0x0D")
+                            debugLog("\(typeAndName): sending security command 'key agreement' 0x0D")
                             send(securityCommand: .keyAgreement)
                             ephemeralPublicKey = initECDH()
-                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): sending generated 65-byte P-256 x9.63 ephemeral key 0x\(ephemeralPublicKey.hex)")
+                            debugLog("\(typeAndName): sending generated 65-byte P-256 x9.63 ephemeral key 0x\(ephemeralPublicKey.hex)")
                             write(ephemeralPublicKey, for: .certificateData)
-                            debugLog("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): sending security command 'ephemereal load done' 0x0E")
+                            debugLog("\(typeAndName): sending security command 'ephemereal load done' 0x0E")
                             send(securityCommand: .ephemeralLoadDone)
                         }
                     }
 
                 case .ephemeralLoadDone:
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): patch ephemeral: \(payload.hex)")
+                    log("\(typeAndName): patch ephemeral: \(payload.hex)")
                     if payload.count == 65 {
                         patchEphemeral = payload
                         if settings.userLevel < .test { // not eavesdropping on Trident
                             Task { @MainActor in
                                 kEnc = deriveSymmetricKey()
-                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: derived symmetric key: \(kEnc.hex)")
+                                log("\(typeAndName): TEST: derived symmetric key: \(kEnc.hex)")
                                 do {
                                     if !Libre3.sharedKeyEndpoint.isEmpty {
                                         kEnc = try await getSharedKey(
@@ -884,7 +884,7 @@ extension String {
                 case .readChallenge:
 
                     let seqId = UInt16(payload[16...17])
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): security challenge: \(payload.hex) (sequential id: \(seqId.hex))")
+                    log("\(typeAndName): security challenge: \(payload.hex) (sequential id: \(seqId.hex))")
 
                     // Store as instance vars to be verified later when decrypting KAuth
                     r1     = Data(payload.prefix(16))
@@ -903,16 +903,16 @@ extension String {
 
                             let challengeResponse = r1 + r2 + blePIN
                             let encryptedResponse = aesEncrypt(data: challengeResponse, nonce: nonce1)!
-                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): writing encrypted challenge response: \(encryptedResponse.hex) (\(encryptedResponse.count) bytes), plain (r1 + r2 + BLE PIN): \(challengeResponse.hex) (\(challengeResponse.count) bytes)")
+                            log("\(typeAndName): writing encrypted challenge response: \(encryptedResponse.hex) (\(encryptedResponse.count) bytes), plain (r1 + r2 + BLE PIN): \(challengeResponse.hex) (\(challengeResponse.count) bytes)")
                             write(encryptedResponse)
 
                         } else {
 
                             if blePIN.isEmpty {
-                                log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): BLE PIN unknown, need a NFC scan first.")
+                                log("\(typeAndName): BLE PIN unknown, need a NFC scan first.")
                             }
 
-                            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): TEST: writing 40-zero challenge response")
+                            log("\(typeAndName): TEST: writing 40-zero challenge response")
                             let challengeData = Data(count: 40)
                             write(challengeData)
                         }
@@ -926,7 +926,7 @@ extension String {
                     let encryptedKAuth = payload.subdata(in:  0 ..< 60)
                     let nonce = payload.subdata(in: 60 ..< 67)
                     let seqId = UInt16(payload[60 ... 61])
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): encrypted KAuth: \(encryptedKAuth.hex), nonce: \(nonce.hex) (sequential id: \(seqId.hex))")
+                    log("\(typeAndName): encrypted KAuth: \(encryptedKAuth.hex), nonce: \(nonce.hex) (sequential id: \(seqId.hex))")
                     // TODO:
                     // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/Libre3GattCallback.java
                     // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/bcrypt/bcrypt.cpp
@@ -936,7 +936,7 @@ extension String {
                     // let kEnc  = decr.subdata(in: 32 ..< 48)
                     // let ivEnc = decr.subdata(in: 48 ..< 56)
                     transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.patchStatus.rawValue]!)
-                    log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): enabling notifications on the patch status characteristic")
+                    log("\(typeAndName): enabling notifications on the patch status characteristic")
                     currentSecurityCommand = nil
 
 
@@ -968,7 +968,7 @@ extension String {
         let stackDisconnectReason = data[10]  // enum
         let appDisconnectReason = data[11]  // enum
 
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed patch status: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), error data: \(errorData) (0x\(data[2...3].hex)), event data: \(eventData) (0x\(data[4...5].hex)), index: \(index) (0x\(data[6].hex)), patch state: \(patchState) (0x\(data[7].hex)), current life count: \(currentLifeCount) (0x\(data[8...9].hex)), current date: \(currentDate.local), stack disconnect reason: \(stackDisconnectReason) (0x\(data[10].hex)), app disconnect reason: \(appDisconnectReason) (0x\(data[11].hex))")
+        log("\(typeAndName): parsed patch status: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), error data: \(errorData) (0x\(data[2...3].hex)), event data: \(eventData) (0x\(data[4...5].hex)), index: \(index) (0x\(data[6].hex)), patch state: \(patchState) (0x\(data[7].hex)), current life count: \(currentLifeCount) (0x\(data[8...9].hex)), current date: \(currentDate.local), stack disconnect reason: \(stackDisconnectReason) (0x\(data[10].hex)), app disconnect reason: \(appDisconnectReason) (0x\(data[11].hex))")
 
     }
 
@@ -998,8 +998,8 @@ extension String {
         let temperature = Double(UInt16(data[19...20])) / 100.0
         let fastData = data.subdata(in: 21 ..< 29)
 
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute reading: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), glucose: \(glucose) mg/dL (0x\(data[2...3].hex) 0x1fff), data quality: 0x\(dataQuality.hex), data quality error flag: \(dqErrorFlag), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex)), actionable flag: \(actionableFlag), status bits: 0x\(statusBits.hex), temperature: \(temperature)°C (0x\(data[19...20].hex)), historical life count: \(historicalLifeCount) (0x\(data[10...11].hex)), historical date: \(historicalDate.local), historical glucose: \(historicalReading) mg/dL (0x\(data[12...13].hex))")
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute further data: ESA (Early Signal Attenuation) duration: \(esaDuration) minutes (0x\(data[6...7].hex)), projected glucose: \(projectedGlucose) mg/dL (0x\(data[8...9].hex)), uncapped current glucose: \(uncappedCurrentMgDl) mg/dL (0x\(data[15...16].hex)), uncapped historical glucose: \(uncappedHistoricMgDl) mg/dL (0x\(data[17...18].hex)), raw fast data: \(fastData.hex) (\(fastData.count) bytes)")
+        log("\(typeAndName): parsed one-minute reading: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), glucose: \(glucose) mg/dL (0x\(data[2...3].hex) 0x1fff), data quality: 0x\(dataQuality.hex), data quality error flag: \(dqErrorFlag), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex)), actionable flag: \(actionableFlag), status bits: 0x\(statusBits.hex), temperature: \(temperature)°C (0x\(data[19...20].hex)), historical life count: \(historicalLifeCount) (0x\(data[10...11].hex)), historical date: \(historicalDate.local), historical glucose: \(historicalReading) mg/dL (0x\(data[12...13].hex))")
+        log("\(typeAndName): parsed one-minute further data: ESA (Early Signal Attenuation) duration: \(esaDuration) minutes (0x\(data[6...7].hex)), projected glucose: \(projectedGlucose) mg/dL (0x\(data[8...9].hex)), uncapped current glucose: \(uncappedCurrentMgDl) mg/dL (0x\(data[15...16].hex)), uncapped historical glucose: \(uncappedHistoricMgDl) mg/dL (0x\(data[17...18].hex)), raw fast data: \(fastData.hex) (\(fastData.count) bytes)")
 
         // TODO
         currentLifeCount = Int(lifeCount)
@@ -1012,7 +1012,7 @@ extension String {
 
     func parseHistoricalPackets(data: [Data]) {  // TODO: -> [HistoricalData]
         let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // shim interconnection
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) backfill historical data packets: \(data.map { $0.hex })")
+        log("\(typeAndName): \(data.count) backfill historical data packets: \(data.map { $0.hex })")
         for data in data {
             let startLifeCount = UInt16(data[0...1])
             let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(startLifeCount) * 60))
@@ -1028,14 +1028,14 @@ extension String {
                 let entry = (lifeCount: lifeCount, date: date, glucose: glucose, range: resultRange, dqErrorFlag: dqErrorFlag)
                 readings.append(entry)
             }
-            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed 6 backfill historical data: life count: \(startLifeCount) (0x\(data[0...1].hex)), date: \(date.local), readings: \(readings.map { "life count: \($0.lifeCount), date: \(date), glucose: \($0.glucose), range: \($0.range), quality error flag: \($0.dqErrorFlag)" })")
+            log("\(typeAndName): parsed 6 backfill historical data: life count: \(startLifeCount) (0x\(data[0...1].hex)), date: \(date.local), readings: \(readings.map { "life count: \($0.lifeCount), date: \(date), glucose: \($0.glucose), range: \($0.range), quality error flag: \($0.dqErrorFlag)" })")
         }
     }
 
 
     func parseClinicalPackets(data: [Data]) {  // TODO: -> [FastData]
         let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) backfill clinical data packets: \(data.map { $0.hex })")
+        log("\(typeAndName): \(data.count) backfill clinical data packets: \(data.map { $0.hex })")
         for data in data {
             let lifeCount = UInt16(data[0...1])
             let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
@@ -1045,13 +1045,13 @@ extension String {
             // TODO:
             let historicalLifeCount = ((lifeCount - 17) / 5) * 5
             let historicalDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(historicalLifeCount) * 60))
-            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed backfill clinical data: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data from filament: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex)), historical life count: \(historicalLifeCount), historical date: \(historicalDate)")
+            log("\(typeAndName): parsed backfill clinical data: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data from filament: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex)), historical life count: \(historicalLifeCount), historical date: \(historicalDate)")
         }
     }
 
 
     func parseEventLogPackets(data: [Data]) {  // TODO: -> [EventLog]
-        let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) event log packets: \(data.map { $0.hex })")
+        let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection        log("\(typeAndName): \(data.count) event log packets: \(data.map { $0.hex })")
         for data in data {
             var events = [(lifeCount: UInt16, date: Date, errorData: UInt16, eventData: UInt16, index: UInt8)]()
             for i in 0...1 {
@@ -1063,13 +1063,13 @@ extension String {
                 let event = (lifeCount: lifeCount, date: date, errorData: errorData, eventData: eventData, index: index)
                 events.append(event)
             }
-            log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed 2 log events: \(events.map { "life count: \($0.lifeCount) (0x\(data[0...1].hex)), date: \($0.date.local), error data: \($0.errorData), event data: \($0.eventData), index: \($0.index)" })")
+            log("\(typeAndName): parsed 2 log events: \(events.map { "life count: \($0.lifeCount) (0x\(data[0...1].hex)), date: \($0.date.local), error data: \($0.errorData), event data: \($0.eventData), index: \($0.index)" })")
         }
     }
 
 
     func parseFactoryDataPackets(data: Data) {  // TODO: -> Factory Data
-        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): factory data: \(data.hex) (\(data.count) bytes)")
+        log("\(typeAndName): factory data: \(data.hex) (\(data.count) bytes)")
     }
 
 

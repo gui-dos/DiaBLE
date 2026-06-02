@@ -87,6 +87,8 @@ enum DeviceType: CaseIterable, Hashable, Identifiable {
         self.main = main
     }
 
+    var typeAndName: String { "\(type) \(peripheral!.name ?? "(unnamed)")" }
+
     func write(_ data: Data, for uuid: String = "", _ writeType: CBCharacteristicWriteType = .withoutResponse) {
         if uuid.isEmpty {
             if writeCharacteristic != nil {
