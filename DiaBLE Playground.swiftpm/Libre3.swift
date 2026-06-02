@@ -727,22 +727,23 @@ extension String {
                         if let oneMinuteReading = decryptPacket(data: buffer, type: .currentGlucose, ivEnc: ivEnc) {
                             log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): decrypted 1-minute reading: \(oneMinuteReading.hex) (\(oneMinuteReading.count) bytes")
                             if oneMinuteReading.count == 29 {
-                                parseCurrentReading(data: oneMinuteReading)
+                                parseOneMinuteReading(data: oneMinuteReading)
                             }
                         } else {
                             log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): FAILED decrypting 1-minute reading")
                         }
                     } else {
                         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): no active shim session, cannot decrypt 1-minute reading")
-                    }
-                    buffer = Data()
-                    if settings.selectedService == .libreLinkUp {
-                        Task { @MainActor in
-                            try await Task.sleep(nanoseconds: 2_000_000_000)
-                            await main.libreLinkUp?.reload()
-                            settings.lastOnlineDate = app.lastReadingDate + 3
+                        if settings.selectedService == .libreLinkUp {
+                            Task { @MainActor in
+                                try await Task.sleep(nanoseconds: 2_000_000_000)
+                                await main.libreLinkUp?.reload()
+                                settings.lastOnlineDate = app.lastReadingDate + 3
+                            }
                         }
                     }
+
+                    buffer = Data()
                 }
             }
 
@@ -971,12 +972,12 @@ extension String {
 
     }
 
-    func parseCurrentReading(data: Data) {  // TODO: -> GlucoseData
+    func parseOneMinuteReading(data: Data) {  // TODO: -> GlucoseData
         let activationTime = app.sensor.activationTime != 0 ? app.sensor.activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection
         let lifeCount = UInt16(data[0...1])
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let readingMgDl = UInt16(data[2...3])
-        let glucose = readingMgDl & 0x1fff
+        let glucose = Int(readingMgDl & 0x1fff)
         let dataQuality = (readingMgDl & 0xE000) // upper 3 bits
         let dqErrorFlag = readingMgDl & 0x8000 != 0  // MSB
         // TODO: TOO_HOT = 0xA000, TOO_COLD = 0xC000
@@ -999,6 +1000,14 @@ extension String {
 
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute reading: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), glucose: \(glucose) mg/dL (0x\(data[2...3].hex) 0x1fff), data quality: 0x\(dataQuality.hex), data quality error flag: \(dqErrorFlag), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex)), actionable flag: \(actionableFlag), status bits: 0x\(statusBits.hex), temperature: \(temperature)°C (0x\(data[19...20].hex)), historical life count: \(historicalLifeCount) (0x\(data[10...11].hex)), historical date: \(historicalDate.local), historical glucose: \(historicalReading) mg/dL (0x\(data[12...13].hex))")
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): parsed one-minute further data: ESA (Early Signal Attenuation) duration: \(esaDuration) minutes (0x\(data[6...7].hex)), projected glucose: \(projectedGlucose) mg/dL (0x\(data[8...9].hex)), uncapped current glucose: \(uncappedCurrentMgDl) mg/dL (0x\(data[15...16].hex)), uncapped historical glucose: \(uncappedHistoricMgDl) mg/dL (0x\(data[17...18].hex)), raw fast data: \(fastData.hex) (\(fastData.count) bytes)")
+
+        // TODO
+        currentLifeCount = Int(lifeCount)
+        lastReadingDate = date
+        main.app.lastReadingDate = date
+        main.app.currentGlucose = glucose
+        main.app.trendArrow = trendArrow
+        main.app.main.didParseSensor(self)
     }
 
     func parseHistoricalPackets(data: [Data]) {  // TODO: -> [HistoricalData]
@@ -1007,12 +1016,12 @@ extension String {
         for data in data {
             let startLifeCount = UInt16(data[0...1])
             let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(startLifeCount) * 60))
-            var readings = [(lifeCount: UInt16, date: Date, glucose: UInt16, range: ResultRange, dqErrorFlag: Bool)]()
+            var readings = [(lifeCount: UInt16, date: Date, glucose: Int, range: ResultRange, dqErrorFlag: Bool)]()
             for i in 0 ... 5 {
                 let reading = UInt16(data[(i * 2) ... (i * 2 + 1)])
                 let lifeCount = startLifeCount + UInt16(i * 5)
                 let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
-                let glucose = reading & 0x1fff
+                let glucose = Int(reading & 0x1fff)
                 // TODO: not range but data quality flags 0xE000?
                 let resultRange = ResultRange(rawValue: Int((reading & 6000) >> 13))!
                 let dqErrorFlag = reading & 0x8000 != 0
