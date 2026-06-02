@@ -956,7 +956,7 @@ extension String {
     }
 
     func parsePatchStatus(data: Data) {  // TODO: -> PatchStatus
-        let activationTime = app.sensor.activationTime != 0 ? app.sensor.activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection
+        let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // shim interconnection
         let lifeCount = UInt16(data[0...1])
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let errorData = UInt16(data[2...3])
@@ -973,7 +973,7 @@ extension String {
     }
 
     func parseOneMinuteReading(data: Data) {  // TODO: -> GlucoseData
-        let activationTime = app.sensor.activationTime != 0 ? app.sensor.activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection
+        let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // shim interconnection
         let lifeCount = UInt16(data[0...1])
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let readingMgDl = UInt16(data[2...3])
@@ -1011,7 +1011,7 @@ extension String {
     }
 
     func parseHistoricalPackets(data: [Data]) {  // TODO: -> [HistoricalData]
-        let activationTime = app.sensor.activationTime != 0 ? app.sensor.activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection
+        let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // shim interconnection
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) backfill historical data packets: \(data.map { $0.hex })")
         for data in data {
             let startLifeCount = UInt16(data[0...1])
@@ -1034,7 +1034,7 @@ extension String {
 
 
     func parseClinicalPackets(data: [Data]) {  // TODO: -> [FastData]
-        let activationTime = app.sensor.activationTime != 0 ? app.sensor.activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection
+        let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection
         log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) backfill clinical data packets: \(data.map { $0.hex })")
         for data in data {
             let lifeCount = UInt16(data[0...1])
@@ -1051,7 +1051,7 @@ extension String {
 
 
     func parseEventLogPackets(data: [Data]) {  // TODO: -> [EventLog]
-        let activationTime = app.sensor.activationTime != 0 ? app.sensor.activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) event log packets: \(data.map { $0.hex })")
+        let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection        log("\(type) \(transmitter!.peripheral!.name ?? "(unnamed)"): \(data.count) event log packets: \(data.map { $0.hex })")
         for data in data {
             var events = [(lifeCount: UInt16, date: Date, errorData: UInt16, eventData: UInt16, index: UInt8)]()
             for i in 0...1 {
