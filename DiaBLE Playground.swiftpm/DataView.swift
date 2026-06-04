@@ -161,26 +161,6 @@ struct DataView: View, LoggingView {
                             .onAppear { if let healthKit = app.main?.healthKit { healthKit.read() } }
                         }
 
-                        if history.nightscoutValues.count > 0 {
-                            VStack(spacing: 4) {
-                                Text("Nightscout").bold()
-                                List {
-                                    ForEach(history.nightscoutValues) { glucose in
-                                        Text("\(String(glucose.source[..<(glucose.source.lastIndex(of: " ") ?? glucose.source.endIndex)])) \(glucose.date.shortDateTime)  **\(glucose.value, specifier: "%3d")**")
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .listRowInsets(EdgeInsets())
-                                    }
-                                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                                }
-                            }
-                            .foregroundStyle(.cyan)
-                            .task {
-                                if let (values, _) = try? await app.main.nightscout?.read() {
-                                    history.nightscoutValues = values
-                                    log("Nightscout: values read count \(history.nightscoutValues.count)")
-                                }
-                            }
-                        }
                     }
                     .listStyle(.plain)
                 }

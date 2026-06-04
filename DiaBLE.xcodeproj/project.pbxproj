@@ -97,8 +97,6 @@
 		C5E4009129825EEE0021C6B7 /* NFC.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4008F29825EED0021C6B7 /* NFC.swift */; };
 		C5E4009629825F120021C6B7 /* LibreLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4009529825F120021C6B7 /* LibreLink.swift */; };
 		C5E4009729825F120021C6B7 /* LibreLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4009529825F120021C6B7 /* LibreLink.swift */; };
-		C5E4009929825F1C0021C6B7 /* Nightscout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4009829825F1C0021C6B7 /* Nightscout.swift */; };
-		C5E4009A29825F1C0021C6B7 /* Nightscout.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E4009829825F1C0021C6B7 /* Nightscout.swift */; };
 		C5E4009F29825F580021C6B7 /* company_ids.json in Resources */ = {isa = PBXBuildFile; fileRef = C5E4009E29825F580021C6B7 /* company_ids.json */; };
 		C5E400A029825F580021C6B7 /* company_ids.json in Resources */ = {isa = PBXBuildFile; fileRef = C5E4009E29825F580021C6B7 /* company_ids.json */; };
 		C5E429FB2C4F0F280067AD57 /* DexcomG7.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E429FA2C4F0F280067AD57 /* DexcomG7.swift */; };
@@ -130,6 +128,13 @@
 		C5939E012FC3662B00AC13B9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C5939DD62FC3662A00AC13B9 /* libre3AndroidServer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7B3335852FB346700048457B;
+			remoteInfo = libre3AndroidServer;
+		};
+		C5996EA62FD1ADC8002F22D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C5996E262FD1ADA2002F22D9 /* libre3AndroidServer.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 7B3335852FB346700048457B;
 			remoteInfo = libre3AndroidServer;
@@ -244,6 +249,7 @@
 		C5916E5629827EB10051AC06 /* MainDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainDelegate.swift; sourceTree = "<group>"; };
 		C5939DD62FC3662A00AC13B9 /* libre3AndroidServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libre3AndroidServer.xcodeproj; sourceTree = "<group>"; };
 		C59960DF2981E381005999C2 /* DiaBLE Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DiaBLE Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C5996E262FD1ADA2002F22D9 /* libre3AndroidServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libre3AndroidServer.xcodeproj; sourceTree = "<group>"; };
 		C59971602FCD752900F9FAD1 /* libre3AndroidServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libre3AndroidServer.xcodeproj; sourceTree = "<group>"; };
 		C5A14842298985E000A0E510 /* DiaBLE Watch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "DiaBLE Watch.entitlements"; path = "../DiaBLE Watch/DiaBLE Watch.entitlements"; sourceTree = "<group>"; };
 		C5A86DA82FC2E9E300EF6289 /* libre3AndroidServer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = libre3AndroidServer.xcodeproj; sourceTree = "<group>"; };
@@ -291,7 +297,6 @@
 		C5E4008C29825ED00021C6B7 /* Health.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Health.swift; sourceTree = "<group>"; };
 		C5E4008F29825EED0021C6B7 /* NFC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NFC.swift; sourceTree = "<group>"; };
 		C5E4009529825F120021C6B7 /* LibreLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibreLink.swift; sourceTree = "<group>"; };
-		C5E4009829825F1C0021C6B7 /* Nightscout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Nightscout.swift; sourceTree = "<group>"; };
 		C5E4009E29825F580021C6B7 /* company_ids.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = company_ids.json; sourceTree = "<group>"; };
 		C5E429FA2C4F0F280067AD57 /* DexcomG7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DexcomG7.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -449,6 +454,14 @@
 			path = "DiaBLE Watch";
 			sourceTree = "<group>";
 		};
+		C5996E3A2FD1ADA2002F22D9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C5996EA72FD1ADC8002F22D9 /* libre3AndroidServer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		C59971742FCD752900F9FAD1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -520,7 +533,6 @@
 				C56869692B30469000B11687 /* NFCTools.swift */,
 				C50B9AD22AA7396500FF1EA3 /* ConsoleTools.swift */,
 				C5E4009529825F120021C6B7 /* LibreLink.swift */,
-				C5E4009829825F1C0021C6B7 /* Nightscout.swift */,
 				C5E4009E29825F580021C6B7 /* company_ids.json */,
 				C5AAA61C2981CF7200CA3EC1 /* Assets.xcassets */,
 				C53F77C529894478004F275A /* Info.plist */,
@@ -699,6 +711,14 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = C5996E3A2FD1ADA2002F22D9 /* Products */;
+					ProjectRef = C5996E262FD1ADA2002F22D9 /* libre3AndroidServer.xcodeproj */;
+				},
+				{
+					ProductGroup = C5A86DAD2FC2E9E300EF6289 /* Products */;
+					ProjectRef = C5A86DA82FC2E9E300EF6289 /* libre3AndroidServer.xcodeproj */;
+				},
+				{
 					ProductGroup = C59971742FCD752900F9FAD1 /* Products */;
 					ProjectRef = C59971602FCD752900F9FAD1 /* libre3AndroidServer.xcodeproj */;
 				},
@@ -719,16 +739,12 @@
 					ProjectRef = C54EB2062FC2E46B006D894A /* libre3AndroidServer.xcodeproj */;
 				},
 				{
-					ProductGroup = C5A86DAD2FC2E9E300EF6289 /* Products */;
-					ProjectRef = C5A86DA82FC2E9E300EF6289 /* libre3AndroidServer.xcodeproj */;
+					ProductGroup = C5C218152FC8393900313206 /* Products */;
+					ProjectRef = C5C218012FC8393900313206 /* libre3AndroidServer.xcodeproj */;
 				},
 				{
 					ProductGroup = C5C030F42FC2EFAF00E3270C /* Products */;
 					ProjectRef = C5C030EE2FC2EFAF00E3270C /* libre3AndroidServer.xcodeproj */;
-				},
-				{
-					ProductGroup = C5C218152FC8393900313206 /* Products */;
-					ProjectRef = C5C218012FC8393900313206 /* libre3AndroidServer.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -760,6 +776,13 @@
 			fileType = wrapper.application;
 			path = libre3AndroidServer.app;
 			remoteRef = C5939E012FC3662B00AC13B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C5996EA72FD1ADC8002F22D9 /* libre3AndroidServer.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = libre3AndroidServer.app;
+			remoteRef = C5996EA62FD1ADC8002F22D9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		C59971E22FCD7EFD00F9FAD1 /* libre3AndroidServer.app */ = {
@@ -887,7 +910,6 @@
 				C5E4008E29825ED00021C6B7 /* Health.swift in Sources */,
 				C5E4007229825DF50021C6B7 /* BluetoothDelegate.swift in Sources */,
 				C5916E5329827E860051AC06 /* OnlineView.swift in Sources */,
-				C5E4009A29825F1C0021C6B7 /* Nightscout.swift in Sources */,
 				C5916E4F29827E860051AC06 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -915,7 +937,6 @@
 				C5E4005F29825C930021C6B7 /* OnlineView.swift in Sources */,
 				C5E4006E29825DEA0021C6B7 /* Device.swift in Sources */,
 				C5E4006129825C930021C6B7 /* Plan.swift in Sources */,
-				C5E4009929825F1C0021C6B7 /* Nightscout.swift in Sources */,
 				C5E4005B29825C930021C6B7 /* Details.swift in Sources */,
 				C5E4005D29825C930021C6B7 /* Console.swift in Sources */,
 				C5E4006529825D1F0021C6B7 /* Extensions.swift in Sources */,

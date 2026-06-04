@@ -39,7 +39,6 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
     var nfc: NFC
     var healthKit: HealthKit?
     var libreLinkUp: LibreLinkUp?
-    var nightscout: Nightscout?
     var eventKit: EventKit?
 
     var shimNFC:    Libre3NFC?
@@ -125,10 +124,6 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
             // settings.libreLinkUpUserId = "" // enforce re-login for testing
             if settings.selectedService == .libreLinkUp {
                 await libreLinkUp?.reload(enforcing: true)
-            }
-            nightscout = Nightscout(main: self)
-            if let (values, _) = try? await nightscout?.read() {
-                history.nightscoutValues = values
             }
             eventKit = EventKit(main: self)
             eventKit?.sync()
@@ -249,9 +244,6 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
         Task {
             if settings.selectedService == .libreLinkUp {
                 await libreLinkUp?.reload(enforcing: true)
-            }
-            if let (values, _) = try? await nightscout?.read() {
-                history.nightscoutValues = values
             }
             healthKit?.read()
         }
@@ -448,21 +440,10 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
             // TODO: Libre 3: delete older non-historical values (lifeCount not divisible by 5)
 
             Task {
-
                 let newEntries = (entries.filter { $0.date > healthKit?.lastDate ?? Calendar.current.date(byAdding: .hour, value: -8, to: Date())! })
                 if newEntries.count > 0 {
                     await healthKit?.write(newEntries)
                     healthKit?.read()
-                }
-
-                if let (values, _) = try? await nightscout?.read() {
-                    let newEntries = values.count > 0 ? entries.filter { $0.date > values[0].date } : entries
-                    if newEntries.count > 0 {
-                        try await nightscout?.post(entries: newEntries)
-                        if let (values, _) = try? await nightscout?.read() {
-                            history.nightscoutValues = values
-                        }
-                    }
                 }
             }
         }
