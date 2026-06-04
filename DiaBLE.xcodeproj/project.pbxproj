@@ -301,63 +301,8 @@
 		C5E429FA2C4F0F280067AD57 /* DexcomG7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DexcomG7.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		C54EB2302FC2E46C006D894A /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"AndroidShim/libre3-auth-ios-sample-app-main/.gitignore",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/AndroidServerClient.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Assets.xcassets",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/ContentView.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Hex.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Info.plist",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/libre3AndroidServerApp.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3BLEClient.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3BLEUUIDs.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3KAuthStore.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3NFC.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3PacketCrypto.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3PatchCertificate.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3Payloads.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3ResearchMaterial.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3SecurityFrameBuffer.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3SecurityProtocol.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3TestVectors.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/LICENSE",
-				"AndroidShim/libre3-auth-ios-sample-app-main/README.md",
-			);
-			target = C59960DE2981E381005999C2 /* DiaBLE Watch */;
-		};
-		C5E039C62FC371F000C038DF /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"AndroidShim/libre3-auth-ios-sample-app-main/.gitignore",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/AndroidServerClient.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Assets.xcassets",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/ContentView.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Hex.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Info.plist",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/libre3AndroidServerApp.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3BLEClient.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3BLEUUIDs.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3KAuthStore.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3NFC.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3PacketCrypto.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3PatchCertificate.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3Payloads.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3ResearchMaterial.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3SecurityFrameBuffer.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3SecurityProtocol.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/libre3AndroidServer/Libre3TestVectors.swift",
-				"AndroidShim/libre3-auth-ios-sample-app-main/LICENSE",
-				"AndroidShim/libre3-auth-ios-sample-app-main/README.md",
-			);
-			target = C5AAA6142981CF7000CA3EC1 /* DiaBLE */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		C5F5D6362FB5C56C00C40F4E /* Libre3 */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C5E039C62FC371F000C038DF /* PBXFileSystemSynchronizedBuildFileExceptionSet */, C54EB2302FC2E46C006D894A /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Libre3; sourceTree = "<group>"; };
+		C5F5D6362FB5C56C00C40F4E /* Libre3 */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Libre3; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
