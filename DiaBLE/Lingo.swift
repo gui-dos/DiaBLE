@@ -156,7 +156,7 @@ import Foundation
     //     let NFC_GET_PATCH_CUSTOM_COMMAND: Swift.Int = 0xa1
     //     let ACTIVATION_ERROR_MANUFACTURING_STATE: Swift.Int       = 0xa2
     //     let ACTIVATION_ERROR_INSERTION_DETECTION_STATE: Swift.Int = 0xa4
-    //     let ACTIVATION_ERROR_PAIRED_STATE: Swift.Int = 0xa4       = 0xa5
+    //     let ACTIVATION_ERROR_PAIRED_STATE: Swift.Int              = 0xa5
     //     let ACTIVATION_ERROR_EXPIRED_STATE: Swift.Int             = 0xa6
     //     let ACTIVATION_ERROR_TERMINATION_NORMAL: Swift.Int        = 0xa7
     //     let ACTIVATION_ERROR_TERMINATION_ERROR: Swift.Int         = 0xa8

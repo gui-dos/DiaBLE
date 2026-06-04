@@ -401,7 +401,7 @@ final class Libre3BLEClient: NSObject, ObservableObject, @MainActor Logging {
         Task { @MainActor in
             do {
                 try await server.openSession()
-                log("Server session opened: \(await server.currentSessionId ?? "?")")
+                log("Server session opened: \(server.currentSessionId ?? "?")")
                 try await skb.resetCryptoContext()
                 // Op 2 (initECDH): pass the 165-B wrapped app_private_key
                 // blob; second arg is the cached kAuth blob if we have one,

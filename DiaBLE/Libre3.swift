@@ -1043,7 +1043,7 @@ extension String {
             let readingMgDl = UInt16(data[10...11])
             let historicMgDl = UInt16(data[12...13])
             // TODO:
-            let historicalLifeCount = ((lifeCount - 17) / 5) * 5
+            let historicalLifeCount = ((lifeCount - 17) / 5) * 5  // HISTORIC_POINT_LATENCY = 17
             let historicalDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(historicalLifeCount) * 60))
             log("\(typeAndName): parsed backfill clinical data: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data from filament: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex)), historical life count: \(historicalLifeCount), historical date: \(historicalDate)")
         }

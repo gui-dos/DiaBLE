@@ -38,7 +38,7 @@ struct Libre3KAuthStore {
     private static let service = "dev.libre3andriodserver.kauth"
 
     private static func keychainRead(account: String) -> Data? {
-        var query: [String: Any] = [
+        let query: [String: Any] = [
             kSecClass as String:       kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
