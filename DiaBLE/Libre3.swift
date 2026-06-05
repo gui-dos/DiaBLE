@@ -357,7 +357,7 @@ extension String {
     // write  22CE  20 + 20 + 6 bytes   // 40-byte challenge response
     // write  2198  08
     // notify 2198  08 43
-    // notify 22CE  20 * 3 + 11 bytes   // 67-byte encrypted KAuth
+    // notify 22CE  20 * 3 + 11 bytes   // 67-byte encrypted kAuth
     // enable notifications for 1338, 1BEE, 195A, 1AB8, 1D24, 1482
     // notify 1482  18-byte packets     // patch status
     // enable notifications for 177A
@@ -390,7 +390,7 @@ extension String {
     // write  22CE  20 * 2 + 6 bytes    // 40-byte challenge response
     // write  2198  08
     // notify 2198  08 43
-    // notify 22CE  20 * 3 + 11 bytes   // 67-byte encrypted KAuth
+    // notify 22CE  20 * 3 + 11 bytes   // 67-byte encrypted kAuth
     // enable notifications for 1338, 1BEE, 195A, 1AB8, 1D24, 1482
     // notify 1482  18 bytes            // patch status
     // enable notifications for 177A
@@ -780,7 +780,7 @@ extension String {
                 log("\(typeAndName): expected response size: \(expectedStreamSize) bytes (payload: \(data[1]) bytes)")
                 if data[1] == 23 {
                     currentSecurityCommand = .readChallenge
-                } else if data[1] == 67 {  // encrypted KAuth
+                } else if data[1] == 67 {  // encrypted kAuth
                     currentSecurityCommand = .challengeLoadDone
                 } else if data[1] == 140 { // patchCertificate
                     currentSecurityCommand = .sendCertificate
@@ -839,6 +839,10 @@ extension String {
                             Task { @MainActor in
                                 kEnc = deriveSymmetricKey()
                                 log("\(typeAndName): TEST: derived symmetric key: \(kEnc.hex)")
+                                if settings.userLevel < .test { // not eavesdropping on Trident
+                                    send(securityCommand: .readChallenge)
+                                    // TODO
+                                }
                             }
                         }
                     }
@@ -850,7 +854,7 @@ extension String {
                     let seqId = UInt16(payload[16...17])
                     log("\(typeAndName): security challenge: \(payload.hex) (sequential id: \(seqId.hex))")
 
-                    // Store as instance vars to be verified later when decrypting KAuth
+                    // Store as instance vars to be verified later when decrypting kAuth
                     r1     = Data(payload.prefix(16))
                     nonce1 = Data(payload.suffix(7))
                     r2     = Data((0 ..< 16).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
@@ -890,15 +894,16 @@ extension String {
                     let encryptedKAuth = payload.subdata(in:  0 ..< 60)
                     let nonce = payload.subdata(in: 60 ..< 67)
                     let seqId = UInt16(payload[60 ... 61])
-                    log("\(typeAndName): encrypted KAuth: \(encryptedKAuth.hex), nonce: \(nonce.hex) (sequential id: \(seqId.hex))")
-                    // TODO:
-                    // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/Libre3GattCallback.java
-                    // https://github.dev/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/bcrypt/bcrypt.cpp
-                    // let decr = process2(8, nonce, encryptedKAuth)     // CRYPTO_EXTENSION_DECRYPT
-                    // let r2    = decr.subdata(in:  0 ..< 16)
-                    // let r1    = decr.subdata(in: 16 ..< 32)
-                    // let kEnc  = decr.subdata(in: 32 ..< 48)
-                    // let ivEnc = decr.subdata(in: 48 ..< 56)
+                    log("\(typeAndName): encrypted kAuth: \(encryptedKAuth.hex), nonce: \(nonce.hex) (sequential id: \(seqId.hex))")
+                    if let decryptedKAuth = aesDecrypt(data: encryptedKAuth, nonce: nonce) {
+                        let r2 = decryptedKAuth.subdata(in:  0 ..< 16)
+                        let r1 = decryptedKAuth.subdata(in: 16 ..< 32)
+                        kEnc   = decryptedKAuth.subdata(in: 32 ..< 48)
+                        ivEnc  = decryptedKAuth.subdata(in: 48 ..< 56)
+                        log("\(typeAndName): decrypted kAuth: r2: \(r2.hex) (sent: \(self.r2.hex)), r1: \(r1.hex) (sent: \(self.r1.hex)), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                    } else {
+                        log("\(typeAndName): FAILED decrypting kAuth")
+                    }
                     transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.patchStatus.rawValue]!)
                     log("\(typeAndName): enabling notifications on the patch status characteristic")
                     currentSecurityCommand = nil
