@@ -37,10 +37,6 @@ struct ContentView: View {
                 Plan()
             }
 
-            Tab("Shim", systemImage: "cloud.rainbow.crop", value: .shim) {
-                AndroidShimContentView()
-            }
-
         }
         .toolbarRole(.navigationStack)
     }

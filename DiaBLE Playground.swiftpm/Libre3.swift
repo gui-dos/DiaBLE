@@ -673,36 +673,28 @@ extension String {
                         log("\(typeAndName): received \(packets.count) packets of \(uuidDescription)")
                     }
 
-                    if let shimSession = main.shimSession {
-                        kEnc = shimSession.kEnc
-                        ivEnc = shimSession.ivEnc
+                    var decryptedPackets = [Data]()
+                    for packet in packets {
 
-                        var decryptedPackets = [Data]()
-                        for packet in packets {
-
-                            debugLog("\(typeAndName): decrypting \(uuidDescription) packet: \(packet.hex) (\(packet.count) bytes), type: \(currentBufferPacketType!), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
-                            if let decryptedPacket = decryptPacket(data: packet, type: currentBufferPacketType!, ivEnc: ivEnc) {
-                                log("\(typeAndName): decrypted \(uuidDescription) packet: \(decryptedPacket.hex) (\(decryptedPacket.count) bytes)")
-                                decryptedPackets.append(decryptedPacket)
-                            } else {
-                                log("\(typeAndName): FAILED decrypting \(uuidDescription)")
-                                break
-                            }
-                        }
-
-                        switch currentBufferPacketType! {
-                        case .backfillHistoric: parseHistoricalPackets(data: decryptedPackets)
-                        case .backfillClinical: parseClinicalPackets(data: decryptedPackets)
-                        case .eventLog:         parseEventLogPackets(data: decryptedPackets)
-                        case .factoryData:      parseFactoryDataPackets(data: Data(decryptedPackets.joined()))
-                        default:
+                        debugLog("\(typeAndName): decrypting \(uuidDescription) packet: \(packet.hex) (\(packet.count) bytes), type: \(currentBufferPacketType!), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                        if let decryptedPacket = decryptPacket(data: packet, type: currentBufferPacketType!, ivEnc: ivEnc) {
+                            log("\(typeAndName): decrypted \(uuidDescription) packet: \(decryptedPacket.hex) (\(decryptedPacket.count) bytes)")
+                            decryptedPackets.append(decryptedPacket)
+                        } else {
+                            log("\(typeAndName): FAILED decrypting \(uuidDescription)")
                             break
-
                         }
-                    } else {
-                        log("\(typeAndName): no active shim session, cannot decrypt \(uuidDescription)")
                     }
 
+                    switch currentBufferPacketType! {
+                    case .backfillHistoric: parseHistoricalPackets(data: decryptedPackets)
+                    case .backfillClinical: parseClinicalPackets(data: decryptedPackets)
+                    case .eventLog:         parseEventLogPackets(data: decryptedPackets)
+                    case .factoryData:      parseFactoryDataPackets(data: Data(decryptedPackets.joined()))
+                    default:
+                        break
+
+                    }
 
                     buffer = Data()
                     currentBufferPacketType = nil
@@ -720,20 +712,14 @@ extension String {
                     let payload = buffer.prefix(33)
                     let seqId = UInt16(buffer.suffix(2))
                     log("\(typeAndName): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
-                    if let shimSession = main.shimSession {
-                        kEnc = shimSession.kEnc
-                        ivEnc = shimSession.ivEnc
-                        debugLog("\(typeAndName): decrypting one-minute reading: \(buffer.hex) (\(buffer.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
-                        if let oneMinuteReading = decryptPacket(data: buffer, type: .currentGlucose, ivEnc: ivEnc) {
-                            log("\(typeAndName): decrypted 1-minute reading: \(oneMinuteReading.hex) (\(oneMinuteReading.count) bytes")
-                            if oneMinuteReading.count == 29 {
-                                parseOneMinuteReading(data: oneMinuteReading)
-                            }
-                        } else {
-                            log("\(typeAndName): FAILED decrypting 1-minute reading")
+                    debugLog("\(typeAndName): decrypting one-minute reading: \(buffer.hex) (\(buffer.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                    if let oneMinuteReading = decryptPacket(data: buffer, type: .currentGlucose, ivEnc: ivEnc) {
+                        log("\(typeAndName): decrypted 1-minute reading: \(oneMinuteReading.hex) (\(oneMinuteReading.count) bytes")
+                        if oneMinuteReading.count == 29 {
+                            parseOneMinuteReading(data: oneMinuteReading)
                         }
                     } else {
-                        log("\(typeAndName): no active shim session, cannot decrypt 1-minute reading")
+                        log("\(typeAndName): FAILED decrypting 1-minute reading")
                         if settings.selectedService == .libreLinkUp {
                             Task { @MainActor in
                                 try await Task.sleep(nanoseconds: 2_000_000_000)
@@ -774,20 +760,14 @@ extension String {
                 let payload = data.prefix(16)
                 let seqId = UInt16(data.suffix(2))
                 log("\(typeAndName): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
-                if let shimSession = main.shimSession {
-                    kEnc = shimSession.kEnc
-                    ivEnc = shimSession.ivEnc
-                    debugLog("\(typeAndName): decrypting patch status: \(data.hex) (\(data.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
-                    if let patchStatus = decryptPacket(data: data, type: .patchStatus, ivEnc: ivEnc) {
-                        log("\(typeAndName): decrypted patch status: \(patchStatus.hex)")
-                        if patchStatus.count == 12 {
-                            parsePatchStatus(data: patchStatus)
-                        }
-                    } else {
-                        log("\(typeAndName): FAILED decrypting patch status")
+                debugLog("\(typeAndName): decrypting patch status: \(data.hex) (\(data.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                if let patchStatus = decryptPacket(data: data, type: .patchStatus, ivEnc: ivEnc) {
+                    log("\(typeAndName): decrypted patch status: \(patchStatus.hex)")
+                    if patchStatus.count == 12 {
+                        parsePatchStatus(data: patchStatus)
                     }
                 } else {
-                    log("\(typeAndName): no active shim session, cannot decrypt patch status")
+                    log("\(typeAndName): FAILED decrypting patch status")
                 }
             }
 
@@ -940,7 +920,6 @@ extension String {
     }
 
     func parsePatchStatus(data: Data) {  // TODO: -> PatchStatus
-        let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // shim interconnection
         let lifeCount = UInt16(data[0...1])
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let errorData = UInt16(data[2...3])
@@ -957,7 +936,6 @@ extension String {
     }
 
     func parseOneMinuteReading(data: Data) {  // TODO: -> GlucoseData
-        let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // shim interconnection
         let lifeCount = UInt16(data[0...1])
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let readingMgDl = UInt16(data[2...3])
@@ -995,7 +973,6 @@ extension String {
     }
 
     func parseHistoricalPackets(data: [Data]) {  // TODO: -> [HistoricalData]
-        let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // shim interconnection
         log("\(typeAndName): \(data.count) backfill historical data packets: \(data.map { $0.hex })")
         for data in data {
             let startLifeCount = UInt16(data[0...1])
@@ -1018,7 +995,6 @@ extension String {
 
 
     func parseClinicalPackets(data: [Data]) {  // TODO: -> [FastData]
-        let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection
         log("\(typeAndName): \(data.count) backfill clinical data packets: \(data.map { $0.hex })")
         for data in data {
             let lifeCount = UInt16(data[0...1])
@@ -1035,7 +1011,7 @@ extension String {
 
 
     func parseEventLogPackets(data: [Data]) {  // TODO: -> [EventLog]
-        let activationTime = activationTime != 0 ? activationTime : MainActor.assumeIsolated { main.shimBLE?.takeover?.activationTime } ?? 0  // TODO: shim interconnection        log("\(typeAndName): \(data.count) event log packets: \(data.map { $0.hex })")
+        log("\(typeAndName): \(data.count) event log packets: \(data.map { $0.hex })")
         for data in data {
             var events = [(lifeCount: UInt16, date: Date, errorData: UInt16, eventData: UInt16, index: UInt8)]()
             for i in 0...1 {

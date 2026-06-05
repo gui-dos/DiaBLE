@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -301,10 +301,6 @@
 		C5E429FA2C4F0F280067AD57 /* DexcomG7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DexcomG7.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		C5F5D6362FB5C56C00C40F4E /* Libre3 */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Libre3; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFrameworksBuildPhase section */
 		C581D5812B0E699C002A4633 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -470,7 +466,6 @@
 				C5E4008129825E8B0021C6B7 /* Libre2.swift */,
 				C5ADF5812B00E65E00E29632 /* Libre2Gen2.swift */,
 				C5E4008429825E990021C6B7 /* Libre3.swift */,
-				C5F5D6362FB5C56C00C40F4E /* Libre3 */,
 				C5AA38A32C25687F00CBB0F3 /* Lingo.swift */,
 				C5E4008A29825EC40021C6B7 /* Events.swift */,
 				C5E4008C29825ED00021C6B7 /* Health.swift */,
@@ -580,9 +575,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				C5F5D6362FB5C56C00C40F4E /* Libre3 */,
-			);
 			name = "DiaBLE Watch";
 			packageProductDependencies = (
 				C55D12B629ACB9CB0050F567 /* CryptoSwift */,
@@ -607,9 +599,6 @@
 			dependencies = (
 				C5BE8E5D29916D3600604237 /* PBXTargetDependency */,
 				C581D5962B0E699D002A4633 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				C5F5D6362FB5C56C00C40F4E /* Libre3 */,
 			);
 			name = DiaBLE;
 			packageProductDependencies = (

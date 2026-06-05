@@ -42,14 +42,6 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
     var healthKit: HealthKit?
     var libreLinkUp: LibreLinkUp?
 
-    // TODO:
-    var shimNFC:    Libre3NFC?
-    var shimServer: AndroidServerClient?
-    var shimBLE:    Libre3BLEClient?
-    var shimAppModel: AndroidShimAppModel?
-    var shimSession: Libre3SessionContext?
-
-
     override init() {
 
         UserDefaults.standard.register(defaults: Settings.defaults)
@@ -69,12 +61,6 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
 
         healthKit = HealthKit()
 
-        // TODO:
-        shimNFC = Libre3NFC()
-        shimServer = AndroidServerClient()
-        shimBLE = Libre3BLEClient(server: shimServer!)
-        shimSession = try? Libre3SessionContext(kEnc: Data(), ivEnc: Data())
-
         super.init()
 
         log.entries = [LogEntry(message: "Welcome to DiaBLE!"), LogEntry(message: "\(settings.logging ? "Log started" : "Log stopped") \(Date().local)")]
@@ -83,15 +69,6 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
         app.main = self
         extendedSession.delegate = self
         bluetoothDelegate.main = self
-
-        // TODO:
-        shimNFC?.main    = self
-        shimServer?.main = self
-        shimBLE?.main    = self
-        if shimServer != nil {
-            shimAppModel = AndroidShimAppModel(main: self)
-            // shimBLE!.session = shimSession
-        }
 
         UNUserNotificationCenter.current().delegate = self
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .criticalAlert]) { _, _ in }
