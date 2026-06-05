@@ -859,22 +859,6 @@ extension String {
                             Task { @MainActor in
                                 kEnc = deriveSymmetricKey()
                                 log("\(typeAndName): TEST: derived symmetric key: \(kEnc.hex)")
-                                do {
-                                    if !Libre3.sharedKeyEndpoint.isEmpty {
-                                        kEnc = try await getSharedKey(
-                                            sensorStatic: patchCertificate!.patchStaticPublicKey,
-                                            sensorEphemeral: patchEphemeral,
-                                            appPrivateStatic: appPrivateKeys[securityVersion].bytes,
-                                            appPrivateEphemeral: ephemeralPrivateKey.rawRepresentation
-                                        )
-                                    }
-                                    if settings.userLevel < .test { // not eavesdropping on Trident
-                                        send(securityCommand: .readChallenge)
-                                        // TODO
-                                    }
-                                } catch {
-                                    self.log("\(self.typeAndName): ERROR deriving shared key: \(error.localizedDescription)")
-                                }
                             }
                         }
                     }
