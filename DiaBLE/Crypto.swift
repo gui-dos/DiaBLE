@@ -25,25 +25,49 @@ extension Libre3 {
     // +[FSOpenSSL encryptUsingCcmAES128:key:iv:tag_len:]
     // +[FSOpenSSL decryptUsingCcmAES128:key:iv:tag:]
 
-    public func deriveSymmetricKey() -> Data {
+    // TODO: guess the right KDF...
+    //
+    // Claude:
+    //
+    // ANSI X9.63 / NIST SP 800-56A Single-Step KDF with SHA-256 (no OtherInfo, no salt):
+    //   Zs = ECDH(appStaticPrivateKey,    patchStaticPublicKey)    // 32 bytes, raw x-coordinate
+    //   Ze = ECDH(appEphemeralPrivateKey, patchEphemeralPublicKey) // 32 bytes, raw x-coordinate
+    //   keyMaterial = SHA-256( 0x00000001 || Zs || Ze )            // 68-byte input → 32-byte output
+    //   kEnc = keyMaterial[0 ..< 16]                               // first 16 bytes → AES-128-CCM key
+    //
+    // Verified by disassembly of +[FSOpenSSL computeECDHSharedAES128:...] at 0x10001284c:
+    //   - ECDH_compute_key() called twice (raw, no built-in KDF)
+    //   - buffer built as: w8=0x1000000 stored at [fp-0xb0] → bytes 00 00 00 01 (big-endian counter=1)
+    //   - ldp q1,q0 from Zs → stur at [fp-0xb0+4] and [fp-0xb0+20]  (bytes 4–35)
+    //   - ldp q1,q0 from Ze → stur at [fp-0xb0+36] and [fp-0xb0+52] (bytes 36–67)
+    //   - SHA256_Init / SHA256_Update(ctx, buffer, 68=0x44) / SHA256_Final → 32-byte NSData returned
+    //   - callers extract first 16 bytes as kEnc
 
-        // Claude: TODO: guess the right KDF...
+    public func deriveSharedKey() -> Data {
 
         let sensorStaticPub = try! P256.KeyAgreement.PublicKey(x963Representation: patchCertificate!.patchStaticPublicKey)
         let sensorEphPub    = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
 
+        // Raw ECDH shared secrets (x-coordinate only, 32 bytes each)
         let Zs = try! appStaticPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
             .withUnsafeBytes { Data($0) }
         let Ze = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorEphPub)
             .withUnsafeBytes { Data($0) }
-        // let ikm = Zs + Ze
-        let ikm = Ze + Zs
-        return HKDF<SHA256>.deriveKey(
-            inputKeyMaterial: SymmetricKey(data: ikm),
-            salt:             Data(),
-            info:             Data("".utf8),
-            outputByteCount:  16
-        ).withUnsafeBytes { Data($0) }
+
+        // ANSI X9.63 single-step: SHA-256( counter=1 || Zs || Ze ), counter as big-endian UInt32
+        var counter = UInt32(1).bigEndian
+        var hashInput = Data(bytes: &counter, count: 4)
+        hashInput += Zs
+        hashInput += Ze
+        // hashInput is 4 + 32 + 32 = 68 bytes
+
+        var digest = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        hashInput.withUnsafeBytes {
+            _ = CC_SHA256($0.baseAddress, CC_LONG(hashInput.count), &digest)
+        }
+        let keyMaterial = Data(digest)  // 32 bytes
+
+        return keyMaterial.prefix(16)   // key = first 16 bytes
     }
 
 

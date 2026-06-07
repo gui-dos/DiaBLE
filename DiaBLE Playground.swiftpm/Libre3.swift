@@ -837,8 +837,8 @@ extension String {
                         patchEphemeral = payload
                         if settings.userLevel < .test { // not eavesdropping on Trident
                             Task { @MainActor in
-                                kEnc = deriveSymmetricKey()
-                                log("\(typeAndName): TEST: derived symmetric key: \(kEnc.hex)")
+                                kEnc = deriveSharedKey()
+                                log("\(typeAndName): TEST: derived shared key: \(kEnc.hex)")
                                 if settings.userLevel < .test { // not eavesdropping on Trident
                                     send(securityCommand: .readChallenge)
                                     // TODO
