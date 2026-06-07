@@ -25,26 +25,12 @@ extension Libre3 {
     // +[FSOpenSSL encryptUsingCcmAES128:key:iv:tag_len:]
     // +[FSOpenSSL decryptUsingCcmAES128:key:iv:tag:]
 
-    /// TODO: the actual method needed to be implemented should be
-    /// `deriveKAuthFromPatchEphemeral()`, a quite hairy task
-    /// for the first pairing because of Trident's SKB use of WBAES
-    /// (White-Box AES), which converts the standard AES algorithm into
-    /// a network of precomputed T-tables (lookup tables).
-    /// https://github.com/gui-dos/DiaBLE/commit/5c3cec7#commitcomment-184791786
     public func deriveSymmetricKey() -> Data {
 
-        // Claude: TODO:
+        // Claude: TODO: guess the right KDF...
 
         let sensorStaticPub = try! P256.KeyAgreement.PublicKey(x963Representation: patchCertificate!.patchStaticPublicKey)
         let sensorEphPub    = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
-
-        // LibreCRKit 3DH-style first-pairing:
-        //
-        ///// ECDH(phone_eph_priv, sensor_static_pub).
-        // public let sharedEphStatic: Data
-        ///// ECDH(phone_eph_priv, sensor_eph_pub).
-        // public let sharedEphEph: Data
-        // let Zs = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
 
         let Zs = try! appStaticPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
             .withUnsafeBytes { Data($0) }
@@ -55,7 +41,7 @@ extension Libre3 {
         return HKDF<SHA256>.deriveKey(
             inputKeyMaterial: SymmetricKey(data: ikm),
             salt:             Data(),
-            info:             Data("".utf8), // TODO: from kAuth
+            info:             Data("".utf8),
             outputByteCount:  16
         ).withUnsafeBytes { Data($0) }
     }
