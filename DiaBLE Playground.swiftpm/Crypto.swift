@@ -20,7 +20,7 @@ extension Libre3 {
         return ephemeralPublicKeyBytes
     }
 
-    // iOS Trident:
+    // iOS Trident (com.abbott.libre3):
     // +[FSOpenSSL computeECDHSharedAES128:appEphemeralKeys:patchStaticPubOctets:patchEphemeralPubOctets:]
     // +[FSOpenSSL encryptUsingCcmAES128:key:iv:tag_len:]
     // +[FSOpenSSL decryptUsingCcmAES128:key:iv:tag:]
@@ -29,19 +29,19 @@ extension Libre3 {
     //
     // Claude:
     //
-    // ANSI X9.63 / NIST SP 800-56A Single-Step KDF with SHA-256 (no OtherInfo, no salt):
-    //   Zs = ECDH(appStaticPrivateKey,    patchStaticPublicKey)    // 32 bytes, raw x-coordinate
+    // "Libre by Abbott" (com.abbott.adc.freestyle.libre.us v1.3.0) ECDHCryptoLib at 0x1015BB99C:
     //   Ze = ECDH(appEphemeralPrivateKey, patchEphemeralPublicKey) // 32 bytes, raw x-coordinate
-    //   keyMaterial = SHA-256( 0x00000001 || Zs || Ze )            // 68-byte input → 32-byte output
-    //   kEnc = keyMaterial[0 ..< 16]                               // first 16 bytes → AES-128-CCM key
+    //   Zs = ECDH(appStaticPrivateKey,    patchStaticPublicKey)    // 32 bytes, raw x-coordinate
+    //   key = SHA-256( 0x00000001 || Ze || Zs )[0 ..< 16]          // ANSI X9.63 single-step KDF
     //
-    // Verified by disassembly of +[FSOpenSSL computeECDHSharedAES128:...] at 0x10001284c:
-    //   - ECDH_compute_key() called twice (raw, no built-in KDF)
-    //   - buffer built as: w8=0x1000000 stored at [fp-0xb0] → bytes 00 00 00 01 (big-endian counter=1)
-    //   - ldp q1,q0 from Zs → stur at [fp-0xb0+4] and [fp-0xb0+20]  (bytes 4–35)
-    //   - ldp q1,q0 from Ze → stur at [fp-0xb0+36] and [fp-0xb0+52] (bytes 36–67)
-    //   - SHA256_Init / SHA256_Update(ctx, buffer, 68=0x44) / SHA256_Final → 32-byte NSData returned
-    //   - callers extract first 16 bytes as kEnc
+    // Disassembly evidence:
+    //   - Ze computed first at 0x1015BBA80 ("Compute Secret (Ze) error 0x%X" at 0x101F315EA)
+    //   - Zs computed second at 0x1015BBB18 ("Compute Secret (Zs) error 0x%X" at 0x101F31609)
+    //   - counter 0x00000001 (big-endian) loaded from __const at 0x101E84A7C
+    //   - SHA256 called with 68-byte input: {counter(4)} || Ze(32) || Zs(32)
+    //   - first 16 bytes returned as the key; identical logic in 3 SKB variants (MA/L3Security/LingoSecurity)
+    //
+    // NOTE: older iOS Trident app used reversed order: SHA-256( 0x00000001 || Zs || Ze )
 
     public func deriveSharedKey() -> Data {
 
@@ -49,16 +49,16 @@ extension Libre3 {
         let sensorEphPub    = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
 
         // Raw ECDH shared secrets (x-coordinate only, 32 bytes each)
-        let Zs = try! appStaticPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
-            .withUnsafeBytes { Data($0) }
         let Ze = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorEphPub)
             .withUnsafeBytes { Data($0) }
+        let Zs = try! appStaticPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
+            .withUnsafeBytes { Data($0) }
 
-        // ANSI X9.63 single-step: SHA-256( counter=1 || Zs || Ze ), counter as big-endian UInt32
+        // ANSI X9.63 single-step: SHA-256( counter=1 || Ze || Zs ), counter as big-endian UInt32
         var counter = UInt32(1).bigEndian
         var hashInput = Data(bytes: &counter, count: 4)
-        hashInput += Zs
         hashInput += Ze
+        hashInput += Zs
         // hashInput is 4 + 32 + 32 = 68 bytes
 
         var digest = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
