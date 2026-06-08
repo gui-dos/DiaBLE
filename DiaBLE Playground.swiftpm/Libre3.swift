@@ -418,7 +418,7 @@ extension String {
         case sendCertificate     = 0x09
         case keyAgreement        = 0x0D
         case ephemeralLoadDone   = 0x0E
-        case readChallenge       = 0x11
+        case authorizeSymmetric  = 0x11
 
         var description: String {
             switch self {
@@ -429,7 +429,7 @@ extension String {
             case .sendCertificate:     "send certificate"
             case .keyAgreement:        "key agreement"
             case .ephemeralLoadDone:   "ephemeral load done"
-            case .readChallenge:       "read challenge"
+            case .authorizeSymmetric:  "authorize symmetric"
             }
         }
     }
@@ -779,7 +779,7 @@ extension String {
                 expectedStreamSize = Int(data[1] + data[1] / 20 + 1)
                 log("\(typeAndName): expected response size: \(expectedStreamSize) bytes (payload: \(data[1]) bytes)")
                 if data[1] == 23 {
-                    currentSecurityCommand = .readChallenge
+                    currentSecurityCommand = .authorizeSymmetric
                 } else if data[1] == 67 {  // encrypted kAuth
                     currentSecurityCommand = .challengeLoadDone
                 } else if data[1] == 140 { // patchCertificate
@@ -840,7 +840,7 @@ extension String {
                                 kEnc = deriveSharedKey()
                                 log("\(typeAndName): TEST: derived shared key: \(kEnc.hex)")
                                 if settings.userLevel < .test { // not eavesdropping on Trident
-                                    send(securityCommand: .readChallenge)
+                                    send(securityCommand: .authorizeSymmetric)
                                     // TODO
                                 }
                             }
@@ -849,7 +849,7 @@ extension String {
 
 
 
-                case .readChallenge:
+                case .authorizeSymmetric:
 
                     let seqId = UInt16(payload[16...17])
                     log("\(typeAndName): security challenge: \(payload.hex) (sequential id: \(seqId.hex))")

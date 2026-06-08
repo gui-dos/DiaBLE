@@ -490,7 +490,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             if serviceUUID == Libre3.UUID.security.rawValue {
                 if sensor.transmitter == nil { sensor.transmitter = app.transmitter }
                 if settings.userLevel < .test { // not eavesdropping on Trident
-                    ((app.device as? Abbott)?.sensor as? Libre3)?.send(securityCommand: .readChallenge)
+                    ((app.device as? Abbott)?.sensor as? Libre3)?.send(securityCommand: .authorizeSymmetric)
                     // ((app.device as? Abbott)?.sensor as? Libre3)?.pair()  // TEST
                 }
 
