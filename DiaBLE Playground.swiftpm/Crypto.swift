@@ -71,9 +71,9 @@ extension Libre3 {
     }
 
 
-    public func aesEncrypt(data: Data, nonce: Data) -> Data? {
+    public func aesEncrypt(data: Data, key: Data, nonce: Data) -> Data? {
         do {
-            let aes = try AES(key: Array(kEnc),
+            let aes = try AES(key: Array(key),
                               blockMode: CCM(iv: Array(nonce),
                                              tagLength: 4,
                                              messageLength: data.count,
@@ -88,9 +88,9 @@ extension Libre3 {
     }
 
 
-    public func aesDecrypt(data: Data, nonce: Data) -> Data? {
+    public func aesDecrypt(data: Data, key: Data, nonce: Data) -> Data? {
         do {
-            let aes = try AES(key: Array(kEnc),
+            let aes = try AES(key: Array(key),
                               blockMode: CCM(iv: Array(nonce),
                                              tagLength: 4,
                                              messageLength: data.count - 4,
@@ -107,13 +107,13 @@ extension Libre3 {
 
     public func encryptPacket(data: Data, type: PacketType, ivEnc: Data, sequenceId: UInt16) -> Data? {
         let nonce = sequenceId.data + Data(Libre3.packetDescriptors[Int(type.rawValue)]) + ivEnc
-        return aesEncrypt(data: data, nonce: nonce)
+        return aesEncrypt(data: data, key: kEnc, nonce: nonce)
     }
 
 
     public func decryptPacket(data: Data, type: PacketType, ivEnc: Data) -> Data? {
         let nonce = data.suffix(2) + Data(Libre3.packetDescriptors[Int(type.rawValue)]) + ivEnc
-        return aesDecrypt(data: data.dropLast(2), nonce: nonce)
+        return aesDecrypt(data: data.dropLast(2), key: kEnc, nonce: nonce)
     }
 
 }

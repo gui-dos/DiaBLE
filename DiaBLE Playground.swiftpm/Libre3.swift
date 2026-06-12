@@ -510,8 +510,9 @@ extension String {
     var exportedKAuth: Data = Data() // 149-byte persistent SKB wrapped exported blob, includes encoded appStaticPrivateKey
 
     // CGMSensor and BCSecurityContext members:
+    var sharedKey: Data = Data()  // 16-byte first-pairing AES symmetric key
     var outCryptoSequence: UInt16 = 1
-    var kEnc: Data = Data()  // 16-byte AES symmetric key
+    var kEnc: Data = Data()  // 16-byte session key
     var ivEnc: Data = Data() // 8 bytes
     // Challenge nonces stored during the security handshake
     var r1: Data = Data()     // 16 bytes from sensor challenge
@@ -837,8 +838,8 @@ extension String {
                         patchEphemeral = payload
                         if settings.userLevel < .test { // not eavesdropping on Trident
                             Task { @MainActor in
-                                kEnc = deriveSharedKey()
-                                log("\(typeAndName): TEST: derived shared key: \(kEnc.hex)")
+                                sharedKey = deriveSharedKey()
+                                log("\(typeAndName): TEST: derived shared key: \(sharedKey.hex)")
                                 if settings.userLevel < .test { // not eavesdropping on Trident
                                     send(securityCommand: .authorizeSymmetric)
                                     // TODO
@@ -867,10 +868,10 @@ extension String {
                             debugLog("\(typeAndName): restore saved active sensor's BLE PIN: \(blePIN.hex)")
                         }
 
-                        if !blePIN.isEmpty && !kEnc.isEmpty {
+                        if !blePIN.isEmpty && !sharedKey.isEmpty {
 
                             let challengeResponse = r1 + r2 + blePIN
-                            let encryptedResponse = aesEncrypt(data: challengeResponse, nonce: nonce1)!
+                            let encryptedResponse = aesEncrypt(data: challengeResponse, key: sharedKey, nonce: nonce1)!
                             log("\(typeAndName): writing encrypted challenge response: \(encryptedResponse.hex) (\(encryptedResponse.count) bytes), plain (r1 + r2 + BLE PIN): \(challengeResponse.hex) (\(challengeResponse.count) bytes)")
                             write(encryptedResponse)
 
@@ -895,7 +896,7 @@ extension String {
                     let nonce = payload.subdata(in: 60 ..< 67)
                     let seqId = UInt16(payload[60 ... 61])
                     log("\(typeAndName): encrypted kAuth: \(encryptedKAuth.hex), nonce: \(nonce.hex) (sequential id: \(seqId.hex))")
-                    if let decryptedKAuth = aesDecrypt(data: encryptedKAuth, nonce: nonce) {
+                    if let decryptedKAuth = aesDecrypt(data: encryptedKAuth, key: sharedKey, nonce: nonce) {
                         let r2 = decryptedKAuth.subdata(in:  0 ..< 16)
                         let r1 = decryptedKAuth.subdata(in: 16 ..< 32)
                         kEnc   = decryptedKAuth.subdata(in: 32 ..< 48)
