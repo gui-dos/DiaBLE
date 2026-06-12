@@ -51,6 +51,7 @@ extension Libre3 {
         // Raw ECDH shared secrets (x-coordinate only, 32 bytes each)
         let Ze = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorEphPub)
             .withUnsafeBytes { Data($0) }
+        // FIXME: cannot work because we know only the app static public key sent with the app certificate
         let Zs = try! appStaticPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
             .withUnsafeBytes { Data($0) }
 

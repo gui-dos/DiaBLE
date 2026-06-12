@@ -506,11 +506,13 @@ extension String {
     var ephemeralPrivateKey: P256.KeyAgreement.PrivateKey = .init()
     var ephemeralPublicKey: Data = Data() // 65-byte uncompressed P-256 returned by initECDH()
 
+    // FIXME: cannot work because we sent the app static public key with the app certificate
     var appStaticPrivateKey: P256.KeyAgreement.PrivateKey = .init()  // used when trying a new ECDH session
+
     var exportedKAuth: Data = Data() // 149-byte persistent SKB wrapped exported blob, includes encoded appStaticPrivateKey
 
     // CGMSensor and BCSecurityContext members:
-    var sharedKey: Data = Data()  // 16-byte first-pairing AES symmetric key
+    var sharedKey: Data = Data()  // 16-byte first-pair AES symmetric key
     var outCryptoSequence: UInt16 = 1
     var kEnc: Data = Data()  // 16-byte session key
     var ivEnc: Data = Data() // 8 bytes
