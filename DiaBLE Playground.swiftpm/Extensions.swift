@@ -3,12 +3,12 @@ import CryptoKit
 
 
 extension Data {
-    var hex: String { self.reduce("", { $0 + String(format: "%02x", $1) }) }
+    var hex: String { self.map { String(format: "%02x", $0) }.joined() }
     var string: String { String(decoding: self, as: UTF8.self) }
-    var hexBytes: String { String(self.reduce("", { $0 + $1.hex + " " }).dropLast(1)) }
-    var hexAddress: String { String(self.reduce("", { $0 + $1.hex + ":" }).dropLast(1)) }
-    var SHA1: String { Insecure.SHA1.hash(data: self).makeIterator().reduce("", { $0 + String(format: "%02x", $1) }) }
-    var SHA256: String { CryptoKit.SHA256.hash(data: self).makeIterator().reduce("", { $0 + String(format: "%02x", $1) }) }
+    var hexBytes: String { self.map(\.hex).joined(separator: " ") }
+    var hexAddress: String { self.map(\.hex).joined(separator: ":") }
+    var SHA1: String { Data(Insecure.SHA1.hash(data: self)).hex }
+    var SHA256: String { Data(CryptoKit.SHA256.hash(data: self)).hex }
 
     func hexDump(header: String = "", address: Int = -1, startBlock: Int = -1, escaping: Bool = false) -> String {
         var offset = startIndex
