@@ -42,13 +42,15 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift", "1.8.3"..<"2.0.0")
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift", "1.8.3"..<"2.0.0"),
+        .package(url: "https://github.com/gui-dos/LibreCRKit", .branch("main"))
     ],
     targets: [
         .executableTarget(
             name: "AppModule",
             dependencies: [
-                .product(name: "CryptoSwift", package: "cryptoswift")
+                .product(name: "CryptoSwift", package: "cryptoswift"),
+                .product(name: "LibreCRKit", package: "librecrkit")
             ],
             path: ".",
             resources: [
