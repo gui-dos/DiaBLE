@@ -9,7 +9,9 @@ struct NFCActivationView: View, LoggingView {
     @Environment(History.self) var history: History
     @Environment(Settings.self) var settings: Settings
 
-    @StateObject private var model = NFCActivationViewModel()
+    // @StateObject private var model = NFCActivationViewModel()
+    @ObservedObject var model: NFCActivationViewModel  // DiaBLE interconnection
+
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -431,7 +433,10 @@ struct LifecycleEventDisplay: Identifiable, Equatable {
 }
 
 @MainActor
-final class NFCActivationViewModel: ObservableObject {
+final class NFCActivationViewModel: ObservableObject, @MainActor Logging {
+
+    var main: MainDelegate!  // DiaBLE interconnection
+
     private static let buildMarker = "2026-05-10-bounded-saved-state-backfill"
 
     @Published var statusText = "Ready"
@@ -520,22 +525,35 @@ final class NFCActivationViewModel: ObservableObject {
         Libre3ReceiverID(receiverID).displayString
     }
 
-    init() {
-        let key = "LibreCRAccountlessUniqueID"
-        if let existing = UserDefaults.standard.string(forKey: key) {
-            uniqueID = existing
+    init(main: MainDelegate) {
+
+        self.main = main  // DiaBLE interconnection
+
+        // DiaBLE: always use a receiverID bound to a user's LibreView GUID
+        if !main.settings.libreLinkUpPatientId.isEmpty {
+            uniqueID = main.settings.libreLinkUpPatientId
+            receiverID = uniqueID.fnv32Hash
+            receiverIDSource = "LibreView GUID"
+
         } else {
-            let created = UUID().uuidString.lowercased()
-            UserDefaults.standard.set(created, forKey: key)
-            uniqueID = created
+            let key = "LibreCRAccountlessUniqueID"
+            if let existing = UserDefaults.standard.string(forKey: key) {
+                uniqueID = existing
+            } else {
+                let created = UUID().uuidString.lowercased()
+                UserDefaults.standard.set(created, forKey: key)
+                uniqueID = created
+            }
+
+            if let override = Self.receiverIDOverride(from: ProcessInfo.processInfo.arguments) {
+                receiverID = override.id
+                receiverIDSource = override.source
+            } else {
+                receiverID = NFCActivationCommand.accountlessReceiverID(from: uniqueID)
+                receiverIDSource = "accountless uniqueID"
+            }
         }
-        if let override = Self.receiverIDOverride(from: ProcessInfo.processInfo.arguments) {
-            receiverID = override.id
-            receiverIDSource = override.source
-        } else {
-            receiverID = NFCActivationCommand.accountlessReceiverID(from: uniqueID)
-            receiverIDSource = "accountless uniqueID"
-        }
+
         appendHandoffLog(
             "App build marker=\(Self.buildMarker) " +
             "args=\(ProcessInfo.processInfo.arguments.dropFirst().joined(separator: " "))"

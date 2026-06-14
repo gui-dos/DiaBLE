@@ -2,7 +2,7 @@ import SwiftUI
 import LibreCRKit
 import CoreBluetooth
 
-struct LibreCRContentView: View {
+struct LibreCRContentView: View, LoggingView {
     @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
     @Environment(History.self) var history: History
@@ -12,7 +12,7 @@ struct LibreCRContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            NFCActivationView()
+            NFCActivationView(model: NFCActivationViewModel(main: app.main))
                 .tabItem { Label("NFC", systemImage: "wave.3.right") }
                 .tag(RootTab.nfc)
             ScanDebugView()
