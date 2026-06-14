@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -303,6 +303,21 @@
 		C5E429FA2C4F0F280067AD57 /* DexcomG7.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DexcomG7.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C58655042FDED31D00E8C2A5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				LibreCRKit/LibreCRContentView.swift,
+				LibreCRKit/NFCActivationView.swift,
+			);
+			target = C59960DE2981E381005999C2 /* DiaBLE Watch */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		C58654FE2FDED28300E8C2A5 /* Libre3 */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C58655042FDED31D00E8C2A5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Libre3; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		C581D5812B0E699C002A4633 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -450,6 +465,7 @@
 		C5AAA6172981CF7000CA3EC1 /* DiaBLE */ = {
 			isa = PBXGroup;
 			children = (
+				C58654FE2FDED28300E8C2A5 /* Libre3 */,
 				C5E4004329825C710021C6B7 /* Media */,
 				C5E4004D29825C930021C6B7 /* Views */,
 				C581D5892B0E699C002A4633 /* Widgets */,
@@ -579,6 +595,9 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				C58654FE2FDED28300E8C2A5 /* Libre3 */,
+			);
 			name = "DiaBLE Watch";
 			packageProductDependencies = (
 				C55D12B629ACB9CB0050F567 /* CryptoSwift */,
@@ -604,6 +623,9 @@
 			dependencies = (
 				C5BE8E5D29916D3600604237 /* PBXTargetDependency */,
 				C581D5962B0E699D002A4633 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				C58654FE2FDED28300E8C2A5 /* Libre3 */,
 			);
 			name = DiaBLE;
 			packageProductDependencies = (
