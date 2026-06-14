@@ -63,6 +63,9 @@ import Foundation
         // Libre 3
         "activeSensorReceiverId": 0,
         "activeSensorBlePIN": Data(),
+        "usingLibreCRKit": true,
+        "activeSensorKEnc": Data(),
+        "activeSensorIvEnc": Data(),
 
         // Dexcom
         "activeTransmitterIdentifier": "",
@@ -275,6 +278,18 @@ import Foundation
 
     var activeSensorBlePIN: Data = UserDefaults.standard.data(forKey: "activeSensorBlePIN")! {
         didSet { UserDefaults.standard.set(self.activeSensorBlePIN, forKey: "activeSensorBlePIN") }
+    }
+
+    var usingLibreCRKit: Bool = UserDefaults.standard.bool(forKey: "usingLibreCRKit") {
+        didSet { UserDefaults.standard.set(self.usingLibreCRKit, forKey: "usingLibreCRKit") }
+    }
+
+    var activeSensorKEnc: Data = UserDefaults.standard.data(forKey: "activeSensorKEnc")! {
+        didSet { UserDefaults.standard.set(self.activeSensorKEnc, forKey: "activeSensorKEnc") }
+    }
+
+    var activeSensorIvEnc: Data = UserDefaults.standard.data(forKey: "activeSensorIvEnc")! {
+        didSet { UserDefaults.standard.set(self.activeSensorIvEnc, forKey: "activeSensorIvEnc") }
     }
 
     var activeTransmitterIdentifier: String = UserDefaults.standard.string(forKey: "activeTransmitterIdentifier")! {

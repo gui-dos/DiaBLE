@@ -2,7 +2,6 @@ import SwiftUI
 import Security
 import CoreBluetooth
 import LibreCRKit
-import UIKit
 
 struct NFCActivationView: View, LoggingView {
     @Environment(AppState.self) var app: AppState
