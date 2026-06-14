@@ -529,11 +529,16 @@ final class NFCActivationViewModel: ObservableObject, @MainActor Logging {
 
         self.main = main  // DiaBLE interconnection
 
-        // DiaBLE: always use a receiverID bound to a user's LibreView GUID
-        if !main.settings.libreLinkUpPatientId.isEmpty {
+        // DiaBLE: prefers a receiverID bound to a user's LibreView GUID but allows to customize it
+        if main.settings.activeSensorReceiverId != 0 || !main.settings.libreLinkUpPatientId.isEmpty {
             uniqueID = main.settings.libreLinkUpPatientId
-            receiverID = uniqueID.fnv32Hash
-            receiverIDSource = "LibreView GUID"
+            if main.settings.activeSensorReceiverId != uniqueID.fnv32Hash {
+                receiverID = UInt32(main.settings.activeSensorReceiverId)
+                receiverIDSource = "Custom receiver ID"
+            } else {
+                receiverID = uniqueID.fnv32Hash
+                receiverIDSource = "LibreView GUID"
+            }
 
         } else {
             let key = "LibreCRAccountlessUniqueID"
