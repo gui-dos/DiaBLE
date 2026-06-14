@@ -583,7 +583,10 @@ final class NFCActivationViewModel: ObservableObject, @MainActor Logging {
         manualSendCandidatePhase5 = true
         manualUseCapturedUserCert = true
         appendHandoffLog("Manual pairing candidate: activate-or-switch with candidate Phase 5 and phone_cert_162b")
-        activateOrSwitchReceiver()
+        // activateOrSwitchReceiver()
+        // TODO:
+        // DiaBLE forces activation command 0xA0 not to change the current BLE PIN
+        forceActivationCommand(.activate)
     }
 
     func switchReceiver() {
@@ -2057,6 +2060,12 @@ final class NFCActivationViewModel: ObservableObject, @MainActor Logging {
         guard useCapturedUserCert else {
             return (try PhoneCert.bundledFirstPair(), "phone_cert_firstpair")
         }
+
+        // TODO: DiaBLE: instantiate a Libre3 when scanning
+        let appSensor = app.sensor as? Libre3 ?? Libre3()
+        let appCertificate = appSensor.androidAppCertificates[appSensor.securityVersion]
+        return (try PhoneCert(raw: Data(appCertificate.bytes)), "Android app certificate V1")
+
         guard let url = Bundle.main.url(forResource: "phone_cert_162b", withExtension: "bin") else {
             throw NFCActivationHandoffError.bundledResourceMissing("phone_cert_162b")
         }
