@@ -1,12 +1,15 @@
 import SwiftUI
 import Security
-@preconcurrency import CoreBluetooth
+import CoreBluetooth
 import LibreCRKit
-#if canImport(UIKit)
 import UIKit
-#endif
 
-struct NFCActivationView: View {
+struct NFCActivationView: View, LoggingView {
+    @Environment(AppState.self) var app: AppState
+    @Environment(Log.self) var log: Log
+    @Environment(History.self) var history: History
+    @Environment(Settings.self) var settings: Settings
+
     @StateObject private var model = NFCActivationViewModel()
     @Environment(\.scenePhase) private var scenePhase
 

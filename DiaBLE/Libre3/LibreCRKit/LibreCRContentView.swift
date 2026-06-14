@@ -3,6 +3,11 @@ import LibreCRKit
 import CoreBluetooth
 
 struct LibreCRContentView: View {
+    @Environment(AppState.self) var app: AppState
+    @Environment(Log.self) var log: Log
+    @Environment(History.self) var history: History
+    @Environment(Settings.self) var settings: Settings
+
     @State private var selectedTab = RootTab.nfc
 
     var body: some View {
@@ -165,5 +170,5 @@ final class ScanViewModel: ObservableObject {
 }
 
 #Preview {
-    ContentView()
+    LibreCRContentView()
 }

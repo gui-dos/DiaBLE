@@ -43,6 +43,7 @@ enum TabTitle: String {
     case settings
     case data
     case plan
+    case libreCR
 }
 
 
