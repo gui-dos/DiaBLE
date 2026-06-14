@@ -1467,6 +1467,14 @@ final class NFCActivationViewModel: ObservableObject, @MainActor Logging {
         )
         let handshake = result.handshake
         let phase5Material = result.phase5Material
+
+        // DiaBLE interconnection:
+        (app.sensor as? Libre3)?.kEnc  = handshake.sessionMaterial.kEnc
+        (app.sensor as? Libre3)?.ivEnc = handshake.sessionMaterial.ivEnc
+        settings.activeSensorKEnc      = handshake.sessionMaterial.kEnc
+        settings.activeSensorIvEnc     = handshake.sessionMaterial.ivEnc
+
+
         let staticScalarOverride = handshake.preamble.phaseHandshake.phoneCert.phase5StaticScalarWindowOverride
         let phase6NoncePrefix = Self.phase6NoncePrefix(fromNonce: handshake.phase6.nonce)
         let historyStart = Self.historyBackfillStart(
@@ -2073,9 +2081,11 @@ final class NFCActivationViewModel: ObservableObject, @MainActor Logging {
     }
 
     private func appendHandoffLog(_ msg: String) {
-        let ts = String(format: "%.3f", Date().timeIntervalSince1970.truncatingRemainder(dividingBy: 1000))
+        let ts = Date().formatted(date: .omitted, time: .standard)
+        // let ts = String(format: "%.3f", Date().timeIntervalSince1970.truncatingRemainder(dividingBy: 1000))
         let line = "[\(ts)] \(msg)"
         persistHandoffLogLine(line)
+        debugLog("LibreCR: \(line)")
         print("[LibreCR:NFC] \(line)")
     }
 
