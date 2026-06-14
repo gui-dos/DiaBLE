@@ -207,7 +207,23 @@ struct Details: View, LoggingView {
                             HStack {
                                 Text("BLE PIN")
                                 Spacer(minLength: 32)
-                                TextField("BLE PIN", value: $settings.activeSensorBlePIN, formatter: HexDataFormatter())
+                                TextField("BLE PIN", value: $settings.activeSensorBlePIN, format: HexDataFormatStyle(maxBytes: 4))
+                                    .multilineTextAlignment(.trailing)
+                                    .foregroundStyle(.blue)
+                            }
+
+                            HStack {
+                                Text("kEnc")
+                                Spacer(minLength: 32)
+                                TextField("kEnc", value: $settings.activeSensorKEnc, format: HexDataFormatStyle(maxBytes: 16))
+                                    .multilineTextAlignment(.trailing)
+                                    .foregroundStyle(.blue)
+                            }
+
+                            HStack {
+                                Text("ivEnc")
+                                Spacer(minLength: 32)
+                                TextField("ivEnc", value: $settings.activeSensorIvEnc, format: HexDataFormatStyle(maxBytes: 8))
                                     .multilineTextAlignment(.trailing)
                                     .foregroundStyle(.blue)
                             }
@@ -234,7 +250,7 @@ struct Details: View, LoggingView {
                             HStack {
                                 Text("Patch Info")
                                 Spacer(minLength: 32)
-                                TextField("Patch Info", value: $settings.activeSensorInitialPatchInfo, formatter: HexDataFormatter())
+                                TextField("Patch Info", value: $settings.activeSensorInitialPatchInfo, format: HexDataFormatStyle(maxBytes: 4))
                                     .multilineTextAlignment(.trailing)
                                     .foregroundStyle(.blue)
                             }

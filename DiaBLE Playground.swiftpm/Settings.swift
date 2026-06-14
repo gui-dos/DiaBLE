@@ -319,16 +319,24 @@ import Foundation
 }
 
 
-// TODO: validate inputs
+struct HexDataFormatStyle: ParseableFormatStyle {
+    var maxBytes: Int = 4
 
-class HexDataFormatter: Formatter {
-    override func string(for obj: Any?) -> String? {
-        return (obj as! Data).hex
+    struct Strategy: ParseStrategy {
+        var maxBytes: Int = 4
+
+        func parse(_ value: String) throws -> Data {
+            var str = value.drop(while: { $0 == "0" }).filter(\.isHexDigit)
+            if str.count % 2 == 1 { str = "0" + str }
+            if str.count < maxBytes * 2 { str = String(repeating: "0", count: maxBytes * 2 - str.count) + str }
+            let data = str.bytes
+            return maxBytes < data.count ? data.prefix(maxBytes) : data
+        }
     }
-    override func getObjectValue(_ obj: AutoreleasingUnsafeMutablePointer<AnyObject?>?, for string: String, errorDescription error: AutoreleasingUnsafeMutablePointer<NSString?>?) -> Bool {
-        var str = string.filter(\.isHexDigit)
-        if str.count % 2 == 1 { str = "0" + str}
-        obj?.pointee = str.bytes as AnyObject
-        return true
+
+    var parseStrategy: Strategy { Strategy(maxBytes: maxBytes) }
+
+    func format(_ value: Data) -> String {
+        (maxBytes < value.count ? value.prefix(maxBytes) : value).hex
     }
 }
