@@ -512,7 +512,7 @@ extension String {
     var exportedKAuth: Data = Data() // 149-byte persistent SKB wrapped exported blob, includes encoded appStaticPrivateKey
 
     // CGMSensor and BCSecurityContext members:
-    var sharedKey: Data = Data()  // 16-byte first-pair AES-128-CCM symmetric key
+    var sharedKey: Data = Data()  // 16-byte first-pair ECDH shared secret
     var outCryptoSequence: UInt16 = 1
     var kEnc: Data = Data()  // 16-byte session key
     var ivEnc: Data = Data() // 8 bytes
@@ -1103,7 +1103,7 @@ extension String {
     func pair() {
         send(securityCommand: .startECDH)
         send(securityCommand: .loadCertificate)
-        let appCertificate = appCertificates[securityVersion].bytes
+        let appCertificate = settings.usingLibreCRKit ? androidAppCertificates[securityVersion].bytes : appCertificates[securityVersion].bytes
         write(appCertificate, for: .certificateData)
         send(securityCommand: .certificateLoadDone)
         // TODO
