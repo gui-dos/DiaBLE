@@ -52,6 +52,7 @@ import Foundation
 
         "activeSensorSerial": "",
         "activeSensorAddress": Data(),
+        "activeSensorActivationTime": 0,
         "activeSensorMaxLife": 0,
 
         // Libre 2
@@ -66,6 +67,7 @@ import Foundation
         "usingLibreCRKit": true,
         "activeSensorKEnc": Data(),
         "activeSensorIvEnc": Data(),
+        "activeSensorLastLifeCount": 0,
 
         // Dexcom
         "activeTransmitterIdentifier": "",
@@ -252,6 +254,10 @@ import Foundation
         didSet { UserDefaults.standard.set(self.activeSensorAddress, forKey: "activeSensorAddress") }
     }
 
+    var activeSensorActivationTime: Int = UserDefaults.standard.integer(forKey: "activeSensorActivationTime") {
+        didSet { UserDefaults.standard.set(self.activeSensorActivationTime, forKey: "activeSensorActivationTime") }
+    }
+
     var activeSensorMaxLife: Int = UserDefaults.standard.integer(forKey: "activeSensorMaxLife") {
         didSet { UserDefaults.standard.set(self.activeSensorMaxLife, forKey: "activeSensorMaxLife") }
     }
@@ -290,6 +296,10 @@ import Foundation
 
     var activeSensorIvEnc: Data = UserDefaults.standard.data(forKey: "activeSensorIvEnc")! {
         didSet { UserDefaults.standard.set(self.activeSensorIvEnc, forKey: "activeSensorIvEnc") }
+    }
+
+    var activeSensorLastLifeCount: Int = UserDefaults.standard.integer(forKey: "activeSensorLastLifeCount") {
+        didSet { UserDefaults.standard.set(self.activeSensorLastLifeCount, forKey: "activeSensorLastLifeCount") }
     }
 
     var activeTransmitterIdentifier: String = UserDefaults.standard.string(forKey: "activeTransmitterIdentifier")! {

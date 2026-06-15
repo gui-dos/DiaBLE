@@ -180,7 +180,7 @@ extension String {
         let uncappedHistoricReadingMgDl: Int
         let dqError: Int
         let temperature: Int
-        let rawData: Data  // first 6 bytes coming from filament
+        let rawData: Data  // first 6 of 8 bytes coming from the filament as for the Libre 1/2
     }
 
 
@@ -521,7 +521,7 @@ extension String {
     var r2: Data = Data()     // 16 bytes generated locally
     var nonce1: Data = Data() //  7 bytes from sensor challenge
 
-    var currentLifeCount: Int = 0
+    var lastLifeCount: Int = 0
     var lastHistoricalLifeCount: Int = 0
     var lastHistoricalReadingDate: Date = .distantPast
 
@@ -972,7 +972,8 @@ extension String {
         log("\(typeAndName): parsed one-minute further data: ESA (Early Signal Attenuation) duration: \(esaDuration) minutes (0x\(data[6...7].hex)), projected glucose: \(projectedGlucose) mg/dL (0x\(data[8...9].hex)), uncapped current glucose: \(uncappedCurrentMgDl) mg/dL (0x\(data[15...16].hex)), uncapped historical glucose: \(uncappedHistoricMgDl) mg/dL (0x\(data[17...18].hex)), raw fast data: \(fastData.hex) (\(fastData.count) bytes)")
 
         // TODO
-        currentLifeCount = Int(lifeCount)
+        lastLifeCount = Int(lifeCount)
+        settings.activeSensorLastLifeCount = lastLifeCount
         lastReadingDate = date
         main.app.lastReadingDate = date
         main.app.currentGlucose = glucose
@@ -1007,7 +1008,7 @@ extension String {
         for data in data {
             let lifeCount = UInt16(data[0...1])
             let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
-            let rawData = data[2...9]  // first 6 bytes coming from filament
+            let rawData = data[2...9]  // first 6 bytes of 8 coming from the filament as for the Libre 1/2
             let readingMgDl = UInt16(data[10...11])
             let historicMgDl = UInt16(data[12...13])
             // TODO:
@@ -1091,7 +1092,8 @@ extension String {
             blePIN = activationResponse.BLE_Pin
             settings.activeSensorBlePIN = blePIN
             activationTime = activationResponse.activationTime
-            lastReadingDate = Date()
+            settings.activeSensorActivationTime = Int(activationTime)
+            // TODO: lastReadingDate = Date()
             age = Int(Date().timeIntervalSince(Date(timeIntervalSince1970: Double(activationTime)))) / 60
         }
     }

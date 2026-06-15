@@ -751,6 +751,7 @@ class LibreLinkUp: Logging {
                         let sensor = await main.app.sensor!
                         if sensor.serial.hasSuffix(serial) || sensorTypes.count == 1 {
                             sensor.activationTime = UInt32(activationTime)
+                            settings.activeSensorActivationTime = activationTime
                             sensor.age = Int(Date().timeIntervalSince(activationDate)) / 60
                             sensor.state = .active
                             sensor.lastReadingDate = Date()
@@ -980,7 +981,7 @@ class LibreLinkUp: Logging {
                                 trend.insert(lastMeasurement.glucose, at: 0)
                             }
                             if let sensor = app.sensor as? Libre3, main.history.factoryValues.count > 0 {
-                                sensor.currentLifeCount = lastMeasurement.id
+                                sensor.lastLifeCount = lastMeasurement.id
                                 sensor.lastHistoricalLifeCount = main.history.factoryValues[0].id
                                 sensor.lastHistoricalReadingDate = main.history.factoryValues[0].date
                             }
