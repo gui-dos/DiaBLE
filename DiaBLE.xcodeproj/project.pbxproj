@@ -308,7 +308,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				LibreCRKit/LibreCRContentView.swift,
-				LibreCRKit/NFCActivationView.swift,
 			);
 			target = C59960DE2981E381005999C2 /* DiaBLE Watch */;
 		};

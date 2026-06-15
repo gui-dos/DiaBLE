@@ -3,6 +3,8 @@ import Security
 import CoreBluetooth
 import LibreCRKit
 
+#if !os(watchOS)
+
 struct NFCActivationView: View, LoggingView {
     @Environment(AppState.self) var app: AppState
     @Environment(Log.self) var log: Log
@@ -356,6 +358,9 @@ struct NFCActivationView: View, LoggingView {
     }
 }
 
+#endif // !os(watchOS)
+
+
 struct GlucoseDisplay: Identifiable, Equatable {
     let id = UUID()
     let receivedAt: Date
@@ -464,7 +469,9 @@ final class NFCActivationViewModel: ObservableObject, @MainActor Logging {
     let uniqueID: String
     let receiverID: UInt32
     let receiverIDSource: String
+    #if !os(watchOS)
     private let reader = Libre3NFCActivationReader()
+    #endif
     private let scanner = SensorScanner(
         configuration: SensorScannerConfiguration(
             restorationIdentifier: "org.librecrkit.librecr.pairing-central",
@@ -647,6 +654,8 @@ final class NFCActivationViewModel: ObservableObject, @MainActor Logging {
         )
 
         Task {
+            // TODO:
+            #if !os(watchOS)
             do {
                 let result = try await reader.scan(mode: mode)
                 patchInfo = result.patchInfo
@@ -701,6 +710,7 @@ final class NFCActivationViewModel: ObservableObject, @MainActor Logging {
                 statusText = "NFC failed"
                 appendHandoffLog("NFC failed error=\(String(describing: error))")
             }
+            #endif // !os(watchOS)
             scanning = false
         }
     }
@@ -844,7 +854,7 @@ final class NFCActivationViewModel: ObservableObject, @MainActor Logging {
         let text = lifecycleEvents
             .map(\.summary)
             .joined(separator: "\n")
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
         UIPasteboard.general.string = text
         appendLifecycleEvent("copied \(lifecycleEvents.count) lifecycle events")
 #else
