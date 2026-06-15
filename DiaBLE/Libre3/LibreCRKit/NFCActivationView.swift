@@ -1469,10 +1469,12 @@ final class NFCActivationViewModel: ObservableObject, @MainActor Logging {
         let phase5Material = result.phase5Material
 
         // DiaBLE interconnection:
-        (app.sensor as? Libre3)?.kEnc  = handshake.sessionMaterial.kEnc
-        (app.sensor as? Libre3)?.ivEnc = handshake.sessionMaterial.ivEnc
-        settings.activeSensorKEnc      = handshake.sessionMaterial.kEnc
-        settings.activeSensorIvEnc     = handshake.sessionMaterial.ivEnc
+        (app.sensor as? Libre3)?.sharedKey = phase5Material.rawKey
+        (app.sensor as? Libre3)?.kEnc      = handshake.sessionMaterial.kEnc
+        (app.sensor as? Libre3)?.ivEnc     = handshake.sessionMaterial.ivEnc
+        settings.activeSensorSharedKey     = phase5Material.rawKey
+        settings.activeSensorKEnc          = handshake.sessionMaterial.kEnc
+        settings.activeSensorIvEnc         = handshake.sessionMaterial.ivEnc
 
 
         let staticScalarOverride = handshake.preamble.phaseHandshake.phoneCert.phase5StaticScalarWindowOverride
