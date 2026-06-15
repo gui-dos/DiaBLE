@@ -211,6 +211,13 @@ struct Details: View, LoggingView {
                             }
 
                             HStack {
+                                Text("Shared Key")
+                                TextField("Shared Key", value: $settings.activeSensorSharedKey, format: HexDataFormatStyle(maxBytes: 16))
+                                    .multilineTextAlignment(.trailing)
+                                    .foregroundStyle(.blue)
+                            }
+
+                            HStack {
                                 Text("kEnc")
                                 TextField("kEnc", value: $settings.activeSensorKEnc, format: HexDataFormatStyle(maxBytes: 16))
                                     .multilineTextAlignment(.trailing)

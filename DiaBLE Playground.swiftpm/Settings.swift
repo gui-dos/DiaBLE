@@ -65,6 +65,7 @@ import Foundation
         "activeSensorReceiverId": 0,
         "activeSensorBlePIN": Data(),
         "usingLibreCRKit": true,
+        "activeSensorSharedKey": Data(),
         "activeSensorKEnc": Data(),
         "activeSensorIvEnc": Data(),
         "activeSensorLastLifeCount": 0,
@@ -292,6 +293,10 @@ import Foundation
 
     var activeSensorKEnc: Data = UserDefaults.standard.data(forKey: "activeSensorKEnc")! {
         didSet { UserDefaults.standard.set(self.activeSensorKEnc, forKey: "activeSensorKEnc") }
+    }
+
+    var activeSensorSharedKey: Data = UserDefaults.standard.data(forKey: "activeSensorSharedKey")! {
+        didSet { UserDefaults.standard.set(self.activeSensorSharedKey, forKey: "activeSensorSharedKey") }
     }
 
     var activeSensorIvEnc: Data = UserDefaults.standard.data(forKey: "activeSensorIvEnc")! {
