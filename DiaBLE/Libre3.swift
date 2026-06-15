@@ -512,7 +512,7 @@ extension String {
     var exportedKAuth: Data = Data() // 149-byte persistent SKB wrapped exported blob, includes encoded appStaticPrivateKey
 
     // CGMSensor and BCSecurityContext members:
-    var sharedKey: Data = Data()  // 16-byte first-pair AES symmetric key
+    var sharedKey: Data = Data()  // 16-byte first-pair AES-128-CCM symmetric key
     var outCryptoSequence: UInt16 = 1
     var kEnc: Data = Data()  // 16-byte session key
     var ivEnc: Data = Data() // 8 bytes
@@ -841,6 +841,7 @@ extension String {
                         if settings.userLevel < .test { // not eavesdropping on Trident
                             Task { @MainActor in
                                 sharedKey = deriveSharedKey()
+                                // TODO: settings.activeSensorSharedKey = sharedKey
                                 log("\(typeAndName): TEST: derived shared key: \(sharedKey.hex)")
                                 if settings.userLevel < .test { // not eavesdropping on Trident
                                     send(securityCommand: .authorizeSymmetric)
@@ -907,8 +908,8 @@ extension String {
                     } else {
                         log("\(typeAndName): FAILED decrypting kAuth")
                     }
-                    transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.patchStatus.rawValue]!)
                     log("\(typeAndName): enabling notifications on the patch status characteristic")
+                    transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.patchStatus.rawValue]!)
                     currentSecurityCommand = nil
 
 

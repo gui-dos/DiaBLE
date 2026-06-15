@@ -291,12 +291,12 @@ import Foundation
         didSet { UserDefaults.standard.set(self.usingLibreCRKit, forKey: "usingLibreCRKit") }
     }
 
-    var activeSensorKEnc: Data = UserDefaults.standard.data(forKey: "activeSensorKEnc")! {
-        didSet { UserDefaults.standard.set(self.activeSensorKEnc, forKey: "activeSensorKEnc") }
-    }
-
     var activeSensorSharedKey: Data = UserDefaults.standard.data(forKey: "activeSensorSharedKey")! {
         didSet { UserDefaults.standard.set(self.activeSensorSharedKey, forKey: "activeSensorSharedKey") }
+    }
+
+    var activeSensorKEnc: Data = UserDefaults.standard.data(forKey: "activeSensorKEnc")! {
+        didSet { UserDefaults.standard.set(self.activeSensorKEnc, forKey: "activeSensorKEnc") }
     }
 
     var activeSensorIvEnc: Data = UserDefaults.standard.data(forKey: "activeSensorIvEnc")! {
