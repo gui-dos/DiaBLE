@@ -3,7 +3,6 @@ import Security
 import CoreBluetooth
 import LibreCRKit
 
-#if !os(watchOS)
 
 struct NFCActivationView: View, LoggingView {
     @Environment(AppState.self) var app: AppState
@@ -33,7 +32,10 @@ struct NFCActivationView: View, LoggingView {
                     if let error = model.lastError {
                         Divider()
                         Text("Error").font(.headline).foregroundStyle(.red)
-                        Text(error).font(.caption).textSelection(.enabled)
+                        Text(error).font(.caption)
+                            #if !os(watchOS)
+                            .textSelection(.enabled)
+                            #endif
                     }
                 }
                 .padding()
@@ -164,7 +166,9 @@ struct NFCActivationView: View, LoggingView {
                     ForEach(model.recentDecodedPackets.prefix(8)) { packet in
                         Text(packet.summary)
                             .font(.system(.caption2, design: .monospaced))
+                            #if !os(watchOS)
                             .textSelection(.enabled)
+                            #endif
                     }
                 }
             }
@@ -250,7 +254,9 @@ struct NFCActivationView: View, LoggingView {
                 monoLabel("next", patch.recommendedCommandCode == .activate ? "A0" : "A8")
                 Text(hex(patch.raw))
                     .font(.system(.caption2, design: .monospaced))
+                    #if !os(watchOS)
                     .textSelection(.enabled)
+                    #endif
             }
         }
     }
@@ -285,7 +291,10 @@ struct NFCActivationView: View, LoggingView {
                 if let summary = model.bleBootstrapSummary {
                     Text(summary)
                         .font(.system(.caption2, design: .monospaced))
+                        #if !os(watchOS)
                         .textSelection(.enabled)
+                        #endif
+
                 }
                 Button {
                     model.retryBLEHandoff()
@@ -319,7 +328,9 @@ struct NFCActivationView: View, LoggingView {
                 ForEach(Array(model.lifecycleEvents.suffix(12))) { event in
                     Text(event.summary)
                         .font(.system(.caption2, design: .monospaced))
+                        #if !os(watchOS)
                         .textSelection(.enabled)
+                        #endif
                 }
             }
         }
@@ -328,7 +339,11 @@ struct NFCActivationView: View, LoggingView {
     private func monoLabel(_ name: String, _ value: String) -> some View {
         HStack(alignment: .top) {
             Text(name).font(.caption).foregroundStyle(.secondary).frame(width: 80, alignment: .leading)
-            Text(value).font(.system(.caption2, design: .monospaced)).textSelection(.enabled)
+            Text(value).font(.system(.caption2, design: .monospaced))
+                #if !os(watchOS)
+                .textSelection(.enabled)
+                #endif
+
         }
     }
 
@@ -357,8 +372,6 @@ struct NFCActivationView: View, LoggingView {
         return "{\(fields.joined(separator: ","))}"
     }
 }
-
-#endif // !os(watchOS)
 
 
 struct GlucoseDisplay: Identifiable, Equatable {
