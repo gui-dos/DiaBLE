@@ -751,7 +751,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             if app.device == nil { return }     // the connection timed out in the meantime
 
             // Preserve the initial app.lastConnectionDate when multiple updates are coming
-            if Int(app.lastConnectionDate.distance(to: app.device.lastConnectionDate)) >= 15 {
+            if Int(app.lastConnectionDate.distance(to: app.device.lastConnectionDate)) > settings.readingInterval * 60 - 5 {
                 app.device.peripheral!.readRSSI()
                 app.lastConnectionDate = app.device.lastConnectionDate
             }
