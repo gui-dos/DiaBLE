@@ -75,6 +75,18 @@ struct HamburgerMenu: View {
                         }
                     }
 
+                    HStack(spacing: 10) {
+                        NavigationLink(destination: LibreCRContentView()) {
+                            VStack {
+                                Image(systemName: "00.circle").resizable().frame(width: 40, height: 40).offset(y: 4)
+                                Text("LibreCR")
+                                    .bold()
+                                    .foregroundStyle(.blue)
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                    }
+
                     // TODO: Help and About sheets
                     // HStack(spacing: 10) {
                     //     VStack {
