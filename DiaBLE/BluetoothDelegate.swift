@@ -750,7 +750,11 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
             if app.device == nil { return }     // the connection timed out in the meantime
 
-            app.device.lastConnectionDate = Date()
+            // Preserve the 1-minute precise Libre 3 connection date
+            if app.device.type != .transmitter(.abbott) {
+                app.device.lastConnectionDate = Date()
+            }
+
             if Int(app.lastConnectionDate.distance(to: app.device.lastConnectionDate)) >= settings.readingInterval * 60 - 5 {
                 app.device.peripheral!.readRSSI()
             }

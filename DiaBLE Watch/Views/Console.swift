@@ -170,21 +170,21 @@ struct Console: View, LoggingView {
                     .contentTransition(.numericText(countsDown: true))
                     .onReceive(app.timer) { _ in
                         withAnimation {
-                            readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
+                            readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate)) - 1
                         }
                     }
                 } else {
                     Spacer()
                 }
 
-                Text(onlineCountdown != 0 ? "\(String(onlineCountdown).count > 5 ? "..." : "\(onlineCountdown) s")" : " ")
+                Text(onlineCountdown > 0 ? "\(String(onlineCountdown).count > 5 ? "..." : "\(onlineCountdown) s")" : " ")
                     .fixedSize()
                     .foregroundStyle(.cyan)
                     .font(.footnote.monospacedDigit())
                     .contentTransition(.numericText(countsDown: true))
                     .onReceive(app.timer) { _ in
                         withAnimation {
-                            onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate))
+                            onlineCountdown = Int64(settings.onlineInterval * 60) - Int64(Date().timeIntervalSince(settings.lastOnlineDate)) - 1
                         }
                     }
                     .onReceive(app.minuteTimer) { _ in

@@ -873,7 +873,7 @@ extension String {
 
                         if sharedKey.isEmpty && !settings.activeSensorSharedKey.isEmpty {
                             sharedKey = settings.activeSensorSharedKey
-                            debugLog("\(typeAndName): restore saved active sensor's shared key: \(sharedKey                      .hex)")
+                            debugLog("\(typeAndName): restore saved active sensor's shared key: \(sharedKey.hex)")
                         }
 
                         if !blePIN.isEmpty && !sharedKey.isEmpty {

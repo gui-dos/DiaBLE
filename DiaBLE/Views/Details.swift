@@ -489,7 +489,7 @@ struct Details: View, LoggingView {
                     .contentTransition(.numericText(countsDown: true))
                     .onReceive(app.timer) { _ in
                         withAnimation {
-                            readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate))
+                            readingCountdown = Int64(settings.readingInterval * 60) - Int64(Date().timeIntervalSince(app.lastConnectionDate)) - 1
                         }
                     }
                 }
