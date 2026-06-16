@@ -871,6 +871,11 @@ extension String {
                             debugLog("\(typeAndName): restore saved active sensor's BLE PIN: \(blePIN.hex)")
                         }
 
+                        if sharedKey.isEmpty && !settings.activeSensorSharedKey.isEmpty {
+                            sharedKey = settings.activeSensorSharedKey
+                            debugLog("\(typeAndName): restore saved active sensor's shared key: \(sharedKey                      .hex)")
+                        }
+
                         if !blePIN.isEmpty && !sharedKey.isEmpty {
 
                             let challengeResponse = r1 + r2 + blePIN
