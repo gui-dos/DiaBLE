@@ -1092,7 +1092,7 @@ extension String {
             )
             let crc = UInt16(response[14 ... 15])
             let computedCrc = response[0 ... 13].crc16
-            log("NFC: \(type) activation response: \(activationResponse), BLE address: \(activationResponse.bdAddress.hexAddress), BLE PIN: \(activationResponse.BLE_Pin.hex), activation time: \(Date(timeIntervalSince1970: Double(activationResponse.activationTime))), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
+            log("NFC: \(type) activation response: \(activationResponse), BLE address: \(activationResponse.bdAddress.hexAddress), BLE PIN: \(activationResponse.BLE_Pin.hex), activation date: \(Date(timeIntervalSince1970: Double(activationResponse.activationTime))), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
 
             transmitter?.macAddress = activationResponse.bdAddress
             blePIN = activationResponse.BLE_Pin
