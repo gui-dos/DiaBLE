@@ -2,6 +2,7 @@ import Foundation
 import CryptoKit     // P-256 ECDH
 import CommonCrypto
 import CryptoSwift   // AES 128 CCM
+import LibreCRKit
 
 
 // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/bcrypt/bcrypt.cpp
@@ -12,6 +13,16 @@ extension Libre3 {
 
     // TODO
     public func initECDH() -> Data {
+
+        if settings.usingLibreCRKit {
+            nativeEphemeral = try! SessionKey.makeFirstPairNativeEphemeral { requestedCount in
+                return Data((0 ..< requestedCount).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
+            }
+            let publicKey65 = nativeEphemeral!.keyPair.publicKey65
+            log("LibreCRKit: generated P-256 ECDH native ephemeral key pair: public key: \(publicKey65.hex) (\(publicKey65.count) bytes), null attempts: \(nativeEphemeral!.attempts)")
+            return publicKey65
+        }
+
         // Generate ephemeral P-256 key pair
         ephemeralPrivateKey = P256.KeyAgreement.PrivateKey()
         // Export uncompressed x9.63 public key (04 || X || Y)
@@ -44,6 +55,18 @@ extension Libre3 {
     // NOTE: older iOS Trident app used reversed order: SHA-256( 0x00000001 || Zs || Ze )
 
     public func deriveSharedKey() -> Data {
+
+        if settings.usingLibreCRKit, let nativeEphemeral {
+            let inputs = FirstPairPhase5KeyInputs(
+                nullEntropy11A: nativeEphemeral.nullEntropy11A,
+                sensorEphemeralPub65: patchEphemeral,
+                sensorStaticPub65: patchCertificate!.patchStaticPublicKey,
+                staticScalarWindow: FirstPairStaticScalarWindow.firstPairIndex1
+            )
+            let phase5Material = try! SessionKey.deriveFirstPairPhase5Material(inputs)
+            log("LibreCRKit: derived Phase 5 raw key: \(phase5Material.rawKey.hex), null attempts: \(phase5Material.nullAttempts)")
+            return phase5Material.rawKey
+        }
 
         let sensorStaticPub = try! P256.KeyAgreement.PublicKey(x963Representation: patchCertificate!.patchStaticPublicKey)
         let sensorEphPub    = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)

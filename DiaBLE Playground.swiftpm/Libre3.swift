@@ -1,5 +1,6 @@
 import Foundation
 import CryptoKit
+import LibreCRKit
 
 
 // https://insulinclub.de/index.php?thread/33795-free-three-ein-xposed-lsposed-modul-f%C3%BCr-libre-3-aktueller-wert-am-sperrbildschir/&postID=655055#post655055
@@ -354,7 +355,7 @@ extension String {
     // write  2198  11
     // notify 2198  08 17
     // notify 22CE  20 + 5 bytes        // 23-byte challenge
-    // write  22CE  20 + 20 + 6 bytes   // 40-byte challenge response
+    // write  22CE  20 * 2 + 6 bytes    // 40-byte challenge response
     // write  2198  08
     // notify 2198  08 43
     // notify 22CE  20 * 3 + 11 bytes   // 67-byte encrypted kAuth
@@ -505,6 +506,7 @@ extension String {
 
     var ephemeralPrivateKey: P256.KeyAgreement.PrivateKey = .init()
     var ephemeralPublicKey: Data = Data() // 65-byte uncompressed P-256 returned by initECDH()
+    var nativeEphemeral: FirstPairNativeEphemeralMaterial?  // set by initECDH() when usingLibreCRKit
 
     // FIXME: cannot work because we sent the app static public key with the app certificate
     var appStaticPrivateKey: P256.KeyAgreement.PrivateKey = .init()  // used when trying a new ECDH session
@@ -841,7 +843,7 @@ extension String {
                         if settings.userLevel < .test { // not eavesdropping on Trident
                             Task { @MainActor in
                                 sharedKey = deriveSharedKey()
-                                // TODO: settings.activeSensorSharedKey = sharedKey
+                                settings.activeSensorSharedKey = sharedKey
                                 log("\(typeAndName): TEST: derived shared key: \(sharedKey.hex)")
                                 if settings.userLevel < .test { // not eavesdropping on Trident
                                     send(securityCommand: .authorizeSymmetric)
@@ -861,41 +863,45 @@ extension String {
                     // Store as instance vars to be verified later when decrypting kAuth
                     r1     = Data(payload.prefix(16))
                     nonce1 = Data(payload.suffix(7))
-                    r2     = Data((0 ..< 16).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
-                    debugLog("\(type): r1: \(r1.hex), generated random r2: \(r2.hex), nonce1: \(nonce1.hex)")
+                    debugLog("\(typeAndName): r1: \(r1.hex), nonce1: \(nonce1.hex)")
 
                     if settings.userLevel < .test { // not eavesdropping on Trident
-
                         if blePIN.isEmpty && !settings.activeSensorBlePIN.isEmpty {
                             blePIN = settings.activeSensorBlePIN
                             debugLog("\(typeAndName): restore saved active sensor's BLE PIN: \(blePIN.hex)")
                         }
-
                         if sharedKey.isEmpty && !settings.activeSensorSharedKey.isEmpty {
                             sharedKey = settings.activeSensorSharedKey
                             debugLog("\(typeAndName): restore saved active sensor's shared key: \(sharedKey.hex)")
                         }
-
                         if !blePIN.isEmpty && !sharedKey.isEmpty {
-
+                            r2 = Data((0 ..< 16).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
+                            debugLog("\(typeAndName): generated random r2: \(r2.hex)")
                             let challengeResponse = r1 + r2 + blePIN
-                            let encryptedResponse = aesEncrypt(data: challengeResponse, key: sharedKey, nonce: nonce1)!
-                            log("\(typeAndName): writing encrypted challenge response: \(encryptedResponse.hex) (\(encryptedResponse.count) bytes), plain (r1 + r2 + BLE PIN): \(challengeResponse.hex) (\(challengeResponse.count) bytes)")
+                            var encryptedResponse = Data(count: 40)
+                            if settings.usingLibreCRKit {
+                                let encrypted = try! AESCCM.encrypt(
+                                    nonce: nonce1,
+                                    plaintext: challengeResponse,
+                                    aad: Data(),
+                                    tagLength: 4,
+                                    aes: try! LibAES.phase5BlockEncryptor(rawKey: sharedKey)
+                                )
+                                encryptedResponse = encrypted.ciphertext + encrypted.tag
+                            } else {
+                                encryptedResponse = aesEncrypt(data: challengeResponse, key: sharedKey, nonce: nonce1)!
+                            }
+                            log("\(typeAndName): writing encrypted challenge response via LibreCRKit: \(encryptedResponse.hex) (\(encryptedResponse.count) bytes), plain (r1 + r2 + BLE PIN): \(challengeResponse.hex) (\(challengeResponse.count) bytes)")
                             write(encryptedResponse)
-
+                            send(securityCommand: .challengeLoadDone)
                         } else {
-
                             if blePIN.isEmpty {
                                 log("\(typeAndName): BLE PIN unknown, need a NFC scan first.")
                             }
-
-                            log("\(typeAndName): TEST: writing 40-zero challenge response")
-                            let challengeData = Data(count: 40)
-                            write(challengeData)
+                            if sharedKey.isEmpty {
+                                log("\(typeAndName): shared key unknown, cannot proceed")
+                            }
                         }
-
-                        // writing .challengeLoadDone makes the Libre 3 disconnect
-                        send(securityCommand: .challengeLoadDone)
                     }
 
 
@@ -904,7 +910,18 @@ extension String {
                     let nonce = payload.subdata(in: 60 ..< 67)
                     let seqId = UInt16(payload[60 ... 61])
                     log("\(typeAndName): encrypted kAuth: \(encryptedKAuth.hex), nonce: \(nonce.hex) (sequential id: \(seqId.hex))")
-                    if let decryptedKAuth = aesDecrypt(data: encryptedKAuth, key: sharedKey, nonce: nonce) {
+
+                    if let decryptedKAuth = if settings.usingLibreCRKit {
+                        try? AESCCM.decrypt(
+                            nonce: nonce,
+                            ciphertext: Data(encryptedKAuth.prefix(56)),
+                            tag: Data(encryptedKAuth.suffix(4)),
+                            aad: Data(),
+                            aes: try! LibAES.phase5BlockEncryptor(rawKey: sharedKey)
+                        )
+                    } else {
+                        aesDecrypt(data: encryptedKAuth, key: sharedKey, nonce: nonce)
+                    } {
                         let r2 = decryptedKAuth.subdata(in:  0 ..< 16)
                         let r1 = decryptedKAuth.subdata(in: 16 ..< 32)
                         kEnc   = decryptedKAuth.subdata(in: 32 ..< 48)
