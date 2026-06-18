@@ -761,20 +761,24 @@ extension String {
 
 
         case .patchStatus:
-            if buffer.count == 0 {
-                let payload = data.prefix(16)
-                let seqId = UInt16(data.suffix(2))
-                log("\(typeAndName): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
-                debugLog("\(typeAndName): decrypting patch status: \(data.hex) (\(data.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
-                if let patchStatus = decryptPacket(data: data, type: .patchStatus, ivEnc: ivEnc) {
-                    log("\(typeAndName): decrypted patch status: \(patchStatus.hex)")
-                    if patchStatus.count == 12 {
-                        parsePatchStatus(data: patchStatus)
-                    }
-                } else {
-                    log("\(typeAndName): FAILED decrypting patch status")
-                }
+            if activationTime == 0 && settings.activeSensorActivationTime != 0 {
+                activationTime = UInt32(settings.activeSensorActivationTime)
             }
+            let payload = data.prefix(16)
+            let seqId = UInt16(data.suffix(2))
+            log("\(typeAndName): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
+            debugLog("\(typeAndName): decrypting patch status: \(data.hex) (\(data.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+            if let patchStatus = decryptPacket(data: data, type: .patchStatus, ivEnc: ivEnc) {
+                log("\(typeAndName): decrypted patch status: \(patchStatus.hex)")
+                if patchStatus.count == 12 {
+                    parsePatchStatus(data: patchStatus)
+                }
+            } else {
+                log("\(typeAndName): FAILED decrypting patch status")
+            }
+            log("\(typeAndName): enabling notifications on the one-minute reading characteristic")
+            transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.oneMinuteReading.rawValue]!)
+
 
 
         case .securityCommands:
