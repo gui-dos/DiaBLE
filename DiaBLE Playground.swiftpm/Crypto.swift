@@ -97,6 +97,17 @@ extension Libre3 {
 
     public func aesEncrypt(data: Data, key: Data, nonce: Data) -> Data? {
         do {
+            if settings.usingLibreCRKit && nonce.count == 7 {  // challenge data
+                let encrypted = try AESCCM.encrypt(
+                    nonce: nonce,
+                    plaintext: data,
+                    aad: Data(),
+                    tagLength: 4,
+                    aes: try! LibAES.phase5BlockEncryptor(rawKey: key)
+                )
+                return encrypted.ciphertext + encrypted.tag
+            }
+
             let aes = try AES(key: Array(key),
                               blockMode: CCM(iv: Array(nonce),
                                              tagLength: 4,
@@ -114,6 +125,17 @@ extension Libre3 {
 
     public func aesDecrypt(data: Data, key: Data, nonce: Data) -> Data? {
         do {
+            if settings.usingLibreCRKit && nonce.count == 7 {  // challenge data
+                let decrypted = try AESCCM.decrypt(
+                    nonce: nonce,
+                    ciphertext: Data(data.dropLast(4)),
+                    tag: Data(data.suffix(4)),
+                    aad: Data(),
+                    aes: try! LibAES.phase5BlockEncryptor(rawKey: key)
+                )
+                return decrypted
+            }
+
             let aes = try AES(key: Array(key),
                               blockMode: CCM(iv: Array(nonce),
                                              tagLength: 4,

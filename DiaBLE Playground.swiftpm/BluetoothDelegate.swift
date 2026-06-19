@@ -681,7 +681,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         if let error {
             debugLog("Bluetooth: error reading \(name)'s RSSI: \(error.localizedDescription)")
         } else {
-            debugLog("Bluetooth: did read \(name)'s RSSI: \(rssi) dB")
+            log("Bluetooth: did read \(name)'s RSSI: \(rssi) dB")
             app.device.rssi = Int(truncating: rssi)
         }
     }

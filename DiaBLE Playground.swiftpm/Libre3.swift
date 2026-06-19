@@ -848,7 +848,7 @@ extension String {
                             Task { @MainActor in
                                 sharedKey = deriveSharedKey()
                                 settings.activeSensorSharedKey = sharedKey
-                                log("\(typeAndName): TEST: derived shared key: \(sharedKey.hex)")
+                                log("\(typeAndName): derived shared key: \(sharedKey.hex)")
                                 if settings.userLevel < .test { // not eavesdropping on Trident
                                     send(securityCommand: .authorizeSymmetric)
                                     // TODO
@@ -882,29 +882,22 @@ extension String {
                             r2 = Data((0 ..< 16).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
                             debugLog("\(typeAndName): generated random r2: \(r2.hex)")
                             let challengeResponse = r1 + r2 + blePIN
-                            var encryptedResponse = Data(count: 40)
-                            if settings.usingLibreCRKit {
-                                let encrypted = try! AESCCM.encrypt(
-                                    nonce: nonce1,
-                                    plaintext: challengeResponse,
-                                    aad: Data(),
-                                    tagLength: 4,
-                                    aes: try! LibAES.phase5BlockEncryptor(rawKey: sharedKey)
-                                )
-                                encryptedResponse = encrypted.ciphertext + encrypted.tag
+                            if let encryptedResponse = aesEncrypt(
+                                data: challengeResponse,
+                                key: sharedKey,
+                                nonce: nonce1) {
+                                log("\(typeAndName): writing encrypted challenge response: \(encryptedResponse.hex) (\(encryptedResponse.count) bytes), plain (r1 + r2 + BLE PIN): \(challengeResponse.hex) (\(challengeResponse.count) bytes)")
+                                write(encryptedResponse)
+                                send(securityCommand: .challengeLoadDone)
                             } else {
-                                encryptedResponse = aesEncrypt(data: challengeResponse, key: sharedKey, nonce: nonce1)!
+                                log("\(typeAndName): FAILED encrypting challenge response")
                             }
-                            log("\(typeAndName): writing encrypted challenge response via LibreCRKit: \(encryptedResponse.hex) (\(encryptedResponse.count) bytes), plain (r1 + r2 + BLE PIN): \(challengeResponse.hex) (\(challengeResponse.count) bytes)")
-                            write(encryptedResponse)
-                            send(securityCommand: .challengeLoadDone)
-                        } else {
-                            if blePIN.isEmpty {
-                                log("\(typeAndName): BLE PIN unknown, need a NFC scan first.")
-                            }
-                            if sharedKey.isEmpty {
-                                log("\(typeAndName): shared key unknown, cannot proceed")
-                            }
+                        }
+                        if blePIN.isEmpty {
+                            log("\(typeAndName): BLE PIN unknown, need a NFC scan first")
+                        }
+                        if sharedKey.isEmpty {
+                            log("\(typeAndName): shared key unknown, cannot proceed")
                         }
                     }
 
@@ -914,22 +907,17 @@ extension String {
                     let nonce = payload.subdata(in: 60 ..< 67)
                     let seqId = UInt16(payload[60 ... 61])
                     log("\(typeAndName): encrypted kAuth: \(encryptedKAuth.hex), nonce: \(nonce.hex) (sequential id: \(seqId.hex))")
-
-                    if let decryptedKAuth = if settings.usingLibreCRKit {
-                        try? AESCCM.decrypt(
-                            nonce: nonce,
-                            ciphertext: Data(encryptedKAuth.prefix(56)),
-                            tag: Data(encryptedKAuth.suffix(4)),
-                            aad: Data(),
-                            aes: try! LibAES.phase5BlockEncryptor(rawKey: sharedKey)
-                        )
-                    } else {
-                        aesDecrypt(data: encryptedKAuth, key: sharedKey, nonce: nonce)
-                    } {
+                    if let decryptedKAuth = aesDecrypt(
+                        data: encryptedKAuth,
+                        key: sharedKey,
+                        nonce: nonce
+                    ) {
                         let r2 = decryptedKAuth.subdata(in:  0 ..< 16)
                         let r1 = decryptedKAuth.subdata(in: 16 ..< 32)
                         kEnc   = decryptedKAuth.subdata(in: 32 ..< 48)
                         ivEnc  = decryptedKAuth.subdata(in: 48 ..< 56)
+                        settings.activeSensorKEnc = kEnc
+                        settings.activeSensorIvEnc = ivEnc
                         log("\(typeAndName): decrypted kAuth: r2: \(r2.hex) (sent: \(self.r2.hex)), r1: \(r1.hex) (sent: \(self.r1.hex)), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
                     } else {
                         log("\(typeAndName): FAILED decrypting kAuth")
