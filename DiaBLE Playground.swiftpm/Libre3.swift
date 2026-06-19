@@ -457,22 +457,32 @@ extension String {
     /// 13 bytes written to .patchControl:
     /// - PATCH_CONTROL_COMMAND_SIZE = 7
     /// - a final sequential Int16 starting by 01 00 since it is enqueued
-    enum ControlCommand {
+    enum ControlCommand: String, CustomStringConvertible {
         /// - 010001 EC2C 0000 requests historical data from lifeCount 11520 (0x2CEC)
-        case historic(Data)       // type 1
+        case historic = "0100"    // type 1
 
         /// Requests past clinical data
         /// - 010101 9B48 0000 requests clinical data from lifeCount 18587 (0x489B)
-        case backfill(Data)       // type 2
+        case backfill = "0101"    // type 2
 
         /// - 040100 0000 0000 requests event log from index 01
-        case eventLog(Data)       // type 3
+        case eventLog = "04"      // type 3
 
         /// - 060000 0000 0000
-        case factoryData(Data)    // type 4
+        case factoryData = "06"   // type 4
 
         /// - 050000 0000 0000
-        case shutdownPatch(Data)  // type 5
+        case shutdownPatch = "05" // type 5
+
+        var description: String {
+            switch self {
+            case .historic:      "historic"
+            case .backfill:      "backfill"
+            case .eventLog:      "event log"
+            case .factoryData:   "factory data"
+            case .shutdownPatch: "shutdown patch"
+            }
+        }
     }
 
     // TODO:
@@ -583,6 +593,15 @@ extension String {
         transmitter!.write(Data([cmd.rawValue]), for: UUID.securityCommands.rawValue, .withResponse)
     }
 
+
+    func send(patchControlCommand cmd: ControlCommand, args: Data) {
+        let trail = Data(count: 7 - cmd.rawValue.count / 2 - args.count)
+        log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` patch control command \((cmd.rawValue.bytes + args).hex)")
+        currentControlCommand = cmd
+        // TODO: command queue final sequential ids
+        let encryptedCommand = encryptPacket(data: cmd.rawValue.bytes + args + trail, type: .controlCommand, ivEnc: ivEnc, sequenceId: outCryptoSequence)!
+        transmitter!.write(encryptedCommand + outCryptoSequence.data, for: UUID.patchControl.rawValue, .withResponse)
+    }
 
     func parsePackets(_ data: Data) -> (Data, String) {
         var payload = Data()
@@ -708,6 +727,26 @@ extension String {
             }
 
 
+        case .patchStatus:
+            if activationTime == 0 && settings.activeSensorActivationTime != 0 {
+                activationTime = UInt32(settings.activeSensorActivationTime)
+            }
+            let payload = data.prefix(16)
+            let seqId = UInt16(data.suffix(2))
+            log("\(typeAndName): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
+            debugLog("\(typeAndName): decrypting patch status: \(data.hex) (\(data.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+            if let patchStatus = decryptPacket(data: data, type: .patchStatus, ivEnc: ivEnc) {
+                log("\(typeAndName): decrypted patch status: \(patchStatus.hex)")
+                if patchStatus.count == 12 {
+                    parsePatchStatus(data: patchStatus)
+                }
+            } else {
+                log("\(typeAndName): FAILED decrypting patch status")
+            }
+            log("\(typeAndName): enabling notifications on the one-minute reading characteristic")
+            transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.oneMinuteReading.rawValue]!)
+
+
         case .oneMinuteReading:
             if buffer.count == 0 {
                 buffer = Data(data)
@@ -719,12 +758,12 @@ extension String {
                     log("\(typeAndName): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
                     debugLog("\(typeAndName): decrypting one-minute reading: \(buffer.hex) (\(buffer.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
                     if let oneMinuteReading = decryptPacket(data: buffer, type: .currentGlucose, ivEnc: ivEnc) {
-                        log("\(typeAndName): decrypted 1-minute reading: \(oneMinuteReading.hex) (\(oneMinuteReading.count) bytes")
+                        log("\(typeAndName): decrypted one-minute reading: \(oneMinuteReading.hex) (\(oneMinuteReading.count) bytes")
                         if oneMinuteReading.count == 29 {
                             parseOneMinuteReading(data: oneMinuteReading)
                         }
                     } else {
-                        log("\(typeAndName): FAILED decrypting 1-minute reading")
+                        log("\(typeAndName): FAILED decrypting one-minute reading")
                         if settings.selectedService == .libreLinkUp {
                             Task { @MainActor in
                                 try await Task.sleep(nanoseconds: 2_000_000_000)
@@ -758,27 +797,6 @@ extension String {
             currentBufferPacketType = packetTypes[UUID(rawValue: uuid)!]!
 
             log("\(typeAndName): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
-
-
-        case .patchStatus:
-            if activationTime == 0 && settings.activeSensorActivationTime != 0 {
-                activationTime = UInt32(settings.activeSensorActivationTime)
-            }
-            let payload = data.prefix(16)
-            let seqId = UInt16(data.suffix(2))
-            log("\(typeAndName): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
-            debugLog("\(typeAndName): decrypting patch status: \(data.hex) (\(data.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
-            if let patchStatus = decryptPacket(data: data, type: .patchStatus, ivEnc: ivEnc) {
-                log("\(typeAndName): decrypted patch status: \(patchStatus.hex)")
-                if patchStatus.count == 12 {
-                    parsePatchStatus(data: patchStatus)
-                }
-            } else {
-                log("\(typeAndName): FAILED decrypting patch status")
-            }
-            log("\(typeAndName): enabling notifications on the one-minute reading characteristic")
-            transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.oneMinuteReading.rawValue]!)
-
 
 
         case .securityCommands:
@@ -987,12 +1005,18 @@ extension String {
         log("\(typeAndName): parsed one-minute further data: ESA (Early Signal Attenuation) duration: \(esaDuration) minutes (0x\(data[6...7].hex)), projected glucose: \(projectedGlucose) mg/dL (0x\(data[8...9].hex)), uncapped current glucose: \(uncappedCurrentMgDl) mg/dL (0x\(data[15...16].hex)), uncapped historical glucose: \(uncappedHistoricMgDl) mg/dL (0x\(data[17...18].hex)), raw fast data: \(fastData.hex) (\(fastData.count) bytes)")
 
         // TODO
+        lastHistoricalLifeCount = Int(historicalLifeCount)
         lastLifeCount = Int(lifeCount)
         settings.activeSensorLastLifeCount = lastLifeCount
         lastReadingDate = date
         main.app.lastReadingDate = date
         main.app.currentGlucose = glucose
         main.app.trendArrow = trendArrow
+        // TODO:
+        // main.app.trendDelta = Int(rateOfChange) // TODO: Double delta
+        // main.app.trendDeltaMinutes = 1
+        // backfill 12 hours of historical data
+        // send(patchControlCommand: .historic, args: "01".bytes + (historicalLifeCount - 12 * 12 * 5).data)
         main.didParseSensor(self)
     }
 
