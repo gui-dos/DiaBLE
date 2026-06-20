@@ -1028,16 +1028,18 @@ extension String {
                 let reading = UInt16(data[(i * 2 + 2) ... (i * 2 + 3)])
                 let lifeCount = startLifeCount + UInt16(i * 5)
                 let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
-                let glucose = Int(reading & 0x1fff)
+                var glucose = Int(reading & 0x1fff)
                 // TODO: not range but data quality flags 0xE000?
                 let resultRange = ResultRange(rawValue: Int((reading & 6000) >> 13))!
+                let dataQuality = reading & 0x8000
                 let dqErrorFlag = reading & 0x8000 != 0
                 let entry = (lifeCount: lifeCount, date: date, glucose: glucose, range: resultRange, dqErrorFlag: dqErrorFlag)
                 readings.append(entry)
                 // TODO: data quality
-                history.append(Glucose(glucose, id: Int(lifeCount), date: date))
+                if dqErrorFlag { glucose = -glucose } // TODO: mark as invalid
+                history.append(Glucose(glucose, id: Int(lifeCount), date: date, dataQuality: Glucose.DataQuality(rawValue: Int(dataQuality))))
             }
-            log("\(typeAndName): parsed 6 backfill historical data: life count: \(startLifeCount) (0x\(data[0...1].hex)), date: \(date.local), readings: \(readings.map { "life count: \($0.lifeCount), date: \(date), glucose: \($0.glucose), range: \($0.range), quality error flag: \($0.dqErrorFlag)" })")
+            log("\(typeAndName): parsed 6 backfill historical data: life count: \(startLifeCount) (0x\(data[0...1].hex)), date: \(date.local), readings: \(readings.map { "life count: \($0.lifeCount), date: \($0.date), glucose: \($0.glucose), range: \($0.range), quality error flag: \($0.dqErrorFlag)" })")
         }
         self.history = history.reversed()
         main.history.factoryValues = self.history
