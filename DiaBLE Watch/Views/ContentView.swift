@@ -40,10 +40,6 @@ struct ContentView: View {
                 //     Plan()
                 // }
 
-                Tab("LibreCR", systemImage: "00.circle", value: .libreCR) {
-                    LibreCRContentView()
-                }
-
             }
             .toolbarBackground(.hidden, for: .navigationBar)
 
