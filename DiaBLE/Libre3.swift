@@ -1013,7 +1013,7 @@ extension String {
         // main.app.trendDeltaMinutes = 1
         if history.isEmpty {
             // backfill 12 hours of historical data:
-            send(controlCommand: .historic, args: "01".bytes + (historicalLifeCount - (12 * 12 - 1) * 5).data)
+            send(controlCommand: .historic, args: "01".bytes + max(historicalLifeCount - (12 * 12 - 1) * 5, 5).data)
         }
     }
 
@@ -1039,8 +1039,8 @@ extension String {
             }
             log("\(typeAndName): parsed 6 backfill historical data: life count: \(startLifeCount) (0x\(data[0...1].hex)), date: \(date.local), readings: \(readings.map { "life count: \($0.lifeCount), date: \(date), glucose: \($0.glucose), range: \($0.range), quality error flag: \($0.dqErrorFlag)" })")
         }
-        self.history = history
-        main.history.factoryValues = history
+        self.history = history.reversed()
+        main.history.factoryValues = self.history
         main.didParseSensor(self)
 
     }
