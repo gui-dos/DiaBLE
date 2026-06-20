@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 100;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -127,35 +127,29 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		C581D5992B0E699D002A4633 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 13;
+			dstSubfolder = PlugIns;
 			files = (
 				C581D5972B0E699D002A4633 /* DiaBLEWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C5BE8E5E29916D3600604237 /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
-			dstSubfolderSpec = 16;
+			dstSubfolder = Product;
 			files = (
 				C5BE8E5B29916D3600604237 /* DiaBLE Watch.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C5EF10752BE67C5C0021A413 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 10;
+			dstSubfolder = Frameworks;
 			files = (
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -237,30 +231,24 @@
 /* Begin PBXFrameworksBuildPhase section */
 		C581D5812B0E699C002A4633 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				C581D5882B0E699C002A4633 /* SwiftUI.framework in Frameworks */,
 				C581D5862B0E699C002A4633 /* WidgetKit.framework in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C59960DC2981E381005999C2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				C55D12B729ACB9CB0050F567 /* CryptoSwift in Frameworks */,
 				C556A5FF2FDE992500F8C95F /* LibreCRKit in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C5AAA6122981CF7000CA3EC1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				C55D12B229ACAE8F0050F567 /* CryptoSwift in Frameworks */,
 				C556A5FD2FDE98AB00F8C95F /* LibreCRKit in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -420,8 +408,6 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			name = DiaBLEWidgetExtension;
 			productName = DiaBLEWidgetExtension;
 			productReference = C581D5842B0E699C002A4633 /* DiaBLEWidgetExtension.appex */;
@@ -436,8 +422,6 @@
 				C59960DD2981E381005999C2 /* Resources */,
 			);
 			buildRules = (
-			);
-			dependencies = (
 			);
 			name = "DiaBLE Watch";
 			packageProductDependencies = (
@@ -496,7 +480,6 @@
 				};
 			};
 			buildConfigurationList = C5AAA6102981CF7000CA3EC1 /* Build configuration list for PBXProject "DiaBLE" */;
-			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -508,6 +491,7 @@
 				C55D12B029ACAE8F0050F567 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
 				C556A5FB2FDE98AB00F8C95F /* XCRemoteSwiftPackageReference "LibreCRKit" */,
 			);
+			preferredProjectObjectVersion = 100;
 			productRefGroup = C5AAA6162981CF7000CA3EC1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -522,16 +506,13 @@
 /* Begin PBXResourcesBuildPhase section */
 		C581D5822B0E699C002A4633 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				C52AF6692BC672C2001FA438 /* PrivacyInfo.xcprivacy in Resources */,
 				C581D5932B0E699D002A4633 /* Assets.xcassets in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C59960DD2981E381005999C2 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				C5E015E12989B0EA00F6EDF9 /* README.md in Resources */,
 				C5E400A029825F580021C6B7 /* company_ids.json in Resources */,
@@ -542,11 +523,9 @@
 				C5E4004829825C710021C6B7 /* alarm_high.mp3 in Resources */,
 				C59184472981E9B000A6DA89 /* Assets.xcassets in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C5AAA6132981CF7000CA3EC1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				C5E015E02989B0EA00F6EDF9 /* README.md in Resources */,
 				C5E4009F29825F580021C6B7 /* company_ids.json in Resources */,
@@ -557,25 +536,21 @@
 				C5E4004729825C710021C6B7 /* alarm_high.mp3 in Resources */,
 				C5AAA61D2981CF7200CA3EC1 /* Assets.xcassets in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C581D5802B0E699C002A4633 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				C581D58F2B0E699C002A4633 /* DiaBLEWidget.swift in Sources */,
 				C581D5912B0E699C002A4633 /* AppIntent.swift in Sources */,
 				C581D58B2B0E699C002A4633 /* DiaBLEWidgetBundle.swift in Sources */,
 				C581D58D2B0E699C002A4633 /* DiaBLEWidgetLiveActivity.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C59960DB2981E381005999C2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				C59184462981E73400A6DA89 /* App.swift in Sources */,
 				C5E4007D29825E4E0021C6B7 /* Abbott.swift in Sources */,
@@ -610,11 +585,9 @@
 				C5E4009A29825F1C0021C6B7 /* Nightscout.swift in Sources */,
 				C5916E4F29827E860051AC06 /* SettingsView.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C5AAA6112981CF7000CA3EC1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 				C5E4008B29825EC40021C6B7 /* Events.swift in Sources */,
 				C5ADF5822B00E65E00E29632 /* Libre2Gen2.swift in Sources */,
@@ -653,7 +626,6 @@
 				C50B9AD32AA7396500FF1EA3 /* ConsoleTools.swift in Sources */,
 				C5E4007C29825E4E0021C6B7 /* Abbott.swift in Sources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -672,7 +644,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		C581D59A2B0E699D002A4633 /* Debug */ = {
+		C581D59A2B0E699D002A4633 /* Debug configuration for PBXNativeTarget "DiaBLEWidgetExtension" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */;
 			buildSettings = {
@@ -710,7 +682,7 @@
 			};
 			name = Debug;
 		};
-		C581D59B2B0E699D002A4633 /* Release */ = {
+		C581D59B2B0E699D002A4633 /* Release configuration for PBXNativeTarget "DiaBLEWidgetExtension" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */;
 			buildSettings = {
@@ -748,7 +720,7 @@
 			};
 			name = Release;
 		};
-		C59960EA2981E383005999C2 /* Debug */ = {
+		C59960EA2981E383005999C2 /* Debug configuration for PBXNativeTarget "DiaBLE Watch" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */;
 			buildSettings = {
@@ -788,7 +760,7 @@
 			};
 			name = Debug;
 		};
-		C59960EB2981E383005999C2 /* Release */ = {
+		C59960EB2981E383005999C2 /* Release configuration for PBXNativeTarget "DiaBLE Watch" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */;
 			buildSettings = {
@@ -829,7 +801,7 @@
 			};
 			name = Release;
 		};
-		C5AAA6222981CF7200CA3EC1 /* Debug */ = {
+		C5AAA6222981CF7200CA3EC1 /* Debug configuration for PBXProject "DiaBLE" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -895,7 +867,7 @@
 			};
 			name = Debug;
 		};
-		C5AAA6232981CF7200CA3EC1 /* Release */ = {
+		C5AAA6232981CF7200CA3EC1 /* Release configuration for PBXProject "DiaBLE" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -954,7 +926,7 @@
 			};
 			name = Release;
 		};
-		C5AAA6252981CF7200CA3EC1 /* Debug */ = {
+		C5AAA6252981CF7200CA3EC1 /* Debug configuration for PBXNativeTarget "DiaBLE" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */;
 			buildSettings = {
@@ -1010,7 +982,7 @@
 			};
 			name = Debug;
 		};
-		C5AAA6262981CF7200CA3EC1 /* Release */ = {
+		C5AAA6262981CF7200CA3EC1 /* Release configuration for PBXNativeTarget "DiaBLE" */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 49DE8D3329AFFB3000BB7CF4 /* DiaBLE.xcconfig */;
 			buildSettings = {
@@ -1072,37 +1044,33 @@
 		C581D59C2B0E699D002A4633 /* Build configuration list for PBXNativeTarget "DiaBLEWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C581D59A2B0E699D002A4633 /* Debug */,
-				C581D59B2B0E699D002A4633 /* Release */,
+				C581D59A2B0E699D002A4633 /* Debug configuration for PBXNativeTarget "DiaBLEWidgetExtension" */,
+				C581D59B2B0E699D002A4633 /* Release configuration for PBXNativeTarget "DiaBLEWidgetExtension" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		C59960EC2981E383005999C2 /* Build configuration list for PBXNativeTarget "DiaBLE Watch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C59960EA2981E383005999C2 /* Debug */,
-				C59960EB2981E383005999C2 /* Release */,
+				C59960EA2981E383005999C2 /* Debug configuration for PBXNativeTarget "DiaBLE Watch" */,
+				C59960EB2981E383005999C2 /* Release configuration for PBXNativeTarget "DiaBLE Watch" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		C5AAA6102981CF7000CA3EC1 /* Build configuration list for PBXProject "DiaBLE" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C5AAA6222981CF7200CA3EC1 /* Debug */,
-				C5AAA6232981CF7200CA3EC1 /* Release */,
+				C5AAA6222981CF7200CA3EC1 /* Debug configuration for PBXProject "DiaBLE" */,
+				C5AAA6232981CF7200CA3EC1 /* Release configuration for PBXProject "DiaBLE" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		C5AAA6242981CF7200CA3EC1 /* Build configuration list for PBXNativeTarget "DiaBLE" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C5AAA6252981CF7200CA3EC1 /* Debug */,
-				C5AAA6262981CF7200CA3EC1 /* Release */,
+				C5AAA6252981CF7200CA3EC1 /* Debug configuration for PBXNativeTarget "DiaBLE" */,
+				C5AAA6262981CF7200CA3EC1 /* Release configuration for PBXNativeTarget "DiaBLE" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
