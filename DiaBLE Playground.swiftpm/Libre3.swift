@@ -594,7 +594,7 @@ extension String {
     }
 
 
-    func send(patchControlCommand cmd: ControlCommand, args: Data) {
+    func send(controlCommand cmd: ControlCommand, args: Data) {
         let trail = Data(count: 7 - cmd.rawValue.count / 2 - args.count)
         log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` patch control command \((cmd.rawValue.bytes + args).hex)")
         currentControlCommand = cmd
@@ -899,7 +899,8 @@ extension String {
                             if let encryptedResponse = aesEncrypt(
                                 data: challengeResponse,
                                 key: sharedKey,
-                                nonce: nonce1) {
+                                nonce: nonce1
+                            ) {
                                 log("\(typeAndName): writing encrypted challenge response: \(encryptedResponse.hex) (\(encryptedResponse.count) bytes), plain (r1 + r2 + BLE PIN): \(challengeResponse.hex) (\(challengeResponse.count) bytes)")
                                 write(encryptedResponse)
                                 send(securityCommand: .challengeLoadDone)
@@ -1010,19 +1011,21 @@ extension String {
         // TODO:
         // main.app.trendDelta = Int(rateOfChange) // TODO: Double delta
         // main.app.trendDeltaMinutes = 1
-        // backfill 12 hours of historical data
-        // send(patchControlCommand: .historic, args: "01".bytes + (historicalLifeCount - 12 * 12 * 5).data)
-        main.didParseSensor(self)
+        if history.isEmpty {
+            // backfill 12 hours of historical data:
+            send(controlCommand: .historic, args: "01".bytes + (historicalLifeCount - (12 * 12 - 1) * 5).data)
+        }
     }
 
     func parseHistoricalPackets(data: [Data]) {  // TODO: -> [HistoricalData]
         log("\(typeAndName): \(data.count) backfill historical data packets: \(data.map { $0.hex })")
+        var history = [Glucose]()
         for data in data {
             let startLifeCount = UInt16(data[0...1])
             let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(startLifeCount) * 60))
             var readings = [(lifeCount: UInt16, date: Date, glucose: Int, range: ResultRange, dqErrorFlag: Bool)]()
             for i in 0 ... 5 {
-                let reading = UInt16(data[(i * 2) ... (i * 2 + 1)])
+                let reading = UInt16(data[(i * 2 + 2) ... (i * 2 + 3)])
                 let lifeCount = startLifeCount + UInt16(i * 5)
                 let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
                 let glucose = Int(reading & 0x1fff)
@@ -1031,9 +1034,15 @@ extension String {
                 let dqErrorFlag = reading & 0x8000 != 0
                 let entry = (lifeCount: lifeCount, date: date, glucose: glucose, range: resultRange, dqErrorFlag: dqErrorFlag)
                 readings.append(entry)
+                // TODO: data quality
+                history.append(Glucose(glucose, id: Int(lifeCount), date: date))
             }
             log("\(typeAndName): parsed 6 backfill historical data: life count: \(startLifeCount) (0x\(data[0...1].hex)), date: \(date.local), readings: \(readings.map { "life count: \($0.lifeCount), date: \(date), glucose: \($0.glucose), range: \($0.range), quality error flag: \($0.dqErrorFlag)" })")
         }
+        self.history = history
+        main.history.factoryValues = history
+        main.didParseSensor(self)
+
     }
 
     func parseClinicalPackets(data: [Data]) {  // TODO: -> [FastData]
@@ -1109,7 +1118,6 @@ extension String {
         }
 
         if flag == 0x00 && response.count == 16 {
-
             let activationResponse = ActivationResponse(
                 bdAddress: Data(response[0 ..< 6].reversed()),
                 BLE_Pin:   response.subdata(in: 6 ..< 10),
@@ -1118,7 +1126,6 @@ extension String {
             let crc = UInt16(response[14 ... 15])
             let computedCrc = response[0 ... 13].crc16
             log("NFC: \(type) activation response: \(activationResponse), BLE address: \(activationResponse.bdAddress.hexAddress), BLE PIN: \(activationResponse.BLE_Pin.hex), activation date: \(Date(timeIntervalSince1970: Double(activationResponse.activationTime))), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
-
             transmitter?.macAddress = activationResponse.bdAddress
             blePIN = activationResponse.BLE_Pin
             settings.activeSensorBlePIN = blePIN
@@ -1285,7 +1292,6 @@ extension String {
     // 98–161: ECDSA signature: 64 bytes, raw r ‖ s signed with the `patchSigningKeys[v]` private counterpart
 
     // iOS Trident:
-
     let appCertificates = [
         "03 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 00 01 5F 14 9F E1 01 00 00 00 00 00 00 00 00 04 27 51 FD 1E F4 2B 14 5A 52 C5 93 AE 6B 5A 75 58 8A 9F 7E AF 1C 0F 99 85 F9 93 D5 8F 14 7B B8 41 68 42 24 49 96 37 92 DC 43 F3 84 47 EF EB BB EB 4A 53 B3 25 5C 0B E0 FE 1F 23 58 44 A3 D3 29 9E BA 97 B8 E6 C3 17 09 39 F2 77 8F 64 86 6F 06 6D EB 91 5D D6 62 9E EE 47 30 A1 E1 4C AB 75 C1 8C 4F EC 53 F8 85 4C 87 64 3A 76 4F 40 87 AE C0 39 4C 21 0C 18 86 5A 8F F4 5A DC 37 27 F4 8B 53 A7",
         "03 00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 00 01 5F 14 9F E1 01 00 00 00 00 00 00 00 00 04 E2 36 95 4F FD 06 A2 25 22 57 FA A7 17 6A D9 0A 69 02 E6 1D DA FF 40 FB 36 B8 FB 52 AA 09 2C 33 A8 02 32 63 2E 94 AF A8 28 86 AE 75 CE F9 22 CD 88 85 CE 8C DA B5 3D AB 2A 4F 23 9B CB 17 C2 6C DE 74 9E A1 6F 75 89 76 04 98 9F DC B3 F0 C7 BC 1D A5 E6 54 1D C3 CE C6 3E 72 0C D9 B3 6A 7B 59 3C FC C5 65 D6 7F 1E E1 84 64 B9 B9 7C CF 06 BE D0 40 C7 BB D5 D2 2F 35 DF DB 44 58 AC 7C 46 15"
