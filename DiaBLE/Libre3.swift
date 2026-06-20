@@ -499,9 +499,9 @@ extension String {
     // PATCH_CONTROL_INDEX_LOW_VALUE = 3
     // PATCH_CONTROL_INDEX_HIGH_VALUE = 5
 
-    var receiverId: UInt32 = 0    // fnv32Hash of LibreView ID string
+    var receiverId: UInt32 = 0  // fnv32Hash of LibreView ID string
 
-    var blePIN: Data = Data()    // 4 bytes returned by the activation command
+    var blePIN: Data = Data()   // 4 bytes returned by the activation command
 
     var buffer: Data = Data()
     var currentBufferPacketType: PacketType?
@@ -516,7 +516,7 @@ extension String {
 
     var ephemeralPrivateKey: P256.KeyAgreement.PrivateKey = .init()
     var ephemeralPublicKey: Data = Data() // 65-byte uncompressed P-256 returned by initECDH()
-    var nativeEphemeral: FirstPairNativeEphemeralMaterial?  // set by initECDH() when usingLibreCRKit
+    var nativeEphemeral: FirstPairNativeEphemeralMaterial?  // set by initECDH() when using LibreCRKit
 
     // FIXME: cannot work because we sent the app static public key with the app certificate
     var appStaticPrivateKey: P256.KeyAgreement.PrivateKey = .init()  // used when trying a new ECDH session
@@ -717,7 +717,6 @@ extension String {
                     case .factoryData:      parseFactoryDataPackets(data: Data(decryptedPackets.joined()))
                     default:
                         break
-
                     }
 
                     buffer = Data()
@@ -772,7 +771,6 @@ extension String {
                             }
                         }
                     }
-
                     buffer = Data()
                 }
             }
@@ -795,7 +793,6 @@ extension String {
             ]
 
             currentBufferPacketType = packetTypes[UUID(rawValue: uuid)!]!
-
             log("\(typeAndName): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
 
 
@@ -874,7 +871,6 @@ extension String {
                             }
                         }
                     }
-
 
 
                 case .authorizeSymmetric:
@@ -973,7 +969,6 @@ extension String {
         let appDisconnectReason = data[11]  // enum
 
         log("\(typeAndName): parsed patch status: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), error data: \(errorData) (0x\(data[2...3].hex)), event data: \(eventData) (0x\(data[4...5].hex)), index: \(index) (0x\(data[6].hex)), patch state: \(patchState) (0x\(data[7].hex)), current life count: \(currentLifeCount) (0x\(data[8...9].hex)), current date: \(currentDate.local), stack disconnect reason: \(stackDisconnectReason) (0x\(data[10].hex)), app disconnect reason: \(appDisconnectReason) (0x\(data[11].hex))")
-
     }
 
     func parseOneMinuteReading(data: Data) {  // TODO: -> GlucoseData
@@ -1041,7 +1036,6 @@ extension String {
         }
     }
 
-
     func parseClinicalPackets(data: [Data]) {  // TODO: -> [FastData]
         log("\(typeAndName): \(data.count) backfill clinical data packets: \(data.map { $0.hex })")
         for data in data {
@@ -1056,7 +1050,6 @@ extension String {
             log("\(typeAndName): parsed backfill clinical data: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data from filament: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex)), historical life count: \(historicalLifeCount), historical date: \(historicalDate)")
         }
     }
-
 
     func parseEventLogPackets(data: [Data]) {  // TODO: -> [EventLog]
         log("\(typeAndName): \(data.count) event log packets: \(data.map { $0.hex })")
@@ -1074,7 +1067,6 @@ extension String {
             log("\(typeAndName): parsed 2 log events: \(events.map { "life count: \($0.lifeCount) (0x\(data[0...1].hex)), date: \($0.date.local), error data: \($0.errorData), event data: \($0.eventData), index: \($0.index)" })")
         }
     }
-
 
     func parseFactoryDataPackets(data: Data) {  // TODO: -> Factory Data
         log("\(typeAndName): factory data: \(data.hex) (\(data.count) bytes)")

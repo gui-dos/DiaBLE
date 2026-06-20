@@ -90,13 +90,13 @@ extension Libre3 {
             _ = CC_SHA256($0.baseAddress, CC_LONG(hashInput.count), &digest)
         }
         let keyMaterial = Data(digest)  // 32 bytes
-
         return keyMaterial.prefix(16)   // key = first 16 bytes
     }
 
 
     public func aesEncrypt(data: Data, key: Data, nonce: Data) -> Data? {
         do {
+
             if settings.usingLibreCRKit && nonce.count == 7 {  // challenge data
                 let encrypted = try AESCCM.encrypt(
                     nonce: nonce,
@@ -116,6 +116,7 @@ extension Libre3 {
                               padding: .noPadding)
             let encrypted = try aes.encrypt(Array(data))
             return Data(encrypted)
+
         } catch {
             debugLog("Crypto: AES CCM encryption error: \(error)")
             return nil
@@ -125,6 +126,7 @@ extension Libre3 {
 
     public func aesDecrypt(data: Data, key: Data, nonce: Data) -> Data? {
         do {
+
             if settings.usingLibreCRKit && nonce.count == 7 {  // challenge data
                 let decrypted = try AESCCM.decrypt(
                     nonce: nonce,
@@ -144,6 +146,7 @@ extension Libre3 {
                               padding: .noPadding)
             let decrypted = try aes.decrypt(Array(data))
             return Data(decrypted)
+
         } catch {
             debugLog("Crypto: AES CCM decryption error: \(error)")
             return nil
