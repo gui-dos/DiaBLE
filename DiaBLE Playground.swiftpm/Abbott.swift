@@ -185,7 +185,7 @@ class Abbott: Transmitter {
                     // TODO: test with Libre2Gen2
                     if settings.selectedService == .libreLinkUp {
                         Task { @MainActor in
-                            try await Task.sleep(nanoseconds: 2_000_000_000)
+                            try? await Task.sleep(nanoseconds: 2_000_000_000)
                             await main.libreLinkUp?.reload()
                             settings.lastOnlineDate = app.lastReadingDate + 3
                         }
