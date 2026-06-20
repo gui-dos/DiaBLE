@@ -498,7 +498,7 @@ struct Details: View, LoggingView {
         .tint(.blue)
         .onAppear {
             if app.sensor != nil {
-                minutesSinceLastReading = Int(Date().timeIntervalSince(app.sensor.lastReadingDate)/60)
+                minutesSinceLastReading = app.sensor.lastReadingDate == .distantPast ? 0 : Int(Date().timeIntervalSince(app.sensor.lastReadingDate)/60)
             } else if app.lastReadingDate != Date.distantPast {
                 minutesSinceLastReading = Int(Date().timeIntervalSince(app.lastReadingDate)/60)
             }
