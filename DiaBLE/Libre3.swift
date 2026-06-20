@@ -1000,7 +1000,6 @@ extension String {
         log("\(typeAndName): parsed one-minute reading: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), glucose: \(glucose) mg/dL (0x\(data[2...3].hex) & 0x1fff), data quality: 0x\(dataQuality.hex), data quality error flag: \(dqErrorFlag), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex)), actionable flag: \(actionableFlag), status bits: 0x\(statusBits.hex), temperature: \(temperature)°C (0x\(data[19...20].hex)), historical life count: \(historicalLifeCount) (0x\(data[10...11].hex)), historical date: \(historicalDate.local), historical glucose: \(historicalReading) mg/dL (0x\(data[12...13].hex))")
         log("\(typeAndName): parsed one-minute further data: ESA (Early Signal Attenuation) duration: \(esaDuration) minutes (0x\(data[6...7].hex)), projected glucose: \(projectedGlucose) mg/dL (0x\(data[8...9].hex)), uncapped current glucose: \(uncappedCurrentMgDl) mg/dL (0x\(data[15...16].hex)), uncapped historical glucose: \(uncappedHistoricMgDl) mg/dL (0x\(data[17...18].hex)), raw fast data: \(fastData.hex) (\(fastData.count) bytes)")
 
-        // TODO
         lastHistoricalLifeCount = Int(historicalLifeCount)
         lastLifeCount = Int(lifeCount)
         settings.activeSensorLastLifeCount = lastLifeCount
@@ -1011,7 +1010,15 @@ extension String {
         // TODO:
         // main.app.trendDelta = Int(rateOfChange) // TODO: Double delta
         // main.app.trendDeltaMinutes = 1
-        if history.isEmpty {
+        if !history.isEmpty {
+            if lastHistoricalLifeCount == history[0].id + 5 {
+                // TODO: data quality
+                history.insert(Glucose(Int(historicalReading), id: lastHistoricalLifeCount, date: historicalDate), at: 0)
+                history.removeLast()
+                main.history.factoryValues = history
+            }
+            main.didParseSensor(self)
+        } else {
             // backfill 12 hours of historical data:
             send(controlCommand: .historic, args: "01".bytes + max(historicalLifeCount - (12 * 12 - 1) * 5, 5).data)
         }

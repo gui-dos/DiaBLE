@@ -431,7 +431,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
                 if let (values, _) = try? await nightscout?.read() {
                     let newEntries = values.count > 0 ? entries.filter { $0.date > values[0].date } : entries
                     if newEntries.count > 0 {
-                        try await nightscout?.post(entries: newEntries)
+                        try? await nightscout?.post(entries: newEntries)
                         if let (values, _) = try? await nightscout?.read() {
                             history.nightscoutValues = values
                         }
