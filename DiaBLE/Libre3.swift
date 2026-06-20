@@ -1037,7 +1037,9 @@ extension String {
                 readings.append(entry)
                 // TODO: data quality
                 if dqErrorFlag { glucose = -glucose } // TODO: mark as invalid
-                history.append(Glucose(glucose, id: Int(lifeCount), date: date, dataQuality: Glucose.DataQuality(rawValue: Int(dataQuality))))
+                if glucose != 0 {
+                    history.append(Glucose(glucose, id: Int(lifeCount), date: date, dataQuality: Glucose.DataQuality(rawValue: Int(dataQuality))))
+                }
             }
             log("\(typeAndName): parsed 6 backfill historical data: life count: \(startLifeCount) (0x\(data[0...1].hex)), date: \(date.local), readings: \(readings.map { "life count: \($0.lifeCount), date: \($0.date), glucose: \($0.glucose), range: \($0.range), quality error flag: \($0.dqErrorFlag)" })")
         }
