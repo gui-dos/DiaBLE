@@ -253,7 +253,8 @@ struct Monitor: View, LoggingView {
                     Image(systemName: settings.caffeinated ? "cup.and.saucer.fill" : "cup.and.saucer")
                         .foregroundStyle(.blue)
                 }
-                .hidden() // trick to center time // FIXME: doesn't work in watchOS 26 and the glass effect is rendered
+                .buttonStyle(.plain)  // no Liquid Glass border
+                .hidden()  // trick to center time
             }
 
         }
