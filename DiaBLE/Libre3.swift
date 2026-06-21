@@ -665,6 +665,12 @@ extension String {
                 let queueId = data.suffix(2)
                 // TODO: manage enqueued id
                 log("\(typeAndName): received \(data.count) bytes of patch control command data: \(data.hex), command queue id: \(queueId.hex)")
+                if let controlResponse = decryptPacket(data: data, type: .controlResponse, ivEnc: ivEnc) {
+                    log("\(typeAndName): decrypted control response: \(controlResponse.hex)")
+                    // TODO: 01000000 flag or queue id? (LibreCRKit: `.handshake`)
+                } else {
+                    log("\(typeAndName): FAILED decrypting control response")
+                }
 
                 if buffer.count > 0 {
 
