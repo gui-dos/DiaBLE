@@ -220,20 +220,21 @@ struct Details: View, LoggingView {
                                     .foregroundStyle(.blue)
                             }
 
-                            HStack {
-                                Text("kEnc")
-                                Spacer(minLength: 32)
-                                TextField("kEnc", value: $settings.activeSensorKEnc, format: HexDataFormatStyle(maxBytes: 16))
-                                    .multilineTextAlignment(.trailing)
-                                    .foregroundStyle(.blue)
-                            }
-
-                            HStack {
-                                Text("ivEnc")
-                                Spacer(minLength: 32)
-                                TextField("ivEnc", value: $settings.activeSensorIvEnc, format: HexDataFormatStyle(maxBytes: 8))
-                                    .multilineTextAlignment(.trailing)
-                                    .foregroundStyle(.blue)
+                            if settings.userLevel > .basic {
+                                HStack {
+                                    Text("kEnc")
+                                    Spacer(minLength: 32)
+                                    TextField("kEnc", value: $settings.activeSensorKEnc, format: HexDataFormatStyle(maxBytes: 16))
+                                        .multilineTextAlignment(.trailing)
+                                        .foregroundStyle(.blue)
+                                }
+                                HStack {
+                                    Text("ivEnc")
+                                    Spacer(minLength: 32)
+                                    TextField("ivEnc", value: $settings.activeSensorIvEnc, format: HexDataFormatStyle(maxBytes: 8))
+                                        .multilineTextAlignment(.trailing)
+                                        .foregroundStyle(.blue)
+                                }
                             }
 
                             // TODO

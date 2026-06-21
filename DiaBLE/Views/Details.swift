@@ -217,18 +217,19 @@ struct Details: View, LoggingView {
                                     .foregroundStyle(.blue)
                             }
 
-                            HStack {
-                                Text("kEnc")
-                                TextField("kEnc", value: $settings.activeSensorKEnc, format: HexDataFormatStyle(maxBytes: 16))
-                                    .multilineTextAlignment(.trailing)
-                                    .foregroundStyle(.blue)
-                            }
-
-                            HStack {
-                                Text("ivEnc")
-                                TextField("ivEnc", value: $settings.activeSensorIvEnc, format: HexDataFormatStyle(maxBytes: 8))
-                                    .multilineTextAlignment(.trailing)
-                                    .foregroundStyle(.blue)
+                            if settings.userLevel > .basic {
+                                HStack {
+                                    Text("kEnc")
+                                    TextField("kEnc", value: $settings.activeSensorKEnc, format: HexDataFormatStyle(maxBytes: 16))
+                                        .multilineTextAlignment(.trailing)
+                                        .foregroundStyle(.blue)
+                                }
+                                HStack {
+                                    Text("ivEnc")
+                                    TextField("ivEnc", value: $settings.activeSensorIvEnc, format: HexDataFormatStyle(maxBytes: 8))
+                                        .multilineTextAlignment(.trailing)
+                                        .foregroundStyle(.blue)
+                                }
                             }
 
                             Text("While in **Test** mode, switch to **Basic** mode and press **RePair** (also from the **Console Tools** menu) before the sensor disconnects (you need to scan it only once)**\((readingCountdown < 0 ? 0 : readingCountdown) - 30 > 0 ? ": \(readingCountdown - 30) s" : "").**")
