@@ -1016,11 +1016,19 @@ extension String {
         // TODO:
         // main.app.trendDelta = Int(rateOfChange) // TODO: Double delta
         // main.app.trendDeltaMinutes = 1
+        // TODO: data quality
+        self.trend.insert(Glucose(glucose, id: Int(lifeCount), date: date, dataQuality: Glucose.DataQuality(rawValue: Int(dataQuality))), at: 0)
+        if self.trend.count > 17 + 5 { // latency + current historical timestamp
+            self.trend.removeLast()
+        }
+        main.history.factoryTrend = self.trend
         if !history.isEmpty {
             if lastHistoricalLifeCount == history[0].id + 5 {
                 // TODO: data quality
                 history.insert(Glucose(Int(historicalReading), id: lastHistoricalLifeCount, date: historicalDate), at: 0)
-                history.removeLast()
+                if history.count > 12 * 12 {
+                    history.removeLast()
+                }
                 main.history.factoryValues = history
             }
             main.didParseSensor(self)
@@ -1058,12 +1066,14 @@ extension String {
         }
         self.history = history.reversed()
         main.history.factoryValues = self.history
+        outCryptoSequence += 1
+        send(controlCommand: .backfill, args: "01".bytes + max(UInt16(lastLifeCount - lastHistoricalLifeCount + 1), 0).data)
         main.didParseSensor(self)
-
     }
 
     func parseClinicalPackets(data: [Data]) {  // TODO: -> [FastData]
         log("\(typeAndName): \(data.count) backfill clinical data packets: \(data.map { $0.hex })")
+        var trend = [Glucose]()
         for data in data {
             let lifeCount = UInt16(data[0...1])
             let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
@@ -1074,7 +1084,12 @@ extension String {
             let historicalLifeCount = ((lifeCount - 17) / 5) * 5  // HISTORIC_POINT_LATENCY = 17
             let historicalDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(historicalLifeCount) * 60))
             log("\(typeAndName): parsed backfill clinical data: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data from filament: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex)), historical life count: \(historicalLifeCount), historical date: \(historicalDate)")
+            // TODO: data quality, glucose = Int(readingMgDl & 0x1fff)?
+            trend.append(Glucose(Int(readingMgDl), id: Int(lifeCount), date: date))
         }
+        self.trend = trend.reversed()
+        main.history.factoryTrend = self.trend
+        outCryptoSequence -= 1
     }
 
     func parseEventLogPackets(data: [Data]) {  // TODO: -> [EventLog]
