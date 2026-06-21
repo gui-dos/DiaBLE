@@ -1067,7 +1067,7 @@ extension String {
         self.history = history.reversed()
         main.history.factoryValues = self.history
         outCryptoSequence += 1
-        send(controlCommand: .backfill, args: "01".bytes + max(UInt16(lastLifeCount - lastHistoricalLifeCount + 1), 0).data)
+        send(controlCommand: .backfill, args: "01".bytes + max(UInt16(lastHistoricalLifeCount + 1), 0).data)
         main.didParseSensor(self)
     }
 
