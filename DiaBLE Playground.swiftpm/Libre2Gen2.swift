@@ -82,7 +82,6 @@ import CoreNFC
 
 
     // TODO: newer Gen2 P1/P2 require a further final random token array
-    // https://github.com/j-kaltes/Juggluco/commit/9ff9c9d
 
     static func p1(command: Int, _ i2: Int, _ d1: Data?, _ d2: Data?) -> Int {
         return 0

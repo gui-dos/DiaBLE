@@ -20,7 +20,7 @@ Currently I am targeting only the latest betas of Xcode and iOS and focusing on 
 ## TODOs
 
 * Libre 3:
-  - tackle AES 128 CCM, ECDH key agreement, Zimperium zShield anti-tampering... (see [Juggluco](https://github.com/j-kaltes/Juggluco))
+  - tackle AES 128 CCM, ECDH key agreement, Zimperium zShield anti-tampering...
 * Dexcom G7:
   - J-PAKE authentication protocol (see [xDrip+'s _keks_](https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/))
 * Apple Watch app:

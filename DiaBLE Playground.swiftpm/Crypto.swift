@@ -5,10 +5,6 @@ import CryptoSwift   // AES 128 CCM
 import LibreCRKit
 
 
-// https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/bcrypt/bcrypt.cpp
-// https://github.com/LoopKit/OmniBLE/blob/dev/OmniBLE/Bluetooth/EnDecrypt/EnDecrypt.swift
-
-
 extension Libre3 {
 
     // TODO

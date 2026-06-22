@@ -1,4 +1,5 @@
-<p align="center"><img src="./DiaBLE/Assets.xcassets/AppIcon.appiconset/Icon.png" width="25%" /></p>
+<p align="center"><img src="./DiaBLE/Assets.xcassets/AppIcon.appiconset/Icon.png" width="25%" /> &nbsp; &nbsp; <img src="https://github.com/gui-dos/DiaBLE/assets/7220550/901ad341-edfb-426e-9617-6763cf377447" width="20.5%"/> &nbsp; &nbsp; <img src="https://github.com/gui-dos/DiaBLE/assets/7220550/4d84f138-5b31-4db3-a407-f85265a78e66" width="20.5%" /></p>
+<br><br>
 
 ## Builds
 
@@ -19,7 +20,7 @@ Currently I am targeting only the latest betas of Xcode and iOS and focusing on 
 ## TODOs
 
 * Libre 3:
-  - tackle AES 128 CCM, ECDH key agreement, Zimperium zShield anti-tampering... (see [Juggluco](https://github.com/j-kaltes/Juggluco))
+  - tackle AES 128 CCM, ECDH key agreement, Zimperium zShield anti-tampering...
 * Dexcom G7:
   - J-PAKE authentication protocol (see [xDrip+'s _keks_](https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/))
 * Apple Watch app:

@@ -213,8 +213,6 @@ import CoreBluetooth
             // TODO: Dexcom ONE/G7 J-PAKE
             // https://en.wikipedia.org/wiki/Password_Authenticated_Key_Exchange_by_Juggling
             // https://github.com/Mbed-TLS/TF-PSA-Crypto/blob/development/drivers/builtin/include/mbedtls/private/ecjpake.h
-            // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/dex/java/tk/glucodata/DexGattCallback.java
-            // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/main/cpp/dexcom/
             // https://github.com/NightscoutFoundation/xDrip/commit/7ee3473 ("Add keks library")
             // https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/Calc.java
 
@@ -812,8 +810,6 @@ class DexcomSecurity {
     //     let popResponseSize: Swift.Int
     // }
 
-
-    // https://github.com/j-kaltes/Juggluco/blob/f9aad1a3080e92c42e253b96ed511cb7ba5ac5b2/Common/src/dex/java/tk/glucodata/DexGattCallback.java#L774-L779
     //
     // https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/src/main/java/jamorham/keks/Plugin.java
     // https://navid200.github.io/xDrip/docs/Dexcom/G7.html
