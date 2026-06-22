@@ -318,12 +318,14 @@ public class MainDelegate: NSObject, WKApplicationDelegate, UNUserNotificationCe
 
         // TODO: delete mirrored implementation from Abbott Device
         // TODO: compute accurate delta and update trend arrow
-        if history.factoryTrend.count > 5 {
+        if history.factoryTrend.count > 5 && (sensor.family < .libre3 || !settings.usingLibreCRKit) {
             let lastTrendValues = history.factoryTrend.prefix(6).filter { $0.value > 0 }
-            let deltaMinutes = lastTrendValues[0].id - lastTrendValues.last!.id
-            let delta = lastTrendValues[0].value - lastTrendValues.last!.value
-            app.trendDeltaMinutes = deltaMinutes
-            app.trendDelta = delta
+            if lastTrendValues.count > 0 {
+                let deltaMinutes = lastTrendValues[0].id - lastTrendValues.last!.id
+                let delta = lastTrendValues[0].value - lastTrendValues.last!.value
+                app.trendDeltaMinutes = deltaMinutes
+                app.trendDelta = Double(delta)
+            }
         }
 
         let remainingSnooze = (Double(settings.alarmSnoozeInterval * 60) + settings.lastAlarmDate.timeIntervalSinceNow)

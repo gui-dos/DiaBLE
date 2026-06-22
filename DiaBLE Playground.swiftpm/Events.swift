@@ -83,7 +83,7 @@ class EventKit: Logging {
 
                 if app.trendDeltaMinutes > 0 {
                     title += "\n"
-                    title += "\(app.trendDelta > 0 ? "+" : app.trendDelta < 0 ? "-" : "")\(app.trendDelta == 0 ? "→" : abs(app.trendDelta).units)" + " over " + "\(app.trendDeltaMinutes)" + " min"
+                    title += "\(app.trendDelta > 0 ? "+" : app.trendDelta < 0 ? "-" : "")\(app.trendDelta == 0 ? "→" : abs(app.trendDelta).decimalUnits)" + " over " + "\(app.trendDeltaMinutes)" + " min"
                 }
                 else {
                     title += "\n Computing trend"

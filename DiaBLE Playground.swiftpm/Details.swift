@@ -196,7 +196,7 @@ struct Details: View, LoggingView {
 
                         @Bindable var settings = settings
 
-                        if app.sensor == nil || app.sensor?.type == .libre3 || app.sensor?.type == .lingo || app.sensor?.type == .libreSelect || app.sensor?.type == .instinct {
+                        if app.sensor == nil || app.sensor?.type == .libre3 || app.sensor?.type == .lingo || app.sensor?.type == .libreSelect || app.sensor?.type == .instinct || app.sensor?.type == .libreX {
 
                             HStack {
                                 Text("Receiver ID")
@@ -232,7 +232,7 @@ struct Details: View, LoggingView {
                                 }
                             }
 
-                            Text("While in **Test** mode, switch to **Basic** mode and press **RePair** (also from the **Console Tools** menu) before the sensor disconnects (you need to scan it only once)**\((readingCountdown < 0 ? 0 : readingCountdown) - 30 > 0 ? ": \(readingCountdown - 30) s" : "").**")
+                            Text("While the sensor is connected in **Test** mode, switch to **Basic** mode and press **RePair** (also from the **Console Tools** menu) before it disconnects (you need to scan it only once)**\((readingCountdown < 0 ? 0 : readingCountdown) - 30 > 0 ? ": \(readingCountdown - 30) s" : "").**")
 
 
                         } else {

@@ -27,7 +27,7 @@ enum SensorType: String, CustomStringConvertible {
 }
 
 
-enum SensorFamily: Int, CustomStringConvertible {
+enum SensorFamily: Int, Comparable, CustomStringConvertible {
     case unknown    = -1
     case libre1     = 0
     case librePro   = 1
@@ -48,6 +48,9 @@ enum SensorFamily: Int, CustomStringConvertible {
         case .libreSense: "Libre Sense"
         case .lingo:      "Lingo"
         }
+    }
+    public static func < (lhs: SensorFamily, rhs: SensorFamily) -> Bool {
+        return lhs.rawValue < rhs.rawValue
     }
 }
 
@@ -118,7 +121,7 @@ enum SensorState: UInt8, CustomStringConvertible {
 
     var uid: SensorUid = Data() {
         willSet(uid) {
-            if type != .libre3 && type != .lingo && type != .libreSelect {
+            if type != .libre3 && type != .lingo && type != .libreSelect && type != .instinct && type != .libreX {
                 serial = serialNumber(uid: uid, family: self.family)
             }
         }

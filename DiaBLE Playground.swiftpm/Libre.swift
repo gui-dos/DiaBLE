@@ -39,7 +39,7 @@ extension SensorType {
             } else {
                 type = .unknown
             }
-            if type != .libre3 && type != .lingo && type != .libreSelect {
+            if type != .libre3 && type != .lingo && type != .libreSelect && type != .instinct && type != .libreX {
                 if info.count > 3 {
                     region = SensorRegion(rawValue: Int(info[3])) ?? .unknown
                 }

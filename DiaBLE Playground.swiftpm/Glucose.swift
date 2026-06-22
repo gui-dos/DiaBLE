@@ -26,6 +26,10 @@ extension Double {
         UserDefaults.standard.bool(forKey: "displayingMillimoles") ?
         String(format: "%.1f", self / 18.0182) : String(format: "%.0f", self)
     }
+    var decimalUnits: String {
+        UserDefaults.standard.bool(forKey: "displayingMillimoles") ?
+        String(format: "%.2", self / 18.0182) : String(format: "%.2f", self)
+    }
 }
 
 

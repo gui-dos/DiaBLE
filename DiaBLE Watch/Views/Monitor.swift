@@ -64,7 +64,7 @@ struct Monitor: View, LoggingView {
                         Group {
                             if app.trendDeltaMinutes > 0 {
                                 VStack(spacing: -6) {
-                                    Text("\(app.trendDelta > 0 ? "+ " : app.trendDelta < 0 ? "- " : "")\(app.trendDelta == 0 ? "→" : abs(app.trendDelta).units)")
+                                    Text("\(app.trendDelta > 0 ? "+ " : app.trendDelta < 0 ? "- " : "")\(app.trendDelta == 0 ? "→" : abs(app.trendDelta).decimalUnits)")
                                         .fontWeight(.black)
                                         .fixedSize()
                                     Text("\(app.trendDeltaMinutes)m")

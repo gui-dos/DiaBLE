@@ -145,7 +145,7 @@ enum TrendArrow: Int, CustomStringConvertible, CaseIterable, Codable {
     var lastReadingDate: Date = Date.distantPast
     var glycemicAlarm: GlycemicAlarm = .unknown
     var trendArrow: TrendArrow = .unknown
-    var trendDelta: Int = 0
+    var trendDelta: Double = 0.0
     var trendDeltaMinutes: Int = 0
 
     var deviceState: String = ""

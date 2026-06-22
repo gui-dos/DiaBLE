@@ -6,7 +6,7 @@ import LibreCRKit
 // https://insulinclub.de/index.php?thread/33795-free-three-ein-xposed-lsposed-modul-f%C3%BCr-libre-3-aktueller-wert-am-sperrbildschir/&postID=655055#post655055
 
 extension String {
-    /// Converts a LibreView account ID string into a receiverID
+    /// Converts a LibreView account GUID string into a receiverID
     /// i.e. "2977dec2-492a-11ea-9702-0242ac110002" -> 524381581
     var fnv32Hash: UInt32 { UInt32(self.reduce(0) { 0xFFFFFFFF & (UInt64($0) * 0x811C9DC5) ^ UInt64($1.asciiValue!) }) }
 }
@@ -18,13 +18,13 @@ extension String {
     enum State: UInt8, CustomStringConvertible {
         case manufacturing      = 0
 
-        /// out of package, not activated yet
+        /// packaged, not activated yet
         case storage            = 1
 
         case insertionDetection = 2
         case insertionFailed    = 3
 
-        /// advertising via BLE already 10/15 minutes after activation
+        /// advertising via BLE already 5/10 minutes after activation
         case paired             = 4
 
         /// if Trident is not run on the final day, still advertising for further 24 hours
@@ -76,7 +76,7 @@ extension String {
         case others = 1
         case sensor = 4    // Libre 3's product family
         case lingo  = 9
-        case instinct = 10 // Medtronic-branded Libre 3+ (firmware 1.4, gen=1)
+        case instinct = 10 // Medtronic-branded Libre 3+ (firmware 1.4, generation 1)
 
         var description: String {
             switch self {
@@ -1013,9 +1013,8 @@ extension String {
         main.app.lastReadingDate = date
         main.app.currentGlucose = glucose
         main.app.trendArrow = trendArrow
-        // TODO:
-        // main.app.trendDelta = Int(rateOfChange) // TODO: Double delta
-        // main.app.trendDeltaMinutes = 1
+        main.app.trendDelta = rateOfChange
+        main.app.trendDeltaMinutes = 1
         // TODO: data quality
         self.trend.insert(Glucose(glucose, id: Int(lifeCount), date: date, dataQuality: Glucose.DataQuality(rawValue: Int(dataQuality))), at: 0)
         if self.trend.count > 17 + 5 { // latency + current historical timestamp
