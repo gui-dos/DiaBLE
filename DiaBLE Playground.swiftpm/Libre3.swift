@@ -594,7 +594,7 @@ extension String {
     }
 
 
-    func send(controlCommand cmd: ControlCommand, args: Data) {
+    func send(controlCommand cmd: ControlCommand, args: Data = Data()) {
         let trail = Data(count: 7 - cmd.rawValue.count / 2 - args.count)
         log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` patch control command \((cmd.rawValue.bytes + args).hex)")
         currentControlCommand = cmd
@@ -720,7 +720,7 @@ extension String {
                     case .backfillHistoric: parseHistoricalPackets(data: decryptedPackets)
                     case .backfillClinical: parseClinicalPackets(data: decryptedPackets)
                     case .eventLog:         parseEventLogPackets(data: decryptedPackets)
-                    case .factoryData:      parseFactoryDataPackets(data: Data(decryptedPackets.joined()))
+                    case .factoryData:      parseFactoryDataPackets(data: decryptedPackets)
                     default:
                         break
                     }
@@ -1062,12 +1062,12 @@ extension String {
                     history.append(Glucose(glucose, id: Int(lifeCount), date: date, dataQuality: Glucose.DataQuality(rawValue: Int(dataQuality))))
                 }
             }
-            log("\(typeAndName): parsed 6 backfill historical data: life count: \(startLifeCount) (0x\(data[0...1].hex)), date: \(date.local), readings: \(readings.map { "life count: \($0.lifeCount), date: \($0.date), glucose: \($0.glucose), range: \($0.range), quality error flag: \($0.dqErrorFlag)" })")
+            log("\(typeAndName): parsed 6 backfill historical data: life count: \(startLifeCount) (0x\(data[0...1].hex)), date: \(date.local), readings: \(readings.map { "life count: \($0.lifeCount), date: \($0.date.local), glucose: \($0.glucose), range: \($0.range), quality error flag: \($0.dqErrorFlag)" })")
         }
         self.history = history.reversed()
         main.history.factoryValues = self.history
         outCryptoSequence += 1
-        send(controlCommand: .backfill, args: "01".bytes + max(UInt16(lastHistoricalLifeCount + 1), 0).data)
+        send(controlCommand: .backfill, args: "01".bytes + max(UInt16(lastHistoricalLifeCount + 1), 1).data)
         main.didParseSensor(self)
     }
 
@@ -1083,13 +1083,23 @@ extension String {
             // TODO:
             let historicalLifeCount = ((lifeCount - 17) / 5) * 5  // HISTORIC_POINT_LATENCY = 17
             let historicalDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(historicalLifeCount) * 60))
-            log("\(typeAndName): parsed backfilled clinical data: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex)), historical life count: \(historicalLifeCount), historical date: \(historicalDate)")
+            log("\(typeAndName): parsed backfilled clinical data: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex)), historical life count: \(historicalLifeCount), historical date: \(historicalDate.local)")
             // TODO: data quality, glucose = Int(readingMgDl & 0x1fff)?
             trend.append(Glucose(Int(readingMgDl), id: Int(lifeCount), date: date))
         }
         self.trend = trend.reversed()
         main.history.factoryTrend = self.trend
         outCryptoSequence -= 1
+
+        // TODO: test factory data end event log
+
+        // outCryptoSequence += 1
+        // send(controlCommand: .factoryData)
+        //
+        // requests log events from index 01:
+        // send(controlCommand: .eventLog, args: "01".bytes)
+
+
     }
 
     func parseEventLogPackets(data: [Data]) {  // TODO: -> [EventLog]
@@ -1109,8 +1119,12 @@ extension String {
         }
     }
 
-    func parseFactoryDataPackets(data: Data) {  // TODO: -> Factory Data
-        log("\(typeAndName): factory data: \(data.hex) (\(data.count) bytes)")
+    func parseFactoryDataPackets(data: [Data]) {
+        var factoryData = Data()
+        for data in data {
+            factoryData.append(data.dropFirst())
+        }
+        log("\(typeAndName): \(factoryData.hexDump(header: "factory data (\(factoryData.count) bytes):"))")
     }
 
 
@@ -1157,7 +1171,7 @@ extension String {
             )
             let crc = UInt16(response[14 ... 15])
             let computedCrc = response[0 ... 13].crc16
-            log("NFC: \(type) activation response: \(activationResponse), BLE address: \(activationResponse.bdAddress.hexAddress), BLE PIN: \(activationResponse.BLE_Pin.hex), activation date: \(Date(timeIntervalSince1970: Double(activationResponse.activationTime))), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
+            log("NFC: \(type) activation response: \(activationResponse), BLE address: \(activationResponse.bdAddress.hexAddress), BLE PIN: \(activationResponse.BLE_Pin.hex), activation date: \(Date(timeIntervalSince1970: Double(activationResponse.activationTime)).local), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
             transmitter?.macAddress = activationResponse.bdAddress
             blePIN = activationResponse.BLE_Pin
             settings.activeSensorBlePIN = blePIN
