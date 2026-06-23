@@ -986,7 +986,8 @@ extension String {
         let dataQuality = (readingMgDl & 0xE000) // upper 3 bits
         let dqErrorFlag = readingMgDl & 0x8000 != 0  // MSB
         // TODO: TOO_HOT = 0xA000, TOO_COLD = 0xC000
-        let rateOfChange = Double(Int16(bitPattern: UInt16(data[4...5]))) / 100.0
+        let rateOfChangeInt16 = Int16(bitPattern: UInt16(data[4...5]))
+        let rateOfChange = rateOfChangeInt16 != Int16.min ? Double(rateOfChangeInt16) / 100.0 : 0.0
         let esaDuration = UInt16(data[6...7])
         let projectedGlucose = UInt16(data[8...9]) / 100
         let historicalLifeCount = UInt16(data[10...11])
@@ -1071,7 +1072,7 @@ extension String {
     }
 
     func parseClinicalPackets(data: [Data]) {  // TODO: -> [FastData]
-        log("\(typeAndName): \(data.count) backfill clinical data packets: \(data.map { $0.hex })")
+        log("\(typeAndName): \(data.count) backfilled clinical data packets: \(data.map { $0.hex })")
         var trend = [Glucose]()
         for data in data {
             let lifeCount = UInt16(data[0...1])
@@ -1082,7 +1083,7 @@ extension String {
             // TODO:
             let historicalLifeCount = ((lifeCount - 17) / 5) * 5  // HISTORIC_POINT_LATENCY = 17
             let historicalDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(historicalLifeCount) * 60))
-            log("\(typeAndName): parsed backfill clinical data: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data from filament: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex)), historical life count: \(historicalLifeCount), historical date: \(historicalDate)")
+            log("\(typeAndName): parsed backfilled clinical data: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), raw data: 0x\(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(data[10...11].hex)), historical: \(historicMgDl) mg/dL (0x\(data[12...13].hex)), historical life count: \(historicalLifeCount), historical date: \(historicalDate)")
             // TODO: data quality, glucose = Int(readingMgDl & 0x1fff)?
             trend.append(Glucose(Int(readingMgDl), id: Int(lifeCount), date: date))
         }
