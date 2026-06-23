@@ -1116,7 +1116,7 @@ extension String {
         }
         var msg = "\(typeAndName): event log:"
         for event in events {
-            msg += "\n\(event.lifeCount.hex) \(event.date.local)\n"
+            msg += "\n\(event.index). \(event.lifeCount.hex) \(event.date.local)\n"
             // TODO:
             if var state = Libre3.State(rawValue: UInt8(event.eventData))?.description {
                 if state == "Insertion failed" { state = "Warming up" }  // TODO: state 3 error
