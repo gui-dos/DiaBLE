@@ -1124,7 +1124,7 @@ extension String {
         for data in data {
             factoryData.append(data.dropFirst())
         }
-        log("\(typeAndName): \(factoryData.hexDump(header: "factory data (\(factoryData.count) bytes):"))")
+        log("\(typeAndName): \(factoryData.hexDump(header: "factory data: computed CRC: \(factoryData.dropLast(2).crc16.hex) (\(factoryData.count) bytes):"))")
     }
 
 
