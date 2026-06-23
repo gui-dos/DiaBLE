@@ -1115,8 +1115,9 @@ extension String {
             }
             debugLog("\(typeAndName): parsed 2 log events: \(events.map { "life count: \($0.lifeCount) (0x\(data[0...1].hex)), date: \($0.date.local), error data: \($0.errorData), event data: \($0.eventData), index: \($0.index)" })")
         }
+        var msg = "\(typeAndName): event log:"
         for event in events {
-            var msg = "\(event.lifeCount.hex) \(event.date.local):\n"
+            msg += "\n\(event.lifeCount.hex) \(event.date.local)\n"
             // TODO:
             if var state = Libre3.State(rawValue: UInt8(event.eventData))?.description {
                 if state == "Insertion failed" { state = "Warming up" }  // TODO: state 3 error
@@ -1125,10 +1126,10 @@ extension String {
                 msg += "\(event.eventData.hex)"
             }
             if event.errorData != 0 {
-                msg += ", error: (\(event.errorData.hex))"
+                msg += ", error: \(event.errorData.hex)"
             }
-            log(msg)
         }
+        log(msg)
 
     }
 
