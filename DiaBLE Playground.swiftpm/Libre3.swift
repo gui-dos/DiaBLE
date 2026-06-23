@@ -1089,23 +1089,21 @@ extension String {
         }
         self.trend = trend.reversed()
         main.history.factoryTrend = self.trend
-        outCryptoSequence -= 1
 
-        // TODO: test factory data end event log
+        outCryptoSequence += 1
+        // request event log from index 01:
+        send(controlCommand: .eventLog, args: "01".bytes)
 
+        // TODO: factory data
         // outCryptoSequence += 1
         // send(controlCommand: .factoryData)
-        //
-        // requests log events from index 01:
-        // send(controlCommand: .eventLog, args: "01".bytes)
-
 
     }
 
     func parseEventLogPackets(data: [Data]) {  // TODO: -> [EventLog]
         log("\(typeAndName): \(data.count) event log packets: \(data.map { $0.hex })")
+        var events = [(lifeCount: UInt16, date: Date, errorData: UInt16, eventData: UInt16, index: UInt8)]()
         for data in data {
-            var events = [(lifeCount: UInt16, date: Date, errorData: UInt16, eventData: UInt16, index: UInt8)]()
             for i in 0...1 {
                 let lifeCount = UInt16(data[(i * 7) ... (i * 7 + 1)])
                 let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
@@ -1115,8 +1113,23 @@ extension String {
                 let event = (lifeCount: lifeCount, date: date, errorData: errorData, eventData: eventData, index: index)
                 events.append(event)
             }
-            log("\(typeAndName): parsed 2 log events: \(events.map { "life count: \($0.lifeCount) (0x\(data[0...1].hex)), date: \($0.date.local), error data: \($0.errorData), event data: \($0.eventData), index: \($0.index)" })")
+            debugLog("\(typeAndName): parsed 2 log events: \(events.map { "life count: \($0.lifeCount) (0x\(data[0...1].hex)), date: \($0.date.local), error data: \($0.errorData), event data: \($0.eventData), index: \($0.index)" })")
         }
+        for event in events {
+            var msg = "\(event.lifeCount.hex) \(event.date.local):\n"
+            // TODO:
+            if var state = Libre3.State(rawValue: UInt8(event.eventData))?.description {
+                if state == "Insertion failed" { state = "Warming up" }  // TODO: state 3 error
+                msg += "\(event.eventData.hex): \(state)"
+            } else {
+                msg += "\(event.eventData.hex)"
+            }
+            if event.errorData != 0 {
+                msg += ", error: (\(event.errorData.hex))"
+            }
+            log(msg)
+        }
+
     }
 
     func parseFactoryDataPackets(data: [Data]) {
