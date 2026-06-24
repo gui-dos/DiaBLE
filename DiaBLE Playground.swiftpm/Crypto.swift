@@ -99,7 +99,7 @@ extension Libre3 {
                     plaintext: data,
                     aad: Data(),
                     tagLength: 4,
-                    aes: try! LibAES.phase5BlockEncryptor(rawKey: key)
+                    aes: try LibAES.phase5BlockEncryptor(rawKey: key)
                 )
                 return encrypted.ciphertext + encrypted.tag
             }
@@ -129,7 +129,7 @@ extension Libre3 {
                     ciphertext: Data(data.dropLast(4)),
                     tag: Data(data.suffix(4)),
                     aad: Data(),
-                    aes: try! LibAES.phase5BlockEncryptor(rawKey: key)
+                    aes: try LibAES.phase5BlockEncryptor(rawKey: key)
                 )
                 return decrypted
             }

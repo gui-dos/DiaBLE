@@ -378,7 +378,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
             } else if uuid == Libre3.UUID.patchStatus.rawValue {
                 msg += "; avoid enabling notifications because of 'Encryption is insufficient' error"
 
-            } else if uuid == Libre3.UUID.oneMinuteReading.rawValue {
+            } else if uuid == Libre3.UUID.oneMinuteReading.rawValue && settings.userLevel < .test {  // not eavesdropping on Trident
                 msg += "; postoponing enabling notifications"
 
             } else if uuid == Abbott.dataReadCharacteristicUUID {

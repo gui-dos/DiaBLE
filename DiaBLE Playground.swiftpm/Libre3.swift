@@ -715,13 +715,15 @@ extension String {
                         }
                     }
 
-                    switch currentBufferPacketType! {
-                    case .backfillHistoric: parseHistoricalPackets(data: decryptedPackets)
-                    case .backfillClinical: parseClinicalPackets(data: decryptedPackets)
-                    case .eventLog:         parseEventLogPackets(data: decryptedPackets)
-                    case .factoryData:      parseFactoryDataPackets(data: decryptedPackets)
-                    default:
-                        break
+                    if decryptedPackets.count > 0 {
+                        switch currentBufferPacketType! {
+                        case .backfillHistoric: parseHistoricalPackets(data: decryptedPackets)
+                        case .backfillClinical: parseClinicalPackets(data: decryptedPackets)
+                        case .eventLog:         parseEventLogPackets(data: decryptedPackets)
+                        case .factoryData:      parseFactoryDataPackets(data: decryptedPackets)
+                        default:
+                            break
+                        }
                     }
 
                     buffer = Data()
@@ -1120,9 +1122,9 @@ extension String {
             // TODO:
             if var state = Libre3.State(rawValue: UInt8(event.eventData))?.description {
                 if state == "Insertion failed" { state = "Warming up" }  // TODO: state 3 error
-                msg += "\(event.eventData.hex): \(state)"
+                msg += "   \(event.eventData.hex): \(state)"
             } else {
-                msg += "\(event.eventData.hex)"
+                msg += "   \(event.eventData.hex)"
             }
             if event.errorData != 0 {
                 msg += ", error: \(event.errorData.hex)"
