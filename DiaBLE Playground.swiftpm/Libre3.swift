@@ -1041,7 +1041,7 @@ extension String {
             age = Int(Date().timeIntervalSince(Date(timeIntervalSince1970: Double(activationTime)))) / 60
             let crc = UInt16(response[14 ... 15])
             let computedCrc = response[0 ... 13].crc16
-            log("NFC: \(type) activation response: BLE MAC address: \(macAddress), BLE PIN: \(blePIN.hex), activation date: \(Date(timeIntervalSince1970: Double(activationTime)).local), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
+            log("NFC: \(type) activation response: BLE MAC address: \(macAddress.hexAddress), BLE PIN: \(blePIN.hex), activation date: \(Date(timeIntervalSince1970: Double(activationTime)).local), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
         }
     }
 
