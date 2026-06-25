@@ -58,7 +58,6 @@ extension String {
     enum Condition: Int, CustomStringConvertible {
         case ok      = 0
         case invalid = 1
-
         /// Early Signal Attenuation
         case esa     = 2
 
@@ -106,116 +105,6 @@ extension String {
     }
 
 
-    // TODO: var members, struct references, enums
-
-
-    struct PatchInfo {
-        let NFC_Key: Int
-        let localization: Int  // 1: Europe, 2: US
-        let generation: Int    // 0: Libre 3, 1: Libre 3+
-        let wearDuration: Int
-        let warmupTime: Int
-        let productType: ProductType
-        let state: State
-        let fwVersion: Data
-        let compressedSN: Data
-        let securityVersion: Int
-    }
-
-
-    struct ErrorData {
-        let errorCode: Int
-        let data: Data
-    }
-
-
-    struct GlucoseData {
-        let lifeCount: UInt16
-        let readingMgDl: UInt16
-        let dqError: UInt16
-        let historicalLifeCount: UInt16
-        let historicalReading: UInt16
-        let projectedGlucose: UInt16
-        let historicalReadingDQError: UInt16
-        let rateOfChange: Int16
-        let trend: TrendArrow
-        let esaDuration: UInt16
-        let temperatureStatus: Int
-        let actionableStatus: Int
-        let glycemicAlarmStatus: GlycemicAlarm
-        let glucoseRangeStatus: ResultRange
-        let sensorCondition: Condition
-        let uncappedCurrentMgDl: Int
-        let uncappedHistoricMgDl: Int
-        let temperature: Int
-        let fastData: Data
-    }
-
-
-    struct HistoricalData {
-        let reading: Int
-        let dqError: Int
-        let lifeCount: Int
-    }
-
-
-    struct ActivationResponse {
-        let bdAddress: Data         // 6 bytes
-        let BLE_Pin: Data           // 4 bytes
-        let activationTime: UInt32  // 4 bytes
-    }
-
-
-    struct EventLog {
-        let lifeCount: Int
-        let errorData: Int
-        let eventData: Int
-        let index: Int
-    }
-
-
-    // Clinical Data
-    struct FastData {
-        let lifeCount: Int
-        let uncappedReadingMgdl: Int
-        let uncappedHistoricReadingMgDl: Int
-        let dqError: Int
-        let temperature: Int
-        let rawData: Data  // first 6 of 8 bytes coming from the filament as for the Libre 1/2
-    }
-
-
-    struct PatchStatus {
-        let patchState: State
-        let totalEvents: Int
-        let lifeCount: Int
-        let errorData: Int
-        let eventData: Int
-        let index: UInt8
-        let currentLifeCount: Int
-        let stackDisconnectReason: UInt8
-        let appDisconnectReason: UInt8
-    }
-
-
-    struct InitParam {
-        let activationTime: UInt32
-        var firstConnect: Bool
-        let serialNumber: String
-        var lastLifeCountReceived: Int
-        let hybridModeEnabled: Bool
-        let dataFile: Any
-        let blePIN: Data
-        var lastEventReceived: Int
-        let deviceAddress: Data
-        let warmupDuration: Int
-        let wearDuration: Int
-        var lastHistoricalLifeCountReceived: Int
-        let exportedKAuth: Data
-        let securityVersion: Int
-    }
-
-
     public enum PacketType: UInt8 {
         case controlCommand   = 0
         case controlResponse  = 1
@@ -250,34 +139,6 @@ extension String {
         [0xF0, 0x00, 0x00],
         [0x44, 0x00, 0x00]
     ]
-
-
-    struct BCSecurityContext {
-        let packetDescriptorArray: [[UInt8]] = packetDescriptors
-        var key: Data    = Data(count: 16)  // kEnc
-        var iv_enc: Data = Data(count: 8)
-        var nonce: Data  = Data(count: 13)
-        var outCryptoSequence: UInt16 = 1
-    }
-
-
-    struct CGMSensor {
-        var sensor: Sensor
-        var deviceType: Int
-        var cryptoLib: Any
-        var securityContext: BCSecurityContext
-        var patchEphemeral: Data
-        var r1: Data     // 16 bytes  ---+
-        var r2: Data     // 16 bytes  ---+
-        var nonce1: Data //  7 bytes     +-- from decrypted kAuth
-        var kEnc: Data   // 16 bytes  ---+
-        var ivEnc: Data  //  8 bytes  ---+
-        var exportedkAuth: Data //  149 bytes
-        var securityLibInitialized: Bool
-        var isPreAuthorized: Bool
-        var initParam: InitParam
-        var securityVersion: Int
-    }
 
 
     enum UUID: String, CustomStringConvertible, CaseIterable {
@@ -321,8 +182,6 @@ extension String {
 
     class var knownUUIDs: [String] { UUID.allCases.map(\.rawValue) }
 
-
-    // TODO: rename commands and events enums expressively
 
     // CMD_ECDH_START              = 0x01
     // CMD_LOAD_CERT_DATA          = 0x02
@@ -454,33 +313,28 @@ extension String {
         }
     }
 
-    /// 13 bytes written to .patchControl:
-    /// - PATCH_CONTROL_COMMAND_SIZE = 7
-    /// - a final sequential Int16 starting by 01 00 since it is enqueued
-    enum ControlCommand: String, CustomStringConvertible {
-        /// - 010001 EC2C 0000 requests historical data from lifeCount 11520 (0x2CEC)
-        case historic = "0100"    // type 1
 
-        /// Requests past clinical data
-        /// - 010101 9B48 0000 requests clinical data from lifeCount 18587 (0x489B)
-        case backfill = "0101"    // type 2
+    enum ControlCommand: String, CustomStringConvertible {
+        /// - 010001 EC2C 0000 requests historical data from lifeCount 0x2CEC
+        case historic = "0100"
+
+        /// - 010101 9B48 0000 requests clinical data from lifeCount 0x489B
+        case backfill = "0101"
 
         /// - 040100 0000 0000 requests event log from index 01
-        case eventLog = "04"      // type 3
+        case eventLog = "04"
 
-        /// - 060000 0000 0000
-        case factoryData = "06"   // type 4
+        case shutdownPatch = "05"
 
-        /// - 050000 0000 0000
-        case shutdownPatch = "05" // type 5
+        case factoryData = "06"
 
         var description: String {
             switch self {
             case .historic:      "historic"
             case .backfill:      "backfill"
             case .eventLog:      "event log"
-            case .factoryData:   "factory data"
             case .shutdownPatch: "shutdown patch"
+            case .factoryData:   "factory data"
             }
         }
     }
@@ -523,14 +377,13 @@ extension String {
 
     var exportedKAuth: Data = Data() // 149-byte persistent SKB wrapped exported blob, includes encoded appStaticPrivateKey
 
-    // CGMSensor and BCSecurityContext members:
     var sharedKey: Data = Data()  // 16-byte first-pair ECDH shared secret
     var outCryptoSequence: UInt16 = 1
     var kEnc: Data = Data()  // 16-byte session key
     var ivEnc: Data = Data() // 8 bytes
     // Challenge nonces stored during the security handshake
     var r1: Data = Data()     // 16 bytes from sensor challenge
-    var r2: Data = Data()     // 16 bytes generated locally
+    var r2: Data = Data()     // 16 random bytes generated locally
     var nonce1: Data = Data() //  7 bytes from sensor challenge
 
     var lastLifeCount: Int = 0
@@ -539,6 +392,7 @@ extension String {
 
     var securityVersion: Int = 1
 
+
     func parsePatchInfo() {
 
         let productType = Int(patchInfo[12])
@@ -546,12 +400,12 @@ extension String {
         log("\(type): product type: \(ProductType(rawValue: productType)?.description ?? "unknown") (0x\(productType.hex))")
 
         let securityVersion = UInt16(patchInfo[0...1])
-        let localization    = UInt16(patchInfo[2...3])
-        let generation      = UInt16(patchInfo[4...5])
+        let localization    = UInt16(patchInfo[2...3])  // 1: Europe, 2: US
+        let generation      = UInt16(patchInfo[4...5])  // 0: Libre 3, 1: Libre 3+, Instinct
         log("\(type): security version: \(securityVersion) (0x\(securityVersion.hex)), localization: \(localization) (0x\(localization.hex)), generation: \(generation) (0x\(generation.hex))")
 
         self.securityVersion = Int(securityVersion)
-        self.generation = Int(generation)  // 1: Libre 3+, Instinct
+        self.generation = Int(generation)
 
         region = SensorRegion(rawValue: Int(localization & 0xFF)) ?? .unknown
         let subregion = UInt8((localization & 0xFF00) >> 8)
@@ -964,7 +818,7 @@ extension String {
 
     }
 
-    func parsePatchStatus(data: Data) {  // TODO: -> PatchStatus
+    func parsePatchStatus(data: Data) {
         let lifeCount = UInt16(data[0...1])
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let errorData = UInt16(data[2...3])
@@ -979,7 +833,7 @@ extension String {
         log("\(typeAndName): parsed patch status: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), error data: \(errorData) (0x\(data[2...3].hex)), event data: \(eventData) (0x\(data[4...5].hex)), index: \(index) (0x\(data[6].hex)), patch state: \(patchState) (0x\(data[7].hex)), current life count: \(currentLifeCount) (0x\(data[8...9].hex)), current date: \(currentDate.local), stack disconnect reason: \(stackDisconnectReason) (0x\(data[10].hex)), app disconnect reason: \(appDisconnectReason) (0x\(data[11].hex))")
     }
 
-    func parseOneMinuteReading(data: Data) {  // TODO: -> GlucoseData
+    func parseOneMinuteReading(data: Data) {
         let lifeCount = UInt16(data[0...1])
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let readingMgDl = UInt16(data[2...3])
@@ -1039,7 +893,7 @@ extension String {
         }
     }
 
-    func parseHistoricalPackets(data: [Data]) {  // TODO: -> [HistoricalData]
+    func parseHistoricalPackets(data: [Data]) {
         log("\(typeAndName): \(data.count) backfill historical data packets: \(data.map { $0.hex })")
         var history = [Glucose]()
         for data in data {
@@ -1072,7 +926,7 @@ extension String {
         main.didParseSensor(self)
     }
 
-    func parseClinicalPackets(data: [Data]) {  // TODO: -> [FastData]
+    func parseClinicalPackets(data: [Data]) {
         log("\(typeAndName): \(data.count) backfilled clinical data packets: \(data.map { $0.hex })")
         var trend = [Glucose]()
         for data in data {
@@ -1101,7 +955,7 @@ extension String {
 
     }
 
-    func parseEventLogPackets(data: [Data]) {  // TODO: -> [EventLog]
+    func parseEventLogPackets(data: [Data]) {
         log("\(typeAndName): \(data.count) event log packets: \(data.map { $0.hex })")
         var events = [(lifeCount: UInt16, date: Date, errorData: UInt16, eventData: UInt16, index: UInt8)]()
         for data in data {
@@ -1143,9 +997,7 @@ extension String {
     }
 
 
-    // TODO: separate CMD_ACTIVATE_SENSOR (0xA0) and CMD_SWITCH_RECEIVER (0xA8)
     var activationNFCCommand: NFCCommand {
-        // TODO:
         if receiverId == 0 && settings.libreLinkUpUserId == "" {
             log("WARNING: the current receiverId and libreLinkUpUserId are null: a successful login to LibreLinkUp is very probably required first.")
         }
@@ -1154,6 +1006,7 @@ extension String {
         parameters += (receiverId != 0 ? receiverId : settings.libreLinkUpPatientId.fnv32Hash).data
         parameters += parameters.crc16.data
 
+        // CMD_ACTIVATE_SENSOR (0xA0) and CMD_SWITCH_RECEIVER (0xA8) differences:
         // - A8 changes the BLE PIN on an activated sensor and returns the error 0x1B0 on an expired one.
         // - A0 returns the current BLE PIN on an activated sensor, the error 0x1B1 on a sensor activated
         //   by the reader, the error 0x1B2 on an expired one with a firmware like 1.1.13.30
@@ -1179,21 +1032,16 @@ extension String {
         }
 
         if flag == 0x00 && response.count == 16 {
-            let activationResponse = ActivationResponse(
-                bdAddress: Data(response[0 ..< 6].reversed()),
-                BLE_Pin:   response.subdata(in: 6 ..< 10),
-                activationTime: UInt32(response.subdata(in: 10 ..< 14))
-            )
+            let macAddress = Data(response[0 ..< 6].reversed())
+            transmitter?.macAddress = macAddress
+            blePIN = response.subdata(in: 6 ..< 10)
+            settings.activeSensorBlePIN = blePIN
+            activationTime = UInt32(response.subdata(in: 10 ..< 14))
+            settings.activeSensorActivationTime = Int(activationTime)
+            age = Int(Date().timeIntervalSince(Date(timeIntervalSince1970: Double(activationTime)))) / 60
             let crc = UInt16(response[14 ... 15])
             let computedCrc = response[0 ... 13].crc16
-            log("NFC: \(type) activation response: \(activationResponse), BLE address: \(activationResponse.bdAddress.hexAddress), BLE PIN: \(activationResponse.BLE_Pin.hex), activation date: \(Date(timeIntervalSince1970: Double(activationResponse.activationTime)).local), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
-            transmitter?.macAddress = activationResponse.bdAddress
-            blePIN = activationResponse.BLE_Pin
-            settings.activeSensorBlePIN = blePIN
-            activationTime = activationResponse.activationTime
-            settings.activeSensorActivationTime = Int(activationTime)
-            // TODO: lastReadingDate = Date()
-            age = Int(Date().timeIntervalSince(Date(timeIntervalSince1970: Double(activationTime)))) / 60
+            log("NFC: \(type) activation response: BLE MAC address: \(macAddress), BLE PIN: \(blePIN.hex), activation date: \(Date(timeIntervalSince1970: Double(activationTime)).local), CRC: \(crc.hex), computed CRC: \(computedCrc.hex)")
         }
     }
 
