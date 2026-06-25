@@ -1078,7 +1078,7 @@
 /* Begin XCRemoteSwiftPackageReference section */
 		C556A5FB2FDE98AB00F8C95F /* XCRemoteSwiftPackageReference "LibreCRKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/gui-dos/LibreCRKit";
+			repositoryURL = "https://github.com/airedev326/LibreCRKit";
 			requirement = {
 				branch = main;
 				kind = branch;

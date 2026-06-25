@@ -1,6 +1,11 @@
 <p align="center"><img src="./DiaBLE/Assets.xcassets/AppIcon.appiconset/Icon.png" width="25%" /> &nbsp; &nbsp; <img src="https://github.com/gui-dos/DiaBLE/assets/7220550/901ad341-edfb-426e-9617-6763cf377447" width="20.5%"/> &nbsp; &nbsp; <img src="https://github.com/gui-dos/DiaBLE/assets/7220550/4d84f138-5b31-4db3-a407-f85265a78e66" width="20.5%" /></p>
 <br><br>
 
+**ChangeLog:**
+
+* 25/06/2026 - 0.0.2 -  [Build 209](https://github.com/gui-dos/DiaBLE/commit/5e0a11c)
+  - **Libre 3 Direct-To-Watch** thanks to [LibreCRKit](https://github.com/airedev326/LibreCRKit)<!-- :<br><br><div align="center"><img src="https://github.com/user-attachments/assets/d4f921b9-73a7-4b3d-8015-48343cf7f078" width="33.3%"/> &nbsp; <img src="https://github.com/user-attachments/assets/a30dda70-be3f-47d8-955a-19cd7a9b0e47" width="33.3%"/></div><br><br> -->
+
 ## Builds
 
 To build the project, you have to duplicate the file _DiaBLE.xcconfig_, rename the copy to ***DiaBLEOverride.xcconfig*** (the missing reference displayed by Xcode in red should then point to it) and edit it by commenting out the trailing lines after `// Comment out the following...` and replacing `##TEAM_ID##` with your Apple Team ID, so that the first line should read, for example, `DEVELOPMENT_TEAM = Z25SC9UDC8`.

@@ -43,7 +43,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", "1.8.3"..<"2.0.0"),
-        .package(url: "https://github.com/gui-dos/LibreCRKit", .branch("main"))
+        .package(url: "https://github.com/airedev326/LibreCRKit", .branch("main"))
     ],
     targets: [
         .executableTarget(
