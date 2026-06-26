@@ -123,7 +123,7 @@ struct Monitor: View, LoggingView {
                     }
 
                     Graph()
-                        .frame(width: 31 * 7 + 60, height: 150)
+                        .frame(width: 12 * 12 * 2 + 60, height: 200)
 
                     VStack {
 
