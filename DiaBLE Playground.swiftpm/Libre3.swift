@@ -321,6 +321,12 @@ extension String {
         /// - 010101 9B48 0000 requests clinical data from lifeCount 0x489B
         case backfill = "0101"
 
+        // TODO: args:
+        // type:  00: historical, 01: clinical
+        // order: 00: descending, 01: ascending
+        // from, to:  lifeCounts
+        case backfillRange = "02"
+
         /// - 040100 0000 0000 requests event log from index 01
         case eventLog = "04"
 
@@ -332,6 +338,7 @@ extension String {
             switch self {
             case .historic:      "historic"
             case .backfill:      "backfill"
+            case .backfillRange: "backfill range"
             case .eventLog:      "event log"
             case .shutdownPatch: "shutdown patch"
             case .factoryData:   "factory data"
