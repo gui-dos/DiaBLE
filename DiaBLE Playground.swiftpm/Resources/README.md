@@ -3,7 +3,7 @@
 
 **ChangeLog:**
 
-* 25/06/2026 - 0.0.2 -  [Build 209](https://github.com/gui-dos/DiaBLE/commit/5e0a11c)
+* 25/06/2026 - 0.0.2 -  [Build 209](https://github.com/gui-dos/DiaBLE/commit/953de81)
   - **Libre 3 Direct-To-Watch** thanks to [LibreCRKit](https://github.com/airedev326/LibreCRKit):<br><br><div align="center"><img src="https://github.com/user-attachments/assets/884f84e4-0079-4739-bbcb-1911dd067881" width="33.3%"/> &nbsp; <img src="https://github.com/user-attachments/assets/1b76ddb1-7c7e-4e15-ab91-d1b0ddb9e76b" width="25%" align="bottom"/></div><br><br>
 
 ## Builds
