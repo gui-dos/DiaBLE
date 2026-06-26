@@ -837,17 +837,18 @@ extension String {
         let lifeCount = UInt16(data[0...1])
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let readingMgDl = UInt16(data[2...3])
-        let glucose = Int(readingMgDl & 0x1fff)
         let dataQuality = (readingMgDl & 0xE000) // upper 3 bits
         let dqErrorFlag = readingMgDl & 0x8000 != 0  // MSB
-        // TODO: TOO_HOT = 0xA000, TOO_COLD = 0xC000, HI = 0x4000
+        // TODO: HI = 0x4000, RF = 0x8020, TOO_HOT = 0xA000, TOO_COLD = 0xC000
+        var glucose = Int(readingMgDl & 0x1fff)
         let rateOfChangeInt16 = Int16(bitPattern: UInt16(data[4...5]))
         let rateOfChange = rateOfChangeInt16 != Int16.min ? Double(rateOfChangeInt16) / 100.0 : 0.0
         let esaDuration = UInt16(data[6...7])
         let projectedGlucose = UInt16(data[8...9]) / 100  // TODO: 0xFFFF
         let historicalLifeCount = UInt16(data[10...11])
         let historicalDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(historicalLifeCount) * 60))
-        let historicalReading = UInt16(data[12...13])
+        let historicalReadingMgDl = UInt16(data[12...13])
+        let historicalGlucose = Int(historicalReadingMgDl & 0x1fff)
         // TODO:
         let bitfields = data[14]
         let trend = bitfields & 0x07 // lower 3 bits
@@ -859,9 +860,10 @@ extension String {
         let temperature = Double(UInt16(data[19...20])) / 100.0
         let fastData = data.subdata(in: 21 ..< 29)
 
-        log("\(typeAndName): parsed one-minute reading: life count: \(lifeCount) (0x\(lifeCount.hex)), date: \(date.local), glucose: \(glucose) mg/dL (0x\(readingMgDl.hex) & 0x1fff), data quality: 0x\(dataQuality.hex), data quality error flag: \(dqErrorFlag), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex)), actionable flag: \(actionableFlag), status bits: 0x\(statusBits.hex), temperature: \(temperature)°C (0x\(data[19...20].hex)/100), historical life count: \(historicalLifeCount) (0x\(historicalLifeCount.hex)), historical date: \(historicalDate.local), historical glucose: \(historicalReading) mg/dL (0x\(historicalReading.hex))")
+        log("\(typeAndName): parsed one-minute reading: life count: \(lifeCount) (0x\(lifeCount.hex)), date: \(date.local), glucose: \(glucose) mg/dL (0x\(readingMgDl.hex) & 0x1fff), data quality: 0x\(dataQuality.hex), data quality error flag: \(dqErrorFlag), rate of change: \(rateOfChange) mg/dL/min (0x\(data[4...5].hex)), bitfields: 0x\(bitfields.hex), trend: \(trendArrow) \(trendArrow.symbol) (0x\(trend.hex)), actionable flag: \(actionableFlag), status bits: 0x\(statusBits.hex), temperature: \(temperature)°C (0x\(data[19...20].hex)/100), historical life count: \(historicalLifeCount) (0x\(historicalLifeCount.hex)), historical date: \(historicalDate.local), historical glucose: \(historicalGlucose) mg/dL (0x\(historicalReadingMgDl.hex) & 0x1fff)")
         log("\(typeAndName): parsed one-minute further data: Early Signal Attenuation duration: \(esaDuration) minutes (0x\(data[6...7].hex)), projected glucose: \(projectedGlucose) mg/dL (0x\(data[8...9].hex)/100), uncapped current glucose: \(uncappedCurrentMgDl) mg/dL (0x\(uncappedCurrentMgDl.hex)), uncapped historical glucose: \(uncappedHistoricMgDl) mg/dL (0x\(uncappedHistoricMgDl.hex)), raw fast data: \(fastData.hex)")
 
+        if dqErrorFlag { glucose = -glucose } // TODO: mark as invalid, i. e. 0x8020 RF interference error when scanning
         lastHistoricalLifeCount = Int(historicalLifeCount)
         lastLifeCount = Int(lifeCount)
         settings.activeSensorLastLifeCount = lastLifeCount
@@ -880,7 +882,7 @@ extension String {
         if !history.isEmpty {
             if lastHistoricalLifeCount == history[0].id + 5 {
                 // TODO: data quality
-                history.insert(Glucose(Int(historicalReading), id: lastHistoricalLifeCount, date: historicalDate), at: 0)
+                history.insert(Glucose(Int(historicalGlucose), id: lastHistoricalLifeCount, date: historicalDate), at: 0)
                 if history.count > 12 * 12 {
                     history.removeLast()
                 }
@@ -901,28 +903,26 @@ extension String {
             let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(startLifeCount) * 60))
             var readings = [(lifeCount: UInt16, date: Date, glucose: Int, range: ResultRange, dqErrorFlag: Bool)]()
             for i in 0 ... 5 {
-                let reading = UInt16(data[(i * 2 + 2) ... (i * 2 + 3)])
                 let lifeCount = startLifeCount + UInt16(i * 5)
+                let readingMgDl = UInt16(data[(i * 2 + 2) ... (i * 2 + 3)])
+                let dataQuality = readingMgDl & 0x8000
+                let dqErrorFlag = readingMgDl & 0x8000 != 0
                 let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
-                var glucose = Int(reading & 0x1fff)
+                var glucose = Int(readingMgDl & 0x1fff)
                 // TODO: not range but data quality flags 0xE000?
-                let resultRange = ResultRange(rawValue: Int((reading & 6000) >> 13))!
-                let dataQuality = reading & 0x8000
-                let dqErrorFlag = reading & 0x8000 != 0
+                let resultRange = ResultRange(rawValue: Int((readingMgDl & 6000) >> 13))!
                 let entry = (lifeCount: lifeCount, date: date, glucose: glucose, range: resultRange, dqErrorFlag: dqErrorFlag)
                 readings.append(entry)
                 // TODO: data quality
                 if dqErrorFlag { glucose = -glucose } // TODO: mark as invalid
-                if glucose != 0 {
-                    history.append(Glucose(glucose, id: Int(lifeCount), date: date, dataQuality: Glucose.DataQuality(rawValue: Int(dataQuality))))
-                }
+                history.append(Glucose(glucose, id: Int(lifeCount), date: date, dataQuality: Glucose.DataQuality(rawValue: Int(dataQuality))))
             }
             log("\(typeAndName): parsed 6 backfill historical data: life count: \(startLifeCount) (0x\(startLifeCount.hex)), date: \(date.local), readings: \(readings.map { "life count: \($0.lifeCount), date: \($0.date.local), glucose: \($0.glucose), range: \($0.range), quality error flag: \($0.dqErrorFlag)" })")
         }
         self.history = history.reversed()
         main.history.factoryValues = self.history
         outCryptoSequence += 1
-        send(controlCommand: .backfill, args: "01".bytes + max(UInt16(lastHistoricalLifeCount + 1), 1).data)
+        send(controlCommand: .backfill, args: "01".bytes + UInt16(lastHistoricalLifeCount + 1).data)
         main.didParseSensor(self)
     }
 
@@ -934,13 +934,15 @@ extension String {
             let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
             let rawData = data[2...9]  // first 6 bytes of 8 coming from the filament as for the Libre 1/2
             let readingMgDl = UInt16(data[10...11])
-            let historicMgDl = UInt16(data[12...13])
-            // TODO:
+            let dqErrorFlag = readingMgDl & 0x8000 != 0
+            let glucose = Int(readingMgDl & 0x1fff)
             let historicalLifeCount = ((lifeCount - 17) / 5) * 5  // HISTORIC_POINT_LATENCY = 17
             let historicalDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(historicalLifeCount) * 60))
-            log("\(typeAndName): parsed backfilled clinical data: life count: \(lifeCount) (0x\(lifeCount.hex)), date: \(date.local), raw data: \(rawData.hex), reading: \(readingMgDl) mg/dL (0x\(readingMgDl.hex)), historical: \(historicMgDl) mg/dL (0x\(historicMgDl.hex)), historical life count: \(historicalLifeCount), historical date: \(historicalDate.local)")
-            // TODO: data quality, glucose = Int(readingMgDl & 0x1fff)?
-            trend.append(Glucose(Int(readingMgDl), id: Int(lifeCount), date: date))
+            let historicMgDl = UInt16(data[12...13])
+            let historicalGlucose = Int(historicMgDl & 0x1fff)
+            log("\(typeAndName): parsed backfilled clinical data: life count: \(lifeCount) (0x\(lifeCount.hex)), date: \(date.local), raw data: \(rawData.hex),  glucose: \(glucose) mg/dL (0x\(readingMgDl.hex) & 0x1fff), data quality error flag: \(dqErrorFlag), historical life count: \(historicalLifeCount), historical date: \(historicalDate.local), historical glucose: \(historicalGlucose) mg/dL (0x\(historicMgDl.hex) & 0x1fff)")
+            // TODO: data quality
+            trend.append(Glucose(Int(glucose), id: Int(lifeCount), date: date))
         }
         self.trend = trend.reversed()
         main.history.factoryTrend = self.trend

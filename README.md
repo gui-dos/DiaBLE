@@ -1,10 +1,10 @@
-<p align="center"><img src="./DiaBLE/Assets.xcassets/AppIcon.appiconset/Icon.png" width="25%" /> &nbsp; &nbsp; <img src="https://github.com/gui-dos/DiaBLE/assets/7220550/901ad341-edfb-426e-9617-6763cf377447" width="20.5%"/> &nbsp; &nbsp; <img src="https://github.com/gui-dos/DiaBLE/assets/7220550/4d84f138-5b31-4db3-a407-f85265a78e66" width="20.5%" /></p>
+<p align="center"><img src="./DiaBLE/Assets.xcassets/AppIcon.appiconset/Icon.png" width="25%" /> &nbsp; &nbsp; <img src="https://github.com/gui-dos/DiaBLE/assets/7220550/901ad341-edfb-426e-9617-6763cf377447" width="20%"/> &nbsp; &nbsp; <img src="https://github.com/gui-dos/DiaBLE/assets/7220550/4d84f138-5b31-4db3-a407-f85265a78e66" width="20%"/></p>
 <br><br>
 
 **ChangeLog:**
 
 * 25/06/2026 - 0.0.2 -  [Build 209](https://github.com/gui-dos/DiaBLE/commit/5e0a11c)
-  - **Libre 3 Direct-To-Watch** thanks to [LibreCRKit](https://github.com/airedev326/LibreCRKit)<!-- :<br><br><div align="center"><img src="https://github.com/user-attachments/assets/d4f921b9-73a7-4b3d-8015-48343cf7f078" width="33.3%"/> &nbsp; <img src="https://github.com/user-attachments/assets/a30dda70-be3f-47d8-955a-19cd7a9b0e47" width="33.3%"/></div><br><br> -->
+  - **Libre 3 Direct-To-Watch** thanks to [LibreCRKit](https://github.com/airedev326/LibreCRKit):<br><br><div align="center"><img src="https://github.com/user-attachments/assets/884f84e4-0079-4739-bbcb-1911dd067881" width="33.3%"/> &nbsp; <img src="https://github.com/user-attachments/assets/1b76ddb1-7c7e-4e15-ab91-d1b0ddb9e76b" width="25%" align="bottom"/></div><br><br>
 
 ## Builds
 
