@@ -743,6 +743,7 @@ class LibreLinkUp: Logging {
                             app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Libre(main: self.main) // TODO: Libre2Gen2
                             app.sensor.type = sensorType
                             app.sensor.serial = serial
+                            app.sensor.family = SensorFamily(rawValue: pt) ?? .libre2
                         } else {
                             if app.sensor.serial.isEmpty {
                                 app.sensor.serial = serial
@@ -966,7 +967,7 @@ class LibreLinkUp: Logging {
                     // TODO: just merge with newer values
                     history = graphHistory.reversed()
                     self.logbookHistory = logbookHistory
-                    if graphHistory.count > 0 {
+                    if app.sensor.history.count == 0 && graphHistory.count > 0 { // Libre 3 is not being decrypted
                         Task { @MainActor in
                             settings.lastOnlineDate = Date()
                             let lastMeasurement = history[0]

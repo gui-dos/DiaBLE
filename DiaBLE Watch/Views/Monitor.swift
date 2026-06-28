@@ -132,7 +132,7 @@ struct Monitor: View, LoggingView {
                 }
 
                 Graph()
-                    .frame(width: 12 * 12 + 60, height: 94)
+                    .frame(width: 12 * 12 + 3 + 60, height: 94)
                     .padding(.vertical, 2)
 
                 HStack(spacing: 2) {
