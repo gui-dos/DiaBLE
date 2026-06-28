@@ -456,11 +456,11 @@ extension String {
 
 
     func send(controlCommand cmd: ControlCommand, args: Data = Data()) {
-        let trail = Data(count: 7 - cmd.rawValue.count / 2 - args.count)
+        let tail = Data(count: 7 - cmd.rawValue.count / 2 - args.count)
         log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` control command \((cmd.rawValue.bytes + args).hex)")
         currentControlCommand = cmd
         // TODO: command queue final sequential ids
-        let encryptedCommand = encryptPacket(data: cmd.rawValue.bytes + args + trail, type: .controlCommand, ivEnc: ivEnc, sequenceId: outCryptoSequence)!
+        let encryptedCommand = encryptPacket(data: cmd.rawValue.bytes + args + tail, type: .controlCommand, ivEnc: ivEnc, sequenceId: outCryptoSequence)!
         transmitter!.write(encryptedCommand + outCryptoSequence.data, for: UUID.patchControl.rawValue, .withResponse)
     }
 
