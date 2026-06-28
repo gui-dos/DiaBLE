@@ -314,51 +314,42 @@ extension String {
     }
 
 
-    enum ControlCommand: String, CustomStringConvertible {
+    enum ControlCommandArgRecordType: UInt8 {
+        case historical = 0x00
+        case clinical   = 0x01
+    }
+    enum ControlCommandArgRecordOrder: UInt8 {
+        case descending = 0x00
+        case ascending  = 0x01
+    }
+    enum ControlCommand: UInt8, CustomStringConvertible {
         /// - 010001 EC2C 0000 requests historical data from lifeCount 0x2CEC
-        case historic = "0100"
-
         /// - 010101 9B48 0000 requests clinical data from lifeCount 0x489B
-        case backfill = "0101"
+        case backfill      = 0x01
 
-        // TODO: args:
-        // type:  00: historical, 01: clinical
-        // order: 00: descending, 01: ascending
-        // from, to:  lifeCounts
-        case backfillRange = "02"
+        case backfillRange = 0x02
+
+        // TODO: test
+        case abortBackfill = 0x03
 
         /// - 040100 0000 0000 requests event log from index 01
-        case eventLog = "04"
+        case eventLog      = 0x04
 
-        case shutdownPatch = "05"
+        case shutdownPatch = 0x05
 
-        case factoryData = "06"
+        case factoryData   = 0x06
 
         var description: String {
             switch self {
-            case .historic:      "historic"
             case .backfill:      "backfill"
             case .backfillRange: "backfill range"
+            case .abortBackfill: "abort backfill"
             case .eventLog:      "event log"
             case .shutdownPatch: "shutdown patch"
             case .factoryData:   "factory data"
             }
         }
     }
-
-    // TODO:
-    //
-    // PATCH_OPCODE_START_BACKFILL_GREATER_OR_EQUAL = 1
-    // PATCH_OPCODE_START_BACKFILL_WITHIN_RANGE = 2
-    // PATCH_OPCODE_ABORT_BACKFILL = 3
-    // PATCH_OPCODE_SEND_EVENT = 4
-    // PATCH_OPCODE_SHUTDOWN = 5
-    // PATCH_OPCODE_GET_FACTORY_DATA = 6
-    //
-    // PATCH_CONTROL_INDEX_RECORD_TYPE = 1
-    // PATCH_CONTROL_INDEX_RECORD_ORDER = 2
-    // PATCH_CONTROL_INDEX_LOW_VALUE = 3
-    // PATCH_CONTROL_INDEX_HIGH_VALUE = 5
 
     var receiverId: UInt32 = 0  // fnv32Hash of LibreView ID string
 
@@ -455,13 +446,21 @@ extension String {
     }
 
 
-    func send(controlCommand cmd: ControlCommand, args: Data = Data()) {
-        let tail = Data(count: 7 - cmd.rawValue.count / 2 - args.count)
-        log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` control command \((cmd.rawValue.bytes + args).hex)")
-        currentControlCommand = cmd
-        // TODO: command queue final sequential ids
-        let encryptedCommand = encryptPacket(data: cmd.rawValue.bytes + args + tail, type: .controlCommand, ivEnc: ivEnc, sequenceId: outCryptoSequence)!
+    func send(
+        controlCommand cmd: ControlCommand,
+        type: ControlCommandArgRecordType? = nil,
+        order: ControlCommandArgRecordOrder? = nil,
+        args: Data?
+    ) {
+        var command = cmd.rawValue.data
+        if let type  { command.append(type.rawValue) }
+        if let order { command.append(order.rawValue) }
+        if let args  { command.append(args) }
+        log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` control command \(command.hex)")
+        // TODO: manage command queue increasing outCryptoSequence
+        let encryptedCommand = encryptPacket(data: command + Data(count: 7 - command.count), type: .controlCommand, ivEnc: ivEnc, sequenceId: outCryptoSequence)!
         transmitter!.write(encryptedCommand + outCryptoSequence.data, for: UUID.patchControl.rawValue, .withResponse)
+        currentControlCommand = cmd
     }
 
     func parsePackets(_ data: Data) -> (Data, String) {
@@ -898,7 +897,7 @@ extension String {
             main.didParseSensor(self)
         } else {
             // backfill 12 hours of historical data:
-            send(controlCommand: .historic, args: "01".bytes + max(historicalLifeCount - (12 * 12 - 1) * 5, 5).data)
+            send(controlCommand: .backfill, type: .historical, order: .ascending, args: max(historicalLifeCount - (12 * 12 - 1) * 5, 5).data)
         }
     }
 
@@ -930,7 +929,7 @@ extension String {
         self.history = history.reversed()
         main.history.factoryValues = self.history
         outCryptoSequence += 1
-        send(controlCommand: .backfill, args: "01".bytes + UInt16(lastHistoricalLifeCount + 1).data)
+        send(controlCommand: .backfill, type: .clinical, order: .ascending, args: UInt16(lastHistoricalLifeCount + 1).data)
         main.didParseSensor(self)
     }
 
