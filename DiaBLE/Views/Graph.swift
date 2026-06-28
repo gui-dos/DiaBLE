@@ -56,6 +56,8 @@ struct Graph: View {
                 }
                 .font(.footnote)
                 .foregroundStyle(.gray)
+                .onChange(of: settings.displayingMillimoles) { // enforce update the units
+                }
             }
 
             // Historic raw values
