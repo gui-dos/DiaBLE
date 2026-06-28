@@ -233,7 +233,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
         if case .iso15693(let tag) = firstTag {
 
-            Task {
+            let _ = Task {
 
                 var patchInfo: PatchInfo = Data()
 
@@ -501,7 +501,7 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
         if case .iso7816(let tag) = firstTag {
 
-            Task {
+            let _ = Task {
 
                 for retry in 0 ... maxRetries {
 
