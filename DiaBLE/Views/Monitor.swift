@@ -132,7 +132,7 @@ struct Monitor: View, LoggingView {
                             yEnd: .value("Target High", settings.targetHigh)
                         )
                         .foregroundStyle(.green)
-                        .opacity(0.15)
+                        .opacity(0.20)
 
                         ForEach(history.factoryTrend + history.factoryValues) { item in
                             LineMark(

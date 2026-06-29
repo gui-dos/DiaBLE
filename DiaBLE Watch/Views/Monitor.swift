@@ -142,7 +142,7 @@ struct Monitor: View, LoggingView {
                         yEnd: .value("Target High", settings.targetHigh)
                     )
                     .foregroundStyle(.green)
-                    .opacity(0.15)
+                    .opacity(0.20)
 
                     ForEach(history.factoryTrend + history.factoryValues) { item in
                         LineMark(
@@ -155,16 +155,25 @@ struct Monitor: View, LoggingView {
                 .chartPlotStyle { content in
                     content.padding(1).overlay(RoundedRectangle(cornerRadius: 10).stroke(.tint, lineWidth: 2))
                 }
-                // TODO: increase font size
+                // increase font size
+                .chartYAxis {
+                    AxisMarks() { _ in
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel()
+                            .font(.system(size: 12))
+                    }
+                }
                 .chartXAxis {
-                    AxisMarks(values: .stride(by: .hour, count: 3)) { _ in
+                    AxisMarks(values: .stride(by: .hour, count: 4)) { _ in
                         AxisGridLine()
                         AxisTick()
                         // FIXME: .top doesn't work to center hours lables
                         AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .omitted)).minute(), anchor: .top)
+                            .font(.system(size: 12))
                     }
                 }
-                .padding(.horizontal, 18)
+                .padding(.horizontal, 22)
                 .frame(maxHeight: 96)
 
                 HStack(spacing: 2) {
