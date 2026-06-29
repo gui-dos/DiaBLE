@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import Charts
 
 
 struct Monitor: View, LoggingView {
@@ -122,8 +123,37 @@ struct Monitor: View, LoggingView {
                         }
                     }
 
-                    Graph()
-                        .frame(width: 12 * 12 * 2 + 6 + 60, height: 200)
+                    // Graph()
+                    //     .frame(width: 12 * 12 * 2 + 6 + 60, height: 200)
+
+                    Chart {
+                        RectangleMark(
+                            yStart: .value("Target Low", settings.targetLow),
+                            yEnd: .value("Target High", settings.targetHigh)
+                        )
+                        .foregroundStyle(.green)
+                        .opacity(0.15)
+
+                        ForEach(history.factoryTrend + history.factoryValues) { item in
+                            LineMark(
+                                x: .value("Time", item.date),
+                                y: .value("Glucose", item.value)
+                            )
+                            .foregroundStyle(.orange)
+                        }
+                    }
+                    .chartPlotStyle { content in
+                        content.padding(1).overlay(RoundedRectangle(cornerRadius: 10).stroke(.tint, lineWidth: 2))
+                    }
+                    .chartXAxis {
+                        AxisMarks(values: .stride(by: .hour, count: 3)) { _ in
+                            AxisGridLine()
+                            AxisTick()
+                            // FIXME: .top doesn't work to center hours lables
+                            AxisValueLabel(format: .dateTime.hour(.defaultDigits(amPM: .omitted)).minute(), anchor: .top)
+                        }
+                    }
+                    .padding(40)
 
                     VStack {
 
