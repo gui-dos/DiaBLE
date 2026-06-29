@@ -173,7 +173,8 @@ struct Monitor: View, LoggingView {
                             .font(.system(size: 12))
                     }
                 }
-                .padding(.horizontal, 22)
+                .padding(.leading, 32)
+                .padding(.trailing, 12)
                 .frame(maxHeight: 96)
 
                 HStack(spacing: 2) {
