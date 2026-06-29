@@ -98,7 +98,7 @@ struct Graph: View {
                     Path { path in
                         let width  = geometry.size.width - 60
                         let height = geometry.size.height
-                        let v = history.factoryValues.map(\.value) + latestTrendValues.map(\.value)
+                        let v = latestTrendValues.map(\.value) + history.factoryValues.map(\.value)
                         let count = v.count
                         let yScale = (height - 20) / yMax()
                         let xScale = width / Double(count - 1)
