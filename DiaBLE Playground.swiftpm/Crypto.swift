@@ -32,7 +32,6 @@ extension Libre3 {
     // +[FSOpenSSL encryptUsingCcmAES128:key:iv:tag_len:]
     // +[FSOpenSSL decryptUsingCcmAES128:key:iv:tag:]
 
-    // TODO: guess the right KDF...
     //
     // Claude:
     //
@@ -48,7 +47,8 @@ extension Libre3 {
     //   - SHA256 called with 68-byte input: {counter(4)} || Ze(32) || Zs(32)
     //   - first 16 bytes returned as the key; identical logic in 3 SKB variants (MA/L3Security/LingoSecurity)
     //
-    // NOTE: older iOS Trident app used reversed order: SHA-256( 0x00000001 || Zs || Ze )
+    // Confirmed by Messina:
+    // https://github.com/awowogei/Messina/blob/master/app/src/commonMain/kotlin/messina/sensors/libre3/Security.kt
 
     public func deriveSharedKey() -> Data {
 
