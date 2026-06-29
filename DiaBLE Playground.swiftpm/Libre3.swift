@@ -1284,7 +1284,9 @@ extension String {
 
 
 @Observable class LibreSelect: Libre3 {
+}
 
+@Observable class Lingo: Libre3 {
 }
 
 
