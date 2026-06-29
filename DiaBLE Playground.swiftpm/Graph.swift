@@ -89,17 +89,14 @@ struct Graph: View {
                 }
             }
 
-            // Historic factory values + latest historic trend values whose id % 5 == 0
+            // Historic factory values
             GeometryReader { geometry in
                 let count = history.factoryValues.count
                 if count > 0 {
-                    let lastHistoricalId = history.factoryValues.first!.id
-                    let latestTrendValues = history.factoryTrend.filter { $0.id % 5 == 0 && $0.id > lastHistoricalId }
                     Path { path in
                         let width  = geometry.size.width - 60
                         let height = geometry.size.height
-                        let v = latestTrendValues.map(\.value) + history.factoryValues.map(\.value)
-                        let count = v.count
+                        let v = history.factoryValues.map(\.value)
                         let yScale = (height - 20) / yMax()
                         let xScale = width / Double(count - 1)
                         var startingVoid = v[count - 1] < 1 ? true : false
