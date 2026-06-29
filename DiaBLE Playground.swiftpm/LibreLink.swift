@@ -740,7 +740,7 @@ class LibreLinkUp: Logging {
                         let isLateJoined = patientSensor["lj"] as? Bool ?? false
                         let isStreaming = ((patientSensor["s"] as? Bool ?? false) || sensorType == .libre3) && !isLateJoined
                         if app.sensor == nil {
-                            app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Libre(main: self.main) // TODO: Libre2Gen2
+                            app.sensor = sensorType == .libre3 ? Libre3(main: self.main) : sensorType == .libre2 ? Libre2(main: self.main) : Libre(main: self.main)
                             app.sensor.type = sensorType
                             app.sensor.serial = serial
                             app.sensor.family = SensorFamily(rawValue: pt) ?? .libre2

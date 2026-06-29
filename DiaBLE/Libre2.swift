@@ -334,6 +334,10 @@ let libre2DumpMap = [
 }
 
 
+@Observable class Libre2Gen2: Libre2 {
+}
+
+
 extension Sensor {
 
     func parseBLEData( _ data: Data) -> [Glucose] {

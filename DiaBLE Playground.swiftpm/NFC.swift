@@ -327,8 +327,6 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                             sensor = Instinct(main: main)
                         case .libreX:
                             sensor = LibreX(main: main)
-                        case .libre2Gen2:
-                            sensor = Libre2Gen2(main: main)
                         case .libre2:
                             sensor = Libre2(main: main)
                         default:
@@ -451,14 +449,6 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
 
                 do {
 
-                    var gen2Attribute = Data()
-                    if sensor.type == .libre2Gen2 {
-                        // TODO: use Libre2Gen2.communicateWithPatch(nfc: self)
-                        gen2Attribute = try await send(sensor.nfcCommand(.readAttribute))
-                        securityChallenge = try await send(sensor.nfcCommand(.readChallenge))
-                        log("NFC: Gen2 security challenge: \(securityChallenge.hex)")
-                    }
-
                     let (start, data) = try await sensor.securityGeneration < 2 ?
                     read(fromBlock: 0, count: blocks) : readBlocks(from: 0, count: blocks)
 
@@ -475,10 +465,6 @@ class NFC: NSObject, NFCTagReaderSessionDelegate, Logging {
                     session.invalidate()
 
                     sensor.fram = Data(data)
-
-                    if gen2Attribute.count > 0 {
-                        sensor.state = SensorState(rawValue: gen2Attribute[0]) ?? .unknown
-                    }
 
                 } catch {
                     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
