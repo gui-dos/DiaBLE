@@ -417,6 +417,7 @@ extension String {
 
         let wearDuration = patchInfo[6...7]
         maxLife = Int(UInt16(wearDuration))
+        settings.activeSensorMaxLife = maxLife
         log("\(type): wear duration: \(maxLife) minutes (\(maxLife.formattedInterval), 0x\(maxLife.hex))")
 
         let fwVersion = patchInfo.subdata(in: 8 ..< 12)
@@ -596,6 +597,7 @@ extension String {
         case .patchStatus:
             if activationTime == 0 && settings.activeSensorActivationTime != 0 {
                 activationTime = UInt32(settings.activeSensorActivationTime)
+                age = Int(Date().timeIntervalSince(Date(timeIntervalSince1970: Double(activationTime)))) / 60
             }
             let payload = data.prefix(16)
             let seqId = UInt16(data.suffix(2))
