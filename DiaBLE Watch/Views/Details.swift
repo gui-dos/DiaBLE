@@ -166,7 +166,7 @@ struct Details: View, LoggingView {
                                 Row("Started on", (app.sensor.activationTime > 0 ? Date(timeIntervalSince1970: Double(app.sensor.activationTime)) : (app.sensor.lastReadingDate - Double(app.sensor.age) * 60)).shortDateTime)
                             }
                             .onReceive(app.minuteTimer) { _ in
-                                minutesSinceLastReading = Int(Date().timeIntervalSince(app.sensor.lastReadingDate)/60)
+                                minutesSinceLastReading = app.sensor.lastReadingDate == .distantPast ? minutesSinceLastReading + 1 : Int(Date().timeIntervalSince(app.sensor.lastReadingDate)/60)
                             }
                         }
 
@@ -218,6 +218,9 @@ struct Details: View, LoggingView {
                                 TextField("Shared Key", value: $settings.activeSensorSharedKey, format: HexDataFormatStyle(maxBytes: 16))
                                     .multilineTextAlignment(.trailing)
                                     .foregroundStyle(.blue)
+                                    .onChange(of: settings.activeSensorSharedKey) {
+                                        (app.sensor as? Libre3)?.sharedKey = settings.activeSensorSharedKey
+                                    }
                             }
 
                             if settings.userLevel > .basic {
@@ -227,6 +230,9 @@ struct Details: View, LoggingView {
                                     TextField("kEnc", value: $settings.activeSensorKEnc, format: HexDataFormatStyle(maxBytes: 16))
                                         .multilineTextAlignment(.trailing)
                                         .foregroundStyle(.blue)
+                                        .onChange(of: settings.activeSensorKEnc) {
+                                            (app.sensor as? Libre3)?.kEnc = settings.activeSensorKEnc
+                                        }
                                 }
                                 HStack {
                                     Text("ivEnc")
@@ -234,6 +240,9 @@ struct Details: View, LoggingView {
                                     TextField("ivEnc", value: $settings.activeSensorIvEnc, format: HexDataFormatStyle(maxBytes: 8))
                                         .multilineTextAlignment(.trailing)
                                         .foregroundStyle(.blue)
+                                        .onChange(of: settings.activeSensorIvEnc) {
+                                            (app.sensor as? Libre3)?.ivEnc = settings.activeSensorIvEnc
+                                        }
                                 }
                             }
 

@@ -624,7 +624,7 @@ extension String {
                     log("\(typeAndName): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
                     debugLog("\(typeAndName): decrypting one-minute reading: \(buffer.hex) (\(buffer.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
                     if let oneMinuteReading = decryptPacket(data: buffer, type: .currentGlucose, ivEnc: ivEnc) {
-                        log("\(typeAndName): decrypted one-minute reading: \(oneMinuteReading.hex) (\(oneMinuteReading.count) bytes")
+                        log("\(typeAndName): decrypted one-minute reading: \(oneMinuteReading.hex) (\(oneMinuteReading.count) bytes)")
                         if oneMinuteReading.count == 29 {
                             parseOneMinuteReading(data: oneMinuteReading)
                         }
@@ -885,6 +885,7 @@ extension String {
             self.trend.removeLast()
         }
         main.history.factoryTrend = self.trend
+        // TODO: fill the gaps when reconnecting
         if !history.isEmpty {
             if lastHistoricalLifeCount == history[0].id + 5 {
                 // TODO: data quality
@@ -1282,6 +1283,8 @@ extension String {
 
 }
 
+@Observable class Instinct: Libre3 {
+}
 
 @Observable class LibreSelect: Libre3 {
 }
@@ -1289,7 +1292,7 @@ extension String {
 @Observable class Lingo: Libre3 {
 }
 
-
+// TODO: Libre Duo
 @Observable class LibreX: Libre3 {
 
     // com.adc.dcm.gksensor.GlucoseKetoneSPL:
@@ -1313,9 +1316,4 @@ extension String {
     // PATCH_ISF_INDEX_CLINICAL_DATA = 37
     // PATCH_ISF_FIRST_ANALYTE_OFFSET = 4
     // PATCH_ISF_ANALYTE_LEN = 15
-}
-
-
-@Observable class Instinct: Libre3 {
-
 }
