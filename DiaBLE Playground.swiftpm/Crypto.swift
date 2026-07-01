@@ -46,11 +46,8 @@ extension Libre3 {
     //   - counter 0x00000001 (big-endian) loaded from __const at 0x101E84A7C
     //   - SHA256 called with 68-byte input: {counter(4)} || Ze(32) || Zs(32)
     //   - first 16 bytes returned as the key; identical logic in 3 SKB variants (MA/L3Security/LingoSecurity)
-    //
-    // Confirmed by Messina:
-    // https://github.com/awowogei/Messina/blob/master/app/src/commonMain/kotlin/messina/sensors/libre3/Security.kt
 
-    public func deriveSharedKey() -> Data {
+    public func deriveSharedKey() async throws -> Data {
 
         if settings.usingLibreCRKit, let nativeEphemeral {
             let inputs = FirstPairPhase5KeyInputs(
@@ -59,34 +56,30 @@ extension Libre3 {
                 sensorStaticPub65: patchCertificate!.patchStaticPublicKey,
                 staticScalarWindow: FirstPairStaticScalarWindow.firstPairIndex1
             )
-            let phase5Material = try! SessionKey.deriveFirstPairPhase5Material(inputs)
+            let phase5Material = try SessionKey.deriveFirstPairPhase5Material(inputs)
             log("LibreCRKit: derived Phase 5 raw key: \(phase5Material.rawKey.hex), null attempts: \(phase5Material.nullAttempts)")
             return phase5Material.rawKey
         }
 
-        let sensorStaticPub = try! P256.KeyAgreement.PublicKey(x963Representation: patchCertificate!.patchStaticPublicKey)
-        let sensorEphPub    = try! P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
+        let sensorStaticPub = try P256.KeyAgreement.PublicKey(x963Representation: patchCertificate!.patchStaticPublicKey)
+        let sensorEphPub    = try P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
 
         // Raw ECDH shared secrets (x-coordinate only, 32 bytes each)
-        let Ze = try! ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorEphPub)
+        let Ze = try ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorEphPub)
             .withUnsafeBytes { Data($0) }
         // FIXME: cannot work because we know only the app static public key sent with the app certificate
-        let Zs = try! appStaticPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
-            .withUnsafeBytes { Data($0) }
+        // let Zs = try! appStaticPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
+        //     .withUnsafeBytes { Data($0) }
+
+        // Try by using Massina server:
+        // https://github.com/awowogei/Messina/blob/master/app/src/commonMain/kotlin/messina/sensors/libre3/Security.kt
+        let Zs = try await getSharedStaticKey()
 
         // ANSI X9.63 single-step: SHA-256( counter=1 || Ze || Zs ), counter as big-endian UInt32
-        var counter = UInt32(1).bigEndian
-        var hashInput = Data(bytes: &counter, count: 4)
-        hashInput += Ze
-        hashInput += Zs
-        // hashInput is 4 + 32 + 32 = 68 bytes
-
-        var digest = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-        hashInput.withUnsafeBytes {
-            _ = CC_SHA256($0.baseAddress, CC_LONG(hashInput.count), &digest)
-        }
-        let keyMaterial = Data(digest)  // 32 bytes
-        return keyMaterial.prefix(16)   // key = first 16 bytes
+        let counter = "00000001".bytes
+        let hashInput = counter + Ze + Zs // 68 bytes
+        let digest = Data(CryptoKit.SHA256.hash(data: hashInput))
+        return Data(digest.prefix(16)) // key = first 16 of 32 bytes
     }
 
 
@@ -161,7 +154,52 @@ extension Libre3 {
         return aesDecrypt(data: data.dropLast(2), key: kEnc, nonce: nonce)
     }
 
+
+    // https://github.com/awowogei/Messina/blob/master/app/src/commonMain/kotlin/messina/sensors/libre3/Security.kt
+    // FIXME: not working
+    func getSharedStaticKey() async throws -> Data {
+        let payload: [String: String] = [
+            "private_key": "1D 85 8F 06 02 00 00 00 01 00 00 01 00 00 00 00 00 96 95 77 4B 9A 04 53 51 FB 16 0B EC 5F 49 DB DF 0D C0 CE 52 FB 56 5F 84 E6 13 B8 19 AE D3 DF 91 9C E3 0A 3D D4 C0 12 EA EA 70 C8 CC E2 89 58 40 00 00 00 01 9B C7 79 12 3D 86 60 B3 7E 99 B4 BF 10 C1 C4 2C 11 35 B3 02 5B C9 B2 EF 00 00 00 20 E3 A1 FB 17 80 A1 63 80 2A A0 FE B1 F2 00 AC 26 9A 42 B2 29 03 8C A6 E1 4D 40 EF BC 6B 7B 6A E8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 CE C6 67 E6 C0 9D 20 F5 C0 33 D0 61 B5 FC A1 8B 39 92 06 8B".replacingOccurrences(of: " ", with: ""),
+            "public_key": patchCertificate!.patchStaticPublicKey.hex,
+        ]
+        var request = URLRequest(url: URL(string: "https://149.28.60.85.nip.io")!)
+        request.httpMethod = "POST"
+        // request.timeoutInterval = timeout
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+        debugLog("Libre 3: posting to \(request.url!.absoluteString) JSON payload:\(request.httpBody!.string)")
+        let (body, response) = try await URLSession(configuration: .ephemeral)
+            .data(for: request)
+        debugLog("Libre 3: shared key response body: \(body.string.trimmingCharacters(in: .newlines))")
+        if let http = response as? HTTPURLResponse, http.statusCode != 200 {
+            throw SharedKeyError.httpStatus(http.statusCode,
+                                            body: String(data: body, encoding: .utf8),
+                                            headers: http.allHeaderFields as! [String: String])
+        }
+        let hexString = String(data: body, encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let key = hexString.bytes
+        if key.count < 16 {
+            throw SharedKeyError.malformedResponse(hexString)
+        }
+        return key
+    }
+
+    public enum SharedKeyError: Error, LocalizedError {
+        case httpStatus(Int, body: String?, headers: [String: String])
+        case malformedResponse(String)
+
+        public var errorDescription: String? {
+            switch self {
+            case .httpStatus(let code, let body, let headers):
+                return "Shared-key server returned HTTP status \(code), body: \(body ?? "<empty>"), headers: \(headers)"
+            case .malformedResponse(let s):
+                return "Shared-key response is not valid hex or is too short: \(s)"
+            }
+        }
+    }
 }
+
 
 
 // https://github.com/LoopKit/CGMBLEKit/blob/dev/CGMBLEKit/AESCrypt.m

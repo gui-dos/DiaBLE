@@ -613,6 +613,7 @@ extension String {
             }
             log("\(typeAndName): enabling notifications on the one-minute reading characteristic")
             transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.oneMinuteReading.rawValue]!)
+            // send(controlCommand: .eventLog, args: "01".bytes) // still working on an expired sensor
 
 
         case .oneMinuteReading:
@@ -730,12 +731,16 @@ extension String {
                         patchEphemeral = payload
                         if settings.userLevel < .test { // not eavesdropping on Trident
                             Task { @MainActor in
-                                sharedKey = deriveSharedKey()
-                                settings.activeSensorSharedKey = sharedKey
-                                log("\(typeAndName): derived shared key: \(sharedKey.hex)")
-                                if settings.userLevel < .test { // not eavesdropping on Trident
-                                    send(securityCommand: .authorizeSymmetric)
-                                    // TODO
+                                do {
+                                    log("\(typeAndName): computing shared key...")
+                                    sharedKey = try await deriveSharedKey()
+                                    settings.activeSensorSharedKey = sharedKey
+                                    log("\(typeAndName): derived shared key: \(sharedKey.hex)")
+                                    if settings.userLevel < .test {
+                                        send(securityCommand: .authorizeSymmetric)
+                                    }
+                                } catch {
+                                    self.log("\(self.typeAndName): ERROR deriving shared key: \(error.localizedDescription)")
                                 }
                             }
                         }
