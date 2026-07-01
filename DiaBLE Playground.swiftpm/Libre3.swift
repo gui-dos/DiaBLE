@@ -566,7 +566,7 @@ extension String {
                     var decryptedPackets = [Data]()
                     for packet in packets {
 
-                        debugLog("\(typeAndName): decrypting \(uuidDescription) packet: \(packet.hex) (\(packet.count) bytes), type: \(currentBufferPacketType!), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                        debugLog("\(typeAndName): decrypting \(uuidDescription) packet: \(packet.hex) (\(packet.count) bytes), type: \(currentBufferPacketType!), kEnc: '\(kEnc.hex)', ivEnc: '\(ivEnc.hex)'")
                         if let decryptedPacket = decryptPacket(data: packet, type: currentBufferPacketType!, ivEnc: ivEnc) {
                             log("\(typeAndName): decrypted \(uuidDescription) packet: \(decryptedPacket.hex) (\(decryptedPacket.count) bytes)")
                             decryptedPackets.append(decryptedPacket)
@@ -602,7 +602,7 @@ extension String {
             let payload = data.prefix(16)
             let seqId = UInt16(data.suffix(2))
             log("\(typeAndName): received \(data.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
-            debugLog("\(typeAndName): decrypting patch status: \(data.hex) (\(data.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+            debugLog("\(typeAndName): decrypting patch status: \(data.hex) (\(data.count) bytes), kEnc: '\(kEnc.hex)', ivEnc: '\(ivEnc.hex)'")
             if let patchStatus = decryptPacket(data: data, type: .patchStatus, ivEnc: ivEnc) {
                 log("\(typeAndName): decrypted patch status: \(patchStatus.hex)")
                 if patchStatus.count == 12 {
@@ -625,7 +625,7 @@ extension String {
                     let payload = buffer.prefix(33)
                     let seqId = UInt16(buffer.suffix(2))
                     log("\(typeAndName): received \(buffer.count) bytes of \(UUID(rawValue: uuid)!) (payload: \(payload.count) bytes): \(payload.hex), sequential id: \(seqId.hex)")
-                    debugLog("\(typeAndName): decrypting one-minute reading: \(buffer.hex) (\(buffer.count) bytes), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                    debugLog("\(typeAndName): decrypting one-minute reading: \(buffer.hex) (\(buffer.count) bytes), kEnc: '\(kEnc.hex)', ivEnc: '\(ivEnc.hex)'")
                     if let oneMinuteReading = decryptPacket(data: buffer, type: .currentGlucose, ivEnc: ivEnc) {
                         log("\(typeAndName): decrypted one-minute reading: \(oneMinuteReading.hex) (\(oneMinuteReading.count) bytes)")
                         if oneMinuteReading.count == 29 {
@@ -807,7 +807,7 @@ extension String {
                         ivEnc  = decryptedKAuth.subdata(in: 48 ..< 56)
                         settings.activeSensorKEnc = kEnc
                         settings.activeSensorIvEnc = ivEnc
-                        log("\(typeAndName): decrypted kAuth: r2: \(r2.hex) (sent: \(self.r2.hex)), r1: \(r1.hex) (sent: \(self.r1.hex)), kEnc: \(kEnc.hex), ivEnc: \(ivEnc.hex)")
+                        log("\(typeAndName): decrypted kAuth: r2: \(r2.hex) (sent: \(self.r2.hex)), r1: \(r1.hex) (sent: \(self.r1.hex)), kEnc: '\(kEnc.hex)', ivEnc: '\(ivEnc.hex)'")
                     } else {
                         log("\(typeAndName): FAILED decrypting kAuth")
                     }
