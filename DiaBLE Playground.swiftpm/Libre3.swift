@@ -905,7 +905,7 @@ extension String {
             main.didParseSensor(self)
         } else {
             // backfill 12 hours of historical data:
-            send(controlCommand: .backfill, type: .historical, order: .ascending, args: max(historicalLifeCount - (12 * 12 - 1) * 5, 5).data)
+            send(controlCommand: .backfill, type: .historical, order: .ascending, args: UInt16(max(Int16(historicalLifeCount) - (12 * 12 - 1) * 5, 5)).data)
         }
     }
 
