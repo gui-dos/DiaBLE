@@ -451,7 +451,7 @@ extension String {
         controlCommand cmd: ControlCommand,
         type: ControlCommandArgRecordType? = nil,
         order: ControlCommandArgRecordOrder? = nil,
-        args: Data?
+        args: Data? = nil
     ) {
         var command = cmd.rawValue.data
         if let type  { command.append(type.rawValue) }
@@ -613,7 +613,8 @@ extension String {
             }
             log("\(typeAndName): enabling notifications on the one-minute reading characteristic")
             transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.oneMinuteReading.rawValue]!)
-            // send(controlCommand: .eventLog, args: "01".bytes) // still working on an expired sensor
+            send(controlCommand: .eventLog, args: "01".bytes) // still working on an expired sensor
+            outCryptoSequence += 1
 
 
         case .oneMinuteReading:
@@ -962,12 +963,7 @@ extension String {
         main.history.factoryTrend = self.trend
 
         outCryptoSequence += 1
-        // request event log from index 01:
-        send(controlCommand: .eventLog, args: "01".bytes)
-
-        // TODO: factory data
-        // outCryptoSequence += 1
-        // send(controlCommand: .factoryData)
+        send(controlCommand: .factoryData)
 
     }
 
