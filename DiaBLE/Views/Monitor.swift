@@ -135,11 +135,13 @@ struct Monitor: View, LoggingView {
                         .opacity(0.20)
 
                         ForEach(history.factoryTrend + history.factoryValues) { item in
-                            LineMark(
-                                x: .value("Time", item.date),
-                                y: .value("Glucose", item.value)
-                            )
-                            .foregroundStyle(.orange)
+                            if item.value > 0 {
+                                LineMark(
+                                    x: .value("Time", item.date),
+                                    y: .value("Glucose", item.value)
+                                )
+                                .foregroundStyle(.orange)
+                            }
                         }
                     }
                     .chartPlotStyle { content in

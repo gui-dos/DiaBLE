@@ -736,9 +736,7 @@ extension String {
                                     sharedKey = try await deriveSharedKey()
                                     settings.activeSensorSharedKey = sharedKey
                                     log("\(typeAndName): derived shared key: \(sharedKey.hex)")
-                                    if settings.userLevel < .test {
-                                        send(securityCommand: .authorizeSymmetric)
-                                    }
+                                    send(securityCommand: .authorizeSymmetric)
                                 } catch {
                                     self.log("\(self.typeAndName): ERROR deriving shared key: \(error.localizedDescription)")
                                 }
@@ -950,8 +948,9 @@ extension String {
             let rawData = data[2...9]  // first 6 bytes of 8 coming from the filament as for the Libre 1/2
             let readingMgDl = UInt16(data[10...11])
             let dqErrorFlag = readingMgDl & 0x8000 != 0
-            let glucose = Int(readingMgDl & 0x1fff)
-            let historicalLifeCount = ((lifeCount - 17) / 5) * 5  // HISTORIC_POINT_LATENCY = 17
+            var glucose = Int(readingMgDl & 0x1fff)
+            if dqErrorFlag { glucose = -glucose } // TODO: mark as invalid
+            let historicalLifeCount = UInt16(max(((Int16(lifeCount) - 17) / 5) * 5, 5)) // HISTORIC_POINT_LATENCY = 17
             let historicalDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(historicalLifeCount) * 60))
             let historicMgDl = UInt16(data[12...13])
             let historicalGlucose = Int(historicMgDl & 0x1fff)
