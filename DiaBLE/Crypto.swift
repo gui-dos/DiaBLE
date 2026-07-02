@@ -68,12 +68,14 @@ extension Libre3 {
         let Ze = try ephemeralPrivateKey.sharedSecretFromKeyAgreement(with: sensorEphPub)
             .withUnsafeBytes { Data($0) }
         // FIXME: cannot work because we know only the app static public key sent with the app certificate
-        // let Zs = try! appStaticPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
-        //     .withUnsafeBytes { Data($0) }
+        var Zs = try appStaticPrivateKey.sharedSecretFromKeyAgreement(with: sensorStaticPub)
+            .withUnsafeBytes { Data($0) }
 
         // Try by using Massina server:
         // https://github.com/awowogei/Messina/blob/master/app/src/commonMain/kotlin/messina/sensors/libre3/Security.kt
-        let Zs = try await getSharedStaticKey()
+        if settings.usingMessinaSharedKeyServer {
+            Zs = try await getSharedStaticKey()
+        }
 
         // ANSI X9.63 single-step: SHA-256( counter=1 || Ze || Zs ), counter as big-endian UInt32
         let counter = "00000001".bytes
@@ -157,7 +159,7 @@ extension Libre3 {
 
 
     // https://github.com/awowogei/Messina/blob/master/app/src/commonMain/kotlin/messina/sensors/libre3/Security.kt
-    // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/ECDHCrypto.java
+    // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/KEYSCrypto.java
     // use Juggluco's 65-byte whiteCryption SKB blob wrapping the app private key
     func getSharedStaticKey() async throws -> Data {
         let payload: [String: String] = [
