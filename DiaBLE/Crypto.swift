@@ -79,6 +79,7 @@ extension Libre3 {
         let counter = "00000001".bytes
         let hashInput = counter + Ze + Zs // 68 bytes
         let digest = Data(CryptoKit.SHA256.hash(data: hashInput))
+        debugLog("Crypto: SHA256(\(hashInput.hex) (\(hashInput.count) bytes)) = \(digest.hex) (\(digest.count) bytes)")
         return Data(digest.prefix(16)) // key = first 16 of 32 bytes
     }
 
@@ -156,7 +157,8 @@ extension Libre3 {
 
 
     // https://github.com/awowogei/Messina/blob/master/app/src/commonMain/kotlin/messina/sensors/libre3/Security.kt
-    // FIXME: not working
+    // https://github.com/j-kaltes/Juggluco/blob/primary/Common/src/libre3/java/tk/glucodata/ECDHCrypto.java
+    // use Juggluco's 65-byte whiteCryption SKB blob wrapping the app private key
     func getSharedStaticKey() async throws -> Data {
         let payload: [String: String] = [
             "private_key": "1D 85 8F 06 02 00 00 00 01 00 00 01 00 00 00 00 00 96 95 77 4B 9A 04 53 51 FB 16 0B EC 5F 49 DB DF 0D C0 CE 52 FB 56 5F 84 E6 13 B8 19 AE D3 DF 91 9C E3 0A 3D D4 C0 12 EA EA 70 C8 CC E2 89 58 40 00 00 00 01 9B C7 79 12 3D 86 60 B3 7E 99 B4 BF 10 C1 C4 2C 11 35 B3 02 5B C9 B2 EF 00 00 00 20 E3 A1 FB 17 80 A1 63 80 2A A0 FE B1 F2 00 AC 26 9A 42 B2 29 03 8C A6 E1 4D 40 EF BC 6B 7B 6A E8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 CE C6 67 E6 C0 9D 20 F5 C0 33 D0 61 B5 FC A1 8B 39 92 06 8B".replacingOccurrences(of: " ", with: ""),

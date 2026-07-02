@@ -68,6 +68,7 @@ import Foundation
         "activeSensorReceiverId": 0,
         "activeSensorBlePIN": Data(),
         "usingLibreCRKit": true,
+        "usingMessinaSharedKeyServer": false,
         "activeSensorSharedKey": Data(),
         "activeSensorKEnc": Data(),
         "activeSensorIvEnc": Data(),
@@ -300,6 +301,10 @@ import Foundation
 
     var usingLibreCRKit: Bool = UserDefaults.standard.bool(forKey: "usingLibreCRKit") {
         didSet { UserDefaults.standard.set(self.usingLibreCRKit, forKey: "usingLibreCRKit") }
+    }
+
+    var usingMessinaSharedKeyServer: Bool = UserDefaults.standard.bool(forKey: "usingMessinaSharedKeyServer") {
+        didSet { UserDefaults.standard.set(self.usingMessinaSharedKeyServer, forKey: "usingMessinaSharedKeyServer") }
     }
 
     var activeSensorSharedKey: Data = UserDefaults.standard.data(forKey: "activeSensorSharedKey")! {

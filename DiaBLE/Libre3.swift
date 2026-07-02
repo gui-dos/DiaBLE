@@ -613,7 +613,8 @@ extension String {
             }
             log("\(typeAndName): enabling notifications on the one-minute reading characteristic")
             transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.oneMinuteReading.rawValue]!)
-            send(controlCommand: .eventLog, args: "01".bytes) // still working on an expired sensor
+            // request event log from index 01, still working on an expired sensor
+            send(controlCommand: .eventLog, args: "01".bytes)
             outCryptoSequence += 1
 
 
@@ -1061,7 +1062,7 @@ extension String {
     func pair() {
         send(securityCommand: .startECDH)
         send(securityCommand: .loadCertificate)
-        let appCertificate = settings.usingLibreCRKit ? androidAppCertificates[securityVersion].bytes : appCertificates[securityVersion].bytes
+        let appCertificate = settings.usingLibreCRKit || settings.usingMessinaSharedKeyServer ? androidAppCertificates[securityVersion].bytes : appCertificates[securityVersion].bytes
         write(appCertificate, for: .certificateData)
         send(securityCommand: .certificateLoadDone)
         // TODO
