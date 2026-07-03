@@ -116,8 +116,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
 
             // features currently in beta testing
             if settings.userLevel >= .test {
-                // settings.usingLibreCRKit = false
-                // settings.usingMessinaSharedKeyServer = true
+                // settings.usingMessinaSharedKeyServer = false
             }
 
         }
@@ -349,7 +348,7 @@ public class MainDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDele
 
         // TODO: delete mirrored implementation from Abbott Device
         // TODO: compute accurate delta and update trend arrow
-        if history.factoryTrend.count > 5 && (sensor.family < .libre3 || !settings.usingLibreCRKit) {
+        if history.factoryTrend.count > 5 && (sensor.family < .libre3 || !settings.usingMessinaSharedKeyServer) {
             let lastTrendValues = history.factoryTrend.prefix(6).filter { $0.value > 0 }
             if lastTrendValues.count > 0 {
                 let deltaMinutes = lastTrendValues[0].id - lastTrendValues.last!.id

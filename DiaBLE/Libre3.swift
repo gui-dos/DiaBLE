@@ -1,6 +1,5 @@
 import Foundation
 import CryptoKit
-import LibreCRKit
 
 
 // https://insulinclub.de/index.php?thread/33795-free-three-ein-xposed-lsposed-modul-f%C3%BCr-libre-3-aktueller-wert-am-sperrbildschir/&postID=655055#post655055
@@ -368,7 +367,6 @@ extension String {
 
     var ephemeralPrivateKey: P256.KeyAgreement.PrivateKey = .init()
     var ephemeralPublicKey: Data = Data() // 65-byte uncompressed P-256 returned by initECDH()
-    var nativeEphemeral: FirstPairNativeEphemeralMaterial?  // set by initECDH() when using LibreCRKit
 
     // FIXME: cannot work because we sent the app static public key with the app certificate
     var appStaticPrivateKey: P256.KeyAgreement.PrivateKey = .init()  // used when trying a new ECDH session
@@ -1062,7 +1060,7 @@ extension String {
     func pair() {
         send(securityCommand: .startECDH)
         send(securityCommand: .loadCertificate)
-        let appCertificate = settings.usingLibreCRKit || settings.usingMessinaSharedKeyServer ? androidAppCertificates[securityVersion].bytes : appCertificates[securityVersion].bytes
+        let appCertificate = settings.usingMessinaSharedKeyServer ? androidAppCertificates[securityVersion].bytes : appCertificates[securityVersion].bytes
         write(appCertificate, for: .certificateData)
         send(securityCommand: .certificateLoadDone)
         // TODO
