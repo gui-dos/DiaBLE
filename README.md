@@ -3,8 +3,8 @@
 
 **ChangeLog:**
 
-* 03/07/2026 - 0.0.2 -  [Build 217](https://github.com/gui-dos/DiaBLE/commit/953de81)
-  - **Libre 3 Direct-To-Watch** leveraging [Messina](https://github.com/awowogei/Messina/) server:<br><br><div align="center"><img src="https://github.com/user-attachments/assets/26986471-de74-4303-a9e4-fd0a9db932db" width="25%"/></div><br><br>
+* 03/07/2026 - 0.0.2 -  [Build 217](https://github.com/gui-dos/DiaBLE/commit/823e455)
+  - **Libre 3 Direct-To-Watch** leveraging [Messina](https://github.com/awowogei/Messina/) one-shot server:<br><br><div align="center"><img src="https://github.com/user-attachments/assets/26986471-de74-4303-a9e4-fd0a9db932db" width="25%"/></div><br><br>
 
 ## Builds
 
