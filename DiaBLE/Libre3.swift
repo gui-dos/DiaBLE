@@ -611,9 +611,11 @@ extension String {
             }
             log("\(typeAndName): enabling notifications on the one-minute reading characteristic")
             transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.oneMinuteReading.rawValue]!)
-            // request event log from index 01, still working on an expired sensor
-            send(controlCommand: .eventLog, args: "01".bytes)
-            outCryptoSequence += 1
+            if settings.userLevel < .test {
+                // request event log from index 01, still working on an expired sensor
+                send(controlCommand: .eventLog, args: "01".bytes)
+                outCryptoSequence += 1
+            }
 
 
         case .oneMinuteReading:
