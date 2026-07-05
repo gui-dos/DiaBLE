@@ -1026,6 +1026,8 @@ extension String {
             factoryData.append(data.dropFirst())
         }
         log("\(typeAndName): \(factoryData.hexDump(header: "factory data: computed CRC: \(factoryData.dropLast(2).crc16.hex) (\(factoryData.count) bytes):"))")
+        let serial = factoryData.subdata(in: 74 ..< 84).string
+        log("\(typeAndName): parsed factory data: serial number: \(serial)")
     }
 
 
