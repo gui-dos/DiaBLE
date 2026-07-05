@@ -313,6 +313,24 @@ extension String {
     }
 
 
+    struct EventLogEvent {
+        let index: UInt8
+        let lifeCount: UInt16
+        let errorData: UInt16
+        let eventData: UInt16
+    }
+
+    typealias PatchErrorEvent = EventLogEvent
+
+    struct PatchStatusEvent {
+        let state: State
+        let lifeCount: UInt16
+        let stackDisconnectReason: UInt8
+        let appDisconnectReason: UInt8
+        let errorEvent: PatchErrorEvent
+    }
+
+
     enum ControlCommandArgRecordType: UInt8 {
         case historical = 0x00
         case clinical   = 0x01
@@ -382,12 +400,14 @@ extension String {
     var r2: Data = Data()     // 16 random bytes generated locally
     var nonce1: Data = Data() //  7 bytes from sensor challenge
 
+    var securityVersion: Int = 1
+
     var lastLifeCount: Int = 0
     var lastHistoricalLifeCount: Int = 0
     var lastHistoricalReadingDate: Date = .distantPast
 
-    var securityVersion: Int = 1
-
+    var lastPatchStatusEvent: PatchStatusEvent?
+    var eventLog = [EventLogEvent]()
 
     func parsePatchInfo() {
 
@@ -832,18 +852,50 @@ extension String {
     }
 
     func parsePatchStatus(data: Data) {
-        let lifeCount = UInt16(data[0...1])
-        let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
+        let eventLifeCount = UInt16(data[0...1])
+        let eventDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(eventLifeCount) * 60))
         let errorData = UInt16(data[2...3])
         let eventData = UInt16(data[4...5])  // TODO: add 4000
         let index = data[6]
-        let patchState = Libre3.State(rawValue: data[7])!
-        let currentLifeCount = UInt16(data[8...9])
-        let currentDate = Date(timeIntervalSince1970: Double(activationTime + UInt32(currentLifeCount) * 60))
-        let stackDisconnectReason = data[10]  // enum
-        let appDisconnectReason = data[11]  // enum
+        let state = Libre3.State(rawValue: data[7])!
+        let lifeCount = UInt16(data[8...9])
+        let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
+        let stackDisconnectReason = data[10]
+        let appDisconnectReason = data[11]
+        lastPatchStatusEvent = PatchStatusEvent(state: state, lifeCount: lifeCount, stackDisconnectReason: stackDisconnectReason, appDisconnectReason: appDisconnectReason, errorEvent: PatchErrorEvent(index: index, lifeCount: eventLifeCount, errorData: errorData, eventData: eventData))
+        log("\(typeAndName): parsed patch status: state: \(state) (0x\(data[7].hex)), life count: \(lifeCount) (0x\(lifeCount.hex)), date: \(date.local), stack disconnect reason: \(stackDisconnectReason) (0x\(stackDisconnectReason.hex), app disconnect reason: \(appDisconnectReason) (0x\(appDisconnectReason.hex)), last event index: \(index) (0x\(data[6].hex)), event life count: \(eventLifeCount) (0x\(eventLifeCount.hex)), event date: \(eventDate.local), event error data: \(errorData) (0x\(data[2...3].hex)), event data: \(eventData) (0x\(data[4...5].hex))")
+    }
 
-        log("\(typeAndName): parsed patch status: life count: \(lifeCount) (0x\(data[0...1].hex)), date: \(date.local), error data: \(errorData) (0x\(data[2...3].hex)), event data: \(eventData) (0x\(data[4...5].hex)), index: \(index) (0x\(data[6].hex)), patch state: \(patchState) (0x\(data[7].hex)), current life count: \(currentLifeCount) (0x\(data[8...9].hex)), current date: \(currentDate.local), stack disconnect reason: \(stackDisconnectReason) (0x\(data[10].hex)), app disconnect reason: \(appDisconnectReason) (0x\(data[11].hex))")
+    func parseEventLogPackets(data: [Data]) {
+        log("\(typeAndName): \(data.count) event log packets: \(data.map { $0.hex })")
+        eventLog = []
+        for data in data {
+            for i in 0...1 {
+                let lifeCount = UInt16(data[(i * 7) ... (i * 7 + 1)])
+                let errorData = UInt16(data[(i * 7 + 2) ... (i * 7 + 3)])
+                let eventData = UInt16(data[(i * 7 + 4) ... (i * 7 + 5)])
+                let index = data[i * 7 + 6]
+                let event = EventLogEvent(index: index, lifeCount: lifeCount, errorData: errorData, eventData: eventData)
+                eventLog.append(event)
+            }
+            debugLog("\(typeAndName): parsed 2 log events: \(eventLog.suffix(2).map { "index: \($0.index), life count: \($0.lifeCount) (0x\($0.lifeCount.hex)), date: \(Date(timeIntervalSince1970: Double(activationTime + UInt32($0.lifeCount) * 60))), error data: \($0.errorData), event data: \($0.eventData)" })")
+        }
+        var msg = "\(typeAndName): event log:"
+        for event in eventLog {
+            msg += "\n\(event.index). \(event.lifeCount.hex) \(Date(timeIntervalSince1970: Double(activationTime + UInt32(event.lifeCount) * 60)))\n"
+            // TODO:
+            if var state = Libre3.State(rawValue: UInt8(event.eventData))?.description {
+                if state == "Insertion failed" { state = "Warming up" }  // TODO: state 3 error
+                msg += "   \(event.eventData.hex): \(state)"
+            } else {
+                msg += "   \(event.eventData.hex)"
+            }
+            if event.errorData != 0 {
+                msg += ", error: \(event.errorData.hex)"
+            }
+        }
+        log(msg)
+
     }
 
     func parseOneMinuteReading(data: Data) {
@@ -965,39 +1017,6 @@ extension String {
 
         outCryptoSequence += 1
         send(controlCommand: .factoryData)
-
-    }
-
-    func parseEventLogPackets(data: [Data]) {
-        log("\(typeAndName): \(data.count) event log packets: \(data.map { $0.hex })")
-        var events = [(lifeCount: UInt16, date: Date, errorData: UInt16, eventData: UInt16, index: UInt8)]()
-        for data in data {
-            for i in 0...1 {
-                let lifeCount = UInt16(data[(i * 7) ... (i * 7 + 1)])
-                let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
-                let errorData = UInt16(data[(i * 7 + 2) ... (i * 7 + 3)])
-                let eventData = UInt16(data[(i * 7 + 4) ... (i * 7 + 5)])
-                let index = data[i * 7 + 6]
-                let event = (lifeCount: lifeCount, date: date, errorData: errorData, eventData: eventData, index: index)
-                events.append(event)
-            }
-            debugLog("\(typeAndName): parsed 2 log events: \(events.map { "life count: \($0.lifeCount) (0x\(data[0...1].hex)), date: \($0.date.local), error data: \($0.errorData), event data: \($0.eventData), index: \($0.index)" })")
-        }
-        var msg = "\(typeAndName): event log:"
-        for event in events {
-            msg += "\n\(event.index). \(event.lifeCount.hex) \(event.date.local)\n"
-            // TODO:
-            if var state = Libre3.State(rawValue: UInt8(event.eventData))?.description {
-                if state == "Insertion failed" { state = "Warming up" }  // TODO: state 3 error
-                msg += "   \(event.eventData.hex): \(state)"
-            } else {
-                msg += "   \(event.eventData.hex)"
-            }
-            if event.errorData != 0 {
-                msg += ", error: \(event.errorData.hex)"
-            }
-        }
-        log(msg)
 
     }
 

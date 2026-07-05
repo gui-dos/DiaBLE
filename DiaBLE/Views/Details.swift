@@ -208,6 +208,9 @@ struct Details: View, LoggingView {
                                 TextField("BLE PIN", value: $settings.activeSensorBlePIN, format: HexDataFormatStyle(maxBytes: 4))
                                     .multilineTextAlignment(.trailing)
                                     .foregroundStyle(.blue)
+                                    .onChange(of: settings.activeSensorBlePIN) {
+                                        (app.sensor as? Libre3)?.blePIN = settings.activeSensorBlePIN
+                                    }
                             }
 
                             HStack {
