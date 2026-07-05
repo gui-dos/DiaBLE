@@ -12,7 +12,7 @@ extension Libre3 {
         ephemeralPrivateKey = P256.KeyAgreement.PrivateKey()
         // Export uncompressed x9.63 public key (04 || X || Y)
         let ephemeralPublicKeyBytes = ephemeralPrivateKey.publicKey.x963Representation
-        log("TEST: generated P-256 ECDH ephemeral private key: \(ephemeralPrivateKey.rawRepresentation.hex) (size: \(ephemeralPrivateKey.rawRepresentation.count) bytes), exported x9.63 public key: \(ephemeralPublicKeyBytes.hex) (size: \(ephemeralPublicKeyBytes.count) bytes)")
+        log("Crypto: generated P-256 ECDH ephemeral private key: \(ephemeralPrivateKey.rawRepresentation.hex) (size: \(ephemeralPrivateKey.rawRepresentation.count) bytes), exported x9.63 public key: \(ephemeralPublicKeyBytes.hex) (size: \(ephemeralPublicKeyBytes.count) bytes)")
         return ephemeralPublicKeyBytes
     }
 

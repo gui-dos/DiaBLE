@@ -1027,7 +1027,9 @@ extension String {
         }
         log("\(typeAndName): \(factoryData.hexDump(header: "factory data: computed CRC: \(factoryData.dropLast(2).crc16.hex) (\(factoryData.count) bytes):"))")
         let serial = factoryData.subdata(in: 74 ..< 84).string
-        log("\(typeAndName): parsed factory data: serial number: \(serial)")
+        let aaDocString = factoryData.subdata(in: 86 ..< 98).string
+        let aaTail = factoryData.subdata(in: 132 ..< 140)
+        log("\(typeAndName): parsed factory data: serial number: \(serial), same as NFC 0xAA command output: \"\(aaDocString)\" + \(aaTail.hex)")
     }
 
 
