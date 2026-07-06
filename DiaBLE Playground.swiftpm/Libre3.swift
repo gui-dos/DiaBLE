@@ -859,6 +859,8 @@ extension String {
         let index = data[6]
         let state = Libre3.State(rawValue: data[7])!
         let lifeCount = UInt16(data[8...9])
+        age = Int(lifeCount)
+        activationTime = UInt32(Date.now.timeIntervalSince1970) - 60 * UInt32(lifeCount)
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let stackDisconnectReason = data[10]
         let appDisconnectReason = data[11]
@@ -900,6 +902,7 @@ extension String {
 
     func parseOneMinuteReading(data: Data) {
         let lifeCount = UInt16(data[0...1])
+        age = Int(lifeCount)
         let date = Date(timeIntervalSince1970: Double(activationTime + UInt32(lifeCount) * 60))
         let readingMgDl = UInt16(data[2...3])
         let dataQuality = (readingMgDl & 0xE000) // upper 3 bits

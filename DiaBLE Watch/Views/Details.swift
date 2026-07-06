@@ -158,12 +158,12 @@ struct Details: View, LoggingView {
 
                         if app.sensor.age > 0 {
                             Group {
+                                Row("Started on", (app.sensor.activationTime > 0 ? Date(timeIntervalSince1970: Double(app.sensor.activationTime)) : (app.sensor.lastReadingDate - Double(app.sensor.age) * 60)).shortDateTime)
                                 Row("Age", (app.sensor.age + minutesSinceLastReading).formattedInterval)
                                 if app.sensor.maxLife - app.sensor.age - minutesSinceLastReading > 0 {
                                     Row("Ends in", (app.sensor.maxLife - app.sensor.age - minutesSinceLastReading).formattedInterval,
                                         foregroundColor: (app.sensor.maxLife - app.sensor.age - minutesSinceLastReading) > 360 ? .green : .red)
                                 }
-                                Row("Started on", (app.sensor.activationTime > 0 ? Date(timeIntervalSince1970: Double(app.sensor.activationTime)) : (app.sensor.lastReadingDate - Double(app.sensor.age) * 60)).shortDateTime)
                             }
                             .onReceive(app.minuteTimer) { _ in
                                 minutesSinceLastReading = app.sensor.lastReadingDate == .distantPast ? minutesSinceLastReading + 1 : Int(Date().timeIntervalSince(app.sensor.lastReadingDate)/60)

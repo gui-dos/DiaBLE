@@ -934,7 +934,6 @@ class LibreLinkUp: Logging {
     func reload(enforcing: Bool = false) async -> String {
 
         guard settings.onlineInterval > 0 else {
-            debugLog("LibreLinkUp: online mode is disabled - didn't reload")
             return "[Online mode is disabled]"
         }
 
