@@ -24,13 +24,11 @@ Currently I am targeting only the latest betas of Xcode and iOS and focusing on 
 
 ## TODOs
 
-* Libre 3:
-  - tackle AES 128 CCM, ECDH key agreement, Zimperium zShield anti-tampering...
+* Libre 3++:
+  - analyze "Libre by Abbott"'s Go runtime definitions and the extended ketone/lactate multi-analyte protocols
+  - focus on our still selling points, the standalone Apple Watch app and sharing the data through HealthKit
 * Dexcom G7:
   - J-PAKE authentication protocol (see [xDrip+'s _keks_](https://github.com/NightscoutFoundation/xDrip/blob/master/libkeks/))
-* Apple Watch app:
-  - workout and extended runtime background sessions, complications
-  - ["Get timely alerts from Bluetooth devices in watchOS" - WWDC 2022](https://developer.apple.com/wwdc22/10135/)
 * migrate to Swift 6 concurrency
 * scrollable graph, offline trend arrow, landscape mode
 * smooth the historic values and project the trend ones (see [LibreTransmitter](https://github.com/dabear/LibreTransmitter/commit/49b50d7995955b76861440e5e34a0accd064d18f))
