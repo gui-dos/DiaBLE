@@ -134,11 +134,11 @@ struct Monitor: View, LoggingView {
                         .foregroundStyle(.green)
                         .opacity(0.20)
 
-                        ForEach(history.factoryTrend + history.factoryValues) { item in
-                            if item.value > 0 {
+                        ForEach(history.factoryTrend + history.factoryValues) { glucose in
+                            if glucose.value > 0 {
                                 LineMark(
-                                    x: .value("Time", item.date),
-                                    y: .value("Glucose", item.value)
+                                    x: .value("Time", glucose.date),
+                                    y: .value("Glucose", glucose.value)
                                 )
                                 .foregroundStyle(.orange)
                             }
@@ -147,8 +147,17 @@ struct Monitor: View, LoggingView {
                     .chartPlotStyle { content in
                         content.padding(1).overlay(RoundedRectangle(cornerRadius: 10).stroke(.tint, lineWidth: 2))
                     }
+                    .chartYAxis {
+                        AxisMarks(values: .stride(by: settings.displayingMillimoles ? 54: 50)) { y in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel() {
+                                Text(y.as(Int.self)!.units)
+                            }
+                        }
+                    }
                     .chartXAxis {
-                        AxisMarks(values: .stride(by: .hour, count: 3)) { _ in
+                        AxisMarks(values: .stride(by: .hour, count: 3)) { x in
                             AxisGridLine()
                             AxisTick()
                             // FIXME: .top doesn't work to center hours lables

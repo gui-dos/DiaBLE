@@ -144,11 +144,11 @@ struct Monitor: View, LoggingView {
                     .foregroundStyle(.green)
                     .opacity(0.20)
 
-                    ForEach(history.factoryTrend + history.factoryValues) { item in
-                        if item.value > 0 {
+                    ForEach(history.factoryTrend + history.factoryValues) { glucose in
+                        if glucose.value > 0 {
                             LineMark(
-                                x: .value("Time", item.date),
-                                y: .value("Glucose", item.value)
+                                x: .value("Time", glucose.date),
+                                y: .value("Glucose", glucose.value)
                             )
                             .foregroundStyle(.orange)
                         }
@@ -159,15 +159,17 @@ struct Monitor: View, LoggingView {
                 }
                 // increase font size
                 .chartYAxis {
-                    AxisMarks() { _ in
+                    AxisMarks(values: .stride(by: settings.displayingMillimoles ? 54: 50)) { y in
                         AxisGridLine()
                         AxisTick()
-                        AxisValueLabel()
-                            .font(.system(size: 12))
+                        AxisValueLabel() {
+                            Text(y.as(Int.self)!.units)
+                                .font(.system(size: 12))
+                        }
                     }
                 }
                 .chartXAxis {
-                    AxisMarks(values: .stride(by: .hour, count: 4)) { _ in
+                    AxisMarks(values: .stride(by: .hour, count: 4)) { x in
                         AxisGridLine()
                         AxisTick()
                         // FIXME: .top doesn't work to center hours lables
@@ -175,6 +177,7 @@ struct Monitor: View, LoggingView {
                             .font(.system(size: 12))
                     }
                 }
+                .padding(.bottom, 1)
                 .padding(.leading, 32)
                 .padding(.trailing, 12)
                 .frame(maxHeight: 96)

@@ -475,7 +475,7 @@ extension String {
         if let type  { command.append(type.rawValue) }
         if let order { command.append(order.rawValue) }
         if let args  { command.append(args) }
-        log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` control command \(command.hex)")
+        log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` control command \(command.hex), queue id: \(outCryptoSequence.data.hex)")
         // TODO: manage command queue increasing outCryptoSequence
         let encryptedCommand = encryptPacket(data: command + Data(count: 7 - command.count), type: .controlCommand, ivEnc: ivEnc, sequenceId: outCryptoSequence)!
         transmitter!.write(encryptedCommand + outCryptoSequence.data, for: UUID.patchControl.rawValue, .withResponse)
@@ -632,9 +632,8 @@ extension String {
             log("\(typeAndName): enabling notifications on the one-minute reading characteristic")
             transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.oneMinuteReading.rawValue]!)
             if settings.userLevel < .test {
-                // request event log from index 01, still working on an expired sensor
-                send(controlCommand: .eventLog, args: "01".bytes)
-                outCryptoSequence += 1
+                // TODO: still working on an expired sensor
+                // send(controlCommand: .eventLog, args: "01".bytes)
             }
 
 
@@ -868,37 +867,6 @@ extension String {
         log("\(typeAndName): parsed patch status: state: \(state) (0x\(data[7].hex)), life count: \(lifeCount) (0x\(lifeCount.hex)), date: \(date.local), stack disconnect reason: \(stackDisconnectReason) (0x\(stackDisconnectReason.hex), app disconnect reason: \(appDisconnectReason) (0x\(appDisconnectReason.hex)), last event index: \(index) (0x\(data[6].hex)), event life count: \(eventLifeCount) (0x\(eventLifeCount.hex)), event date: \(eventDate.local), event error data: \(errorData) (0x\(data[2...3].hex)), event data: \(eventData) (0x\(data[4...5].hex))")
     }
 
-    func parseEventLogPackets(data: [Data]) {
-        log("\(typeAndName): \(data.count) event log packets: \(data.map { $0.hex })")
-        eventLog = []
-        for data in data {
-            for i in 0...1 {
-                let lifeCount = UInt16(data[(i * 7) ... (i * 7 + 1)])
-                let errorData = UInt16(data[(i * 7 + 2) ... (i * 7 + 3)])
-                let eventData = UInt16(data[(i * 7 + 4) ... (i * 7 + 5)])
-                let index = data[i * 7 + 6]
-                let event = EventLogEvent(index: index, lifeCount: lifeCount, errorData: errorData, eventData: eventData)
-                eventLog.append(event)
-            }
-            debugLog("\(typeAndName): parsed 2 log events: \(eventLog.suffix(2).map { "index: \($0.index), life count: \($0.lifeCount) (0x\($0.lifeCount.hex)), date: \(Date(timeIntervalSince1970: Double(activationTime + UInt32($0.lifeCount) * 60))), error data: \($0.errorData), event data: \($0.eventData)" })")
-        }
-        var msg = "\(typeAndName): event log:"
-        for event in eventLog {
-            msg += "\n\(event.index). \(event.lifeCount.hex) \(Date(timeIntervalSince1970: Double(activationTime + UInt32(event.lifeCount) * 60)))\n"
-            // TODO:
-            if var state = Libre3.State(rawValue: UInt8(event.eventData))?.description {
-                if state == "Insertion failed" { state = "Warming up" }  // TODO: state 3 error
-                msg += "   \(event.eventData.hex): \(state)"
-            } else {
-                msg += "   \(event.eventData.hex)"
-            }
-            if event.errorData != 0 {
-                msg += ", error: \(event.errorData.hex)"
-            }
-        }
-        log(msg)
-
-    }
 
     func parseOneMinuteReading(data: Data) {
         let lifeCount = UInt16(data[0...1])
@@ -964,6 +932,7 @@ extension String {
         }
     }
 
+
     func parseHistoricalPackets(data: [Data]) {
         log("\(typeAndName): \(data.count) backfill historical data packets: \(data.map { $0.hex })")
         var history = [Glucose]()
@@ -996,6 +965,7 @@ extension String {
         main.didParseSensor(self)
     }
 
+
     func parseClinicalPackets(data: [Data]) {
         log("\(typeAndName): \(data.count) backfilled clinical data packets: \(data.map { $0.hex })")
         var trend = [Glucose]()
@@ -1019,9 +989,45 @@ extension String {
         main.history.factoryTrend = self.trend
 
         outCryptoSequence += 1
-        send(controlCommand: .factoryData)
+        // request event log from index 01:
+        send(controlCommand: .eventLog, args: "01".bytes)
 
+        // outCryptoSequence += 1
+        // send(controlCommand: .factoryData)
     }
+
+
+    func parseEventLogPackets(data: [Data]) {
+        log("\(typeAndName): \(data.count) event log packets: \(data.map { $0.hex })")
+        eventLog = []
+        for data in data {
+            for i in 0...1 {
+                let lifeCount = UInt16(data[(i * 7) ... (i * 7 + 1)])
+                let errorData = UInt16(data[(i * 7 + 2) ... (i * 7 + 3)])
+                let eventData = UInt16(data[(i * 7 + 4) ... (i * 7 + 5)])
+                let index = data[i * 7 + 6]
+                let event = EventLogEvent(index: index, lifeCount: lifeCount, errorData: errorData, eventData: eventData)
+                eventLog.append(event)
+            }
+            debugLog("\(typeAndName): parsed 2 log events: \(eventLog.suffix(2).map { "index: \($0.index), life count: \($0.lifeCount) (0x\($0.lifeCount.hex)), date: \(Date(timeIntervalSince1970: Double(activationTime + UInt32($0.lifeCount) * 60))), error data: \($0.errorData), event data: \($0.eventData)" })")
+        }
+        var msg = "\(typeAndName): event log:"
+        for event in eventLog {
+            msg += "\n\(event.index). \(event.lifeCount.hex) \(Date(timeIntervalSince1970: Double(activationTime + UInt32(event.lifeCount) * 60)))\n"
+            // TODO:
+            if var state = Libre3.State(rawValue: UInt8(event.eventData))?.description {
+                if state == "Insertion failed" { state = "Warming up" }  // TODO: state 3 error
+                msg += "   \(event.eventData.hex): \(state)"
+            } else {
+                msg += "   \(event.eventData.hex)"
+            }
+            if event.errorData != 0 {
+                msg += ", error: \(event.errorData.hex)"
+            }
+        }
+        log(msg)
+    }
+
 
     func parseFactoryDataPackets(data: [Data]) {
         var factoryData = Data()
