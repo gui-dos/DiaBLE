@@ -693,7 +693,7 @@ extension String {
             if data.count == 2 {
                 expectedStreamSize = Int(data[1] + data[1] / 20 + 1)
                 log("\(typeAndName): expected response size: \(expectedStreamSize) bytes (payload: \(data[1]) bytes)")
-                if data[1] == 23 {
+                if data[1] == 23 {         // challenge
                     currentSecurityCommand = .authorizeSymmetric
                 } else if data[1] == 67 {  // encrypted kAuth
                     currentSecurityCommand = .challengeLoadDone
@@ -921,7 +921,7 @@ extension String {
                 // TODO: data quality
                 history.insert(Glucose(Int(historicalGlucose), id: lastHistoricalLifeCount, date: historicalDate), at: 0)
                 if history.count > 12 * 12 {
-                    history.removeLast()
+                    history.removeLast(history.count - 12 * 12)
                 }
                 main.history.factoryValues = history
             }
@@ -1042,6 +1042,11 @@ extension String {
     }
 
 
+    // CMD_ACTIVATE_SENSOR (0xA0) returns the current BLE PIN on an activated sensor,
+    // the error 0x1B1 on a sensor activated by the reader, the error 0x1B2 on an
+    // expired sensor with a firmware like 1.1.13.30 and a new BLE PIN with older
+    // firmwares like 1.0.25.30...
+
     var activationNFCCommand: NFCCommand {
         if receiverId == 0 && settings.libreLinkUpUserId == "" {
             log("WARNING: the current receiverId and libreLinkUpUserId are null: a successful login to LibreLinkUp is very probably required first.")
@@ -1051,15 +1056,11 @@ extension String {
         parameters += (receiverId != 0 ? receiverId : settings.libreLinkUpPatientId.fnv32Hash).data
         parameters += parameters.crc16.data
 
-        // CMD_ACTIVATE_SENSOR (0xA0) and CMD_SWITCH_RECEIVER (0xA8) differences:
-        // - A8 changes the BLE PIN on an activated sensor and returns the error 0x1B0 on an expired one.
-        // - A0 returns the current BLE PIN on an activated sensor, the error 0x1B1 on a sensor activated
-        //   by the reader, the error 0x1B2 on an expired one with a firmware like 1.1.13.30
-        //   and a new BLE PIN with older firmwares like 1.0.25.30...
-        let code = patchInfo[14] == State.storage.rawValue ? 0xA8 : 0xA0
-
-        return NFCCommand(code: code, parameters: parameters, description: "activate")
+        return NFCCommand(code: 0xA0, parameters: parameters, description: "activate")
     }
+
+    // NOTTODO: CMD_SWITCH_RECEIVER (0xA8): same input parameters and output as 0xA0 but it
+    // changes the BLE PIN of an activated sensor; returns the error 0x1B0 on an expired one
 
 
     func parseActivation(output: Data) {
