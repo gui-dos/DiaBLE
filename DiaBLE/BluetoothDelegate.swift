@@ -255,9 +255,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         main.status("\(app.device.name)")
         app.device.peripheral?.delegate = self
         log("Bluetooth: connecting to \(name!)...")
-        manager.connect(app.device.peripheral!, options: nil)
-        // TODO:
-        // manager.connect(app.device.peripheral!, options: [CBConnectPeripheralOptionEnableAutoReconnect: true])
+        manager.connect(app.device.peripheral!, options: [CBConnectPeripheralOptionEnableAutoReconnect: true])
         app.device.state = app.device.peripheral!.state
         app.deviceState = app.device.state.description.capitalized + "..."
     }
@@ -265,7 +263,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
     public func centralManager(_ manager: CBCentralManager, didConnect peripheral: CBPeripheral) {
         let name = peripheral.name ?? "an unnamed peripheral"
-        var msg = "Bluetooth: \(name) has connected"
+        var msg = "Bluetooth: \(name) has \(app.device.characteristics.isEmpty ? "connected" : "reconnected")"
         app.device.state = peripheral.state
         app.deviceState = app.device.state.description.capitalized
         app.device.lastConnectionDate = Date()
@@ -280,6 +278,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         // log("Bluetooth: registerForConnectionEvents: options: [\(CBConnectPeripheralOptionEnableAutoReconnect): true, .peripheralUUIDs: [\(peripheral.identifier)])")
         msg += ("; discovering services")
         peripheral.discoverServices(nil)
+        main.status("\(app.device.name)")
         log(msg)
     }
 
@@ -563,29 +562,15 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         let name = peripheral.name ?? "an unnamed peripheral"
         app.device?.state = peripheral.state
         app.deviceState = peripheral.state.description.capitalized
-        // TODO: skip when isReconnecting
         if error != nil {
             log("Bluetooth: \(name) has disconnected at \(Date(timeIntervalSinceReferenceDate: timestamp).shortTime), is reconnecting: \(isReconnecting)")
             let errorCode = CBError.Code(rawValue: (error! as NSError).code)! // 6 = timed out when out of range
             log("Bluetooth: error type \(errorCode.rawValue): \(error!.localizedDescription)")
-            if app.transmitter != nil && (settings.preferredTransmitter == .none || settings.preferredTransmitter.id == app.transmitter.type.id) {
+            if isReconnecting {
                 app.deviceState = "Reconnecting..."
                 log("Bluetooth: reconnecting to \(name)...")
                 if errorCode == .connectionTimeout { main.errorStatus("Connection timed out. Waiting...") }
                 app.device.buffer = Data()
-                // TODO: Dexcom reconnection
-                if app.transmitter.type == .transmitter(.dexcom) {
-                    debugLog("DEBUG: Dexcom: sleeping 2 seconds before rescanning to reconnect")
-                    self.main.status("Scanning for Dexcom...") //  allow stopping from Console
-                    DispatchQueue.global(qos: .utility).async {
-                        Thread.sleep(forTimeInterval: 2)
-                        // manager.connect(peripheral, options: nil)
-                        // https://github.com/LoopKit/G7SensorKit/blob/14205c1/G7SensorKit/G7CGMManager/G7BluetoothManager.swift#L224-L229
-                        manager.scanForPeripherals(withServices: [CBUUID(string: Dexcom.UUID.advertisement.rawValue)], options: nil)
-                    }
-                } else {
-                    manager.connect(peripheral, options: nil)
-                }
             } else {
                 let lastConnectionDate = Date()
                 app.device?.lastConnectionDate = lastConnectionDate
@@ -617,7 +602,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         } else {
             msg += "; retrying..."
             main.errorStatus("Failed to connect, retrying...")
-            manager.connect(app.device.peripheral!, options: nil)
+            manager.connect(app.device.peripheral!, options: [CBConnectPeripheralOptionEnableAutoReconnect: true])
         }
 
         log(msg)
