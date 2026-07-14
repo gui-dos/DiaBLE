@@ -547,7 +547,7 @@ extension String {
                 if let controlResponse = decryptPacket(data: data, type: .controlResponse, ivEnc: ivEnc) {
                     log("\(typeAndName): decrypted control response: \(controlResponse.hex), command opcode: \(controlResponse[0])")
                 } else {
-                    log("\(typeAndName): FAILED decrypting control response")
+                    log("\(typeAndName): FAILED to decrypt control response")
                 }
 
                 if buffer.count > 0 {
@@ -589,7 +589,7 @@ extension String {
                             log("\(typeAndName): decrypted \(uuidDescription) packet: \(decryptedPacket.hex) (\(decryptedPacket.count) bytes)")
                             decryptedPackets.append(decryptedPacket)
                         } else {
-                            log("\(typeAndName): FAILED decrypting \(uuidDescription)")
+                            log("\(typeAndName): FAILED to decrypt \(uuidDescription)")
                             break
                         }
                     }
@@ -627,7 +627,7 @@ extension String {
                     parsePatchStatus(data: patchStatus)
                 }
             } else {
-                log("\(typeAndName): FAILED decrypting patch status")
+                log("\(typeAndName): FAILED to decrypt patch status")
             }
             log("\(typeAndName): enabling notifications on the one-minute reading characteristic")
             transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.oneMinuteReading.rawValue]!)
@@ -653,7 +653,7 @@ extension String {
                             parseOneMinuteReading(data: oneMinuteReading)
                         }
                     } else {
-                        log("\(typeAndName): FAILED decrypting one-minute reading")
+                        log("\(typeAndName): FAILED to decrypt one-minute reading")
                         if settings.selectedService == .libreLinkUp {
                             Task { @MainActor in
                                 try? await Task.sleep(nanoseconds: 2_000_000_000)
@@ -798,7 +798,7 @@ extension String {
                                 write(encryptedResponse)
                                 send(securityCommand: .challengeLoadDone)
                             } else {
-                                log("\(typeAndName): FAILED encrypting challenge response")
+                                log("\(typeAndName): FAILED to encrypt challenge response")
                             }
                         }
                         if blePIN.isEmpty {
@@ -828,7 +828,7 @@ extension String {
                         settings.activeSensorIvEnc = ivEnc
                         log("\(typeAndName): decrypted kAuth: r2: \(r2.hex) (sent: \(self.r2.hex)), r1: \(r1.hex) (sent: \(self.r1.hex)), kEnc: '\(kEnc.hex)', ivEnc: '\(ivEnc.hex)'")
                     } else {
-                        log("\(typeAndName): FAILED decrypting kAuth")
+                        log("\(typeAndName): FAILED to decrypt kAuth")
                     }
                     log("\(typeAndName): enabling notifications on the patch status characteristic")
                     transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.patchStatus.rawValue]!)
