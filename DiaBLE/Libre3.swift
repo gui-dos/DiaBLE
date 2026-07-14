@@ -736,9 +736,9 @@ extension String {
                             debugLog("\(typeAndName): patch certificate ECDSA signature not verified")
                         }
                         if settings.userLevel < .test { // not eavesdropping on Trident
+                            initECDH()
                             debugLog("\(typeAndName): sending security command 'key agreement' 0x0D")
                             send(securityCommand: .keyAgreement)
-                            ephemeralPublicKey = initECDH()
                             debugLog("\(typeAndName): sending generated 65-byte P-256 x9.63 ephemeral key 0x\(ephemeralPublicKey.hex)")
                             write(ephemeralPublicKey, for: .certificateData)
                             debugLog("\(typeAndName): sending security command 'ephemereal load done' 0x0E")
