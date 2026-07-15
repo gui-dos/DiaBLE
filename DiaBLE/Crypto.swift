@@ -15,6 +15,7 @@ extension Libre3 {
             }
             ephemeralPublicKey = nativeEphemeral!.keyPair.publicKey65
             log("LibreCRKit: generated P-256 ECDH native ephemeral key pair: \(nativeEphemeral!.keyPair.privateKey.rawRepresentation.hex) (size: \(nativeEphemeral!.keyPair.privateKey.rawRepresentation) bytes), exported x9.63 public key: \(ephemeralPublicKey.hex) (\(ephemeralPublicKey.count) bytes), null attempts: \(nativeEphemeral!.attempts)")
+            return
         }
 
         ephemeralPrivateKey = P256.KeyAgreement.PrivateKey()
@@ -103,6 +104,7 @@ extension Libre3 {
                               padding: .noPadding)
             let encrypted = try aes.encrypt(Array(data))
             return Data(encrypted)
+
         } catch {
             debugLog("Crypto: AES CCM encryption error: \(error)")
             return nil
@@ -132,6 +134,7 @@ extension Libre3 {
                               padding: .noPadding)
             let decrypted = try aes.decrypt(Array(data))
             return Data(decrypted)
+
         } catch {
             debugLog("Crypto: AES CCM decryption error: \(error)")
             return nil

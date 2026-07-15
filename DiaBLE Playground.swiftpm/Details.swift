@@ -348,8 +348,9 @@ struct Details: View, LoggingView {
                                         .font(.footnote).bold()
                                         .padding(.bottom, 4)
                                 }
-                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(.tint, lineWidth: 2.5))
                             }
+                            .buttonStyle(BorderlessButtonStyle())
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(.tint, lineWidth: 2.5))
                             .foregroundStyle(.tint)
                             .alert("NFC not supported", isPresented: $showingNFCAlert) {
                             } message: {
@@ -379,7 +380,8 @@ struct Details: View, LoggingView {
                                         .padding(.bottom, 4)
                                 }
                             }
-                            .padding(.horizontal, 2)
+                            .buttonStyle(BorderlessButtonStyle())
+                            .padding(.horizontal, 4)
                             .overlay(RoundedRectangle(cornerRadius: 8).stroke(.tint, lineWidth: 2.5))
                             .foregroundStyle(.tint)
 
