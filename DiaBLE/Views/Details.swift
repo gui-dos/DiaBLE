@@ -324,6 +324,7 @@ struct Details: View, LoggingView {
 
                         HStack {
                             Spacer()
+
                             Button {
                                 ((app.device as? Abbott)?.sensor as? Libre3)?.pair()
                                 if app.main.nfc.isAvailable {
@@ -359,7 +360,31 @@ struct Details: View, LoggingView {
                                     app.main.nfc.taskRequest = .enableStreaming
                                 }
                             }
+
                             Spacer()
+
+                            Text("using:")
+                            Button {
+                                showingNFCAlert = false
+                                settings.usingLibreCRKit.toggle()
+                                settings.usingMessinaSharedKeyServer.toggle()
+                                log("Settings: \(settings.usingLibreCRKit ? "LibreCRKit" : "Messina server") selected")
+                            } label: {
+                                VStack(spacing: 0) {
+                                    Image(systemName: settings.usingLibreCRKit ? "ring" : "cloud.rainbow.crop")
+                                        .resizable().frame(width: 24, height: 24)
+                                        .padding(.vertical, 2)
+                                    Text("\(settings.usingLibreCRKit ? "LibreCR" : "Messina")")
+                                        .font(.footnote).bold()
+                                        .padding(.bottom, 4)
+                                }
+                            }
+                            .padding(.horizontal, 2)
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(.tint, lineWidth: 2.5))
+                            .foregroundStyle(.tint)
+
+                            Spacer()
+
                         }
                         .padding(.vertical, 4)
 

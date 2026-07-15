@@ -966,7 +966,7 @@ class LibreLinkUp: Logging {
                     // TODO: just merge with newer values
                     history = graphHistory.reversed()
                     self.logbookHistory = logbookHistory
-                    if app.sensor.history.count == 0 && graphHistory.count > 0 { // Libre 3 is not being decrypted
+                    if app.sensor?.history.count == 0 && graphHistory.count > 0 { // Libre 3 is not being decrypted
                         Task { @MainActor in
                             settings.lastOnlineDate = Date()
                             let lastMeasurement = history[0]

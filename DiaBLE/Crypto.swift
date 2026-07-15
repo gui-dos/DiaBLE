@@ -2,11 +2,21 @@ import Foundation
 import CryptoKit     // P-256 ECDH
 import CommonCrypto
 import CryptoSwift   // AES 128 CCM
+import LibreCRKit
 
 
 extension Libre3 {
 
     public func initECDH() {
+
+        if settings.usingLibreCRKit {
+            nativeEphemeral = try! SessionKey.makeFirstPairNativeEphemeral { requestedCount in
+                return Data((0 ..< requestedCount).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
+            }
+            ephemeralPublicKey = nativeEphemeral!.keyPair.publicKey65
+            log("LibreCRKit: generated P-256 ECDH native ephemeral key pair: \(nativeEphemeral!.keyPair.privateKey.rawRepresentation.hex) (size: \(nativeEphemeral!.keyPair.privateKey.rawRepresentation) bytes), exported x9.63 public key: \(ephemeralPublicKey.hex) (\(ephemeralPublicKey.count) bytes), null attempts: \(nativeEphemeral!.attempts)")
+        }
+
         ephemeralPrivateKey = P256.KeyAgreement.PrivateKey()
         ephemeralPublicKey = ephemeralPrivateKey.publicKey.x963Representation
         log("Crypto: generated P-256 ECDH ephemeral private key: \(ephemeralPrivateKey.rawRepresentation.hex) (size: \(ephemeralPrivateKey.rawRepresentation.count) bytes), exported x9.63 public key: \(ephemeralPublicKey.hex) (size: \(ephemeralPublicKey.count) bytes)")
@@ -33,6 +43,19 @@ extension Libre3 {
     //   - first 16 bytes returned as the key; identical logic in 3 SKB variants (MA/L3Security/LingoSecurity)
 
     public func deriveSharedKey() async throws -> Data {
+
+        if settings.usingLibreCRKit, let nativeEphemeral {
+            let inputs = FirstPairPhase5KeyInputs(
+                nullEntropy11A: nativeEphemeral.nullEntropy11A,
+                sensorEphemeralPub65: patchEphemeral,
+                sensorStaticPub65: patchCertificate!.patchStaticPublicKey,
+                staticScalarWindow: FirstPairStaticScalarWindow.firstPairIndex1
+            )
+            let phase5Material = try SessionKey.deriveFirstPairPhase5Material(inputs)
+            log("LibreCRKit: derived Phase 5 raw key: \(phase5Material.rawKey.hex), null attempts: \(phase5Material.nullAttempts)")
+            return phase5Material.rawKey
+        }
+
         let sensorStaticPub = try P256.KeyAgreement.PublicKey(x963Representation: patchCertificate!.patchStaticPublicKey)
         let sensorEphPub    = try P256.KeyAgreement.PublicKey(x963Representation: patchEphemeral)
 
@@ -60,6 +83,18 @@ extension Libre3 {
 
     public func aesEncrypt(data: Data, key: Data, nonce: Data) -> Data? {
         do {
+
+            if settings.usingLibreCRKit && nonce.count == 7 {  // challenge data
+                let encrypted = try AESCCM.encrypt(
+                    nonce: nonce,
+                    plaintext: data,
+                    aad: Data(),
+                    tagLength: 4,
+                    aes: try LibAES.phase5BlockEncryptor(rawKey: key)
+                )
+                return encrypted.ciphertext + encrypted.tag
+            }
+
             let aes = try AES(key: Array(key),
                               blockMode: CCM(iv: Array(nonce),
                                              tagLength: 4,
@@ -77,6 +112,18 @@ extension Libre3 {
 
     public func aesDecrypt(data: Data, key: Data, nonce: Data) -> Data? {
         do {
+
+            if settings.usingLibreCRKit && nonce.count == 7 {  // challenge data
+                 let decrypted = try AESCCM.decrypt(
+                     nonce: nonce,
+                     ciphertext: Data(data.dropLast(4)),
+                     tag: Data(data.suffix(4)),
+                     aad: Data(),
+                     aes: try LibAES.phase5BlockEncryptor(rawKey: key)
+                 )
+                 return decrypted
+             }
+
             let aes = try AES(key: Array(key),
                               blockMode: CCM(iv: Array(nonce),
                                              tagLength: 4,

@@ -38,6 +38,8 @@
 		C59184472981E9B000A6DA89 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C5AAA61C2981CF7200CA3EC1 /* Assets.xcassets */; };
 		C5AAA6192981CF7000CA3EC1 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5AAA6182981CF7000CA3EC1 /* App.swift */; };
 		C5AAA61D2981CF7200CA3EC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C5AAA61C2981CF7200CA3EC1 /* Assets.xcassets */; };
+		C5B0498F30079C82001B535F /* LibreCRKit in Frameworks */ = {isa = PBXBuildFile; productRef = C5B0498E30079C82001B535F /* LibreCRKit */; };
+		C5B0499130079CE4001B535F /* LibreCRKit in Frameworks */ = {isa = PBXBuildFile; productRef = C5B0499030079CE4001B535F /* LibreCRKit */; };
 		C5B7CE322AEE498F00227392 /* Dexcom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7CE312AEE498F00227392 /* Dexcom.swift */; };
 		C5B7CE332AEE498F00227392 /* Dexcom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7CE312AEE498F00227392 /* Dexcom.swift */; };
 		C5BE8E5B29916D3600604237 /* DiaBLE Watch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C59960DF2981E381005999C2 /* DiaBLE Watch.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -232,12 +234,14 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				C55D12B729ACB9CB0050F567 /* CryptoSwift in Frameworks */,
+				C5B0499130079CE4001B535F /* LibreCRKit in Frameworks */,
 			);
 		};
 		C5AAA6122981CF7000CA3EC1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				C55D12B229ACAE8F0050F567 /* CryptoSwift in Frameworks */,
+				C5B0498F30079C82001B535F /* LibreCRKit in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -414,6 +418,7 @@
 			name = "DiaBLE Watch";
 			packageProductDependencies = (
 				C55D12B629ACB9CB0050F567 /* CryptoSwift */,
+				C5B0499030079CE4001B535F /* LibreCRKit */,
 			);
 			productName = "DiaBLE Watch Watch App";
 			productReference = C59960DF2981E381005999C2 /* DiaBLE Watch.app */;
@@ -439,6 +444,7 @@
 			name = DiaBLE;
 			packageProductDependencies = (
 				C55D12B129ACAE8F0050F567 /* CryptoSwift */,
+				C5B0498E30079C82001B535F /* LibreCRKit */,
 			);
 			productName = DiaBLE;
 			productReference = C5AAA6152981CF7000CA3EC1 /* DiaBLE.app */;
@@ -475,6 +481,7 @@
 			mainGroup = C5AAA60C2981CF7000CA3EC1;
 			packageReferences = (
 				C55D12B029ACAE8F0050F567 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
+				C5B0498D30079C82001B535F /* XCRemoteSwiftPackageReference "LibreCRKit" */,
 			);
 			preferredProjectObjectVersion = 100;
 			productRefGroup = C5AAA6162981CF7000CA3EC1 /* Products */;
@@ -1065,6 +1072,14 @@
 				minimumVersion = 1.9.0;
 			};
 		};
+		C5B0498D30079C82001B535F /* XCRemoteSwiftPackageReference "LibreCRKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airedev326/LibreCRKit";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1077,6 +1092,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C55D12B029ACAE8F0050F567 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
 			productName = CryptoSwift;
+		};
+		C5B0498E30079C82001B535F /* LibreCRKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5B0498D30079C82001B535F /* XCRemoteSwiftPackageReference "LibreCRKit" */;
+			productName = LibreCRKit;
+		};
+		C5B0499030079CE4001B535F /* LibreCRKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5B0498D30079C82001B535F /* XCRemoteSwiftPackageReference "LibreCRKit" */;
+			productName = LibreCRKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

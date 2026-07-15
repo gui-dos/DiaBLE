@@ -252,6 +252,24 @@ struct Details: View, LoggingView {
                             // TODO
                             // Text("While the sensor is connected in **Test** mode, switch to **Basic** mode and press **RePair** (also from the **Console Tools** menu) before it disconnects (you need to scan it only once)**\((readingCountdown < 0 ? 0 : readingCountdown) - 30 > 0 ? ": \(readingCountdown - 30) s" : "").**")
 
+                            HStack {
+                                Text("Using: ")
+                                Spacer()
+                                Button {
+                                    settings.usingLibreCRKit.toggle()
+                                    settings.usingMessinaSharedKeyServer.toggle()
+                                    log("Settings: \(settings.usingLibreCRKit ? "LibreCRKit" : "Messina server") selected")
+                                } label: {
+                                    Label {
+                                        Text("\(settings.usingLibreCRKit ? "LibreCR" : "Messina")")
+                                    } icon: {
+                                        Image(systemName: settings.usingLibreCRKit ? "ring" : "cloud.rainbow.crop")
+                                            .resizable().frame(width: 24, height: 24)
+                                    }
+                                    .foregroundStyle(.blue)
+                                }
+                            }
+
                             Button {
                                 // TODO
                                 settings.logging = true
