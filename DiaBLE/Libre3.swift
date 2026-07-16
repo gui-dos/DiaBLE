@@ -1010,11 +1010,11 @@ extension String {
                 let event = EventLogEvent(index: index, lifeCount: lifeCount, errorData: errorData, eventData: eventData)
                 eventLog.append(event)
             }
-            debugLog("\(typeAndName): parsed 2 log events: \(eventLog.suffix(2).map { "index: \($0.index), life count: \($0.lifeCount) (0x\($0.lifeCount.hex)), date: \(Date(timeIntervalSince1970: Double(activationTime + UInt32($0.lifeCount) * 60))), error data: \($0.errorData), event data: \($0.eventData)" })")
+            debugLog("\(typeAndName): parsed 2 log events: \(eventLog.suffix(2).map { "index: \($0.index), life count: \($0.lifeCount) (0x\($0.lifeCount.hex)), date: \(Date(timeIntervalSince1970: Double(activationTime + UInt32($0.lifeCount) * 60)).local), error data: \($0.errorData), event data: \($0.eventData)" })")
         }
         var msg = "\(typeAndName): event log:"
         for event in eventLog {
-            msg += "\n\(event.index). \(event.lifeCount.hex) \(Date(timeIntervalSince1970: Double(activationTime + UInt32(event.lifeCount) * 60)))\n"
+            msg += "\n\(event.index). \(event.lifeCount.hex) \(Date(timeIntervalSince1970: Double(activationTime + UInt32(event.lifeCount) * 60)).local)\n"
             // TODO:
             if var state = Libre3.State(rawValue: UInt8(event.eventData))?.description {
                 if state == "Insertion failed" { state = "Warming up" }  // TODO: state 3 error
@@ -1036,10 +1036,11 @@ extension String {
             factoryData.append(data.dropFirst())
         }
         log("\(typeAndName): \(factoryData.hexDump(header: "factory data: computed CRC: \(factoryData.dropLast(2).crc16.hex) (\(factoryData.count) bytes):"))")
-        let serial = factoryData.subdata(in: 74 ..< 84).string
+        serial = factoryData.subdata(in: 74 ..< 84).string // TODO: family prefix
+        uid = factoryData.subdata(in: 52 ..< 58) + "7AE0".bytes
         let aaDocString = factoryData.subdata(in: 86 ..< 98).string
         let aaTail = factoryData.subdata(in: 132 ..< 140)
-        log("\(typeAndName): parsed factory data: serial number: \(serial), same as NFC 0xAA command output: \"\(aaDocString)\" + \(aaTail.hex)")
+        log("\(typeAndName): parsed factory data: serial number: \(serial), NFC uid: \(uid.hex), same as NFC 0xAA command output: \"\(aaDocString)\" + \(aaTail.hex)")
     }
 
 

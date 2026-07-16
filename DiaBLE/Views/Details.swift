@@ -366,7 +366,6 @@ struct Details: View, LoggingView {
 
                             Text("using:")
                             Button {
-                                showingNFCAlert = false
                                 settings.usingLibreCRKit.toggle()
                                 settings.usingMessinaSharedKeyServer.toggle()
                                 log("Settings: \(settings.usingLibreCRKit ? "LibreCRKit" : "Messina server") selected")
