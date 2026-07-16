@@ -1039,8 +1039,11 @@ extension String {
         serial = factoryData.subdata(in: 74 ..< 84).string // TODO: family prefix
         uid = factoryData.subdata(in: 52 ..< 58) + "7AE0".bytes
         let aaDocString = factoryData.subdata(in: 86 ..< 98).string
+        // TODO: '0100 0100' from patch info
+        let wearDuration = factoryData.subdata(in: 102 ..< 104)
+        maxLife = Int(UInt16(wearDuration))
         let aaTail = factoryData.subdata(in: 132 ..< 140)
-        log("\(typeAndName): parsed factory data: serial number: \(serial), NFC uid: \(uid.hex), same as NFC 0xAA command output: \"\(aaDocString)\" + \(aaTail.hex)")
+        log("\(typeAndName): parsed factory data: serial number: \(serial), NFC uid: \(uid.hex), wear duration: \(maxLife) minutes (\(maxLife.formattedInterval), 0x\(maxLife.hex)), same as NFC 0xAA command output: \"\(aaDocString)\" + \(aaTail.hex)")
     }
 
 
