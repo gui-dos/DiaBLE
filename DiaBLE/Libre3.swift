@@ -633,8 +633,11 @@ extension String {
             log("\(typeAndName): enabling notifications on the one-minute reading characteristic")
             transmitter!.peripheral?.setNotifyValue(true, for: transmitter!.characteristics[UUID.oneMinuteReading.rawValue]!)
             if settings.userLevel < .test {
-                // TODO: still working on an expired sensor
+                // TODO: still working on an expired sensor:
                 // send(controlCommand: .eventLog, args: "01".bytes)
+                //
+                // Switch the status from 05 (.expired) to 06 (.terminated), stopping the sensor from advertising:
+                // send(controlCommand: .shutdownPatch)
             }
 
 
