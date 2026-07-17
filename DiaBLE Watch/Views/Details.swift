@@ -15,13 +15,13 @@ struct Details: View, LoggingView {
 
 
     // TODO:
-    @ViewBuilder func Row(_ label: String, _ value: String, foregroundColor: Color? = .yellow) -> some View {
+    @ViewBuilder func Row(_ label: String, _ value: String, foregroundStyle: Color? = .yellow) -> some View {
         if !(value.isEmpty || value == "unknown") {
             HStack {
                 Text(label)
                 Spacer()
                 Text(value)
-                    .foregroundStyle(foregroundColor!)
+                    .foregroundStyle(foregroundStyle!)
             }
         } else {
             EmptyView()
@@ -58,7 +58,7 @@ struct Details: View, LoggingView {
                             Row("Name", app.device.peripheral?.name ?? app.device.name)
 
                             Row("State", (app.device.peripheral?.state ?? app.device.state).description.capitalized,
-                                foregroundColor: (app.device.peripheral?.state ?? app.device.state) == .connected ? .green : .red)
+                                foregroundStyle: (app.device.peripheral?.state ?? app.device.state) == .connected ? .green : .red)
 
                             if app.device.lastConnectionDate != .distantPast {
                                 HStack {
@@ -114,7 +114,7 @@ struct Details: View, LoggingView {
 
                         if app.device.battery > -1 {
                             Row("Battery", "\(app.device.battery)%",
-                                foregroundColor: app.device.battery > 10 ? .green : .red)
+                                foregroundStyle: app.device.battery > 10 ? .green : .red)
                         }
 
                         if app.device.characteristics.count > 0 {
@@ -132,8 +132,13 @@ struct Details: View, LoggingView {
 
                     Section(header: Text("Sensor")) {
 
-                        Row("State", app.sensor.state.description,
-                            foregroundColor: app.sensor.state == .active ? .green : .red)
+                        if (app.sensor as? Libre3) != nil && (app.sensor as? Libre)?.patchInfo.count ?? 0 > 0 {
+                            Row("State", Libre3.State(rawValue: (app.sensor as! Libre3).patchInfo[14])!.description,
+                                foregroundStyle: app.sensor.state == .active ? .green : .red)
+                        } else {
+                            Row("State", app.sensor.state.description,
+                                foregroundStyle: app.sensor.state == .active ? .green : .red)
+                        }
 
                         if app.sensor.state == .failure && (app.sensor as? Libre)?.fram.count ?? 0 > 8 {
                             let fram = (app.sensor as! Libre).fram
@@ -141,7 +146,7 @@ struct Details: View, LoggingView {
                             let failureAge = Int(fram[7]) + Int(fram[8]) << 8
                             let failureInterval = failureAge == 0 ? "an unknown time" : "\(failureAge.formattedInterval)"
                             Row("Failure", "\(decodeFailure(error: errorCode).capitalized) (0x\(errorCode.hex)) at \(failureInterval)",
-                                foregroundColor: .red)
+                                foregroundStyle: .red)
                         }
 
                         Row("Type", "\(app.sensor.type.description)\(((app.sensor as? Libre)?.patchInfo.hex ?? "").hasPrefix("a2") ? " (new 'A2' kind)" : (app.sensor as? Libre)?.isAPlus ?? false ? " Plus" : "")")
@@ -162,7 +167,7 @@ struct Details: View, LoggingView {
                                 Row("Age", (app.sensor.age + minutesSinceLastReading).formattedInterval)
                                 if app.sensor.maxLife - app.sensor.age - minutesSinceLastReading > 0 {
                                     Row("Ends in", (app.sensor.maxLife - app.sensor.age - minutesSinceLastReading).formattedInterval,
-                                        foregroundColor: (app.sensor.maxLife - app.sensor.age - minutesSinceLastReading) > 360 ? .green : .red)
+                                        foregroundStyle: (app.sensor.maxLife - app.sensor.age - minutesSinceLastReading) > 360 ? .green : .red)
                                 }
                             }
                             .onReceive(app.minuteTimer) { _ in

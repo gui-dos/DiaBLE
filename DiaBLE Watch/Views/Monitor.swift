@@ -186,8 +186,13 @@ struct Monitor: View, LoggingView {
 
                     if app.sensor != nil && (app.sensor.state != .unknown || app.sensor.serial != "") {
                         VStack(spacing: -4) {
-                            Text(app.sensor.state.description)
-                                .foregroundStyle(app.sensor.state == .active ? .green : .red)
+                            if (app.sensor as? Libre3) != nil && (app.sensor as? Libre)?.patchInfo.count ?? 0 > 0 {
+                                Text(Libre3.State(rawValue: (app.sensor as! Libre3).patchInfo[14])!.description)
+                                    .foregroundStyle(app.sensor.state == .active ? .green : .red)
+                            } else {
+                                Text(app.sensor.state.description)
+                                    .foregroundStyle(app.sensor.state == .active ? .green : .red)
+                            }
 
                             if app.sensor.age > 0 {
                                 Text(app.sensor.age.shortFormattedInterval)
