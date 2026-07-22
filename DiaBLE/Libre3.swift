@@ -33,9 +33,9 @@ extension String {
         /// the sensor stopped advertising via BLE by itself on the following day anyway
         case terminated         = 6
 
-        /// detected for a sensor that fell off
         case error              = 7
 
+        /// detected for a detached sensor
         case errorTerminated    = 8
 
         var description: String {
@@ -368,7 +368,7 @@ extension String {
         }
     }
 
-    var receiverId: UInt32 = 0  // fnv32Hash of LibreView ID string
+    var receiverId: UInt32 = 0  // fnv32Hash of LibreView GUID string
 
     var blePIN: Data = Data()   // 4 bytes returned by the activation command
 
@@ -916,7 +916,7 @@ extension String {
         // TODO: data quality
         self.trend.insert(Glucose(glucose, id: Int(lifeCount), date: date, dataQuality: Glucose.DataQuality(rawValue: Int(dataQuality))), at: 0)
         if self.trend.count > 17 + 5 { // latency + current historical timestamp
-            self.trend.removeLast()
+            self.trend.removeLast(self.trend.count - (17 + 5))
         }
         main.history.factoryTrend = self.trend
         // TODO: fill the gaps when reconnecting
