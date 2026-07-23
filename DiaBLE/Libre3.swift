@@ -376,6 +376,8 @@ extension String {
     var currentBufferPacketType: PacketType?
 
     var currentControlCommand:  ControlCommand?
+    var controlCommandsQueue = [Data]()
+
     var currentSecurityCommand: SecurityCommand?
     var lastSecurityEvent: SecurityEvent = .unknown
     var expectedStreamSize = 0
@@ -476,11 +478,13 @@ extension String {
         if let type  { command.append(type.rawValue) }
         if let order { command.append(order.rawValue) }
         if let args  { command.append(args) }
-        log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` control command \(command.hex), queue id: \(outCryptoSequence.data.hex)")
-        // TODO: manage command queue increasing outCryptoSequence
-        let encryptedCommand = encryptPacket(data: command + Data(count: 7 - command.count), type: .controlCommand, ivEnc: ivEnc, sequenceId: outCryptoSequence)!
-        transmitter!.write(encryptedCommand + outCryptoSequence.data, for: UUID.patchControl.rawValue, .withResponse)
-        currentControlCommand = cmd
+        controlCommandsQueue.append(command)
+        if controlCommandsQueue.count == 1 {
+            let encryptedCommand = encryptPacket(data: command + Data(count: 7 - command.count), type: .controlCommand, ivEnc: ivEnc, sequenceId: outCryptoSequence)!
+            log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` control command \(command.hex) (encrypted: \(encryptedCommand.hex)) , queue id: \(outCryptoSequence.data.hex)")
+            transmitter!.write(encryptedCommand + outCryptoSequence.data, for: UUID.patchControl.rawValue, .withResponse)
+            currentControlCommand = cmd
+        }
     }
 
     func parsePackets(_ data: Data) -> (Data, String) {
@@ -546,7 +550,7 @@ extension String {
                 // TODO: manage enqueued id
                 log("\(typeAndName): received \(data.count) bytes of patch control command data: \(data.hex), command queue id: \(queueId.hex)")
                 if let controlResponse = decryptPacket(data: data, type: .controlResponse, ivEnc: ivEnc) {
-                    log("\(typeAndName): decrypted control response: \(controlResponse.hex), command opcode: \(controlResponse[0])")
+                    log("\(typeAndName): decrypted control response: \(controlResponse.hex), command opcode: \(controlResponse[0]) (\(ControlCommand(rawValue: controlResponse[0])!))")
                 } else {
                     log("\(typeAndName): FAILED to decrypt control response")
                 }
@@ -596,6 +600,7 @@ extension String {
                     }
 
                     if decryptedPackets.count > 0 {
+
                         switch currentBufferPacketType! {
                         case .backfillHistoric: parseHistoricalPackets(data: decryptedPackets)
                         case .backfillClinical: parseClinicalPackets(data: decryptedPackets)
@@ -604,11 +609,24 @@ extension String {
                         default:
                             break
                         }
+
+                        controlCommandsQueue.removeFirst()
+                        if !controlCommandsQueue.isEmpty {
+                            let command = controlCommandsQueue.first!
+                            let cmd = ControlCommand(rawValue: command[0])!
+                            outCryptoSequence += 1
+                            let encryptedCommand = encryptPacket(data: command + Data(count: 7 - command.count), type: .controlCommand, ivEnc: ivEnc, sequenceId: outCryptoSequence)!
+                            log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` control command \(command.hex) (encrypted: \(encryptedCommand.hex)) , queue id: \(outCryptoSequence.data.hex)")
+                            transmitter!.write(encryptedCommand + outCryptoSequence.data, for: UUID.patchControl.rawValue, .withResponse)
+                            currentControlCommand = cmd
+                        } else {
+                            currentControlCommand = nil
+                        }
                     }
 
                     buffer = Data()
                     currentBufferPacketType = nil
-                    currentControlCommand = nil
+
                 }
             }
 
@@ -993,11 +1011,9 @@ extension String {
         main.history.factoryTrend = self.trend
 
         outCryptoSequence += 1
+        send(controlCommand: .factoryData)
         // request event log from index 01:
         send(controlCommand: .eventLog, args: "01".bytes)
-
-        // outCryptoSequence += 1
-        // send(controlCommand: .factoryData)
     }
 
 
