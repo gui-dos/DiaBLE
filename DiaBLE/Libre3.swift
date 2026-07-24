@@ -481,7 +481,7 @@ extension String {
         controlCommandsQueue.append(command)
         if controlCommandsQueue.count == 1 {
             let encryptedCommand = encryptPacket(data: command + Data(count: 7 - command.count), type: .controlCommand, ivEnc: ivEnc, sequenceId: outCryptoSequence)!
-            log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` control command \(command.hex) (encrypted: \(encryptedCommand.hex)) , queue id: \(outCryptoSequence.data.hex)")
+            log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` control command \(command.hex) (encrypted: \(encryptedCommand.hex)), queue id: \(outCryptoSequence.data.hex)")
             transmitter!.write(encryptedCommand + outCryptoSequence.data, for: UUID.patchControl.rawValue, .withResponse)
             currentControlCommand = cmd
         }
@@ -616,7 +616,7 @@ extension String {
                             let cmd = ControlCommand(rawValue: command[0])!
                             outCryptoSequence += 1
                             let encryptedCommand = encryptPacket(data: command + Data(count: 7 - command.count), type: .controlCommand, ivEnc: ivEnc, sequenceId: outCryptoSequence)!
-                            log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` control command \(command.hex) (encrypted: \(encryptedCommand.hex)) , queue id: \(outCryptoSequence.data.hex)")
+                            log("Bluetooth: sending to \(typeAndName) `\(cmd.description)` control command \(command.hex) (encrypted: \(encryptedCommand.hex)), queue id: \(outCryptoSequence.data.hex)")
                             transmitter!.write(encryptedCommand + outCryptoSequence.data, for: UUID.patchControl.rawValue, .withResponse)
                             currentControlCommand = cmd
                         } else {
@@ -1035,9 +1035,14 @@ extension String {
         for event in eventLog {
             msg += "\n\(event.index). \(event.lifeCount.hex) \(Date(timeIntervalSince1970: Double(activationTime + UInt32(event.lifeCount) * 60)).local)\n"
             // TODO:
+            let eventDescription: [UInt16: String] = [
+                0x0D: "Reactivation (new BLE PIN)"
+            ]
             if var state = Libre3.State(rawValue: UInt8(event.eventData))?.description {
                 if state == "Insertion failed" { state = "Warming up" }  // TODO: state 3 error
                 msg += "   \(event.eventData.hex): \(state)"
+            } else if let eventDescription = eventDescription[event.eventData] {
+                msg += "   \(event.eventData.hex): \(eventDescription)"
             } else {
                 msg += "   \(event.eventData.hex)"
             }
