@@ -7,7 +7,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
     var main: MainDelegate!
     var centralManager: CBCentralManager { main.centralManager }
 
-    /// [uuid: (name, peripheral, isConnectable, isIgnored)]
+    /// [uuid: (name, peripheral, advertisement, isConnectable, isIgnored)]
     @Published var knownDevices: [String: (name: String, peripheral: CBPeripheral, advertisement: [String: Any], isConnectable: Bool, isIgnored: Bool)] = [:]
 
 

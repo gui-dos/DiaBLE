@@ -1061,7 +1061,11 @@ extension String {
         }
         log("\(typeAndName): \(factoryData.hexDump(header: "factory data: computed CRC: \(factoryData.dropLast(2).crc16.hex) (\(factoryData.count) bytes):"))")
         serial = factoryData.subdata(in: 74 ..< 84).string // TODO: family prefix
+        settings.activeSensorSerial = serial
         uid = factoryData.subdata(in: 52 ..< 58) + "7AE0".bytes
+        if uid == settings.currentSensorUid && !settings.currentPatchInfo.isEmpty {
+            patchInfo = settings.currentPatchInfo
+        }
         let aaDocString = factoryData.subdata(in: 86 ..< 98).string
         // TODO: '0100 0100' from patch info
         let wearDuration = factoryData.subdata(in: 102 ..< 104)
