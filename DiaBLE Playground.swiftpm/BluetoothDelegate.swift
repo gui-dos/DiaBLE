@@ -8,7 +8,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
     var centralManager: CBCentralManager { main.centralManager }
 
     /// [uuid: (name, peripheral, isConnectable, isIgnored)]
-    @Published var knownDevices: [String: (name: String, peripheral: CBPeripheral, isConnectable: Bool, isIgnored: Bool)] = [:]
+    @Published var knownDevices: [String: (name: String, peripheral: CBPeripheral, advertisement: [String: Any], isConnectable: Bool, isIgnored: Bool)] = [:]
 
 
     public func centralManagerDidUpdateState(_ manager: CBCentralManager) {
@@ -131,7 +131,7 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
         var msg = "Bluetooth: \(name!)'s device identifier \(identifier)"
         if knownDevices[identifier.uuidString] == nil {
             msg += " not yet known"
-            knownDevices[identifier.uuidString] = (name!.contains("unnamed") ? name! : peripheral.name!, peripheral, deviceIsConnectable, deviceIsIgnored)
+            knownDevices[identifier.uuidString] = (name!.contains("unnamed") ? name! : peripheral.name!, peripheral, advertisement, deviceIsConnectable, deviceIsIgnored)
             if settings.userLevel > .basic {
                 msg += " (advertised data: \(advertisement)\(BLE.companies[companyId].name != "< Unknown >" ? ", company: \(BLE.companies[companyId].name)" : ""))"
             }
@@ -290,6 +290,24 @@ class BluetoothDelegate: NSObject, CBCentralManagerDelegate, CBPeripheralDelegat
 
     public func centralManager(_ manager: CBCentralManager, willRestoreState dict: [String: Any]) {
         log("Bluetooth: will restore state to \(dict.debugDescription)")
+        if let restoredPeripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
+            for peripheral in restoredPeripherals {
+                let identifier = peripheral.identifier.uuidString
+                let name = peripheral.name ?? "an unnamed peripheral"
+                let knownDevice = knownDevices[identifier]
+                let advertisement = knownDevice?.advertisement ?? [:]
+                let isConnectable = knownDevice?.isConnectable ?? true
+                let isIgnored = knownDevice?.isIgnored ?? false
+                knownDevices[identifier] = (name: name, peripheral: peripheral, advertisement, isConnectable: isConnectable, isIgnored: isIgnored)
+                log("TODO: Bluetooth: restoring peripheral \(name), identifier: \(identifier), connectable: \(isConnectable), ignored: \(isIgnored)")
+                // TODO
+                // switch peripheral.state {
+                    main.status("Reconnecting to \(name)...")
+                    log("Bluetooth: reconnecting to restored peripheral \(name)...")
+                    manager.connect(peripheral, options: [CBConnectPeripheralOptionEnableAutoReconnect: true])
+                // }
+            }
+        }
     }
 
 

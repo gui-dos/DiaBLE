@@ -462,7 +462,7 @@ struct Details: View, LoggingView {
                                                 }
                                                 log("Bluetooth: retrieved \(peripheral.name ?? "unnamed peripheral")")
                                                 app.main.settings.preferredTransmitter = .none
-                                                app.main.bluetoothDelegate.centralManager(app.main.centralManager, didDiscover: peripheral, advertisementData: [:], rssi: 0)
+                                                app.main.bluetoothDelegate.centralManager(app.main.centralManager, didDiscover: peripheral, advertisementData: device.advertisement, rssi: 0)
                                             }
                                         }
                                     if !device.isConnectable {
